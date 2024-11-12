@@ -34,7 +34,7 @@
             // Add description to sequence for each exit (sorted by direction)
             foreach(KeyValuePair<Direction, Location> exit in Exits.OrderBy(x => x.Key))
             {
-                descriptions.Add($"the {exit.Value.Name} is to the {exit.Key}");
+                descriptions.Add($"the {exit.Value.Name} is {exit.Key.DirectionDescription()}");
             }
 
             // Return descriptions sequence
