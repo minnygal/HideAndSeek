@@ -26,7 +26,20 @@
         /// <summary>
         /// Returns a sequence of descriptions of the exits, sorted by direction
         /// </summary>
-        public IEnumerable<string> ExitList => throw new NotImplementedException();
+        public IEnumerable<string> ExitList()
+        {
+            // Initialize a sequence to store descriptions
+            List<string> descriptions = new List<string>();
+
+            // Add description to sequence for each exit (sorted by direction)
+            foreach(KeyValuePair<Direction, Location> exit in Exits.OrderBy(x => x.Key))
+            {
+                descriptions.Add($"the {exit.Value.Name} is to the {exit.Key}");
+            }
+
+            // Return descriptions sequence
+            return descriptions as IEnumerable<string>;
+        }
 
         /// <summary>
         /// Adds an exit to this location (and adds a reciprocal exit to the other location)
@@ -48,6 +61,7 @@
         {
             Exits.Add(direction, connectingLocation);
         }
+
         /// <summary>
         /// Gets the exit location in a direction
         /// </summary>
