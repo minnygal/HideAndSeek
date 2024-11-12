@@ -6,35 +6,65 @@
         /// The name of this location
         /// </summary>
         public string Name { get; private set; }
+
         /// <summary>
         /// The exits out of this location
         /// </summary>
-        public IDictionary<Direction, Location> Exits { get; private set; }
-        = new Dictionary<Direction, Location>();
+        public IDictionary<Direction, Location> Exits { get; private set; } = new Dictionary<Direction, Location>();
+
         /// <summary>
         /// The constructor sets the location name
         /// </summary>
         /// <param name="name">Name of the location</param>
-        public Location(string name) => throw new NotImplementedException();
+        public Location(string name)
+        {
+            Name = name;
+        }
+
         public override string ToString() => Name;
+
         /// <summary>
         /// Returns a sequence of descriptions of the exits, sorted by direction
         /// </summary>
         public IEnumerable<string> ExitList => throw new NotImplementedException();
+
         /// <summary>
-        /// Adds an exit to this location
+        /// Adds an exit to this location (and adds a reciprocal exit to the other location)
         /// </summary>
         /// <param name="direction">Direction of the connecting location</param>
         /// <param name="connectingLocation">Connecting location to add</param>
         public void AddExit(Direction direction, Location connectingLocation)
         {
-            throw new NotImplementedException();
+            Exits.Add(direction, connectingLocation);
+            connectingLocation.AddReturnExit(direction.OppositeDirection(), this);
+        }
+
+        /// <summary>
+        /// Adds a return exit to the specified connecting location
+        /// </summary>
+        /// <param name="direction">Direction from this location to the connecting location</param>
+        /// <param name="connectingLocation">Connecting location linked to this location</param>
+        private void AddReturnExit(Direction direction, Location connectingLocation)
+        {
+            Exits.Add(direction, connectingLocation);
         }
         /// <summary>
         /// Gets the exit location in a direction
         /// </summary>
         /// <param name="direction">Direciton of the exit location</param>
         /// <returns>The exit location, or this if there is no exit in that direction</returns>
-        public Location GetExit(Direction direction) => throw new NotImplementedException();
+        public Location GetExit(Direction direction) {
+            // Get exit in direction specified and store in location variable
+            Exits.TryGetValue(direction, out Location location);
+
+            // If to location found in direction
+            if(location == null)
+            {
+                location = this; // Return calling location
+            }
+
+            // Return location
+            return location;
+        }
     }
 }
