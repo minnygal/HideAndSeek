@@ -74,7 +74,9 @@ namespace HideAndSeek
         /// <returns>True if the player can move in that direction, false oterwise</returns>
         public bool Move(Direction direction)
         {
-            throw new NotImplementedException();
+            Location startLocation = CurrentLocation; // Set start location to current location
+            CurrentLocation = CurrentLocation.GetExit(direction); // Set current location to exit returned
+            return CurrentLocation != startLocation; // Return whether the current location has changed (move was successful)
         }
 
         /// <summary>
@@ -84,7 +86,19 @@ namespace HideAndSeek
         /// <returns>The results of parsing the input</returns>
         public string ParseInput(string input)
         {
-            throw new NotImplementedException();
+            // If input cannot be parsed to Direction enum value
+            if ( !(Enum.TryParse(input, out Direction direction)) ) 
+            {
+                return "That's not a valid direction"; // Return invalid direction message
+            }
+            else if( !(this.Move(direction))) // If cannot move in specified direction
+            {
+                return "There's no exit in that direction"; // Return no exit in that direction message
+            } 
+            else // If successfully moved in specified direction
+            {
+                return "Moving " + direction; // Return the direction you're moving
+            }
         }
     }
 }
