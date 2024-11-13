@@ -53,6 +53,16 @@
         }
 
         /// <summary>
+        /// Creates a new Location and adds it as an exit to the calling Location (and adds a reciprocal exit to the new Location)
+        /// </summary>
+        /// <param name="direction">Direction of the new location</param>
+        /// <param name="connectingLocation">Name of new location to add and connect</param>
+        public void AddExit(Direction direction, string newLocationName)
+        {
+            AddExit(direction, new Location(newLocationName));
+        }
+
+        /// <summary>
         /// Adds a return exit to the specified connecting location
         /// </summary>
         /// <param name="direction">Direction from this location to the connecting location</param>
