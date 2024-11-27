@@ -7,7 +7,15 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     public static class House {
+        /// <summary>
+        /// Entry of House
+        /// </summary>
         public static Location Entry { get; private set; }
+
+        /// <summary>
+        /// List of Locations in House
+        /// </summary>
+        public static List<Location> Locations { get; private set; }
 
         /// <summary>
         /// Static constructor to create Locations within the house and connect them
@@ -35,6 +43,25 @@ namespace HideAndSeek
 
             // Connect Master Bodroom to new location: Master Bath
             Location masterBath = masterBedroom.AddExit(Direction.East, "Master Bath");
+
+            // Add Locations to Locations list
+            Locations = new List<Location>()
+            {
+                attic,
+                hallway,
+                kidsRoom,
+                masterBedroom,
+                nursery,
+                pantry,
+                secondBathroom,
+                kitchen,
+                hallway,
+                masterBath,
+                garage,
+                landing,
+                livingRoom,
+                Entry
+            };
         }
     }
 }
