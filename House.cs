@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -17,6 +18,8 @@ namespace HideAndSeek
         /// </summary>
         public static List<Location> Locations { get; private set; }
 
+        public static Random Random { get; set; } = new Random();
+
         /// <summary>
         /// Static constructor to create Locations within the house and connect them
         /// </summary>
@@ -31,16 +34,19 @@ namespace HideAndSeek
             Location kitchen = hallway.AddExit(Direction.Northwest, "Kitchen");
             Location bathroom = hallway.AddExit(Direction.North, "Bathroom");
             Location livingRoom = hallway.AddExit(Direction.South, "Living Room");
-            Location landing = hallway.AddExit(Direction.Up, "Landing");
 
-            // Connect Landing to new locations: Second Bathroom, Nursery, Pantry, Kids Room, Attic, Master Bedroom
-            Location secondBathroom = landing.AddExit(Direction.West, "Second Bathroom");
+            // Create landing
+            Location landing = new Location("Landing");
+
+            // Connect Landing to new locations: Attic, Hallway, Kids Room, Master Bedroom, Nursery, Pantry, Second Bathroom
+            Location attic = landing.AddExit(Direction.Up, "Attic");
+            landing.AddExit(Direction.Down, hallway);
+            Location kidsRoom = landing.AddExit(Direction.Southeast, "Kids Room");
+            Location masterBedroom = landing.AddExit(Direction.Northwest, "Master Bedroom");
             Location nursery = landing.AddExit(Direction.Southwest, "Nursery");
             Location pantry = landing.AddExit(Direction.South, "Pantry");
-            Location kidsRoom = landing.AddExit(Direction.Southeast, "Kids Room");
-            Location attic = landing.AddExit(Direction.Up, "Attic");
-            Location masterBedroom = landing.AddExit(Direction.Northwest, "Master Bedroom");
-
+            Location secondBathroom = landing.AddExit(Direction.West, "Second Bathroom");
+            
             // Connect Master Bodroom to new location: Master Bath
             Location masterBath = masterBedroom.AddExit(Direction.East, "Master Bath");
 
@@ -72,6 +78,17 @@ namespace HideAndSeek
         public static Location GetLocationByName(string name)
         {
             return Locations.Where(l => l.Name == name).FirstOrDefault(Entry);
+        }
+
+        /// <summary>
+        /// Get random exit from specified location
+        /// </summary>
+        /// <param name="location">Location from which to find random exit</param>
+        /// <returns>Random exit Location</returns>
+        public static Location RandomExit(Location location)
+        {
+            IDictionary<Direction, Location> exitList = location.Exits; // Get collection of all exits from Location
+            return exitList.ElementAt(Random.Next(exitList.Count)).Value; // Return random Location from exits collection
         }
     }
 }
