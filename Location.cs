@@ -46,10 +46,12 @@
         /// </summary>
         /// <param name="direction">Direction of the connecting location</param>
         /// <param name="connectingLocation">Connecting location to add</param>
-        public void AddExit(Direction direction, Location connectingLocation)
+        /// <returns>Connecting Location</returns>
+        public Location AddExit(Direction direction, Location connectingLocation)
         {
             Exits.Add(direction, connectingLocation);
             connectingLocation.AddReturnExit(direction.OppositeDirection(), this);
+            return connectingLocation;
         }
 
         /// <summary>
@@ -57,9 +59,10 @@
         /// </summary>
         /// <param name="direction">Direction of the new location</param>
         /// <param name="connectingLocation">Name of new location to add and connect</param>
-        public void AddExit(Direction direction, string newLocationName)
+        /// <returns>New Location</returns>
+        public Location AddExit(Direction direction, string newLocationName)
         {
-            AddExit(direction, new Location(newLocationName));
+            return AddExit(direction, new Location(newLocationName));
         }
 
         /// <summary>

@@ -14,30 +14,27 @@ namespace HideAndSeek
         /// </summary>
         static House()
         {
-            // Create Entry and connect to new Garage
+            // Create Entry and connect to new locations: Garage, Hallway
             Entry = new Location("Entry");
-            Entry.AddExit(Direction.Out, "Garage");
+            Location garage = Entry.AddExit(Direction.Out, "Garage");
+            Location hallway = Entry.AddExit(Direction.East, "Hallway");
 
-            // Create Hallway and connect to Entry and new rooms: Kitchen, Bathroom, and Living Room
-            Location hallway = new Location("Hallway");
-            hallway.AddExit(Direction.West, Entry);
-            hallway.AddExit(Direction.Northwest, "Kitchen");
-            hallway.AddExit(Direction.North, "Bathroom");
-            hallway.AddExit(Direction.South, "Living Room");
+            // Connect Hallway to new locations: Kitchen, Bathroom, Living Room, Landing
+            Location kitchen = hallway.AddExit(Direction.Northwest, "Kitchen");
+            Location bathroom = hallway.AddExit(Direction.North, "Bathroom");
+            Location livingRoom = hallway.AddExit(Direction.South, "Living Room");
+            Location landing = hallway.AddExit(Direction.Up, "Landing");
 
-            // Create Landing and connect to Hallway and new rooms: Second Bathroom, Nursery, Pantry, Kids Room, and Attic
-            Location landing = new Location("Landing");
-            landing.AddExit(Direction.Down, hallway);
-            landing.AddExit(Direction.West, "Second Bathroom");
-            landing.AddExit(Direction.Southwest, "Nursery");
-            landing.AddExit(Direction.South, "Pantry");
-            landing.AddExit(Direction.Southeast, "Kids Room");
-            landing.AddExit(Direction.Up, "Attic");
+            // Connect Landing to new locations: Second Bathroom, Nursery, Pantry, Kids Room, Attic, Master Bedroom
+            Location secondBathroom = landing.AddExit(Direction.West, "Second Bathroom");
+            Location nursery = landing.AddExit(Direction.Southwest, "Nursery");
+            Location pantry = landing.AddExit(Direction.South, "Pantry");
+            Location kidsRoom = landing.AddExit(Direction.Southeast, "Kids Room");
+            Location attic = landing.AddExit(Direction.Up, "Attic");
+            Location masterBedroom = landing.AddExit(Direction.Northwest, "Master Bedroom");
 
-            // Create Master Bedroom and connect to Landing and new Master Bath
-            Location masterBedroom = new Location("Master Bedroom");
-            masterBedroom.AddExit(Direction.Southeast, landing);
-            masterBedroom.AddExit(Direction.East, "Master Bath");
+            // Connect Master Bodroom to new location: Master Bath
+            Location masterBath = masterBedroom.AddExit(Direction.East, "Master Bath");
         }
     }
 }
