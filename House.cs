@@ -27,34 +27,35 @@ namespace HideAndSeek
         {
             // Create Entry and connect to new locations: Garage, Hallway
             Entry = new Location("Entry");
-            Location garage = Entry.AddExit(Direction.Out, "Garage");
+            LocationWithHidingPlace garage = Entry.AddExit(Direction.Out, "Garage", "behind the car");
             Location hallway = Entry.AddExit(Direction.East, "Hallway");
 
             // Connect Hallway to new locations: Kitchen, Bathroom, Living Room, Landing
-            Location kitchen = hallway.AddExit(Direction.Northwest, "Kitchen");
-            Location bathroom = hallway.AddExit(Direction.North, "Bathroom");
-            Location livingRoom = hallway.AddExit(Direction.South, "Living Room");
+            LocationWithHidingPlace kitchen = hallway.AddExit(Direction.Northwest, "Kitchen", "next to the stove");
+            LocationWithHidingPlace bathroom = hallway.AddExit(Direction.North, "Bathroom", "behind the door");
+            LocationWithHidingPlace livingRoom = hallway.AddExit(Direction.South, "Living Room", "behind the sofa");
 
             // Create landing
             Location landing = new Location("Landing");
 
             // Connect Landing to new locations: Attic, Hallway, Kids Room, Master Bedroom, Nursery, Pantry, Second Bathroom
-            Location attic = landing.AddExit(Direction.Up, "Attic");
+            LocationWithHidingPlace attic = landing.AddExit(Direction.Up, "Attic", "in a trunk");
             landing.AddExit(Direction.Down, hallway);
-            Location kidsRoom = landing.AddExit(Direction.Southeast, "Kids Room");
-            Location masterBedroom = landing.AddExit(Direction.Northwest, "Master Bedroom");
-            Location nursery = landing.AddExit(Direction.Southwest, "Nursery");
-            Location pantry = landing.AddExit(Direction.South, "Pantry");
-            Location secondBathroom = landing.AddExit(Direction.West, "Second Bathroom");
-            
+            LocationWithHidingPlace kidsRoom = landing.AddExit(Direction.Southeast, "Kids Room", "in the bunk beds");
+            LocationWithHidingPlace masterBedroom = landing.AddExit(Direction.Northwest, "Master Bedroom", "under the bed");
+            LocationWithHidingPlace nursery = landing.AddExit(Direction.Southwest, "Nursery", "behind the changing table");
+            LocationWithHidingPlace pantry = landing.AddExit(Direction.South, "Pantry", "inside a cabinet");
+            LocationWithHidingPlace secondBathroom = landing.AddExit(Direction.West, "Second Bathroom", "in the shower");
+
             // Connect Master Bodroom to new location: Master Bath
-            Location masterBath = masterBedroom.AddExit(Direction.East, "Master Bath");
+            LocationWithHidingPlace masterBath = masterBedroom.AddExit(Direction.East, "Master Bath", "in the tub");
 
             // Add Locations to Locations list
             Locations = new List<Location>()
             {
                 attic,
                 hallway,
+                bathroom,
                 kidsRoom,
                 masterBedroom,
                 nursery,
@@ -89,6 +90,18 @@ namespace HideAndSeek
         {
             IDictionary<Direction, Location> exitList = location.Exits; // Get collection of all exits from Location
             return exitList.ElementAt(Random.Next(exitList.Count)).Value; // Return random Location from exits collection
+        }
+
+        /// <summary>
+        /// Clear each LocationWithHidingPlace of opponents.
+        /// </summary>
+        public static void ClearHidingPlaces()
+        {
+            // For each LocationWithHidingPlace
+            foreach(LocationWithHidingPlace location in Locations.Where((l) => l.GetType() == typeof(LocationWithHidingPlace)))
+            {
+                location.CheckHidingPlace(); // Check and clear hiding place
+            }
         }
     }
 }
