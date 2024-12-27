@@ -66,6 +66,18 @@
         }
 
         /// <summary>
+        /// Creates a new LocationWithHidingPlace and adds it as an exit to the calling Location (and adds a reciprocal exit to the new LocationWithHidingPlace)
+        /// </summary>
+        /// <param name="direction">Direction of the new location</param>
+        /// <param name="newLocationName">Name of new location to add and connect</param>
+        /// <param name="hidingPlaceDescription">Description of hiding place in new location</param>
+        /// <returns>New LocationWithHidingPlace</returns>
+        public LocationWithHidingPlace AddExit(Direction direction, string newLocationName, string hidingPlaceDescription)
+        {
+            return (LocationWithHidingPlace) AddExit(direction, new LocationWithHidingPlace(newLocationName, hidingPlaceDescription));
+        }
+
+        /// <summary>
         /// Adds a return exit to the specified connecting location
         /// </summary>
         /// <param name="direction">Direction from this location to the connecting location</param>
