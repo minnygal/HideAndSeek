@@ -88,7 +88,7 @@ namespace HideAndSeek
         /// <returns>Random exit Location</returns>
         public static Location RandomExit(Location location)
         {
-            IDictionary<Direction, Location> exitList = location.Exits; // Get collection of all exits from Location
+            IDictionary<Direction, Location> exitList = location.Exits.OrderBy(x => x.Key).ToDictionary(); // Get collection of all exits from Location
             return exitList.ElementAt(Random.Next(exitList.Count)).Value; // Return random Location from exits collection
         }
 
