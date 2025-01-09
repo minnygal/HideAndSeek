@@ -53,15 +53,15 @@ namespace HideAndSeek
             }
 
             // If no opponents have been found
-            if(foundOpponents.Count == 0)
+            if(FoundOpponents.Count == 0)
             {
                 message += Environment.NewLine + "You have not found any opponents";
             }
             else // if opponents have been found
             {
                 // Add information about opponents found to message
-                message += Environment.NewLine + $"You have found {foundOpponents.Count} of {Opponents.Count()} opponent{(Opponents.Count() == 1 ? "" : "s")}"
-                        + ": " + String.Join(", ", foundOpponents);
+                message += Environment.NewLine + $"You have found {FoundOpponents.Count} of {Opponents.Count()} opponent{(Opponents.Count() == 1 ? "" : "s")}"
+                        + ": " + String.Join(", ", FoundOpponents);
             }
 
             Status = message; // Set status
@@ -80,7 +80,7 @@ namespace HideAndSeek
         /// <summary>
         /// Private list of opponents the player needs to find
         /// </summary>
-        public readonly IEnumerable<Opponent> Opponents = new List<Opponent>()
+        public IEnumerable<Opponent> Opponents { get; private set; } = new List<Opponent>()
         {
             new Opponent("Joe"),
             new Opponent("Bob"),
@@ -90,14 +90,14 @@ namespace HideAndSeek
         };
 
         /// <summary>
-        /// Private list of opponents the player has found so far
+        /// List of opponents the player has found so far
         /// </summary>
-        private readonly List<Opponent> foundOpponents = new List<Opponent>();
+        public List<Opponent> FoundOpponents { get; private set; } = new List<Opponent>();
 
         /// <summary>
         /// Returns true if the game is over
         /// </summary>
-        public bool GameOver => Opponents.Count() == foundOpponents.Count();
+        public bool GameOver => Opponents.Count() == FoundOpponents.Count();
 
         /// <summary>
         /// Constructor to start game
@@ -182,7 +182,7 @@ namespace HideAndSeek
                 // If any opponents were found in the hiding place
                 if (found.Count >= 1)
                 {
-                    foundOpponents.AddRange(found); // Add opponents found to list
+                    FoundOpponents.AddRange(found); // Add opponents found to list
                     UpdateStatus(); // Update status
                     return $"You found {found.Count} opponent{(found.Count == 1 ? "" : "s")} hiding {location.HidingPlace}";
                 }

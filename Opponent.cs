@@ -10,8 +10,24 @@ namespace HideAndSeek
     public class Opponent
     {
         public readonly string Name;
-        public Opponent(string name) => Name = name;
+
         public override string ToString() => Name;
+
+        public LocationWithHidingPlace HidingPlace { get; private set; }
+
+
+        // Contructor accepting opponent's name
+        public Opponent(string name)
+        {
+            Name = name;
+        }
+
+        // Constructor accepting opponent's name and hiding place
+        public Opponent(string name, LocationWithHidingPlace hidingPlace)
+        {
+            Name = name;
+            HidingPlace = hidingPlace;
+        }
 
         public void Hide()
         {
@@ -38,6 +54,9 @@ namespace HideAndSeek
 
             // Hide in hiding place
             hidingPlace.Hide(this);
+
+            // Set hiding place property
+            HidingPlace = hidingPlace;
         }
     }
 }
