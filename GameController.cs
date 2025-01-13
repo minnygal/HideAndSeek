@@ -151,15 +151,40 @@ namespace HideAndSeek
                 MoveNumber++; // Increment move number
                 return CheckCurrentLocation(); // Check current location and return results
             }
-            else if ( !(Enum.TryParse(input, out Direction direction))) // If input cannot be parsed to Direction enum value
+            else if(input.ToLower().StartsWith("save") || input.ToLower().StartsWith("load")) // If input requests save or load game
+            {
+                // If input is acceptable length (containing a file name of at least 1 character)
+                if(input.Length > 5)
+                {
+                    string fileName = input.Substring(5); // Extract file name
+
+                    // If file name is valid
+                    if(IsValidFileName(fileName)) 
+                    {
+                        // If input requests save game
+                        if(input.ToLower().StartsWith("save"))
+                        {
+                            return SaveGame(fileName); // Save game and return message
+                        }
+                        else // if input requests load game
+                        {
+                            return LoadGame(fileName); // Load game and return message
+                        }
+                    }
+                }
+
+                // If any of the requirements for input are not met, return failure message
+                return "Cannot perform action because file name is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)";
+            }
+            else if (!(Enum.TryParse(input, out Direction direction))) // If input cannot be parsed to Direction enum value
             {
                 return "That's not a valid direction"; // Return invalid direction message
             }
-            else if( !(this.Move(direction))) // If cannot move in specified direction
+            else if (!(this.Move(direction))) // If cannot move in specified direction
             {
                 MoveNumber++; // Increment move number
                 return "There's no exit in that direction"; // Return no exit in that direction message
-            } 
+            }
             else // If successfully moved in specified direction
             {
                 MoveNumber++; // Increment move number
@@ -194,6 +219,71 @@ namespace HideAndSeek
             else // If current location does not have a hiding place
             {
                 return $"There is no hiding place in the {CurrentLocation}";
+            }
+        }
+
+        /// <summary>
+        /// Return whether file name is valid (not empty and no illegal characters)
+        /// </summary>
+        /// <param name="fileName">File name to examine</param>
+        /// <returns>Whether file name is valid</returns>
+        private bool IsValidFileName(string fileName)
+        {
+            // Return true if file name doen NOT contain whitespace, a backslash, or a forward slash
+            return !(fileName.Contains(" ") || fileName.Contains("\\") || fileName.Contains("/") || fileName.Equals(""));
+        }
+
+        /// <summary>
+        /// Save game to file
+        /// </summary>
+        /// <param name="fileName">Name of file in which to save game data</param>
+        /// <returns>String describing what happened</returns>
+        /// <exception cref="NotImplementedException"></exception>
+        private string SaveGame(string fileName)
+        {
+            SavedGame savedGame = new SavedGame(this);
+            // TODO
+            // Convert to JSON
+            // Create file
+            // Store text
+            return $"Game successfully saved in {fileName}";
+        }
+
+        /// <summary>
+        /// Load game from file
+        /// </summary>
+        /// <param name="fileName">Name of file from which to load game data</param>
+        /// <returns>String describing what happened</returns>
+        /// <exception cref="NotImplementedException"></exception>
+        private string LoadGame(string fileName)
+        {
+            // TODO
+            // Read text from file
+            // Convert to SavedGame object
+            // Call LoadGame with SavedGame object
+            return $"Game successfully loaded from {fileName}";
+        }
+
+        /// <summary>
+        /// Load game from SavedGame object
+        /// </summary>
+        /// <param name="savedGame">SavedGame object from which to load game</param>
+        private void LoadGame(SavedGame savedGame)
+        {
+            // Set current location
+            CurrentLocation = House.GetLocationByName(savedGame.PlayerLocation);
+
+            // Set move number
+            MoveNumber = savedGame.MoveNumber;
+
+            // Restore list of opponents, creating new Opponent objects
+            Opponents = savedGame.AllOpponents.Select((x) => new Opponent(x.Key, (LocationWithHidingPlace)House.GetLocationByName(x.Value)));
+
+            // Restore list of found opponents
+            FoundOpponents.Clear(); // Clear list of found opponents
+            foreach(String opponent in savedGame.FoundOpponents)
+            {
+                FoundOpponents.Add(Opponents.First((x) => x.Name == opponent)); // Add Opponent object with matching name to FoundOpponents list
             }
         }
     }
