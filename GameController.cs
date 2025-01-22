@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using static System.Net.Mime.MediaTypeNames;
 
@@ -11,7 +13,8 @@ namespace HideAndSeek
     public class GameController
     {
         private Location _location;
-
+        private IFileSystem _fileSystem;
+        
         /// <summary>
         /// The player's current location in the house
         /// </summary>
@@ -102,8 +105,15 @@ namespace HideAndSeek
         /// <summary>
         /// Constructor to start game
         /// </summary>
-        public GameController()
+        public GameController() : this(new FileSystem()) {}
+
+        /// <summary>
+        /// Constructor to start game with specific file system (used for testing)
+        /// </summary>
+        /// <param name="fileSystem">File system</param>
+        public GameController(IFileSystem fileSystem)
         {
+            _fileSystem = fileSystem;
             RestartGame(); // Restart game
         }
 
@@ -241,12 +251,10 @@ namespace HideAndSeek
         /// <exception cref="NotImplementedException"></exception>
         private string SaveGame(string fileName)
         {
-            SavedGame savedGame = new SavedGame(this);
-            // TODO
-            // Convert to JSON
-            // Create file
-            // Store text
-            return $"Game successfully saved in {fileName}";
+            SavedGame savedGame = new SavedGame(this); // Store this game's state data in new SavedGame object
+            string savedGameAsJSON = JsonSerializer.Serialize(savedGame); // Convert game's state data to JSON
+            _fileSystem.File.WriteAllText(fileName, savedGameAsJSON); // Save game's state data in file
+            return $"Game successfully saved in {fileName}"; // Return success message
         }
 
         /// <summary>
