@@ -72,6 +72,16 @@ namespace HideAndSeek
         }
 
         /// <summary>
+        /// Return whether Location exists
+        /// </summary>
+        /// <param name="name">Name of Location</param>
+        /// <returns>True if Location exists</returns>
+        public static bool DoesLocationExist(string name)
+        {
+            return Locations.Select((x) => x.Name).Contains(name);
+        }
+
+        /// <summary>
         /// Get Location object by its Name property
         /// </summary>
         /// <param name="name">Name of Location</param>

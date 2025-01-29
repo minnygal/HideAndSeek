@@ -265,10 +265,45 @@ namespace HideAndSeek
         /// <exception cref="NotImplementedException"></exception>
         private string LoadGame(string fileName)
         {
-            // TODO
+            // If file does not exist
+            if( !(_fileSystem.File.Exists(fileName)) )
+            {
+                return "Cannot load game because file does not exist";
+            }
+
             // Read text from file
-            // Convert to SavedGame object
-            // Call LoadGame with SavedGame object
+            string fileText = _fileSystem.File.ReadAllText(fileName);
+
+            // Declare variable to store SavedGame object
+            SavedGame savedGame;
+
+            // Deserialize text from file into SavedGame object
+            try
+            {
+                savedGame = JsonSerializer.Deserialize<SavedGame>(fileText);
+            } 
+            catch(Exception e)
+            {
+                // If data for specific field (evauluated in property setter) is invalid
+                if(e is InvalidDataException)
+                {
+                    return e.Message;
+                }
+                // If problem due to JSON or an invalid error, return failure message
+                if(e is JsonException || e is InvalidOperationException)
+                {
+                    return "Cannot load game because data in file is corrupt";
+                }
+                else
+                {
+                    throw;
+                }
+            }
+
+            // Load game from SavedGame object.
+            LoadGame(savedGame);
+
+            // Return success message
             return $"Game successfully loaded from {fileName}";
         }
 
