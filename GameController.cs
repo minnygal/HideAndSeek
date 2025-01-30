@@ -251,6 +251,13 @@ namespace HideAndSeek
         /// <exception cref="NotImplementedException"></exception>
         private string SaveGame(string fileName)
         {
+            // If file already exists
+            if(_fileSystem.File.Exists(fileName))
+            {
+                return $"Cannot perform action because a file named {fileName} already exists";
+            }
+            
+            // Save game as JSON to file and return success message
             SavedGame savedGame = new SavedGame(this); // Store this game's state data in new SavedGame object
             string savedGameAsJSON = JsonSerializer.Serialize(savedGame); // Convert game's state data to JSON
             _fileSystem.File.WriteAllText(fileName, savedGameAsJSON); // Save game's state data in file
