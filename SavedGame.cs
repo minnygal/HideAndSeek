@@ -13,7 +13,7 @@ namespace HideAndSeek
         private string _playerLocation = "";
 
         // Player's current location
-        [JsonInclude]
+        //[JsonInclude]
         public required string PlayerLocation { 
             get 
             {
@@ -35,7 +35,7 @@ namespace HideAndSeek
         private int _moveNumber;
 
         // Current move number
-        [JsonInclude]
+        //[JsonInclude]
         public required int MoveNumber
         {
             get
@@ -58,7 +58,7 @@ namespace HideAndSeek
         private Dictionary<string, string> _allOpponents;
 
         // All opponents (opponent name and hiding place name)
-        [JsonInclude]
+        //[JsonInclude]
         public required Dictionary<string, string> AllOpponents 
         { 
             get
@@ -90,7 +90,7 @@ namespace HideAndSeek
         private IEnumerable<string> _foundOpponents;
 
         // All found opponents' names
-        [JsonInclude]
+        //[JsonInclude]
         public required IEnumerable<string> FoundOpponents
         {
             get
