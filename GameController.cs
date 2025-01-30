@@ -282,13 +282,12 @@ namespace HideAndSeek
             {
                 savedGame = JsonSerializer.Deserialize<SavedGame>(fileText);
             } 
+            catch(InvalidDataException e) // if data for specific field (evauluated in property setter) is invalid
+            {
+                return e.Message;
+            }
             catch(Exception e)
             {
-                // If data for specific field (evauluated in property setter) is invalid
-                if(e is InvalidDataException)
-                {
-                    return e.Message;
-                }
                 // If problem due to JSON or an invalid error, return failure message
                 if(e is JsonException || e is InvalidOperationException)
                 {
