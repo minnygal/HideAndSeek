@@ -155,30 +155,45 @@ namespace HideAndSeek
         /// <returns>The results of parsing the input</returns>
         public string ParseInput(string input)
         {
+            // Extract lowercaseCommand, one version lowercase and one version original
+            string originalCommand = input.Split(" ").FirstOrDefault("");
+            string lowercaseCommand = originalCommand.ToLower();
+
             // If input requests the current location be checked for hiding opponents
-            if (input.ToLower() == "check")
+            if (lowercaseCommand == "check")
             {
                 MoveNumber++; // Increment move number
                 return CheckCurrentLocation(); // Check current location and return results
             }
-            else if(input.ToLower().StartsWith("save") || input.ToLower().StartsWith("load")) // If input requests save or load game
+            else if ( // If input requests save or load game
+                lowercaseCommand == "save" || 
+                lowercaseCommand == "load" ||
+                lowercaseCommand == "delete" )
             {
-                // If input is acceptable length (containing a file name of at least 1 character)
-                if(input.Length > 5)
+                // Get index of space in input (space before name of file)
+                int indexOfSpace = input.IndexOf(' ');
+
+                // If input includes a space
+                if (indexOfSpace != -1)
                 {
-                    string fileName = input.Substring(5); // Extract file name
+                    // Extract file name
+                    string fileName = input.Substring(indexOfSpace + 1);
 
                     // If file name is valid
-                    if(IsValidFileName(fileName)) 
+                    if (IsValidFileName(fileName))
                     {
                         // If input requests save game
-                        if(input.ToLower().StartsWith("save"))
+                        if (lowercaseCommand == "save")
                         {
                             return SaveGame(fileName); // Save game and return message
                         }
-                        else // if input requests load game
+                        else if (lowercaseCommand == "load") // If input requests load game
                         {
                             return LoadGame(fileName); // Load game and return message
+                        }
+                        else // If input requests delete game
+                        {
+                            return DeleteGame(fileName);
                         }
                     }
                 }
@@ -186,7 +201,7 @@ namespace HideAndSeek
                 // If any of the requirements for input are not met, return failure message
                 return "Cannot perform action because file name is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)";
             }
-            else if (!(Enum.TryParse(input, out Direction direction))) // If input cannot be parsed to Direction enum value
+            else if (!(Enum.TryParse(originalCommand, out Direction direction))) // If input cannot be parsed to Direction enum value
             {
                 return "That's not a valid direction"; // Return invalid direction message
             }
@@ -334,6 +349,16 @@ namespace HideAndSeek
             {
                 FoundOpponents.Add(Opponents.First((x) => x.Name == opponent)); // Add Opponent object with matching name to FoundOpponents list
             }
+        }
+
+        /// <summary>
+        /// Delete game file
+        /// </summary>
+        /// <param name="fileName">Name of file to delete</param>
+        /// <returns>String describing what happened</returns>
+        private string DeleteGame(string fileName)
+        {
+            throw new NotImplementedException();
         }
     }
 }
