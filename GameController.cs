@@ -358,7 +358,17 @@ namespace HideAndSeek
         /// <returns>String describing what happened</returns>
         private string DeleteGame(string fileName)
         {
-            throw new NotImplementedException();
+            // If file does not exist
+            if( !(_fileSystem.File.Exists(fileName)) )
+            {
+                return $"Could not delete game because file {fileName} does not exist";
+            }
+
+            // Delete file
+            _fileSystem.File.Delete(fileName);
+
+            // Return success message
+            return $"Game file {fileName} has been successfully deleted";
         }
     }
 }
