@@ -43,7 +43,18 @@ namespace HideAndSeek
         /// </summary>
         public void Hide()
         {
-            HidingPlace = House.GetRandomHidingPlace(); // Set hiding place property to random hiding place
+            Hide(House.GetRandomHidingPlace()); // Hide in random hiding place.
+        }
+
+        /// <summary>
+        /// Hide in specified hiding place
+        /// Only called directly from GameController, SavedGame, and tests
+        /// In future, could be used to have user hide players manually
+        /// </summary>
+        /// <param name="hidingPlace">Hiding place for opponent</param>
+        public void Hide(LocationWithHidingPlace hidingPlace)
+        {
+            HidingPlace = hidingPlace; // Set hiding place property
             HidingPlace.Hide(this); // Inform hiding place that this opponent is hidden there
         }
     }
