@@ -113,5 +113,33 @@ namespace HideAndSeek
                 location.CheckHidingPlace(); // Check and clear hiding place
             }
         }
+        
+        /// <summary>
+        /// Get a random hiding place
+        /// </summary>
+        /// <returns>Random location with hiding place</returns>
+        public static LocationWithHidingPlace GetRandomHidingPlace()
+        {
+            // Current location of opponent moving through House to find hiding place
+            Location currentLocation = House.Entry;
+
+            // Minimum number of moves opponent makes through the house to find a hiding spot
+            int minNumberOfMoves = House.Random.Next(10, 51);
+
+            // Move through house via random exits between 10 and 50 times (inclusive)
+            for (int currentMove = 0; currentMove < minNumberOfMoves; currentMove++)
+            {
+                currentLocation = House.RandomExit(currentLocation);
+            }
+
+            // Keep moving until a location with hiding place is found
+            while (currentLocation.GetType() != typeof(LocationWithHidingPlace))
+            {
+                currentLocation = House.RandomExit(currentLocation);
+            }
+
+            // Return hiding place
+            return currentLocation as LocationWithHidingPlace;
+        }
     }
 }
