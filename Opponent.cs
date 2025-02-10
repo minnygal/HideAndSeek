@@ -16,6 +16,14 @@ namespace HideAndSeek
         public LocationWithHidingPlace HidingPlace { get; private set; }
 
         private static int _randomOpponentNumber = 1; // Number for next opponent created with default name
+        
+        /// <summary>
+        /// Reset numbers for default names for opponents created without specified names
+        /// </summary>
+        public static void ResetDefaultNumbersForOpponentNames()
+        {
+            _randomOpponentNumber = 1;
+        }
 
         /// <summary>
         /// Create opponent with default name
