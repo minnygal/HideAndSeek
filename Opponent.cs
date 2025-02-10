@@ -20,7 +20,7 @@ namespace HideAndSeek
         /// <summary>
         /// Create opponent with default name
         /// </summary>
-        public Opponent() : this("RandomOpponent" + _randomOpponentNumber++) { }
+        public Opponent() : this("Random Opponent " + _randomOpponentNumber++) { }
 
         /// <summary>
         /// Create opponent with specified name
