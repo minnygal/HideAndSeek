@@ -15,8 +15,17 @@ namespace HideAndSeek
 
         public LocationWithHidingPlace HidingPlace { get; private set; }
 
+        private static int _randomOpponentNumber = 1; // Number for next opponent created with default name
 
-        // Contructor accepting opponent's name
+        /// <summary>
+        /// Create opponent with default name
+        /// </summary>
+        public Opponent() : this("RandomOpponent" + _randomOpponentNumber++) { }
+
+        /// <summary>
+        /// Create opponent with specified name
+        /// </summary>
+        /// <param name="name"></param>
         public Opponent(string name)
         {
             Name = name;
