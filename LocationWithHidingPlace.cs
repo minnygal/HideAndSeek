@@ -30,9 +30,10 @@ namespace HideAndSeek
 
         /// <summary>
         /// Hide opponent in hiding place
+        /// Should only be called directly from Opponent.Hide
         /// </summary>
         /// <param name="opponent">Opponent to hide</param>
-        public void Hide(Opponent opponent)
+        public void HideOpponent(Opponent opponent)
         {
             opponentsHiding.Add(opponent);
         }

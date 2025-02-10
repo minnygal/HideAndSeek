@@ -55,7 +55,7 @@ namespace HideAndSeek
         public void Hide(LocationWithHidingPlace hidingPlace)
         {
             HidingPlace = hidingPlace; // Set hiding place property
-            HidingPlace.Hide(this); // Inform hiding place that this opponent is hidden there
+            HidingPlace.HideOpponent(this); // Inform hiding place that this opponent is hidden there
         }
     }
 }
