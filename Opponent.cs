@@ -55,7 +55,7 @@ namespace HideAndSeek
         }
 
         /// <summary>
-        /// Hide in specified hiding place
+        /// Hide in specified hiding place by location with hiding place object
         /// Only called directly from GameController, SavedGame, and tests
         /// In future, could be used to have user hide players manually
         /// </summary>
@@ -64,6 +64,17 @@ namespace HideAndSeek
         {
             HidingPlace = hidingPlace; // Set hiding place property
             HidingPlace.HideOpponent(this); // Inform hiding place that this opponent is hidden there
+        }
+
+        /// <summary>
+        /// Hide in specified hiding place by name of location with hiding place
+        /// Only called directly from GameController, SavedGame, and tests
+        /// In future, could be used to have user hide players manually
+        /// </summary>
+        /// <param name="hidingPlaceName">Name of hiding place for opponent</param>
+        public void Hide(string hidingPlaceName)
+        {
+            Hide((LocationWithHidingPlace)House.GetLocationByName(hidingPlaceName));
         }
     }
 }
