@@ -113,6 +113,42 @@ namespace HideAndSeek
                 location.CheckHidingPlace(); // Check and clear hiding place
             }
         }
+
+        /// <summary>
+        /// Hide all opponents in random hiding places
+        /// </summary>
+        /// <param name="opponents">Opponents to hide</param>
+        public static void HideAllOpponents(IEnumerable<Opponent> opponents)
+        {
+            // Create empty list to store hiding places
+            List<LocationWithHidingPlace> hidingPlaces = new List<LocationWithHidingPlace>();
+
+            // For each opponent, add a random hiding place to the list
+            for (int i = 0; i < opponents.Count(); i++)
+            {
+                hidingPlaces.Add(GetRandomHidingPlace());
+            }
+
+            // Hide opponents in hiding places
+            HideAllOpponents(opponents, hidingPlaces);
+        }
+
+        /// <summary>
+        /// Hide all opponents in random hiding places
+        /// </summary>
+        /// <param name="opponents">Opponents to hide</param>
+        /// <param name="hidingPlaces">Locations to hide opponents</param>
+        public static void HideAllOpponents(IEnumerable<Opponent> opponents, IEnumerable<LocationWithHidingPlace> hidingPlaces)
+        {
+            // Clear hiding places
+            ClearHidingPlaces();
+
+            // Hide each Opponent in the corresponding hiding place
+            for (int i = 0; i < opponents.Count(); i++)
+            {
+                opponents.ElementAt(i).Hide(hidingPlaces.ElementAt(i));
+            }
+        }
         
         /// <summary>
         /// Get a random hiding place
