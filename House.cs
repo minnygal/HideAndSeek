@@ -135,6 +135,8 @@ namespace HideAndSeek
 
         /// <summary>
         /// Hide all opponents in random hiding places
+        /// This method was created to make sure hiding places are cleared before opponents are rehidden 
+        /// to avoid an opponent being hidden in multiple hiding places at once or appearing in LocationWithHidingPlace's opponents list multiple times.
         /// </summary>
         /// <param name="opponents">Opponents to hide</param>
         /// <param name="hidingPlaces">Locations to hide opponents</param>
