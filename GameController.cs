@@ -122,14 +122,8 @@ namespace HideAndSeek
         /// </summary>
         public void RestartGame()
         {
-            // Clear hiding places
-            House.ClearHidingPlaces(); 
-
             // Hide opponents
-            foreach (var opponent in Opponents)
-            {
-                opponent.Hide();
-            }
+            House.HideAllOpponents(Opponents);
 
             // Reset properties
             MoveNumber = 1; // Reset move number
