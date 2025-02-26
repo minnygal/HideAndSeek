@@ -122,12 +122,29 @@ namespace HideAndSeek
         /// </summary>
         public void RestartGame()
         {
-            // Hide opponents
-            House.HideAllOpponents(Opponents);
+            // Hide opponents in random places
+            RehideAllOpponents();
 
             // Reset properties
             MoveNumber = 1; // Reset move number
             CurrentLocation = House.Entry; // Set current location to Entry
+        }
+
+        /// <summary>
+        /// Rehide all opponents in specified hiding places
+        /// </summary>
+        /// <param name="hidingPlaces">Places to hide opponents</param>
+        public void RehideAllOpponents(IEnumerable<LocationWithHidingPlace> hidingPlaces)
+        {
+            House.HideAllOpponents(Opponents, hidingPlaces);
+        }
+
+        /// <summary>
+        /// Rehide all opponents in random hiding places
+        /// </summary>
+        public void RehideAllOpponents()
+        {
+            House.HideAllOpponents(Opponents);
         }
 
         /// <summary>
