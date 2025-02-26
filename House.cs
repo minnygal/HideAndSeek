@@ -96,7 +96,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="location">Location from which to find random exit</param>
         /// <returns>Random exit Location</returns>
-        public static Location RandomExit(Location location)
+        public static Location GetRandomExit(Location location)
         {
             IDictionary<Direction, Location> exitList = location.Exits.OrderBy(x => x.Key).ToDictionary(); // Get collection of all exits from Location
             return exitList.ElementAt(Random.Next(exitList.Count)).Value; // Return random Location from exits collection
@@ -167,13 +167,13 @@ namespace HideAndSeek
             // Move through house via random exits between 10 and 50 times (inclusive)
             for (int currentMove = 0; currentMove < minNumberOfMoves; currentMove++)
             {
-                currentLocation = House.RandomExit(currentLocation);
+                currentLocation = House.GetRandomExit(currentLocation);
             }
 
             // Keep moving until a location with hiding place is found
             while (currentLocation.GetType() != typeof(LocationWithHidingPlace))
             {
-                currentLocation = House.RandomExit(currentLocation);
+                currentLocation = House.GetRandomExit(currentLocation);
             }
 
             // Return hiding place
