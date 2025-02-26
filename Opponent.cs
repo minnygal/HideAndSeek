@@ -56,7 +56,7 @@ namespace HideAndSeek
 
         /// <summary>
         /// Hide in specified hiding place by location with hiding place object
-        /// Only called directly from GameController, SavedGame, and tests
+        /// CAUTION: Should only be called directly from House, SavedGame, HouseTests, and Opponent tests
         /// In future, could be used to have user hide players manually
         /// </summary>
         /// <param name="hidingPlace">Hiding place for opponent</param>
@@ -68,7 +68,7 @@ namespace HideAndSeek
 
         /// <summary>
         /// Hide in specified hiding place by name of location with hiding place
-        /// Only called directly from GameController, SavedGame, and tests
+        /// CAUTION: Should only be called directly from House, SavedGame, and Opponent tests
         /// In future, could be used to have user hide players manually
         /// </summary>
         /// <param name="hidingPlaceName">Name of hiding place for opponent</param>
