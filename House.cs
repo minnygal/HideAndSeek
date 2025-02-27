@@ -7,6 +7,30 @@ using System.Threading.Tasks;
 
 namespace HideAndSeek
 {
+    /// <summary>
+    /// Static class to represent a House with Locations through which the user can navigate
+    /// 
+    /// CREDIT: adapted from HideAndSeek project's House class
+    ///         © 2023 Andrew Stellman and Jennifer Greene
+    ///         Published under the MIT License
+    ///         https://github.com/head-first-csharp/fourth-edition/blob/master/Code/Chapter_10/HideAndSeek_part_3/HideAndSeek/House.cs
+    ///         Link valid as of 02-25-2025
+    ///         
+    /// CHANGES:
+    /// -In the constructor, I created and added exits to Locations in the same area of code
+    ///  and in a different order for easier comprehension (just my approach).
+    /// -I added a method to tell whether a Location exists to make restoring a saved game easier.
+    /// -I used a shorter code approach in GetLocationByName.
+    /// -I renamed a method to GetRandomExit to follow project method naming convention.
+    /// -I used ElementAt instead of Skip in GetRandomExit.
+    /// -I added a method to get a random hiding place using logic from 
+    ///  Andrew Stellman and Jennifer Greene's HideAndSeek project's Opponent class's Hide method.
+    /// -I added methods to hide all opponents to ensure hiding places are cleared before
+    ///  opponents are rehidden.
+    /// -I selected LocationWithHidingPlace objects in foreach header instead of using if statement in body
+    ///  in ClearHidingPlaces method.
+    /// -I added/edited comments for easier reading.
+    /// </summary>
     public static class House {
         /// <summary>
         /// Entry of House
@@ -151,9 +175,21 @@ namespace HideAndSeek
                 opponents.ElementAt(i).Hide(hidingPlaces.ElementAt(i));
             }
         }
-        
+
         /// <summary>
         /// Get a random hiding place
+        /// 
+        /// CREDIT: adapted from HideAndSeek project's Opponent class's Hide method
+        ///         © 2023 Andrew Stellman and Jennifer Greene
+        ///         Published under the MIT License
+        ///         https://github.com/head-first-csharp/fourth-edition/blob/master/Code/Chapter_10/HideAndSeek_part_3/HideAndSeek/Opponent.cs
+        ///         Link valid as of 02-25-2025
+        ///         
+        /// CHANGES:
+        /// -I renamed variables and made them type specific for easier comprehension.
+        /// -I used GetType and typeof instead of "is" in while loop (just my approach).
+        /// -I removed the diagnostic debug line of code because it's unnecessary right now.
+        /// -I added comments for easier reading.
         /// </summary>
         /// <returns>Random location with hiding place</returns>
         public static LocationWithHidingPlace GetRandomHidingPlace()

@@ -8,6 +8,25 @@ using System.Threading.Tasks;
 
 namespace HideAndSeek
 {
+    /// <summary>
+    /// Class to store a saved game (stores state of game)
+    /// 
+    /// CREDIT: adapted from HideAndSeek project's SavedGame class
+    ///         © 2023 Andrew Stellman and Jennifer Greene
+    ///         Published under the MIT License
+    ///         https://github.com/head-first-csharp/fourth-edition/blob/master/Code/Chapter_10/HideAndSeek_part_3/HideAndSeek/SavedGame.cs
+    ///         Link valid as of 02-25-2025
+    ///         
+    /// CHANGES:
+    /// -I marked each property as required to ensure it is set.
+    /// -I created a private variable for each public property.
+    /// -I created a body for each property's getter and setter methods.
+    /// -I added data validation in each setter method.
+    /// -I added a parameterless constructor for JSON deserialization.
+    /// -I added a parameterized constructor to set SavedGame's properties to 
+    ///  reflect game state stored in GameController passed into constructor.
+    /// -I added comments for easier reading.
+    /// </summary>
     public class SavedGame
     {
         private string _playerLocation = "";

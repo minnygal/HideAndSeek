@@ -1,5 +1,14 @@
 ﻿namespace HideAndSeek
 {
+    /// <summary>
+    /// Enum to represent a direction (describe the relationship between two Locations)
+    /// 
+    /// CREDIT: copied from HideAndSeek project's Direction enum class
+    ///         © 2023 Andrew Stellman and Jennifer Greene
+    ///         Published under the MIT License
+    ///         https://github.com/head-first-csharp/fourth-edition/blob/master/Code/Chapter_10/HideAndSeek_part_3/HideAndSeek/Direction.cs
+    ///         Link valid as of 02-25-2025
+    /// </summary>
     public enum Direction
     {
         North = -1,
@@ -16,6 +25,16 @@
         Out = 6
     }
 
+    /// <summary>
+    /// Extension class for Direction enum to describe a direction or get the opposite direction
+    /// 
+    /// CREDIT: direction descriptions and directions description logic
+    ///         adapted from HideAndSeek project's Location class's DescribeDirection method
+    ///         © 2023 Andrew Stellman and Jennifer Greene
+    ///         Published under the MIT License
+    ///         https://github.com/head-first-csharp/fourth-edition/blob/master/Code/Chapter_10/HideAndSeek_part_3/HideAndSeek/Direction.cs
+    ///         Link valid as of 02-25-2025
+    /// </summary>
     public static class Extensions
     {
         /// <summary>

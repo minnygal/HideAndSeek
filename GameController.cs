@@ -10,6 +10,43 @@ using static System.Net.Mime.MediaTypeNames;
 
 namespace HideAndSeek
 {
+    /// <summary>
+    /// Class to control a game and allow external interaction with and direction of game
+    /// Only 1 game can be going on at a time.
+    /// GameController can be used to restart the game.
+    /// 
+    /// CREDIT: adapted from HideAndSeek project's GameController class
+    ///         © 2023 Andrew Stellman and Jennifer Greene
+    ///         Published under the MIT License
+    ///         https://github.com/head-first-csharp/fourth-edition/blob/master/Code/Chapter_10/HideAndSeek_part_3/HideAndSeek/GameController.cs
+    ///         Link valid as of 02-25-2025
+    ///         
+    /// CHANGES:
+    /// -I added a restart method so the game can be restarted without creating a new GameController.
+    /// -I created a method to update the status.
+    /// -I added a private location variable so I could define a setter for CurrentLocation.
+    /// -I created a setter method for Currentlocation so it could automatically update the status.
+    /// -I made the list of found opponents public for easier game saving/restoration.
+    /// -I removed the dictionary of opponent hiding places because the Opponent stores that information.
+    /// -I added a file system class variable for testing purposes.
+    /// -I added a method to rehide all opponents to call House's hide all opponents method
+    ///  to make sure hiding places are cleared before opponents rehidden.
+    /// -I used my own approach in ParseInput but accomplished the same results.
+    /// -I renamed methods to SaveGame and LoadGame for easier comprehension.
+    /// -I prevented overwriting a saved game file in the SaveGame method.
+    /// -I had the SavedGame class create itself in SaveGame method 
+    ///  by passing in GameController for separation of concerns.
+    /// -I wrapped JSON deserialization in a try/catch block in the LoadGame method
+    ///  to return custom feedback/update messages if certain problems occur.
+    /// -I moved the code for loading a game from an acceptable JSON file to another method
+    ///  to separate it from the code for evaluating whether JSON file is acceptable.
+    /// -I set GameController properties appropriately based on my class design in LoadGame method.
+    /// -I changed some feedback/update messages for easier reading.
+    /// -I extracted the file name validation logic to its own method for code reuse.
+    /// -I renamed a variable in Move method for easier comprehension.
+    /// -I added a method to delete a game.
+    /// -I added/edited comments for easier reading.
+    /// </summary>
     public class GameController
     {
         private Location _location;
