@@ -40,6 +40,9 @@ namespace HideAndSeek
     ///  to return custom feedback/update messages if certain problems occur.
     /// -I moved the code for loading a game from an acceptable JSON file to another method
     ///  to separate it from the code for evaluating whether JSON file is acceptable.
+    /// -I created a private variable to store the full file name in SaveGame and LoadGame.
+    /// -I created a class variable to store the serialized file extension text.
+    /// -I added a method to return a full file name with the serialized file extension.
     /// -I set GameController properties appropriately based on my class design in LoadGame method.
     /// -I changed some feedback/update messages for easier reading.
     /// -I extracted the file name validation logic to its own method for code reuse.
@@ -51,6 +54,17 @@ namespace HideAndSeek
     {
         private Location _location;
         private IFileSystem _fileSystem;
+        private string _fileNameExtension = "json";
+
+        /// <summary>
+        /// Get full name for file (including extension)
+        /// </summary>
+        /// <param name="fileName">Name of file not including extension</param>
+        /// <returns>Full name of file including extension</returns>
+        private string GetFullFileName(string fileName)
+        {
+            return $"{fileName}.{_fileNameExtension}";
+        }
         
         /// <summary>
         /// The player's current location in the house
@@ -314,8 +328,11 @@ namespace HideAndSeek
         /// <exception cref="NotImplementedException"></exception>
         private string SaveGame(string fileName)
         {
+            // Set variable to full file name including extension
+            string fullFileName = GetFullFileName(fileName);
+
             // If file already exists
-            if(_fileSystem.File.Exists(fileName))
+            if (_fileSystem.File.Exists(fullFileName))
             {
                 return $"Cannot perform action because a file named {fileName} already exists";
             }
@@ -323,7 +340,7 @@ namespace HideAndSeek
             // Save game as JSON to file and return success message
             SavedGame savedGame = new SavedGame(this); // Store this game's state data in new SavedGame object
             string savedGameAsJSON = JsonSerializer.Serialize(savedGame); // Convert game's state data to JSON
-            _fileSystem.File.WriteAllText(fileName, savedGameAsJSON); // Save game's state data in file
+            _fileSystem.File.WriteAllText(fullFileName, savedGameAsJSON); // Save game's state data in file
             return $"Game successfully saved in {fileName}"; // Return success message
         }
 
@@ -335,14 +352,17 @@ namespace HideAndSeek
         /// <exception cref="NotImplementedException"></exception>
         private string LoadGame(string fileName)
         {
+            // Set variable to full file name including extension
+            string fullFileName = GetFullFileName(fileName);
+
             // If file does not exist
-            if( !(_fileSystem.File.Exists(fileName)) )
+            if( !(_fileSystem.File.Exists(fullFileName)) )
             {
                 return "Cannot load game because file does not exist";
             }
 
             // Read text from file
-            string fileText = _fileSystem.File.ReadAllText(fileName);
+            string fileText = _fileSystem.File.ReadAllText(fullFileName);
 
             // Declare variable to store SavedGame object
             SavedGame savedGame;
@@ -406,14 +426,17 @@ namespace HideAndSeek
         /// <returns>String describing what happened</returns>
         private string DeleteGame(string fileName)
         {
+            // Set variable to full file name including extension
+            string fullFileName = GetFullFileName(fileName);
+
             // If file does not exist
-            if( !(_fileSystem.File.Exists(fileName)) )
+            if ( !(_fileSystem.File.Exists(fullFileName)) )
             {
                 return $"Could not delete game because file {fileName} does not exist";
             }
 
             // Delete file
-            _fileSystem.File.Delete(fileName);
+            _fileSystem.File.Delete(fullFileName);
 
             // Return success message
             return $"Game file {fileName} has been successfully deleted";
