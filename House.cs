@@ -139,44 +139,6 @@ namespace HideAndSeek
         }
 
         /// <summary>
-        /// Hide all opponents in random hiding places
-        /// </summary>
-        /// <param name="opponents">Opponents to hide</param>
-        public static void HideAllOpponents(IEnumerable<Opponent> opponents)
-        {
-            // Create empty list to store hiding places
-            List<LocationWithHidingPlace> hidingPlaces = new List<LocationWithHidingPlace>();
-
-            // For each opponent, add a random hiding place to the list
-            for (int i = 0; i < opponents.Count(); i++)
-            {
-                hidingPlaces.Add(GetRandomHidingPlace());
-            }
-
-            // Hide opponents in hiding places
-            HideAllOpponents(opponents, hidingPlaces);
-        }
-
-        /// <summary>
-        /// Hide all opponents in random hiding places
-        /// This method was created to make sure hiding places are cleared before opponents are rehidden 
-        /// to avoid an opponent being hidden in multiple hiding places at once or appearing in LocationWithHidingPlace's opponents list multiple times.
-        /// </summary>
-        /// <param name="opponents">Opponents to hide</param>
-        /// <param name="hidingPlaces">Locations to hide opponents</param>
-        public static void HideAllOpponents(IEnumerable<Opponent> opponents, IEnumerable<LocationWithHidingPlace> hidingPlaces)
-        {
-            // Clear hiding places
-            ClearHidingPlaces();
-
-            // Hide each Opponent in the corresponding hiding place
-            for (int i = 0; i < opponents.Count(); i++)
-            {
-                opponents.ElementAt(i).Hide(hidingPlaces.ElementAt(i));
-            }
-        }
-
-        /// <summary>
         /// Get a random hiding place
         /// 
         /// CREDIT: adapted from HideAndSeek project's Opponent class's Hide method
