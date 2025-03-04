@@ -37,8 +37,6 @@ namespace HideAndSeek
 
         public override string ToString() => Name;
 
-        public LocationWithHidingPlace HidingPlace { get; private set; }
-
         private static int _randomOpponentNumber = 1; // Number for next opponent created with default name
         
         /// <summary>
@@ -61,44 +59,6 @@ namespace HideAndSeek
         public Opponent(string name)
         {
             Name = name;
-        }
-
-        // Constructor accepting opponent's name and hiding place
-        public Opponent(string name, LocationWithHidingPlace hidingPlace)
-        {
-            Name = name;
-            HidingPlace = hidingPlace;
-        }
-
-        /// <summary>
-        /// Hide in random hiding place
-        /// </summary>
-        public void Hide()
-        {
-            Hide(House.GetRandomHidingPlace()); // Hide in random hiding place.
-        }
-
-        /// <summary>
-        /// Hide in specified hiding place by location with hiding place object
-        /// CAUTION: Should only be called directly from House, SavedGame, HouseTests, and Opponent tests
-        /// In future, could be used to have user hide players manually
-        /// </summary>
-        /// <param name="hidingPlace">Hiding place for opponent</param>
-        public void Hide(LocationWithHidingPlace hidingPlace)
-        {
-            HidingPlace = hidingPlace; // Set hiding place property
-            HidingPlace.HideOpponent(this); // Inform hiding place that this opponent is hidden there
-        }
-
-        /// <summary>
-        /// Hide in specified hiding place by name of location with hiding place
-        /// CAUTION: Should only be called directly from House, SavedGame, and Opponent tests
-        /// In future, could be used to have user hide players manually
-        /// </summary>
-        /// <param name="hidingPlaceName">Name of hiding place for opponent</param>
-        public void Hide(string hidingPlaceName)
-        {
-            Hide((LocationWithHidingPlace)House.GetLocationByName(hidingPlaceName));
         }
     }
 }

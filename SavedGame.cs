@@ -72,14 +72,14 @@ namespace HideAndSeek
             }
         }
 
-        private Dictionary<string, string> _allOpponents;
+        private Dictionary<string, string> _opponentsAndHidingPlaces;
 
         // All opponents (opponent name and hiding place name)
-        public required Dictionary<string, string> AllOpponents 
+        public required Dictionary<string, string> OpponentsAndHidingPlaces 
         { 
             get
             {
-                return _allOpponents;
+                return _opponentsAndHidingPlaces;
             }
             set
             {
@@ -99,7 +99,7 @@ namespace HideAndSeek
                 }
 
                 // Set dictionary of all opponents
-                _allOpponents = value;
+                _opponentsAndHidingPlaces = value;
             }
         }
 
@@ -114,10 +114,10 @@ namespace HideAndSeek
             }
             set
             {
-                // If any of the opponents do not exist in AllOpponents dictionary, throw exception
+                // If any of the opponents do not exist in OpponentsAndHidingPlaces dictionary, throw exception
                 foreach (string foundOpponent in value)
                 {
-                    if ( !(AllOpponents.Keys.Contains(foundOpponent)) )
+                    if ( !(OpponentsAndHidingPlaces.Keys.Contains(foundOpponent)) )
                     {
                         throw new InvalidDataException("Cannot load game because data in file is corrupt - found opponent is not an opponent");
                     }
@@ -130,29 +130,5 @@ namespace HideAndSeek
 
         // Default constructor for JSON deserializer
         public SavedGame() {}
-
-        // Constructor to create SavedGame from game state stored in GameController
-        [SetsRequiredMembers]
-        public SavedGame(GameController gameController)
-        {
-            PlayerLocation = gameController.CurrentLocation.Name; // Set player location
-            MoveNumber = gameController.MoveNumber; // Set move number
-
-            // Get opponents
-            IEnumerable<Opponent> opponents = gameController.Opponents;
-
-            // Add opponents and their hiding places to a collection
-            Dictionary<string, string> allOpponents = new Dictionary<string, string>();
-            foreach (Opponent opponent in opponents)
-            {
-                allOpponents.Add(opponent.Name, opponent.HidingPlace.Name);
-            }
-
-            // Set property to collection of all opponents
-            AllOpponents = allOpponents;
-
-            // Set property to names of found opponents
-            FoundOpponents = gameController.FoundOpponents.Select((x) => x.Name);
-        }
     }
 }
