@@ -118,6 +118,9 @@ namespace HideAndSeek
         /// </summary>
         public int MoveNumber { get; private set; } = 1;
 
+        /// <summary>
+        /// Opponents and their hiding places
+        /// </summary>
         public Dictionary<Opponent, LocationWithHidingPlace> OpponentsAndHidingPlaces { get; private set; } = new Dictionary<Opponent, LocationWithHidingPlace>();
             
         /// <summary>
