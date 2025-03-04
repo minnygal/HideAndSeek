@@ -50,7 +50,6 @@ namespace HideAndSeek
     /// </summary>
     public class GameController
     {
-        private Location _location;
         private IFileSystem _fileSystem;
         private string _fileNameExtension = "json";
 
@@ -67,56 +66,46 @@ namespace HideAndSeek
         /// <summary>
         /// The player's current location in the house
         /// </summary>
-        public Location CurrentLocation { 
-            get 
-            { 
-                return _location; 
-            } 
-            
-            // Set the location and update status
-            private set {
-                _location = value;
-                UpdateStatus();
-            } 
-        }
-
-        public string Status { get; private set; }
+        public Location CurrentLocation { get; private set; }
 
         /// <summary>
-        /// Returns the the current status to show to the player
-        /// Called by CurrentLocation's setter
+        /// Status of game
         /// </summary>
-        public void UpdateStatus()
+        public string Status
         {
-            // Initialize variable to first part of message for status
-            string message = $"You are in the {CurrentLocation.Name}. You see the following exits:";
-            
-            // Add each exit description to the message for status
-            foreach(string exitDescription in CurrentLocation.ExitList())
+            get
             {
-                message += Environment.NewLine + " - " + exitDescription;
-            }
+                // Initialize variable to first part of message for status
+                string message = $"You are in the {CurrentLocation.Name}. You see the following exits:";
 
-            // Add hiding place info if someone could hide in CurrentLocation
-            if(CurrentLocation.GetType() ==  typeof(LocationWithHidingPlace))
-            {
-                LocationWithHidingPlace location = (LocationWithHidingPlace) CurrentLocation;
-                message += Environment.NewLine + $"Someone could hide {location.HidingPlace}";
-            }
+                // Add each exit description to the message for status
+                foreach (string exitDescription in CurrentLocation.ExitList())
+                {
+                    message += Environment.NewLine + " - " + exitDescription;
+                }
 
-            // If no opponents have been found
-            if(FoundOpponents.Count == 0)
-            {
-                message += Environment.NewLine + "You have not found any opponents";
-            }
-            else // if opponents have been found
-            {
-                // Add information about opponents found to message
-                message += Environment.NewLine + $"You have found {FoundOpponents.Count} of {OpponentsAndHidingPlaces.Count()} opponent{(OpponentsAndHidingPlaces.Count() == 1 ? "" : "s")}"
-                        + ": " + String.Join(", ", FoundOpponents);
-            }
+                // Add hiding place info if someone could hide in CurrentLocation
+                if (CurrentLocation.GetType() == typeof(LocationWithHidingPlace))
+                {
+                    LocationWithHidingPlace location = (LocationWithHidingPlace)CurrentLocation;
+                    message += Environment.NewLine + $"Someone could hide {location.HidingPlace}";
+                }
 
-            Status = message; // Set status
+                // If no opponents have been found
+                if (FoundOpponents.Count == 0)
+                {
+                    message += Environment.NewLine + "You have not found any opponents";
+                }
+                else // if opponents have been found
+                {
+                    // Add information about opponents found to message
+                    message += Environment.NewLine + $"You have found {FoundOpponents.Count} of {OpponentsAndHidingPlaces.Count()} opponent{(OpponentsAndHidingPlaces.Count() == 1 ? "" : "s")}"
+                            + ": " + String.Join(", ", FoundOpponents);
+                }
+
+                // Return status message
+                return message;
+            }
         }
 
         /// <summary>
@@ -317,7 +306,6 @@ namespace HideAndSeek
                 if (found.Count >= 1)
                 {
                     FoundOpponents.AddRange(found); // Add opponents found to list
-                    UpdateStatus(); // Update status
                     return $"You found {found.Count} opponent{(found.Count == 1 ? "" : "s")} hiding {location.HidingPlace}";
                 }
                 else // if no opponents were found in the hiding place
