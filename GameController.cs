@@ -50,8 +50,8 @@ namespace HideAndSeek
     /// </summary>
     public class GameController
     {
-        private IFileSystem _fileSystem;
-        private string _fileNameExtension = "json";
+        private IFileSystem _fileSystem; // File system to use (set in constructor)
+        private string _fileNameExtension = "json"; // Extension for files in which saved games are stored
 
         /// <summary>
         /// Get full name for file (including extension)
