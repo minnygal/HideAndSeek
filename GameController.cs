@@ -50,8 +50,8 @@ namespace HideAndSeek
     /// </summary>
     public class GameController
     {
-        private IFileSystem _fileSystem;
-        private string _fileNameExtension = "json";
+        private IFileSystem _fileSystem; // File system to use (set in constructor)
+        private string _fileNameExtension = "json"; // Extension for files in which saved games are stored
 
         /// <summary>
         /// Get full name for file (including extension)
@@ -118,6 +118,9 @@ namespace HideAndSeek
         /// </summary>
         public int MoveNumber { get; private set; } = 1;
 
+        /// <summary>
+        /// Opponents and their hiding places
+        /// </summary>
         public Dictionary<Opponent, LocationWithHidingPlace> OpponentsAndHidingPlaces { get; private set; } = new Dictionary<Opponent, LocationWithHidingPlace>();
             
         /// <summary>
@@ -406,7 +409,7 @@ namespace HideAndSeek
                 // If problem due to JSON or an invalid error, return failure message
                 if(e is JsonException || e is InvalidOperationException)
                 {
-                    return "Cannot load game because data in file is corrupt";
+                    return "Cannot process because data is corrupt";
                 }
                 else
                 {
