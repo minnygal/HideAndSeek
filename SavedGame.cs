@@ -42,7 +42,7 @@ namespace HideAndSeek
                 // If location does not exist, throw exception
                 if( !(House.DoesLocationExist(value)) )
                 {
-                    throw new InvalidDataException("Cannot load game because data in file is corrupt - invalid CurrentLocation");
+                    throw new InvalidDataException("Cannot process because data is corrupt - invalid CurrentLocation");
                 }
 
                 // Set player location
@@ -64,7 +64,7 @@ namespace HideAndSeek
                 // If move number is invalid, throw exception
                 if(value < 1)
                 {
-                    throw new InvalidDataException("Cannot load game because data in file is corrupt - invalid MoveNumber");
+                    throw new InvalidDataException("Cannot process because data is corrupt - invalid MoveNumber");
                 }
 
                 // Set move number
@@ -86,7 +86,7 @@ namespace HideAndSeek
                 // If dictionary is empty, throw exception
                 if ( value.Count == 0 )
                 {
-                    throw new InvalidDataException("Cannot load game because data in file is corrupt - no opponents");
+                    throw new InvalidDataException("Cannot process because data is corrupt - no opponents");
                 }
 
                 // If any of the locations do not exist, throw exception
@@ -94,7 +94,7 @@ namespace HideAndSeek
                 {
                     if( !(House.DoesLocationExist(opponentInfo.Value)) )
                     {
-                        throw new InvalidDataException("Cannot load game because data in file is corrupt - invalid hiding place for opponent");
+                        throw new InvalidDataException("Cannot process because data is corrupt - invalid hiding place for opponent");
                     }
                 }
 
@@ -119,7 +119,7 @@ namespace HideAndSeek
                 {
                     if ( !(OpponentsAndHidingPlaces.Keys.Contains(foundOpponent)) )
                     {
-                        throw new InvalidDataException("Cannot load game because data in file is corrupt - found opponent is not an opponent");
+                        throw new InvalidDataException("Cannot process because data is corrupt - found opponent is not an opponent");
                     }
                 }
 

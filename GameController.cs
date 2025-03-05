@@ -409,7 +409,7 @@ namespace HideAndSeek
                 // If problem due to JSON or an invalid error, return failure message
                 if(e is JsonException || e is InvalidOperationException)
                 {
-                    return "Cannot load game because data in file is corrupt";
+                    return "Cannot process because data is corrupt";
                 }
                 else
                 {
