@@ -23,8 +23,6 @@ namespace HideAndSeek
     /// -I created a body for each property's getter and setter methods.
     /// -I added data validation in each setter method.
     /// -I added a parameterless constructor for JSON deserialization.
-    /// -I added a parameterized constructor to set SavedGame's properties to 
-    ///  reflect game state stored in GameController passed into constructor.
     /// -I added comments for easier reading.
     /// </summary>
     public class SavedGame
