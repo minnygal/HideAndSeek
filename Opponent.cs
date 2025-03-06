@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// Class representing an Opponent who can be hidden in a Location in the House for the user to find
+    /// Class to represent an Opponent who can be hidden in a Location in the House for the user to find
     /// 
     /// CREDIT: adapted from HideAndSeek project's Opponent class
     ///         © 2023 Andrew Stellman and Jennifer Greene
