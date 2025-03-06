@@ -451,7 +451,7 @@ namespace HideAndSeek
             OpponentsAndHidingLocations = new Dictionary<Opponent, LocationWithHidingPlace>();
             foreach(KeyValuePair<string, string> kvp in savedGame.OpponentsAndHidingLocations)
             {
-                OpponentsAndHidingLocations.Add(new Opponent(kvp.Key), (LocationWithHidingPlace)House.GetLocationByName(kvp.Value));
+                OpponentsAndHidingLocations.Add(new Opponent(kvp.Key), House.GetLocationWithHidingPlaceByName(kvp.Value));
             }
 
             // Restore list of found opponents
