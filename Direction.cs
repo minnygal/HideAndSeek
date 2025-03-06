@@ -49,20 +49,21 @@
         };
 
         /// <summary>
-        /// Get the opposite Direction of the direction provided
+        /// Get the opposite Direction of the Direction provided
         /// </summary>
         /// <param name="direction">Direction to find the opposite of</param>
-        /// <returns>The opposite Direction of the direction provided</returns>
+        /// <returns>The opposite Direction of the Direction provided</returns>
         public static Direction OppositeDirection(this Direction direction)
         {
-            return (Direction)((int)(direction) * -1); // direction provided as integer multiplied by -1 and converted back to Direction
+            // Return Direction provided converted to integer, multiplied by -1, and converted back to Direction
+            return (Direction)((int)(direction) * -1); 
         }
 
         /// <summary>
         /// Describes a direction (e.g. "in" vs. "to the North")
         /// </summary>
         /// <param name="direction">Direction to describe</param>
-        /// <returns>string describing the direction</returns>
+        /// <returns>String describing the direction</returns>
         public static string DirectionDescription(this Direction direction)
         {
             // If the direction should be output without extra words
