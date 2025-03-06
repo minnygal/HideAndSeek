@@ -374,7 +374,7 @@ namespace HideAndSeek
             {
                 PlayerLocation = CurrentLocation.ToString(),
                 MoveNumber = this.MoveNumber,
-                OpponentsAndHidingPlaces = opponentsAndHidingPlacesAsStrings,
+                OpponentsAndHidingLocations = opponentsAndHidingPlacesAsStrings,
                 FoundOpponents = this.FoundOpponents.Select((x) => x.ToString())
             };
 
@@ -449,7 +449,7 @@ namespace HideAndSeek
 
             // Restore dictionary of Opponents and their hiding places, creating new Opponent objects
             OpponentsAndHidingPlaces = new Dictionary<Opponent, LocationWithHidingPlace>();
-            foreach(KeyValuePair<string, string> kvp in savedGame.OpponentsAndHidingPlaces)
+            foreach(KeyValuePair<string, string> kvp in savedGame.OpponentsAndHidingLocations)
             {
                 OpponentsAndHidingPlaces.Add(new Opponent(kvp.Key), (LocationWithHidingPlace)House.GetLocationByName(kvp.Value));
             }
