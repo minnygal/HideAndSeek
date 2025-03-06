@@ -87,10 +87,10 @@ namespace HideAndSeek
                     throw new InvalidDataException("Cannot process because data is corrupt - no opponents");
                 }
 
-                // If any of the locations do not exist, throw exception
+                // If any of the LocationWithHidingPlaces do not exist, throw exception
                 foreach (KeyValuePair<string, string> opponentInfo in value)
                 {
-                    if( !(House.DoesLocationExist(opponentInfo.Value)) )
+                    if( !(House.DoesLocationWithHidingPlaceExist(opponentInfo.Value)) )
                     {
                         throw new InvalidDataException("Cannot process because data is corrupt - invalid hiding place for opponent");
                     }
