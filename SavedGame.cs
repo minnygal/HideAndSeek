@@ -9,26 +9,33 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// Class to represent a saved game
-    /// Stores the state of a game and is serializable
+    /// Class to represent a saved game, stores the state of a game, and is serializable
     /// 
-    /// CREDIT: adapted from HideAndSeek project's SavedGame class
-    ///         © 2023 Andrew Stellman and Jennifer Greene
-    ///         Published under the MIT License
-    ///         https://github.com/head-first-csharp/fourth-edition/blob/master/Code/Chapter_10/HideAndSeek_part_3/HideAndSeek/SavedGame.cs
-    ///         Link valid as of 02-25-2025
-    ///         
-    /// CHANGES:
-    /// -I marked each property as required to ensure it is set.
-    /// -I created a private variable for each public property.
-    /// -I created a body for each property's getter and setter methods.
-    /// -I added data validation in each setter method.
-    /// -I added a parameterless constructor for JSON deserialization.
-    /// -I added comments for easier reading.
-    /// 
-    /// Note to self: If add parameterized constructor in the future, 
-    /// remember to add parameterless constructor for JSON deserializer.
+    /// CREDIT: adapted from Stellman and Greene's code
     /// </summary>
+
+    /** CREDIT
+     *  adapted from HideAndSeek project's SavedGame class
+     *  © 2023 Andrew Stellman and Jennifer Greene
+     *         Published under the MIT License
+     *         https://github.com/head-first-csharp/fourth-edition/blob/master/Code/Chapter_10/HideAndSeek_part_3/HideAndSeek/SavedGame.cs
+     *         Link valid as of 02-25-2025
+     * **/
+
+    /** CHANGES
+     * -I marked each property as required to ensure it is set.
+     * -I created a private variable for each public property.
+     * -I created a body for each property's getter and setter methods.
+     * -I added data validation in each setter method.
+     * -I added a parameterless constructor for JSON deserialization.
+     * -I added comments for easier reading.
+     **/
+
+    /** NOTE TO SELF
+     * If add parameterized constructor in the future, 
+     * remember to add parameterless constructor for JSON deserializer.
+     * **/
+
     public class SavedGame
     {
         private string _playerLocation = "";

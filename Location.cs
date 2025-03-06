@@ -3,30 +3,36 @@
     /// <summary>
     /// Class to represent a location in the House
     /// 
-    /// CREDIT: adapted from HideAndSeek project's Location class
-    ///         © 2023 Andrew Stellman and Jennifer Greene
-    ///         Published under the MIT License
-    ///         https://github.com/head-first-csharp/fourth-edition/blob/master/Code/Chapter_10/HideAndSeek_part_3/HideAndSeek/Location.cs
-    ///         Link valid as of 02-25-2025
-    ///         
-    /// CHANGES:
-    /// -I removed DescribeDirection method and put the logic in Direction file as Extension class
-    ///  for separation of concerns.
-    /// -I used a loop instead of LINQ in the ExitList method (just my approach).
-    /// -I made AddExit return the connecting Location added.
-    /// -I created an AddExit overload to allow a location name to be passed in
-    ///  to have a new Location created in method (for ease).
-    /// -I created an AddExit overload to allow a location name and hiding place description
-    ///  to be passed in to have a new LocationWithHidingPlace created in method (for ease).
-    /// -I used a different method to find out whether there is an exit 
-    ///  in the specified Direction in GetExit method (just my approach).
-    /// -I made the GetExit method body multi-line and replaced ternary operator
-    ///  for easier reading.
-    /// -I modified the Direction changing logic in AddReturnExit (just my approach).
-    /// -I used Direction changing in AddExit (just my approach).
-    /// -I converted lambdas to regular method bodies for easier modification.
-    /// -I added comments for easier reading.
+    /// CREDIT: adapted from Stellman and Greene's code
     /// </summary>
+
+    /** CREDIT
+     *  adapted from HideAndSeek project's Location class
+     *  © 2023 Andrew Stellman and Jennifer Greene
+     *         Published under the MIT License
+     *         https://github.com/head-first-csharp/fourth-edition/blob/master/Code/Chapter_10/HideAndSeek_part_3/HideAndSeek/Location.cs
+     *         Link valid as of 02-25-2025
+     * **/
+
+    /** CHANGES
+     * -I removed DescribeDirection method and put the logic in Direction file as Extension class
+     *  for separation of concerns.
+     * -I used a loop instead of LINQ in the ExitList method (just my approach).
+     * -I made AddExit return the connecting Location added.
+     * -I created an AddExit overload to allow a location name to be passed in
+     *  to have a new Location created in method (for ease).
+     * -I created an AddExit overload to allow a location name and hiding place description
+     *  to be passed in to have a new LocationWithHidingPlace created in method (for ease).
+     * -I used a different method to find out whether there is an exit 
+     *  in the specified Direction in GetExit method (just my approach).
+     * -I made the GetExit method body multi-line and replaced ternary operator
+     *  for easier reading.
+     * -I modified the Direction changing logic in AddReturnExit (just my approach).
+     * -I used Direction changing in AddExit (just my approach).
+     * -I converted lambdas to regular method bodies for easier modification.
+     * -I added comments for easier reading.
+     * **/
+
     public class Location
     {
         /// <summary>
