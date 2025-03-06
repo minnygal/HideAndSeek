@@ -120,7 +120,8 @@ namespace HideAndSeek
         /// <returns>True if LocationWithHidingPlace exists</returns>
         public static bool DoesLocationWithHidingPlaceExist(string name)
         {
-            return Locations.Where((x) => x.GetType() == typeof(LocationWithHidingPlace)).Select((x) => x.Name).Contains(name);
+
+            return GetLocationWithHidingPlaceByName(name) != null;
         }
 
         /// <summary>
