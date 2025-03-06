@@ -110,7 +110,7 @@ namespace HideAndSeek
         /// <returns>True if Location exists</returns>
         public static bool DoesLocationExist(string name)
         {
-            return Locations.Select((x) => x.Name).Contains(name);
+            return GetLocationByName(name) != null;
         }
 
         /// <summary>
