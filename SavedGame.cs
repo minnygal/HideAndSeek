@@ -85,17 +85,17 @@ namespace HideAndSeek
             }
         }
 
-        private Dictionary<string, string> _opponentsAndHidingPlaces;
+        private Dictionary<string, string> _opponentsAndHidingLocations;
 
         /// <summary>
         /// Opponents and their locations with hiding place
         /// (opponent name as key, location with hiding place name as value)
         /// </summary>
-        public required Dictionary<string, string> OpponentsAndHidingPlaces 
+        public required Dictionary<string, string> OpponentsAndHidingLocations 
         { 
             get
             {
-                return _opponentsAndHidingPlaces;
+                return _opponentsAndHidingLocations;
             }
             set
             {
@@ -115,7 +115,7 @@ namespace HideAndSeek
                 }
 
                 // Set dictionary of all opponents and their locations
-                _opponentsAndHidingPlaces = value;
+                _opponentsAndHidingLocations = value;
             }
         }
 
@@ -132,10 +132,10 @@ namespace HideAndSeek
             }
             set
             {
-                // If any found opponents do not exist in OpponentsAndHidingPlaces dictionary, throw exception
+                // If any found opponents do not exist in OpponentsAndHidingLocations dictionary, throw exception
                 foreach (string foundOpponent in value)
                 {
-                    if ( !(OpponentsAndHidingPlaces.Keys.Contains(foundOpponent)) )
+                    if ( !(OpponentsAndHidingLocations.Keys.Contains(foundOpponent)) )
                     {
                         throw new InvalidDataException("Cannot process because data is corrupt - found opponent is not an opponent");
                     }

@@ -6,7 +6,6 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
-using static System.Net.Mime.MediaTypeNames;
 
 namespace HideAndSeek
 {
@@ -24,10 +23,13 @@ namespace HideAndSeek
      *         Link valid as of 02-25-2025
      * **/
 
-
     /** NOTES
      * -Only 1 game can be going on at a time because the House is static.
      * -You can start a new game w/o having to create a new GameController instance.
+     * -Command keywords cannot have spaces.
+     * -Current command keywords are: move, check, save, load, and delete
+     * -In ParseInput, file name is extracted from user input 
+     *  starting after the space following the save, load, or delete keyword.
      * **/
 
     /** CHANGES
@@ -36,7 +38,7 @@ namespace HideAndSeek
      * -I created a method to update the status.
      * -I added a private location variable so I could define a setter for CurrentLocation.
      * -I created a setter method for Currentlocation so it could automatically update the status.
-     * -I made the list of found opponents public for easier game saving/restoration.
+     * -I made the list of opponentsFound opponents public for easier game saving/restoration.
      * -I added a file system class variable for testing purposes.
      * -I used my own approach in ParseInput but accomplished the same results.
      * -I renamed methods to SaveGame and LoadGame for easier comprehension.
@@ -88,7 +90,7 @@ namespace HideAndSeek
                 // Initialize variable to first part of message for status
                 string message = $"You are in the {CurrentLocation.Name}. You see the following exits:";
 
-                // Add each exit description to the message for status
+                // Add each exit's description to the message for status
                 foreach (string exitDescription in CurrentLocation.ExitList())
                 {
                     message += Environment.NewLine + " - " + exitDescription;
@@ -101,16 +103,15 @@ namespace HideAndSeek
                     message += Environment.NewLine + $"Someone could hide {location.HidingPlace}";
                 }
 
-                // If no opponents have been found
+                // If no Opponents have been opponentsFound
                 if (FoundOpponents.Count == 0)
                 {
-                    message += Environment.NewLine + "You have not found any opponents";
+                    message += Environment.NewLine + "You have not found any opponents"; // Add info to message for status
                 }
-                else // if opponents have been found
+                else // if Opponents have been opponentsFound
                 {
-                    // Add information about opponents found to message
-                    message += Environment.NewLine + $"You have found {FoundOpponents.Count} of {OpponentsAndHidingPlaces.Count()} opponent{(OpponentsAndHidingPlaces.Count() == 1 ? "" : "s")}"
-                            + ": " + String.Join(", ", FoundOpponents);
+                    message += Environment.NewLine + $"You have found {FoundOpponents.Count} of {OpponentsAndHidingLocations.Count()} opponent{(OpponentsAndHidingLocations.Count() == 1 ? "" : "s")}"
+                            + ": " + String.Join(", ", FoundOpponents); // Add information about Opponents opponentsFound to message
                 }
 
                 // Return status message
@@ -131,25 +132,25 @@ namespace HideAndSeek
         /// <summary>
         /// Opponents and their hiding places
         /// </summary>
-        public Dictionary<Opponent, LocationWithHidingPlace> OpponentsAndHidingPlaces { get; private set; } = new Dictionary<Opponent, LocationWithHidingPlace>();
+        public Dictionary<Opponent, LocationWithHidingPlace> OpponentsAndHidingLocations { get; private set; } = new Dictionary<Opponent, LocationWithHidingPlace>();
             
         /// <summary>
-        /// List of opponents the player has found so far
+        /// List of opponents the player has opponentsFound so far
         /// </summary>
         public List<Opponent> FoundOpponents { get; private set; } = new List<Opponent>();
 
         /// <summary>
         /// Returns true if the game is over
         /// </summary>
-        public bool GameOver => OpponentsAndHidingPlaces.Count() == FoundOpponents.Count();
+        public bool GameOver => OpponentsAndHidingLocations.Count() == FoundOpponents.Count();
 
         /// <summary>
-        /// Constructor to start game
+        /// Constructor to start game with default file system
         /// </summary>
         public GameController() : this(new FileSystem()) {}
 
         /// <summary>
-        /// Constructor to start game with specific file system (used for testing)
+        /// Constructor to start game with specific file system (called directly for testing)
         /// </summary>
         /// <param name="fileSystem">File system</param>
         public GameController(IFileSystem fileSystem)
@@ -158,11 +159,11 @@ namespace HideAndSeek
             _fileSystem = fileSystem;
 
             // Create Opponents and store them in dictionary as keys
-            OpponentsAndHidingPlaces.Add(new Opponent("Joe"), null);
-            OpponentsAndHidingPlaces.Add(new Opponent("Bob"), null);
-            OpponentsAndHidingPlaces.Add(new Opponent("Ana"), null);
-            OpponentsAndHidingPlaces.Add(new Opponent("Owen"), null);
-            OpponentsAndHidingPlaces.Add(new Opponent("Jimmy"), null);
+            OpponentsAndHidingLocations.Add(new Opponent("Joe"), null);
+            OpponentsAndHidingLocations.Add(new Opponent("Bob"), null);
+            OpponentsAndHidingLocations.Add(new Opponent("Ana"), null);
+            OpponentsAndHidingLocations.Add(new Opponent("Owen"), null);
+            OpponentsAndHidingLocations.Add(new Opponent("Jimmy"), null);
 
             // Start game
             RestartGame();
@@ -171,77 +172,78 @@ namespace HideAndSeek
         /// <summary>
         /// Restart game from beginning (Entry)
         /// </summary>
-        public void RestartGame()
+        private void RestartGame()
         {
             // Hide opponents in random places
             RehideAllOpponents();
 
             // Reset properties
             MoveNumber = 1; // Reset move number
-            CurrentLocation = House.Entry; // Set current location to Entry
+            CurrentLocation = House.Entry; // Reset current location
         }
 
         /// <summary>
-        /// Rehide all opponents in specified hiding places
+        /// Rehide all Opponents in specified hiding places
+        /// Should only be called from GameController and tests
         /// </summary>
-        /// <param name="hidingPlaces">Places to hide opponents</param>
+        /// <param name="hidingPlaces">Places to hide Opponents</param>
         public void RehideAllOpponents(IEnumerable<LocationWithHidingPlace> hidingPlaces)
         {
             // Clear hiding places
             House.ClearHidingPlaces();
 
-            // Initialize dictionary to store opponents and new hiding places
-            Dictionary<Opponent, LocationWithHidingPlace> opponentsAndNewHidingPlaces = new Dictionary<Opponent, LocationWithHidingPlace>();
+            // Initialize dictionary to store Opponents and new hiding locations
+            Dictionary<Opponent, LocationWithHidingPlace> opponentsAndNewHidingLocations = new Dictionary<Opponent, LocationWithHidingPlace>();
 
-            // Hide Opponents in hiding places and add hiding places to dictionary
-            for (int i = 0; i < OpponentsAndHidingPlaces.Count(); i++)
+            // Hide Opponents in hiding locations and add hiding locations to dictionary
+            for (int i = 0; i < OpponentsAndHidingLocations.Count(); i++)
             {
-                hidingPlaces.ElementAt(i).HideOpponent(OpponentsAndHidingPlaces.ElementAt(i).Key);
-                opponentsAndNewHidingPlaces.Add(OpponentsAndHidingPlaces.ElementAt(i).Key, hidingPlaces.ElementAt(i));
+                hidingPlaces.ElementAt(i).HideOpponent(OpponentsAndHidingLocations.ElementAt(i).Key);
+                opponentsAndNewHidingLocations.Add(OpponentsAndHidingLocations.ElementAt(i).Key, hidingPlaces.ElementAt(i));
             }
 
-            // Set opponents and hiding places dictionary to dictionary with new hiding places
-            OpponentsAndHidingPlaces = opponentsAndNewHidingPlaces;
+            // Set Opponents and hiding locations dictionary to dictionary with new hiding locations
+            OpponentsAndHidingLocations = opponentsAndNewHidingLocations;
         }
 
         /// <summary>
-        /// Rehide all opponents in random hiding places
+        /// Rehide all Opponents in random hiding places
         /// </summary>
-        public void RehideAllOpponents()
+        private void RehideAllOpponents()
         {
-            // Initialize list of locations with hiding places
-            List<LocationWithHidingPlace> hidingPlaces = new List<LocationWithHidingPlace>();
+            // Initialize list for locations with hiding locations
+            List<LocationWithHidingPlace> hidingLocations = new List<LocationWithHidingPlace>();
 
-            // Populate list with random hiding places (1 per Opponent)
-            for(int i = 0; i < OpponentsAndHidingPlaces.Count(); i++)
+            // Populate list with random hiding locations (1 per Opponent)
+            for(int i = 0; i < OpponentsAndHidingLocations.Count(); i++)
             {
-                hidingPlaces.Add(House.GetRandomLocationWithHidingPlace());
+                hidingLocations.Add(House.GetRandomLocationWithHidingPlace());
             }
 
             // Hide Opponents in hiding places
-            RehideAllOpponents(hidingPlaces);
+            RehideAllOpponents(hidingLocations);
         }
 
         /// <summary>
-        /// Move to the location in a direction
+        /// Move to the Location in a Direction
         /// </summary>
-        /// <param name="direction">The direction to move</param>
-        /// <returns>True if the player can move in that direction, false oterwise</returns>
-        public bool Move(Direction direction)
+        /// <param name="direction">The Direction to move</param>
+        /// <returns>True if the player can move in that Direction, false otherwise</returns>
+        private bool Move(Direction direction)
         {
             Location startLocation = CurrentLocation; // Set start location to current location
             CurrentLocation = CurrentLocation.GetExit(direction); // Set current location to exit returned
-            return CurrentLocation != startLocation; // Return whether the current location has changed (move was successful)
+            return CurrentLocation != startLocation; // Return whether the current location has changed (whether move was successful)
         }
 
         /// <summary>
-        /// Parses input from the player and updates the status
+        /// Parse input from the player
         /// </summary>
         /// <param name="input">Input to parse</param>
         /// <returns>The results of parsing the input</returns>
         public string ParseInput(string input)
         {
-            // Extract lowercaseCommand, one version lowercase and one version original
+            // Extract command, one version lowercase and one version original
             string originalCommand = input.Split(" ").FirstOrDefault("");
             string lowercaseCommand = originalCommand.ToLower();
 
@@ -251,12 +253,12 @@ namespace HideAndSeek
                 MoveNumber++; // Increment move number
                 return CheckCurrentLocation(); // Check current location and return results
             }
-            else if ( // If input requests save or load game
+            else if ( // If input requests save, load, or delete game
                 lowercaseCommand == "save" || 
                 lowercaseCommand == "load" ||
                 lowercaseCommand == "delete" )
             {
-                // Get index of space in input (space before name of file)
+                // Get index of first space in input (space after command and before name of file)
                 int indexOfSpace = input.IndexOf(' ');
 
                 // If input includes a space
@@ -279,24 +281,25 @@ namespace HideAndSeek
                         }
                         else // If input requests delete game
                         {
-                            return DeleteGame(fileName);
+                            return DeleteGame(fileName); // Delete game and return message
                         }
                     }
                 }
 
-                // If any of the requirements for input are not met, return failure message
+                // If any of the requirements for file name input are not met, return failure message
                 return "Cannot perform action because file name is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)";
             }
-            else if (!(Enum.TryParse(originalCommand, out Direction direction))) // If input cannot be parsed to Direction enum value
+            else if ( !(Enum.TryParse(originalCommand, out Direction direction)) ) // If input cannot be parsed to Direction enum value
             {
                 return "That's not a valid direction"; // Return invalid direction message
             }
-            else if (!(this.Move(direction))) // If cannot move in specified direction
+            // Try to move in specified Direction
+            else if ( !(Move(direction)) ) // If cannot move in specified Direction
             {
                 MoveNumber++; // Increment move number
                 return "There's no exit in that direction"; // Return no exit in that direction message
             }
-            else // If successfully moved in specified direction
+            else // If successfully moved in specified Direction
             {
                 MoveNumber++; // Increment move number
                 return "Moving " + direction; // Return the direction you're moving
@@ -313,15 +316,15 @@ namespace HideAndSeek
             if (CurrentLocation.GetType() == typeof(LocationWithHidingPlace))
             {
                 LocationWithHidingPlace location = (LocationWithHidingPlace)CurrentLocation; // Convert CurrentLocation to LocationWithHidingPlace
-                List<Opponent> found = location.CheckHidingPlace(); // Check hiding place and initialize list to opponents found
+                List<Opponent> opponentsFound = location.CheckHidingPlace(); // Check hiding place and initialize list to Opponents found
 
-                // If any opponents were found in the hiding place
-                if (found.Count >= 1)
+                // If any Opponents were found in the hiding place
+                if (opponentsFound.Count >= 1)
                 {
-                    FoundOpponents.AddRange(found); // Add opponents found to list
-                    return $"You found {found.Count} opponent{(found.Count == 1 ? "" : "s")} hiding {location.HidingPlace}";
+                    FoundOpponents.AddRange(opponentsFound); // Add Opponents found to list of found opponents
+                    return $"You found {opponentsFound.Count} opponent{(opponentsFound.Count == 1 ? "" : "s")} hiding {location.HidingPlace}";
                 }
-                else // if no opponents were found in the hiding place
+                else // if no Opponents were found in the hiding place
                 {
                     return $"Nobody was hiding {location.HidingPlace}";
                 }
@@ -335,7 +338,7 @@ namespace HideAndSeek
         /// <summary>
         /// Return whether file name is valid (not empty and no illegal characters)
         /// </summary>
-        /// <param name="fileName">File name to examine</param>
+        /// <param name="fileName">File name to evaluate</param>
         /// <returns>Whether file name is valid</returns>
         private bool IsValidFileName(string fileName)
         {
@@ -348,31 +351,30 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="fileName">Name of file in which to save game data</param>
         /// <returns>String describing what happened</returns>
-        /// <exception cref="NotImplementedException"></exception>
         private string SaveGame(string fileName)
         {
-            // Set variable to full file name including extension
+            // Get full file name including extension
             string fullFileName = GetFullFileName(fileName);
 
             // If file already exists
             if (_fileSystem.File.Exists(fullFileName))
             {
-                return $"Cannot perform action because a file named {fileName} already exists";
+                return $"Cannot perform action because a file named {fileName} already exists"; // Return error message
             }
 
-            // Create dictionary of opponents and hiding places as strings
+            // Create dictionary of Opponents and hiding locations as strings
             Dictionary<string, string> opponentsAndHidingPlacesAsStrings = new Dictionary<string, string>();
-            foreach(KeyValuePair<Opponent, LocationWithHidingPlace> kvp in OpponentsAndHidingPlaces)
+            foreach(KeyValuePair<Opponent, LocationWithHidingPlace> kvp in OpponentsAndHidingLocations)
             {
                 opponentsAndHidingPlacesAsStrings.Add(kvp.Key.ToString(), kvp.Value.ToString());
             }
 
-            // Initialize object to store game state data
+            // Initialize SavedGame object to store game state data
             SavedGame savedGame = new SavedGame()
             {
                 PlayerLocation = CurrentLocation.ToString(),
                 MoveNumber = this.MoveNumber,
-                OpponentsAndHidingPlaces = opponentsAndHidingPlacesAsStrings,
+                OpponentsAndHidingLocations = opponentsAndHidingPlacesAsStrings,
                 FoundOpponents = this.FoundOpponents.Select((x) => x.ToString())
             };
 
@@ -387,16 +389,15 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="fileName">Name of file from which to load game data</param>
         /// <returns>String describing what happened</returns>
-        /// <exception cref="NotImplementedException"></exception>
         private string LoadGame(string fileName)
         {
-            // Set variable to full file name including extension
+            // Get full file name including extension
             string fullFileName = GetFullFileName(fileName);
 
             // If file does not exist
             if( !(_fileSystem.File.Exists(fullFileName)) )
             {
-                return "Cannot load game because file does not exist";
+                return "Cannot load game because file does not exist"; // Return error message
             }
 
             // Read text from file
@@ -410,20 +411,20 @@ namespace HideAndSeek
             {
                 savedGame = JsonSerializer.Deserialize<SavedGame>(fileText);
             } 
-            catch(InvalidDataException e) // if data for specific field (evauluated in property setter) is invalid
+            catch(InvalidDataException e) // If data for specific field (evauluated in property setter) is invalid
             {
-                return e.Message;
+                return e.Message; // Return exception's message as error message
             }
             catch(Exception e)
             {
-                // If problem due to JSON or an invalid error, return failure message
+                // If problem due to JSON or an invalid error
                 if(e is JsonException || e is InvalidOperationException)
                 {
-                    return "Cannot process because data is corrupt";
+                    return "Cannot process because data is corrupt"; // Return error message
                 }
-                else
+                else // If any other exception
                 {
-                    throw;
+                    throw; // Bubble up exception
                 }
             }
 
@@ -447,17 +448,17 @@ namespace HideAndSeek
             MoveNumber = savedGame.MoveNumber;
 
             // Restore dictionary of Opponents and their hiding places, creating new Opponent objects
-            OpponentsAndHidingPlaces = new Dictionary<Opponent, LocationWithHidingPlace>();
-            foreach(KeyValuePair<string, string> kvp in savedGame.OpponentsAndHidingPlaces)
+            OpponentsAndHidingLocations = new Dictionary<Opponent, LocationWithHidingPlace>();
+            foreach(KeyValuePair<string, string> kvp in savedGame.OpponentsAndHidingLocations)
             {
-                OpponentsAndHidingPlaces.Add(new Opponent(kvp.Key), (LocationWithHidingPlace)House.GetLocationByName(kvp.Value));
+                OpponentsAndHidingLocations.Add(new Opponent(kvp.Key), (LocationWithHidingPlace)House.GetLocationByName(kvp.Value));
             }
 
             // Restore list of found opponents
-            FoundOpponents.Clear(); // Clear list of found opponents
-            foreach(String opponent in savedGame.FoundOpponents)
+            FoundOpponents.Clear(); // Clear list of found Opponents
+            foreach(String opponent in savedGame.FoundOpponents) // For each found Opponent
             {
-                FoundOpponents.Add(OpponentsAndHidingPlaces.Keys.First((x) => x.Name == opponent)); // Add Opponent object with matching name to FoundOpponents list
+                FoundOpponents.Add(OpponentsAndHidingLocations.Keys.First((x) => x.Name == opponent)); // Add Opponent object with matching name to FoundOpponents list
             }
         }
 
@@ -468,13 +469,13 @@ namespace HideAndSeek
         /// <returns>String describing what happened</returns>
         private string DeleteGame(string fileName)
         {
-            // Set variable to full file name including extension
+            // Get full file name including extension
             string fullFileName = GetFullFileName(fileName);
 
             // If file does not exist
             if ( !(_fileSystem.File.Exists(fullFileName)) )
             {
-                return $"Could not delete game because file {fileName} does not exist";
+                return $"Could not delete game because file {fileName} does not exist"; // Return error message
             }
 
             // Delete file
