@@ -204,7 +204,7 @@ namespace HideAndSeek
             }
 
             // Return LocationWithHidingPlace
-            return opponentCurrentLocation as LocationWithHidingPlace;
+            return (LocationWithHidingPlace)opponentCurrentLocation;
         }
     }
 }
