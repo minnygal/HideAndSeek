@@ -7,25 +7,31 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// Class to represent a location with a hiding place (where an Opponent can hide) in the House
+    /// Class to represent a location with a hiding place where an Opponent can hide in the House
     /// 
-    /// CREDIT: adapted from HideAndSeek project's LocationWithHidingPlace class
-    ///         © 2023 Andrew Stellman and Jennifer Greene
-    ///         Published under the MIT License
-    ///         https://github.com/head-first-csharp/fourth-edition/blob/master/Code/Chapter_10/HideAndSeek_part_3/HideAndSeek/LocationWithHidingPlace.cs
-    ///         Link valid as of 02-25-2025
-    ///         
-    /// CHANGES:
-    /// -I renamed the parameters in the constructor for easier comprehension.
-    /// -I renamed the private list to opponentsHiding for easier comprehension.
-    /// -I renamed the Hide method to HideOpponent so it's easier to 
-    ///  differentiate between this class's hide method and Opponent's Hide method.
-    /// -I converted lambdas to regular method bodies for easier modification.
-    /// -I changed the return type for CheckHidingPlace.
-    /// -I made a local variable in CheckHidingPlace a specific type.
-    /// -I renamed a local variable in CheckHidingPlace for easier comprehension.
-    /// -I added/edited comments for easier reading.
+    /// CREDIT: adapted from Stellman and Greene's code
     /// </summary>
+
+    /** CREDIT
+     *  adapted from HideAndSeek project's LocationWithHidingPlace class
+     *  © 2023 Andrew Stellman and Jennifer Greene
+     *         Published under the MIT License
+     *         https://github.com/head-first-csharp/fourth-edition/blob/master/Code/Chapter_10/HideAndSeek_part_3/HideAndSeek/LocationWithHidingPlace.cs
+     *         Link valid as of 02-25-2025
+     **/
+
+    /** CHANGES
+     * -I renamed the parameters in the constructor for easier comprehension.
+     * -I renamed the private list to opponentsHiding for easier comprehension.
+     * -I renamed the Hide method to HideOpponent so it's easier to 
+        differentiate between this class's hide method and Opponent's Hide method.
+     * -I converted lambdas to regular method bodies for easier modification.
+     * -I changed the return type for CheckHidingPlace.
+     * -I made a local variable in CheckHidingPlace a specific type.
+     * -I renamed a local variable in CheckHidingPlace for easier comprehension.
+     * -I added/edited comments for easier reading.
+     * **/
+
     public class LocationWithHidingPlace : Location
     {
         /// <summary>
@@ -41,25 +47,24 @@ namespace HideAndSeek
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="roomName">Name of room hiding place is in</param>
+        /// <param name="locationName">Name of location hiding place is in</param>
         /// <param name="hidingPlaceDescription">Name of hiding place</param>
-        public LocationWithHidingPlace(string roomName, string hidingPlaceDescription) : base(roomName)
+        public LocationWithHidingPlace(string locationName, string hidingPlaceDescription) : base(locationName)
         {
             HidingPlace = hidingPlaceDescription;
         }
 
         /// <summary>
         /// Hide opponent in hiding place
-        /// Should only be called directly from Opponent.Hide
         /// </summary>
         /// <param name="opponent">Opponent to hide</param>
         public void HideOpponent(Opponent opponent)
         {
-            opponentsHiding.Add(opponent);
+            opponentsHiding.Add(opponent); // Add opponent to list of opponents hiding in this location
         }
 
         /// <summary>
-        /// Check hiding place for opponents (clears hiding place of all opponents)
+        /// Check hiding place for opponents (clear hiding place of all opponents)
         /// </summary>
         /// <returns>List of opponents found in hiding place</returns>
         public List<Opponent> CheckHidingPlace()
