@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// Static class to represent a House with Locations through which the user can navigate
+    /// Static class to represent a house with Locations through which the user can navigate
     /// 
     /// CREDIT: adapted from HideAndSeek project's House class
     ///         © 2023 Andrew Stellman and Jennifer Greene
@@ -39,10 +39,13 @@ namespace HideAndSeek
         public static Location Entry { get; private set; }
 
         /// <summary>
-        /// List of Locations in House
+        /// List of all Locations in House
         /// </summary>
-        public static List<Location> Locations { get; private set; }
+        public static List<Location> Locations { get; set; }
 
+        /// <summary>
+        /// Random number generator (used for returning random hiding place)
+        /// </summary>
         public static Random Random { get; set; } = new Random();
 
         /// <summary>
@@ -59,20 +62,17 @@ namespace HideAndSeek
             LocationWithHidingPlace kitchen = hallway.AddExit(Direction.Northwest, "Kitchen", "next to the stove");
             LocationWithHidingPlace bathroom = hallway.AddExit(Direction.North, "Bathroom", "behind the door");
             LocationWithHidingPlace livingRoom = hallway.AddExit(Direction.South, "Living Room", "behind the sofa");
-
-            // Create landing
-            Location landing = new Location("Landing");
-
-            // Connect Landing to new locations: Attic, Hallway, Kids Room, Master Bedroom, Nursery, Pantry, Second Bathroom
+            Location landing = hallway.AddExit(Direction.Up, "Landing");
+            
+            // Connect Landing to new locations: Attic, Kids Room, Master Bedroom, Nursery, Pantry, Second Bathroom
             LocationWithHidingPlace attic = landing.AddExit(Direction.Up, "Attic", "in a trunk");
-            landing.AddExit(Direction.Down, hallway);
             LocationWithHidingPlace kidsRoom = landing.AddExit(Direction.Southeast, "Kids Room", "in the bunk beds");
             LocationWithHidingPlace masterBedroom = landing.AddExit(Direction.Northwest, "Master Bedroom", "under the bed");
             LocationWithHidingPlace nursery = landing.AddExit(Direction.Southwest, "Nursery", "behind the changing table");
             LocationWithHidingPlace pantry = landing.AddExit(Direction.South, "Pantry", "inside a cabinet");
             LocationWithHidingPlace secondBathroom = landing.AddExit(Direction.West, "Second Bathroom", "in the shower");
 
-            // Connect Master Bodroom to new location: Master Bath
+            // Connect Master Bedroom to new location: Master Bath
             LocationWithHidingPlace masterBath = masterBedroom.AddExit(Direction.East, "Master Bath", "in the tub");
 
             // Add Locations to Locations list
@@ -120,7 +120,7 @@ namespace HideAndSeek
         /// Get Location object by its Name property
         /// </summary>
         /// <param name="name">Name of Location</param>
-        /// <returns>Location with specified name or Entry if no match found</returns>
+        /// <returns>Location with specified name (or Entry if no match found)</returns>
         public static Location GetLocationByName(string name)
         {
             return Locations.Where(l => l.Name == name).FirstOrDefault(Entry);
@@ -130,27 +130,27 @@ namespace HideAndSeek
         /// Get random exit from specified location
         /// </summary>
         /// <param name="location">Location from which to find random exit</param>
-        /// <returns>Random exit Location</returns>
+        /// <returns>Location to which random exit leads</returns>
         public static Location GetRandomExit(Location location)
         {
-            IDictionary<Direction, Location> exitList = location.Exits.OrderBy(x => x.Key).ToDictionary(); // Get collection of all exits from Location
+            IDictionary<Direction, Location> exitList = location.Exits.OrderBy(x => x.Key).ToDictionary(); // Get collection of all exits from Location ordered by name
             return exitList.ElementAt(Random.Next(exitList.Count)).Value; // Return random Location from exits collection
         }
 
         /// <summary>
-        /// Clear each LocationWithHidingPlace of opponents.
+        /// Clear all LocationWithHidingPlaces of Opponents.
         /// </summary>
         public static void ClearHidingPlaces()
         {
             // For each LocationWithHidingPlace
             foreach(LocationWithHidingPlace location in Locations.Where((l) => l.GetType() == typeof(LocationWithHidingPlace)))
             {
-                location.CheckHidingPlace(); // Check and clear hiding place
+                location.CheckHidingPlace(); // Check hiding place which clears hiding place as well
             }
         }
 
         /// <summary>
-        /// Get a random hiding place
+        /// Get a random location with hiding place
         /// 
         /// CREDIT: adapted from HideAndSeek project's Opponent class's Hide method
         ///         © 2023 Andrew Stellman and Jennifer Greene
@@ -167,26 +167,26 @@ namespace HideAndSeek
         /// <returns>Random location with hiding place</returns>
         public static LocationWithHidingPlace GetRandomHidingPlace()
         {
-            // Current location of opponent moving through House to find hiding place
-            Location currentLocation = House.Entry;
+            // Current Location of Opponent moving through House to find hiding place
+            Location opponentCurrentLocation = Entry;
 
-            // Minimum number of moves opponent makes through the house to find a hiding spot
-            int minNumberOfMoves = House.Random.Next(10, 51);
+            // Minimum number of moves Opponent must make through House to find a LocationWithHidingPlace
+            int minNumberOfMoves = Random.Next(10, 51);
 
-            // Move through house via random exits between 10 and 50 times (inclusive)
+            // Move through Locations in House via random exits between 10 and 50 times (inclusive)
             for (int currentMove = 0; currentMove < minNumberOfMoves; currentMove++)
             {
-                currentLocation = House.GetRandomExit(currentLocation);
+                opponentCurrentLocation = GetRandomExit(opponentCurrentLocation);
             }
 
-            // Keep moving until a location with hiding place is found
-            while (currentLocation.GetType() != typeof(LocationWithHidingPlace))
+            // Keep moving until Opponent is in LocationWithHidingPlace
+            while (opponentCurrentLocation.GetType() != typeof(LocationWithHidingPlace))
             {
-                currentLocation = House.GetRandomExit(currentLocation);
+                opponentCurrentLocation = GetRandomExit(opponentCurrentLocation);
             }
 
-            // Return hiding place
-            return currentLocation as LocationWithHidingPlace;
+            // Return LocationWithHidingPlace
+            return opponentCurrentLocation as LocationWithHidingPlace;
         }
     }
 }
