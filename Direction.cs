@@ -45,7 +45,7 @@
      *         Link valid as of 02-25-2025
      * **/
 
-    public static class Extensions
+    public static class DirectionExtensions
     {
         /// <summary>
         /// Directions whose descriptions should be output without extra words
