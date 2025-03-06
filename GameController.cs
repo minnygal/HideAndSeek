@@ -110,7 +110,7 @@ namespace HideAndSeek
                 }
                 else // if Opponents have been opponentsFound
                 {
-                    message += Environment.NewLine + $"You have found {FoundOpponents.Count} of {OpponentsAndHidingPlaces.Count()} opponent{(OpponentsAndHidingPlaces.Count() == 1 ? "" : "s")}"
+                    message += Environment.NewLine + $"You have found {FoundOpponents.Count} of {OpponentsAndHidingLocations.Count()} opponent{(OpponentsAndHidingLocations.Count() == 1 ? "" : "s")}"
                             + ": " + String.Join(", ", FoundOpponents); // Add information about Opponents opponentsFound to message
                 }
 
@@ -132,7 +132,7 @@ namespace HideAndSeek
         /// <summary>
         /// Opponents and their hiding places
         /// </summary>
-        public Dictionary<Opponent, LocationWithHidingPlace> OpponentsAndHidingPlaces { get; private set; } = new Dictionary<Opponent, LocationWithHidingPlace>();
+        public Dictionary<Opponent, LocationWithHidingPlace> OpponentsAndHidingLocations { get; private set; } = new Dictionary<Opponent, LocationWithHidingPlace>();
             
         /// <summary>
         /// List of opponents the player has opponentsFound so far
@@ -142,7 +142,7 @@ namespace HideAndSeek
         /// <summary>
         /// Returns true if the game is over
         /// </summary>
-        public bool GameOver => OpponentsAndHidingPlaces.Count() == FoundOpponents.Count();
+        public bool GameOver => OpponentsAndHidingLocations.Count() == FoundOpponents.Count();
 
         /// <summary>
         /// Constructor to start game with default file system
@@ -159,11 +159,11 @@ namespace HideAndSeek
             _fileSystem = fileSystem;
 
             // Create Opponents and store them in dictionary as keys
-            OpponentsAndHidingPlaces.Add(new Opponent("Joe"), null);
-            OpponentsAndHidingPlaces.Add(new Opponent("Bob"), null);
-            OpponentsAndHidingPlaces.Add(new Opponent("Ana"), null);
-            OpponentsAndHidingPlaces.Add(new Opponent("Owen"), null);
-            OpponentsAndHidingPlaces.Add(new Opponent("Jimmy"), null);
+            OpponentsAndHidingLocations.Add(new Opponent("Joe"), null);
+            OpponentsAndHidingLocations.Add(new Opponent("Bob"), null);
+            OpponentsAndHidingLocations.Add(new Opponent("Ana"), null);
+            OpponentsAndHidingLocations.Add(new Opponent("Owen"), null);
+            OpponentsAndHidingLocations.Add(new Opponent("Jimmy"), null);
 
             // Start game
             RestartGame();
@@ -196,14 +196,14 @@ namespace HideAndSeek
             Dictionary<Opponent, LocationWithHidingPlace> opponentsAndNewHidingLocations = new Dictionary<Opponent, LocationWithHidingPlace>();
 
             // Hide Opponents in hiding locations and add hiding locations to dictionary
-            for (int i = 0; i < OpponentsAndHidingPlaces.Count(); i++)
+            for (int i = 0; i < OpponentsAndHidingLocations.Count(); i++)
             {
-                hidingPlaces.ElementAt(i).HideOpponent(OpponentsAndHidingPlaces.ElementAt(i).Key);
-                opponentsAndNewHidingLocations.Add(OpponentsAndHidingPlaces.ElementAt(i).Key, hidingPlaces.ElementAt(i));
+                hidingPlaces.ElementAt(i).HideOpponent(OpponentsAndHidingLocations.ElementAt(i).Key);
+                opponentsAndNewHidingLocations.Add(OpponentsAndHidingLocations.ElementAt(i).Key, hidingPlaces.ElementAt(i));
             }
 
             // Set Opponents and hiding locations dictionary to dictionary with new hiding locations
-            OpponentsAndHidingPlaces = opponentsAndNewHidingLocations;
+            OpponentsAndHidingLocations = opponentsAndNewHidingLocations;
         }
 
         /// <summary>
@@ -215,7 +215,7 @@ namespace HideAndSeek
             List<LocationWithHidingPlace> hidingLocations = new List<LocationWithHidingPlace>();
 
             // Populate list with random hiding locations (1 per Opponent)
-            for(int i = 0; i < OpponentsAndHidingPlaces.Count(); i++)
+            for(int i = 0; i < OpponentsAndHidingLocations.Count(); i++)
             {
                 hidingLocations.Add(House.GetRandomLocationWithHidingPlace());
             }
@@ -364,7 +364,7 @@ namespace HideAndSeek
 
             // Create dictionary of Opponents and hiding locations as strings
             Dictionary<string, string> opponentsAndHidingPlacesAsStrings = new Dictionary<string, string>();
-            foreach(KeyValuePair<Opponent, LocationWithHidingPlace> kvp in OpponentsAndHidingPlaces)
+            foreach(KeyValuePair<Opponent, LocationWithHidingPlace> kvp in OpponentsAndHidingLocations)
             {
                 opponentsAndHidingPlacesAsStrings.Add(kvp.Key.ToString(), kvp.Value.ToString());
             }
@@ -448,17 +448,17 @@ namespace HideAndSeek
             MoveNumber = savedGame.MoveNumber;
 
             // Restore dictionary of Opponents and their hiding places, creating new Opponent objects
-            OpponentsAndHidingPlaces = new Dictionary<Opponent, LocationWithHidingPlace>();
+            OpponentsAndHidingLocations = new Dictionary<Opponent, LocationWithHidingPlace>();
             foreach(KeyValuePair<string, string> kvp in savedGame.OpponentsAndHidingLocations)
             {
-                OpponentsAndHidingPlaces.Add(new Opponent(kvp.Key), (LocationWithHidingPlace)House.GetLocationByName(kvp.Value));
+                OpponentsAndHidingLocations.Add(new Opponent(kvp.Key), (LocationWithHidingPlace)House.GetLocationByName(kvp.Value));
             }
 
             // Restore list of found opponents
             FoundOpponents.Clear(); // Clear list of found Opponents
             foreach(String opponent in savedGame.FoundOpponents) // For each found Opponent
             {
-                FoundOpponents.Add(OpponentsAndHidingPlaces.Keys.First((x) => x.Name == opponent)); // Add Opponent object with matching name to FoundOpponents list
+                FoundOpponents.Add(OpponentsAndHidingLocations.Keys.First((x) => x.Name == opponent)); // Add Opponent object with matching name to FoundOpponents list
             }
         }
 
