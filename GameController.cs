@@ -205,7 +205,7 @@ namespace HideAndSeek
             // Populate list with random hiding places (1 per Opponent)
             for(int i = 0; i < OpponentsAndHidingPlaces.Count(); i++)
             {
-                hidingPlaces.Add(House.GetRandomHidingPlace());
+                hidingPlaces.Add(House.GetRandomLocationWithHidingPlace());
             }
 
             // Hide Opponents in hiding places

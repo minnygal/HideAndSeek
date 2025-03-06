@@ -162,10 +162,11 @@ namespace HideAndSeek
         /// -I renamed variables and made them type specific for easier comprehension.
         /// -I used GetType and typeof instead of "is" in while loop (just my approach).
         /// -I removed the diagnostic debug line of code because it's unnecessary right now.
+        /// -I removed House class specifiers before method calls (unnecessary in House class).
         /// -I added comments for easier reading.
         /// </summary>
         /// <returns>Random location with hiding place</returns>
-        public static LocationWithHidingPlace GetRandomHidingPlace()
+        public static LocationWithHidingPlace GetRandomLocationWithHidingPlace()
         {
             // Current Location of Opponent moving through House to find hiding place
             Location opponentCurrentLocation = Entry;
