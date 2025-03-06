@@ -128,10 +128,10 @@ namespace HideAndSeek
         /// Get Location object by its Name property
         /// </summary>
         /// <param name="name">Name of Location</param>
-        /// <returns>Location with specified name (or Entry if no match found)</returns>
+        /// <returns>Location with specified name (or null if not found)</returns>
         public static Location GetLocationByName(string name)
         {
-            return Locations.Where(l => l.Name == name).FirstOrDefault(Entry);
+            return Locations.Where(l => l.Name == name).FirstOrDefault();
         }
 
         /// <summary>
