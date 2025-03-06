@@ -27,6 +27,7 @@ namespace HideAndSeek
      * -I added a method to tell whether a Location exists to make restoring a saved game easier.
      * -I added a method to tell whether a LocationWithHidingPlace exists to make restoring a saved game easier.
      * -I used a shorter code approach in GetLocationByName.
+     * -I added a method to get a LocationWithHidingPlace by name.
      * -I renamed a method to GetRandomExit to follow project method naming convention.
      * -I used ElementAt instead of Skip in GetRandomExit.
      * -I added a method to get a random hiding place using logic from 
@@ -130,6 +131,16 @@ namespace HideAndSeek
         public static Location GetLocationByName(string name)
         {
             return Locations.Where(l => l.Name == name).FirstOrDefault(Entry);
+        }
+
+        /// <summary>
+        /// Get LocationWithHidingPlace object by its Name property
+        /// </summary>
+        /// <param name="name">Name of LocationWithHidingPlace</param>
+        /// <returns>LocationWithHidingPlace with specified name (or null if not found)</returns>
+        public static LocationWithHidingPlace GetLocationWithHidingPlaceByName(string name)
+        {
+            return (LocationWithHidingPlace) Locations.Where((x) => x.GetType() == typeof(LocationWithHidingPlace) && x.Name == name).FirstOrDefault();
         }
 
         /// <summary>
