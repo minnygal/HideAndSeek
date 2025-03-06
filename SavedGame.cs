@@ -9,7 +9,8 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// Class to store a saved game (stores state of game)
+    /// Class to represent a saved game
+    /// Stores the state of a game and is serializable
     /// 
     /// CREDIT: adapted from HideAndSeek project's SavedGame class
     ///         © 2023 Andrew Stellman and Jennifer Greene
@@ -24,12 +25,17 @@ namespace HideAndSeek
     /// -I added data validation in each setter method.
     /// -I added a parameterless constructor for JSON deserialization.
     /// -I added comments for easier reading.
+    /// 
+    /// Note to self: If add parameterized constructor in the future, 
+    /// remember to add parameterless constructor for JSON deserializer.
     /// </summary>
     public class SavedGame
     {
         private string _playerLocation = "";
 
-        // Player's current location
+        /// <summary>
+        /// Player's current location
+        /// </summary>
         public required string PlayerLocation { 
             get 
             {
@@ -50,7 +56,9 @@ namespace HideAndSeek
 
         private int _moveNumber;
 
-        // Current move number
+        /// <summary>
+        /// Current move number
+        /// </summary>
         public required int MoveNumber
         {
             get
@@ -72,7 +80,10 @@ namespace HideAndSeek
 
         private Dictionary<string, string> _opponentsAndHidingPlaces;
 
-        // All opponents (opponent name and hiding place name)
+        /// <summary>
+        /// Opponents and their locations with hiding place
+        /// (opponent name as key, location with hiding place name as value)
+        /// </summary>
         public required Dictionary<string, string> OpponentsAndHidingPlaces 
         { 
             get
@@ -81,7 +92,7 @@ namespace HideAndSeek
             }
             set
             {
-                // If dictionary is empty, throw exception
+                // If no opponents, throw exception
                 if ( value.Count == 0 )
                 {
                     throw new InvalidDataException("Cannot process because data is corrupt - no opponents");
@@ -96,14 +107,16 @@ namespace HideAndSeek
                     }
                 }
 
-                // Set dictionary of all opponents
+                // Set dictionary of all opponents and their locations
                 _opponentsAndHidingPlaces = value;
             }
         }
 
         private IEnumerable<string> _foundOpponents;
 
-        // All found opponents' names
+        /// <summary>
+        /// All found opponents' names
+        /// </summary>
         public required IEnumerable<string> FoundOpponents
         {
             get
@@ -112,7 +125,7 @@ namespace HideAndSeek
             }
             set
             {
-                // If any of the opponents do not exist in OpponentsAndHidingPlaces dictionary, throw exception
+                // If any found opponents do not exist in OpponentsAndHidingPlaces dictionary, throw exception
                 foreach (string foundOpponent in value)
                 {
                     if ( !(OpponentsAndHidingPlaces.Keys.Contains(foundOpponent)) )
@@ -125,8 +138,5 @@ namespace HideAndSeek
                 _foundOpponents = value;
             }
         }
-
-        // Default constructor for JSON deserializer
-        public SavedGame() {}
     }
 }
