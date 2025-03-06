@@ -41,25 +41,24 @@ namespace HideAndSeek
         /// <summary>
         /// Constructor
         /// </summary>
-        /// <param name="roomName">Name of room hiding place is in</param>
+        /// <param name="locationName">Name of location hiding place is in</param>
         /// <param name="hidingPlaceDescription">Name of hiding place</param>
-        public LocationWithHidingPlace(string roomName, string hidingPlaceDescription) : base(roomName)
+        public LocationWithHidingPlace(string locationName, string hidingPlaceDescription) : base(locationName)
         {
             HidingPlace = hidingPlaceDescription;
         }
 
         /// <summary>
         /// Hide opponent in hiding place
-        /// Should only be called directly from Opponent.Hide
         /// </summary>
         /// <param name="opponent">Opponent to hide</param>
         public void HideOpponent(Opponent opponent)
         {
-            opponentsHiding.Add(opponent);
+            opponentsHiding.Add(opponent); // Add opponent to list of opponents hiding in this location
         }
 
         /// <summary>
-        /// Check hiding place for opponents (clears hiding place of all opponents)
+        /// Check hiding place for opponents (clear hiding place of all opponents)
         /// </summary>
         /// <returns>List of opponents found in hiding place</returns>
         public List<Opponent> CheckHidingPlace()
