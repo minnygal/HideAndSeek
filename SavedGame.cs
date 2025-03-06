@@ -110,7 +110,7 @@ namespace HideAndSeek
                 {
                     if( !(House.DoesLocationWithHidingPlaceExist(opponentInfo.Value)) )
                     {
-                        throw new InvalidDataException("Cannot process because data is corrupt - invalid hiding place for opponent");
+                        throw new InvalidDataException("Cannot process because data is corrupt - invalid hiding location for opponent");
                     }
                 }
 
