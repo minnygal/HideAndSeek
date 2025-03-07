@@ -107,7 +107,13 @@ namespace HideAndSeek
         /// <summary>
         /// A prompt to display to the player
         /// </summary>
-        public string Prompt => $"{MoveNumber}: Which direction do you want to go (or type 'check'): ";
+        public string Prompt
+        {
+            get
+            {
+                return $"{MoveNumber}: Which direction do you want to go{( ( CurrentLocation.GetType() == typeof(LocationWithHidingPlace) ) ? " (or type 'check')" : "")}: ";
+            }
+        } 
 
         /// <summary>
         /// The number of moves the player has made
