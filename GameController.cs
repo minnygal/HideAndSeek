@@ -371,7 +371,7 @@ namespace HideAndSeek
             // If file does not exist
             if( !(_fileSystem.File.Exists(fullFileName)) )
             {
-                return "Cannot load game because file does not exist"; // Return error message
+                return $"Cannot load game because file {fileName} does not exist"; // Return error message
             }
 
             // Read text from file
