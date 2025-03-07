@@ -157,7 +157,7 @@ namespace HideAndSeek
         /// <summary>
         /// Restart game from beginning (Entry)
         /// </summary>
-        private void RestartGame()
+        public void RestartGame()
         {
             // Hide opponents in random places
             RehideAllOpponents();
