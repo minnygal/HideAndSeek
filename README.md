@@ -37,7 +37,7 @@ The Hide and Seek Game Console app allows a user (playing the role of the seeker
 <a name="install"></a>
 ### How to install
 
-Download the latest release's .zip file to your machine and unzip it.
+[Find the latest release](https://github.com/minnygal/HideAndSeek/releases), download its .zip file to your machine, unzip it.
 
 
 <a name="requirements"></a>
@@ -52,12 +52,12 @@ Use any of the following 3 ways to run the app.  You can view more details about
 
 <a name="run-double-click"></a>
 ### Run executable by double-clicking on it
-Double-click the executable file HideAndSeekConsole.exe (extension may not display) in the Publish directory.
+Double-click the executable file HideAndSeekConsole.exe (extension may not display) in the latest release's directory.
 
 
 <a name="run-exe-cl"></a>
 ### Run executable from command line
-Navigate to the Publish directory via the command line interface and enter this command to run the executable:
+Navigate to the latest release's directory via the command line interface and enter this command to run the executable:
 ```bash
 HideAndSeekConsole.exe
 ```
@@ -65,7 +65,7 @@ HideAndSeekConsole.exe
 
 <a name="run-dll-cl"></a>
 ### Run app using the dotnet command from command line
-Navigate to the Publish directory via the command line interface and enter this command in the command prompt:
+Navigate to the latest release's directory via the command line interface and enter this command in the command prompt:
 ```bash
 dotnet HideAndSeekConsole.dll
 ```
