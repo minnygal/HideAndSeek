@@ -1,19 +1,26 @@
-﻿using System;
+﻿using Moq;
+using System;
 using System.Collections.Generic;
+using System.IO.Abstractions;
+using System.IO.Abstractions.TestingHelpers;
+using System.Text.Json;
 
 namespace HideAndSeek
 {
     /// <summary>
-    /// SavedGame tests to test setters for SavedGame public properties
+    /// SavedGame tests to test setters for SavedGame public properties and object deserialization
     /// </summary>
     public class SavedGameTests
     {
         private Dictionary<string, string> validOpponentsAndHidingPlacesDictionary;
+        private House house;
 
         [SetUp]
         public void SetUp()
         {
-            
+            // Create House
+            house = new House();
+
             // Initialize dictionary to opponent names and valid hiding places
             validOpponentsAndHidingPlacesDictionary = new Dictionary<string, string>();
             validOpponentsAndHidingPlacesDictionary.Add("Joe", "Kitchen");
@@ -29,6 +36,7 @@ namespace HideAndSeek
             // Create SavedGame object with valid player location
             SavedGame savedGame = new SavedGame()
             {
+                HouseFileName = "DefaultHouse",
                 PlayerLocation = playerLocation,
                 MoveNumber = 1,
                 OpponentsAndHidingLocations = validOpponentsAndHidingPlacesDictionary,
@@ -50,6 +58,7 @@ namespace HideAndSeek
                 {
                     SavedGame savedGame = new SavedGame()
                     {
+                        HouseFileName = "DefaultHouse",
                         PlayerLocation = "Alaska",
                         MoveNumber = 1,
                         OpponentsAndHidingLocations = validOpponentsAndHidingPlacesDictionary,
@@ -72,6 +81,7 @@ namespace HideAndSeek
             // Create SavedGame object with valid move number
             SavedGame savedGame = new SavedGame()
             {
+                HouseFileName = "DefaultHouse",
                 PlayerLocation = "Entry",
                 MoveNumber = moveNumber,
                 OpponentsAndHidingLocations = validOpponentsAndHidingPlacesDictionary,
@@ -95,6 +105,7 @@ namespace HideAndSeek
                 {
                     SavedGame savedGame = new SavedGame()
                     {
+                        HouseFileName = "DefaultHouse",
                         PlayerLocation = "Entry",
                         MoveNumber = moveNumber,
                         OpponentsAndHidingLocations = validOpponentsAndHidingPlacesDictionary,
@@ -122,6 +133,7 @@ namespace HideAndSeek
             // Create SavedGame object with valid opponents and hiding places dictionary
             SavedGame savedGame = new SavedGame()
             {
+                HouseFileName = "DefaultHouse",
                 PlayerLocation = "Entry",
                 MoveNumber = 1,
                 OpponentsAndHidingLocations = validOpponentsAndHidingPlaces,
@@ -143,6 +155,7 @@ namespace HideAndSeek
                 {
                     SavedGame savedGame = new SavedGame()
                     {
+                        HouseFileName = "DefaultHouse",
                         PlayerLocation = "Entry",
                         MoveNumber = 1,
                         OpponentsAndHidingLocations = new Dictionary<string, string>(),
@@ -179,6 +192,7 @@ namespace HideAndSeek
                 {
                     SavedGame savedGame = new SavedGame()
                     {
+                        HouseFileName = "DefaultHouse",
                         PlayerLocation = "Entry",
                         MoveNumber = 1,
                         OpponentsAndHidingLocations = invalidOpponentsAndHidingPlaces,
@@ -210,6 +224,7 @@ namespace HideAndSeek
                 {
                     SavedGame savedGame = new SavedGame()
                     {
+                        HouseFileName = "DefaultHouse",
                         PlayerLocation = "Entry",
                         MoveNumber = 1,
                         OpponentsAndHidingLocations = invalidOpponentsAndHidingPlaces,
@@ -229,6 +244,7 @@ namespace HideAndSeek
             // Create SavedGame object with valid empty list for FoundOpponents
             SavedGame savedGame = new SavedGame()
             {
+                HouseFileName = "DefaultHouse",
                 PlayerLocation = "Entry",
                 MoveNumber = 1,
                 OpponentsAndHidingLocations = validOpponentsAndHidingPlacesDictionary,
@@ -264,6 +280,7 @@ namespace HideAndSeek
             // Create SavedGame object with valid found opponents list
             SavedGame savedGame = new SavedGame()
             {
+                HouseFileName = "DefaultHouse",
                 PlayerLocation = "Entry",
                 MoveNumber = 1,
                 OpponentsAndHidingLocations = validOpponentsAndHidingPlaces,
@@ -311,6 +328,7 @@ namespace HideAndSeek
                 {
                     SavedGame savedGame = new SavedGame()
                     {
+                        HouseFileName = "DefaultHouse",
                         PlayerLocation = "Entry",
                         MoveNumber = 1,
                         OpponentsAndHidingLocations = validOpponentsAndHidingPlaces,
@@ -320,6 +338,38 @@ namespace HideAndSeek
 
                 // Assert that exception message is as expected
                 Assert.That(exception.Message, Is.EqualTo("Cannot process because data is corrupt - found opponent is not an opponent"));
+            });
+        }
+
+        [Test]
+        public void Test_SavedGame_Deserialization()
+        {
+            // Initialize variable to text stored in mock file
+            string textInFile = "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"Entry\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[]}";
+
+            // Create variable to store success message or exception message (if exception thrown)
+            string message = "success";
+
+            // Create variable to store SavedGame object
+            SavedGame savedGame = null;
+
+            // Attempt to deserialize text from file into SavedGame object
+            try
+            {
+                savedGame = JsonSerializer.Deserialize<SavedGame>(textInFile);
+            } catch (Exception e)
+            {
+                message = e.Message; // Set message variable to exception message
+            }
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(message, Is.EqualTo("success"));
+                Assert.That(savedGame.HouseFileName, Is.EqualTo("DefaultHouse"));
+                Assert.That(savedGame.PlayerLocation, Is.EqualTo("Entry"));
+                Assert.That(savedGame.MoveNumber, Is.EqualTo(1));
+                Assert.That(savedGame.OpponentsAndHidingLocations.Count(), Is.EqualTo(5));
+                Assert.That(savedGame.FoundOpponents, Is.Empty);
             });
         }
     }

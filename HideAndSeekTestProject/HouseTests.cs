@@ -15,6 +15,14 @@ namespace HideAndSeek
     [TestFixture]
     public class HouseTests
     {
+        private House house;
+
+        [SetUp] 
+        public void SetUp()
+        {
+            house = new House();
+        }
+
         /// <summary>
         /// Assert that layout of House is as expected using House's GetExit method and Location's Name property
         /// 
@@ -38,14 +46,14 @@ namespace HideAndSeek
             Assert.Multiple(() =>
             {
                 // Assert that name of Entry is correct
-                Assert.That(House.Entry.Name, Is.EqualTo("Entry"), "name of Entry");
+                Assert.That(house.Entry.Name, Is.EqualTo("Entry"), "name of Entry");
 
                 // Assert that Garage is located "Out" from Entry
-                var garage = House.Entry.GetExit(Direction.Out);
+                var garage = house.Entry.GetExit(Direction.Out);
                 Assert.That(garage.Name, Is.EqualTo("Garage"), "Garage is Out from Entry");
 
                 // Assert that Hallway is located "East" of Entry
-                var hallway = House.Entry.GetExit(Direction.East);
+                var hallway = house.Entry.GetExit(Direction.East);
                 Assert.That(hallway.Name, Is.EqualTo("Hallway"), "Hallway is East of Entry");
 
                 // Assert that Kitchen is located "Northwest" of Hallway
@@ -100,10 +108,10 @@ namespace HideAndSeek
         {
             Assert.Multiple(() =>
             {
-                Assert.That(House.GetLocationByName("Entry").Name, Is.EqualTo("Entry"), "get Entry");
-                Assert.That(House.GetLocationByName("Attic").Name, Is.EqualTo("Attic"), "get Attic");
-                Assert.That(House.GetLocationByName("Garage").Name, Is.EqualTo("Garage"), "get Garage");
-                Assert.That(House.GetLocationByName("Master Bedroom").Name, Is.EqualTo("Master Bedroom"), "get Master Bedroom");
+                Assert.That(house.GetLocationByName("Entry").Name, Is.EqualTo("Entry"), "get Entry");
+                Assert.That(house.GetLocationByName("Attic").Name, Is.EqualTo("Attic"), "get Attic");
+                Assert.That(house.GetLocationByName("Garage").Name, Is.EqualTo("Garage"), "get Garage");
+                Assert.That(house.GetLocationByName("Master Bedroom").Name, Is.EqualTo("Master Bedroom"), "get Master Bedroom");
             });
         }
 
@@ -113,9 +121,9 @@ namespace HideAndSeek
         {
             Assert.Multiple(() =>
             {
-                Assert.That(House.GetLocationByName("Secret Library"), Is.Null, "try \"Secret Library\"");
-                Assert.That(House.GetLocationByName("master bedroom"), Is.Null, "try \"master bedroom\"");
-                Assert.That(House.GetLocationByName("MasterBedroom"), Is.Null, "try \"MasterBedroom\"");
+                Assert.That(house.GetLocationByName("Secret Library"), Is.Null, "try \"Secret Library\"");
+                Assert.That(house.GetLocationByName("master bedroom"), Is.Null, "try \"master bedroom\"");
+                Assert.That(house.GetLocationByName("MasterBedroom"), Is.Null, "try \"MasterBedroom\"");
             });
         }
 
@@ -125,10 +133,10 @@ namespace HideAndSeek
         {
             Assert.Multiple(() =>
             {
-                Assert.That(House.GetLocationWithHidingPlaceByName("Pantry").Name, Is.EqualTo("Pantry"), "get Pantry");
-                Assert.That(House.GetLocationWithHidingPlaceByName("Attic").Name, Is.EqualTo("Attic"), "get Attic");
-                Assert.That(House.GetLocationWithHidingPlaceByName("Garage").Name, Is.EqualTo("Garage"), "get Garage");
-                Assert.That(House.GetLocationWithHidingPlaceByName("Master Bedroom").Name, Is.EqualTo("Master Bedroom"), "get Master Bedroom");
+                Assert.That(house.GetLocationWithHidingPlaceByName("Pantry").Name, Is.EqualTo("Pantry"), "get Pantry");
+                Assert.That(house.GetLocationWithHidingPlaceByName("Attic").Name, Is.EqualTo("Attic"), "get Attic");
+                Assert.That(house.GetLocationWithHidingPlaceByName("Garage").Name, Is.EqualTo("Garage"), "get Garage");
+                Assert.That(house.GetLocationWithHidingPlaceByName("Master Bedroom").Name, Is.EqualTo("Master Bedroom"), "get Master Bedroom");
             });
         }
 
@@ -138,9 +146,9 @@ namespace HideAndSeek
         {
             Assert.Multiple(() =>
             {
-                Assert.That(House.GetLocationWithHidingPlaceByName("Entry"), Is.Null, "try \"Entry\"");
-                Assert.That(House.GetLocationWithHidingPlaceByName("Hallway"), Is.Null, "try \"Hallway\"");
-                Assert.That(House.GetLocationWithHidingPlaceByName("Landing"), Is.Null, "try \"Landing\"");
+                Assert.That(house.GetLocationWithHidingPlaceByName("Entry"), Is.Null, "try \"Entry\"");
+                Assert.That(house.GetLocationWithHidingPlaceByName("Hallway"), Is.Null, "try \"Hallway\"");
+                Assert.That(house.GetLocationWithHidingPlaceByName("Landing"), Is.Null, "try \"Landing\"");
             });
         }
 
@@ -150,9 +158,9 @@ namespace HideAndSeek
         {
             Assert.Multiple(() =>
             {
-                Assert.That(House.GetLocationWithHidingPlaceByName("Secret Library"), Is.Null, "try \"Secret Library\"");
-                Assert.That(House.GetLocationWithHidingPlaceByName("master bedroom"), Is.Null, "try \"master bedroom\"");
-                Assert.That(House.GetLocationWithHidingPlaceByName("MasterBedroom"), Is.Null, "try \"MasterBedroom\"");
+                Assert.That(house.GetLocationWithHidingPlaceByName("Secret Library"), Is.Null, "try \"Secret Library\"");
+                Assert.That(house.GetLocationWithHidingPlaceByName("master bedroom"), Is.Null, "try \"master bedroom\"");
+                Assert.That(house.GetLocationWithHidingPlaceByName("MasterBedroom"), Is.Null, "try \"MasterBedroom\"");
             });
         }
 
@@ -160,35 +168,35 @@ namespace HideAndSeek
         [Category("House DoesLocationExist Success")]
         public void Test_House_DoesLocationExist_ReturnsTrue() 
         {
-            Assert.That(House.DoesLocationExist("Entry"), Is.True);
+            Assert.That(house.DoesLocationExist("Entry"), Is.True);
         }
 
         [Test]
         [Category("House DoesLocationExist Failure")]
         public void Test_House_DoesLocationExist_ReturnsFalse()
         {
-            Assert.That(House.DoesLocationExist("Dungeon"), Is.False);
+            Assert.That(house.DoesLocationExist("Dungeon"), Is.False);
         }
 
         [Test]
         [Category("House DoesLocationWithHidingPlaceExist Success")]
         public  void Test_House_DoesLocationWithHidingPlaceExist_ReturnsTrue()
         {
-            Assert.That(House.DoesLocationWithHidingPlaceExist("Pantry"), Is.True);
+            Assert.That(house.DoesLocationWithHidingPlaceExist("Pantry"), Is.True);
         }
 
         [Test]
         [Category("House DoesLocationWithHidingPlaceExist Failure")]
         public void Test_House_DoesLocationWithHidingPlaceExist_ReturnsFalse_WhenNoLocationExists()
         {
-            Assert.That(House.DoesLocationWithHidingPlaceExist("Dungeon"), Is.False);
+            Assert.That(house.DoesLocationWithHidingPlaceExist("Dungeon"), Is.False);
         }
 
         [Test]
         [Category("House DoesLocationWithHidingPlaceExist Failure")]
         public void Test_House_DoesLocationWithHidingPlaceExist_ReturnsFalse_WhenLocationIsNotLocationWithHidingPlace()
         {
-            Assert.That(House.DoesLocationWithHidingPlaceExist("Landing"), Is.False);
+            Assert.That(house.DoesLocationWithHidingPlaceExist("Landing"), Is.False);
         }
 
         /// <summary>
@@ -213,42 +221,42 @@ namespace HideAndSeek
         public void Test_House_GetRandomExit()
         {
             // Get locations
-            var landing = House.GetLocationByName("Landing");
-            var kitchen = House.GetLocationByName("Kitchen");
+            var landing = house.GetLocationByName("Landing");
+            var kitchen = house.GetLocationByName("Kitchen");
 
             Assert.Multiple(() =>
             {
                 // Assert Landing's random exit at index 0 is Attic
-                House.Random = new MockRandom() { ValueToReturn = 0 };
-                Assert.That(House.GetRandomExit(landing).Name, Is.EqualTo("Attic"), "Landing exit at index 0");
+                house.Random = new MockRandom() { ValueToReturn = 0 };
+                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Attic"), "Landing exit at index 0");
 
                 // Assert Landing's random exit at index 1 is Kids Room
-                House.Random = new MockRandom() { ValueToReturn = 1 };
-                Assert.That(House.GetRandomExit(landing).Name, Is.EqualTo("Kids Room"), "Landing exit at index 1");
+                house.Random = new MockRandom() { ValueToReturn = 1 };
+                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Kids Room"), "Landing exit at index 1");
 
                 // Assert Landing's random exit at index 2 is Pantry
-                House.Random = new MockRandom() { ValueToReturn = 2 };
-                Assert.That(House.GetRandomExit(landing).Name, Is.EqualTo("Pantry"), "Landing exit at index 2");
+                house.Random = new MockRandom() { ValueToReturn = 2 };
+                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Pantry"), "Landing exit at index 2");
 
                 // Assert Landing's random exit at index 3 is Second Bathroom
-                House.Random = new MockRandom() { ValueToReturn = 3 };
-                Assert.That(House.GetRandomExit(landing).Name, Is.EqualTo("Second Bathroom"), "Landing exit at index 3");
+                house.Random = new MockRandom() { ValueToReturn = 3 };
+                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Second Bathroom"), "Landing exit at index 3");
 
                 // Assert Landing's random exit at index 4 is Nursery
-                House.Random = new MockRandom() { ValueToReturn = 4 };
-                Assert.That(House.GetRandomExit(landing).Name, Is.EqualTo("Nursery"), "Landing exit at index 4");
+                house.Random = new MockRandom() { ValueToReturn = 4 };
+                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Nursery"), "Landing exit at index 4");
 
                 // Assert Landing's random exit at index 5 is Master Bedroom
-                House.Random = new MockRandom() { ValueToReturn = 5 };
-                Assert.That(House.GetRandomExit(landing).Name, Is.EqualTo("Master Bedroom"), "Landing exit at index 5");
+                house.Random = new MockRandom() { ValueToReturn = 5 };
+                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Master Bedroom"), "Landing exit at index 5");
 
                 // Assert Landing's random exit at index 6 is Hallway
-                House.Random = new MockRandom() { ValueToReturn = 6 };
-                Assert.That(House.GetRandomExit(landing).Name, Is.EqualTo("Hallway"), "Landing exit at index 6");
+                house.Random = new MockRandom() { ValueToReturn = 6 };
+                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Hallway"), "Landing exit at index 6");
 
                 // Assert Kitchen's random exit at index 0 is Hallway
-                House.Random = new MockRandom() { ValueToReturn = 0 };
-                Assert.That(House.GetRandomExit(kitchen).Name, Is.EqualTo("Hallway"), "Kitchen exit at index 0");
+                house.Random = new MockRandom() { ValueToReturn = 0 };
+                Assert.That(house.GetRandomExit(kitchen).Name, Is.EqualTo("Hallway"), "Kitchen exit at index 0");
             });
         }
 
@@ -258,8 +266,8 @@ namespace HideAndSeek
         [Category("House GetRandomLocationWithHidingPlace")]
         public void Test_House_GetRandomHidingPlace(string hidingLocationName, params int[] mockRandomValueList)
         {
-            House.Random = new MockRandomWithValueList(mockRandomValueList); // Set House's Random number generator to mock
-            Assert.That(House.GetRandomLocationWithHidingPlace().Name, Is.EqualTo(hidingLocationName)); // Assert that name of LocationWithHidingPlace returned is as expected
+            house.Random = new MockRandomWithValueList(mockRandomValueList); // Set House's Random number generator to mock
+            Assert.That(house.GetRandomLocationWithHidingPlace().Name, Is.EqualTo(hidingLocationName)); // Assert that name of LocationWithHidingPlace returned is as expected
         }
 
         [Test]
@@ -268,17 +276,17 @@ namespace HideAndSeek
         {
             Assert.Multiple(() =>
             {
-                Assert.That(House.GetLocationByName("Garage"), Is.InstanceOf<LocationWithHidingPlace>(), "Garage");
-                Assert.That(House.GetLocationByName("Kitchen"), Is.InstanceOf<LocationWithHidingPlace>(), "Kitchen");
-                Assert.That(House.GetLocationByName("Living Room"), Is.InstanceOf<LocationWithHidingPlace>(), "Living Room");
-                Assert.That(House.GetLocationByName("Bathroom"), Is.InstanceOf<LocationWithHidingPlace>(), "Bathroom");
-                Assert.That(House.GetLocationByName("Master Bedroom"), Is.InstanceOf<LocationWithHidingPlace>(), "Master Bedroom");
-                Assert.That(House.GetLocationByName("Master Bath"), Is.InstanceOf<LocationWithHidingPlace>(), "Master Bath");
-                Assert.That(House.GetLocationByName("Second Bathroom"), Is.InstanceOf<LocationWithHidingPlace>(), "Second Bathroom");
-                Assert.That(House.GetLocationByName("Kids Room"), Is.InstanceOf<LocationWithHidingPlace>(), "Kids Room");
-                Assert.That(House.GetLocationByName("Nursery"), Is.InstanceOf<LocationWithHidingPlace>(), "Nursery");
-                Assert.That(House.GetLocationByName("Pantry"), Is.InstanceOf<LocationWithHidingPlace>(), "Pantry");
-                Assert.That(House.GetLocationByName("Attic"), Is.InstanceOf<LocationWithHidingPlace>(), "Attic");
+                Assert.That(house.GetLocationByName("Garage"), Is.InstanceOf<LocationWithHidingPlace>(), "Garage");
+                Assert.That(house.GetLocationByName("Kitchen"), Is.InstanceOf<LocationWithHidingPlace>(), "Kitchen");
+                Assert.That(house.GetLocationByName("Living Room"), Is.InstanceOf<LocationWithHidingPlace>(), "Living Room");
+                Assert.That(house.GetLocationByName("Bathroom"), Is.InstanceOf<LocationWithHidingPlace>(), "Bathroom");
+                Assert.That(house.GetLocationByName("Master Bedroom"), Is.InstanceOf<LocationWithHidingPlace>(), "Master Bedroom");
+                Assert.That(house.GetLocationByName("Master Bath"), Is.InstanceOf<LocationWithHidingPlace>(), "Master Bath");
+                Assert.That(house.GetLocationByName("Second Bathroom"), Is.InstanceOf<LocationWithHidingPlace>(), "Second Bathroom");
+                Assert.That(house.GetLocationByName("Kids Room"), Is.InstanceOf<LocationWithHidingPlace>(), "Kids Room");
+                Assert.That(house.GetLocationByName("Nursery"), Is.InstanceOf<LocationWithHidingPlace>(), "Nursery");
+                Assert.That(house.GetLocationByName("Pantry"), Is.InstanceOf<LocationWithHidingPlace>(), "Pantry");
+                Assert.That(house.GetLocationByName("Attic"), Is.InstanceOf<LocationWithHidingPlace>(), "Attic");
             });
         }
 
@@ -287,17 +295,17 @@ namespace HideAndSeek
         public void Test_House_ClearHidingPlaces()
         {
             // Hide opponent in garage
-            var garage = House.GetLocationWithHidingPlaceByName("Garage"); // Get garage reference
+            var garage = house.GetLocationWithHidingPlaceByName("Garage"); // Get garage reference
             garage.HideOpponent(new Opponent());
 
             // Hide 3 more opponents in attic
-            var attic = House.GetLocationWithHidingPlaceByName("Attic"); // Get attic reference
+            var attic = house.GetLocationWithHidingPlaceByName("Attic"); // Get attic reference
             attic.HideOpponent(new Opponent());
             attic.HideOpponent(new Opponent());
             attic.HideOpponent(new Opponent());
 
             // Clear hiding places in house
-            House.ClearHidingPlaces();
+            house.ClearHidingPlaces();
 
             // Assert that no opponents are in cleared hiding places
             Assert.Multiple(() =>

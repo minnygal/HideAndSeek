@@ -11,7 +11,7 @@ namespace HideAndSeek
     public class SaveGameTests_TestCaseData
     {
         // Text file version of saved GameController returned by StartNewGameWithSpecificHidingInfo_MockFileSystem method
-        private static readonly string fileText_GameWithSpecificHidingInfo_NoOpponentsFound = "{\"PlayerLocation\":\"Entry\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[]}";
+        private static readonly string fileText_GameWithSpecificHidingInfo_NoOpponentsFound = "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"Entry\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[]}";
 
         /// <summary>
         /// Helper method to start new game with Opponents in specific hiding places and with specified file system
@@ -52,11 +52,11 @@ namespace HideAndSeek
             // Create enumerable of places to hide opponents
             IEnumerable<LocationWithHidingPlace> hidingPlaces = new List<LocationWithHidingPlace>()
             {
-                House.GetLocationWithHidingPlaceByName("Kitchen"),
-                House.GetLocationWithHidingPlaceByName("Pantry"),
-                House.GetLocationWithHidingPlaceByName("Bathroom"),
-                House.GetLocationWithHidingPlaceByName("Kitchen"),
-                House.GetLocationWithHidingPlaceByName("Pantry")
+                gameController.House.GetLocationWithHidingPlaceByName("Kitchen"),
+                gameController.House.GetLocationWithHidingPlaceByName("Pantry"),
+                gameController.House.GetLocationWithHidingPlaceByName("Bathroom"),
+                gameController.House.GetLocationWithHidingPlaceByName("Kitchen"),
+                gameController.House.GetLocationWithHidingPlaceByName("Pantry")
             };
 
             // Hide all Opponents in specific hiding places
@@ -67,7 +67,7 @@ namespace HideAndSeek
         }
 
         // Text file version of saved GameController returned by Find3Opponents method
-        private static readonly string fileText_GameWithSpecificHidingInfo_3OpponentsFound = "{\"PlayerLocation\":\"Bathroom\",\"MoveNumber\":7,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[\"Joe\",\"Owen\",\"Ana\"]}";
+        private static readonly string fileText_GameWithSpecificHidingInfo_3OpponentsFound = "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"Bathroom\",\"MoveNumber\":7,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[\"Joe\",\"Owen\",\"Ana\"]}";
 
         /// <summary>
         /// Helper method to start and find 3 opponents in new game with predetermined hiding places and specified file system
@@ -171,48 +171,48 @@ namespace HideAndSeek
 
                 // Missing move number
                 yield return new TestCaseData("Cannot process because data is corrupt",
-                                              "{\"PlayerLocation\":\"Entry\",\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[\"Joe\",\"Bob\",\"Ana\",\"Owen\",\"Jimmy\"]}")
+                                              "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"Entry\",\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[\"Joe\",\"Bob\",\"Ana\",\"Owen\",\"Jimmy\"]}")
                     .SetName("Test_GameController_Load_CheckErrorMessage_FileDataInvalid - missing move number");
 
                 // Missing all opponents
                 yield return new TestCaseData("Cannot process because data is corrupt",
-                                              "{\"PlayerLocation\":\"Entry\",\"MoveNumber\":1,\"FoundOpponents\":[]}")
+                                              "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"Entry\",\"MoveNumber\":1,\"FoundOpponents\":[]}")
                     .SetName("Test_GameController_Load_CheckErrorMessage_FileDataInvalid - missing all opponents");
 
                 // Missing found opponents
                 yield return new TestCaseData("Cannot process because data is corrupt",
-                                              "{\"PlayerLocation\":\"Entry\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"}}")
+                                              "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"Entry\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"}}")
                     .SetName("Test_GameController_Load_CheckErrorMessage_FileDataInvalid - missing found opponents");
 
                 // INVALID VALUE DATA
                 // Invalid current location
                 yield return new TestCaseData("Cannot process because data is corrupt - invalid CurrentLocation",
-                                              "{\"PlayerLocation\":\"Tree\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[]}")
+                                              "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"Tree\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[]}")
                     .SetName("Test_GameController_Load_CheckErrorMessage_FileDataInvalid - invalid CurrentLocation");
 
                 // Invalid (negative) move number
                 yield return new TestCaseData("Cannot process because data is corrupt - invalid MoveNumber",
-                                              "{\"PlayerLocation\":\"Entry\",\"MoveNumber\":-1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[]}")
+                                              "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"Entry\",\"MoveNumber\":-1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[]}")
                     .SetName("Test_GameController_Load_CheckErrorMessage_FileDataInvalid - invalid MoveNumber");
 
                 // No opponents
                 yield return new TestCaseData("Cannot process because data is corrupt - no opponents",
-                                              "{\"PlayerLocation\":\"Entry\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{},\"FoundOpponents\":[]}")
+                                              "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"Entry\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{},\"FoundOpponents\":[]}")
                     .SetName("Test_GameController_Load_CheckErrorMessage_FileDataInvalid - no opponents");
 
                 // Invalid hiding place for Joe (not yet found) because location does not exist
                 yield return new TestCaseData("Cannot process because data is corrupt - invalid hiding location for opponent",
-                                              "{\"PlayerLocation\":\"Entry\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Tree\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[]}")
+                                              "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"Entry\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Tree\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[]}")
                     .SetName("Test_GameController_Load_CheckErrorMessage_FileDataInvalid - invalid hiding place for opponent - Location does not exist");
 
                 // Invalid hiding place for Joe (not yet found) because hiding location is not of type LocationWithHidingPlace
                 yield return new TestCaseData("Cannot process because data is corrupt - invalid hiding location for opponent",
-                                              "{\"PlayerLocation\":\"Entry\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Hallway\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[]}")
+                                              "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"Entry\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Hallway\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[]}")
                     .SetName("Test_GameController_Load_CheckErrorMessage_FileDataInvalid - invalid hiding place for opponent - not LocationWithHidingPlace");
 
                 // Found opponent is not in all opponents list
                 yield return new TestCaseData("Cannot process because data is corrupt - found opponent is not an opponent",
-                                              "{\"PlayerLocation\":\"Entry\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[\"Steve\"]}")
+                                              "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"Entry\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[\"Steve\"]}")
                     .SetName("Test_GameController_Load_CheckErrorMessage_FileDataInvalid - found opponent Steve is not opponent");
             }
         }

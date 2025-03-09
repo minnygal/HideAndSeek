@@ -1,14 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Security.Cryptography;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 
 namespace HideAndSeek
 {
     /// <summary>
-    /// Static class to represent a house with Locations through which the user can navigate
+    /// Class to represent a house with Locations through which the user can navigate
     /// 
     /// CREDIT: adapted from Stellman and Greene's code
     /// </summary>
@@ -22,6 +24,12 @@ namespace HideAndSeek
      * **/
 
     /** CHANGES
+     * -I made the class non-static so GameController can have an instance of House.
+     * -I added a static method to create a House object from a file.
+     * -I added a static public property for the file system used in CreateHouse for testing purposes.
+     * -I added a Name property so a House object can have a name.
+     * -I added a name of file property to store the name of the file from which this House was loaded 
+     *  (necessary for saving game).
      * -In the constructor, I created and added exits to Locations in the same area of code
      *  and in a different order for easier comprehension (just my approach).
      * -I added a method to tell whether a Location exists to make restoring a saved game easier.
@@ -39,26 +47,86 @@ namespace HideAndSeek
      * -I added/edited comments for easier reading.
      * **/
 
-    public static class House {
+    public class House {
+        /// <summary>
+        /// File name for default House layout (not including .json extension)
+        /// </summary>
+        public static string DefaultHouseFileName { get { return "DefaultHouse"; } }
+
+        /// <summary>
+        /// File system to use when creating a new House from a House file
+        /// (should only be changed for testing purposes)
+        /// </summary>
+        public static IFileSystem FileSystem { get; set; } = new FileSystem();
+
+        /// <summary>
+        /// Create a House object from a file
+        /// Should only be called from GameController and SavedGame, and tests
+        /// </summary>
+        /// <param name="fileName">Name of House file (not including .json extension)</param>
+        /// <returns>House object created from file</returns>
+        /// <exception cref="FileNotFoundException">Exception thrown if House file not found</exception>
+        /// <exception cref="JsonException">Exception thrown if House file data is corrupt</exception>
+        /// <exception cref="InvalidOperationException">Exception thrown if House file data is corrupt</exception>
+        public static House CreateHouse(string fileName)
+        {
+            // Get full file name including extension
+            string fullFileName = FileSystem.GetFullFileNameForJson(fileName);
+
+            // If file does not exist
+            if (!(FileSystem.File.Exists(fullFileName)))
+            {
+                throw new FileNotFoundException($"Cannot load game because file {fileName} does not exist"); // Return error message
+            }
+
+            // Get text from House file
+            string houseFileText = FileSystem.File.ReadAllText(fullFileName);
+
+            // Deserialize text from file into House object and set house private variable to it
+            try
+            {
+                return JsonSerializer.Deserialize<House>(houseFileText);
+            }
+            catch (JsonException e)
+            {
+                throw new JsonException("Cannot process because data is corrupt");
+            }
+            catch (InvalidOperationException e)
+            {
+                throw new InvalidOperationException("Cannot process because data is corrupt");
+            }
+        }
+
+        /// <summary>
+        /// Name of House
+        /// </summary>
+        public string Name { get; private set; } = "my house";
+
+        /// <summary>
+        /// Name of file from which House is loaded (w/o JSON extension)
+        /// </summary>
+        public string HouseFileName { get; private set; } = "DefaultHouse";
+
         /// <summary>
         /// Entry of House
         /// </summary>
-        public static Location Entry { get; private set; }
+        public Location Entry { get; private set; }
 
         /// <summary>
         /// List of all Locations in House
         /// </summary>
-        public static List<Location> Locations { get; set; }
+        public List<Location> Locations { get; set; }
 
         /// <summary>
         /// Random number generator (used for returning random hiding place)
         /// </summary>
-        public static Random Random { get; set; } = new Random();
+        public Random Random { get; set; } = new Random();
 
         /// <summary>
-        /// Static constructor to create Locations within the house and connect them
+        /// Parameterless constructor for JSON deserializer
+        /// Should only be called directly from HouseHelper unless default house is desired
         /// </summary>
-        static House()
+        public House() 
         {
             // Create Entry and connect to new locations: Garage, Hallway
             Entry = new Location("Entry");
@@ -70,7 +138,7 @@ namespace HideAndSeek
             LocationWithHidingPlace bathroom = hallway.AddExit(Direction.North, "Bathroom", "behind the door");
             LocationWithHidingPlace livingRoom = hallway.AddExit(Direction.South, "Living Room", "behind the sofa");
             Location landing = hallway.AddExit(Direction.Up, "Landing");
-            
+
             // Connect Landing to new locations: Attic, Kids Room, Master Bedroom, Nursery, Pantry, Second Bathroom
             LocationWithHidingPlace attic = landing.AddExit(Direction.Up, "Attic", "in a trunk");
             LocationWithHidingPlace kidsRoom = landing.AddExit(Direction.Southeast, "Kids Room", "in the bunk beds");
@@ -108,7 +176,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="name">Name of Location</param>
         /// <returns>True if Location exists</returns>
-        public static bool DoesLocationExist(string name)
+        public bool DoesLocationExist(string name)
         {
             return GetLocationByName(name) != null;
         }
@@ -118,7 +186,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="name">Name of LocationWithHidingPlace</param>
         /// <returns>True if LocationWithHidingPlace exists</returns>
-        public static bool DoesLocationWithHidingPlaceExist(string name)
+        public bool DoesLocationWithHidingPlaceExist(string name)
         {
 
             return GetLocationWithHidingPlaceByName(name) != null;
@@ -129,7 +197,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="name">Name of Location</param>
         /// <returns>Location with specified name (or null if not found)</returns>
-        public static Location GetLocationByName(string name)
+        public Location GetLocationByName(string name)
         {
             return Locations.Where(l => l.Name == name).FirstOrDefault();
         }
@@ -139,7 +207,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="name">Name of LocationWithHidingPlace</param>
         /// <returns>LocationWithHidingPlace with specified name (or null if not found)</returns>
-        public static LocationWithHidingPlace GetLocationWithHidingPlaceByName(string name)
+        public LocationWithHidingPlace GetLocationWithHidingPlaceByName(string name)
         {
             return (LocationWithHidingPlace) Locations.Where((x) => x.GetType() == typeof(LocationWithHidingPlace) && x.Name == name).FirstOrDefault();
         }
@@ -149,7 +217,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="location">Location from which to find random exit</param>
         /// <returns>Location to which random exit leads</returns>
-        public static Location GetRandomExit(Location location)
+        public Location GetRandomExit(Location location)
         {
             IDictionary<Direction, Location> exitList = location.Exits.OrderBy(x => x.Key).ToDictionary(); // Get collection of all exits from Location ordered by name
             return exitList.ElementAt(Random.Next(exitList.Count)).Value; // Return random Location from exits collection
@@ -158,7 +226,7 @@ namespace HideAndSeek
         /// <summary>
         /// Clear all LocationWithHidingPlaces of Opponents.
         /// </summary>
-        public static void ClearHidingPlaces()
+        public void ClearHidingPlaces()
         {
             // For each LocationWithHidingPlace
             foreach(LocationWithHidingPlace location in Locations.Where((l) => l.GetType() == typeof(LocationWithHidingPlace)))
@@ -184,7 +252,7 @@ namespace HideAndSeek
         /// -I added comments for easier reading.
         /// </summary>
         /// <returns>Random location with hiding place</returns>
-        public static LocationWithHidingPlace GetRandomLocationWithHidingPlace()
+        public LocationWithHidingPlace GetRandomLocationWithHidingPlace()
         {
             // Current Location of Opponent moving through House to find hiding place
             Location opponentCurrentLocation = Entry;

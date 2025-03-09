@@ -1,8 +1,10 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
@@ -28,16 +30,34 @@ namespace HideAndSeek
      * -I created a body for each property's getter and setter methods.
      * -I added data validation in each setter method.
      * -I added a parameterless constructor for JSON deserialization.
+     * -I added a House property and a _houseFileName variable.
+     * -I added a parameterized constructor for 
+     *  easily setting properties upon initialization.
      * -I added comments for easier reading.
      **/
 
-    /** NOTE TO SELF
-     * If add parameterized constructor in the future, 
-     * remember to add parameterless constructor for JSON deserializer.
-     * **/
-
     public class SavedGame
     {
+        private House house = House.CreateHouse(House.DefaultHouseFileName); // Set associated House to House with default layout (used for location-related data validation)
+
+        private string _houseFileName = House.DefaultHouseFileName; // Set house file name to default house file name
+
+        /// <summary>
+        /// Name of file storing House object for layout (w/o JSON extension)
+        /// </summary>
+        public required string HouseFileName
+        {
+            get
+            {
+                return _houseFileName;
+            }
+            set
+            {
+                _houseFileName = value; // Set House file name
+                house = House.CreateHouse(_houseFileName); // Create House from file and assign to variable
+            }
+        }
+
         private string _playerLocation = "";
 
         /// <summary>
@@ -51,7 +71,7 @@ namespace HideAndSeek
             set
             {
                 // If location does not exist, throw exception
-                if( !(House.DoesLocationExist(value)) )
+                if( !(house.DoesLocationExist(value)) )
                 {
                     throw new InvalidDataException("Cannot process because data is corrupt - invalid CurrentLocation");
                 }
@@ -108,7 +128,7 @@ namespace HideAndSeek
                 // If any of the LocationWithHidingPlaces do not exist, throw exception
                 foreach (KeyValuePair<string, string> opponentInfo in value)
                 {
-                    if( !(House.DoesLocationWithHidingPlaceExist(opponentInfo.Value)) )
+                    if( !(house.DoesLocationWithHidingPlaceExist(opponentInfo.Value)) )
                     {
                         throw new InvalidDataException("Cannot process because data is corrupt - invalid hiding location for opponent");
                     }
@@ -144,6 +164,33 @@ namespace HideAndSeek
                 // Set collection of found opponents
                 _foundOpponents = value;
             }
+        }
+
+        /// <summary>
+        /// Parameterless constructor for JSON deserializer
+        /// </summary>
+        public SavedGame() { }
+
+        /// <summary>
+        /// Constructor for setting properties
+        /// </summary>
+        /// <param name="house">House object being used</param>
+        /// <param name="playerLocation">Current location of player</param>
+        /// <param name="moveNumber">Current move number</param>
+        /// <param name="opponentsAndHidingLocations">Opponents and their hiding locations</param>
+        /// <param name="foundOpponents">Opponents who have been found</param>
+        [SetsRequiredMembers]
+        public SavedGame(House house, string playerLocation, int moveNumber, Dictionary<string, string> opponentsAndHidingLocations, IEnumerable<string> foundOpponents)
+        {
+            this.house = house;
+            HouseFileName = house.HouseFileName;
+            PlayerLocation = playerLocation;
+            MoveNumber = moveNumber;
+            MoveNumber = moveNumber;
+            OpponentsAndHidingLocations = opponentsAndHidingLocations;
+            OpponentsAndHidingLocations = opponentsAndHidingLocations;
+            FoundOpponents = foundOpponents;
+            FoundOpponents = foundOpponents;
         }
     }
 }
