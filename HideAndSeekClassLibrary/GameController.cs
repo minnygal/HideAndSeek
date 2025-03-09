@@ -35,7 +35,7 @@ namespace HideAndSeek
     /** CHANGES
      * -I added a restart method so the game can be restarted without creating a new GameController.
      * -I added methods to rehide all opponents.
-     * -I created a method to update the status.
+     * -I created a variable to store a House object (initialized in constructor).
      * -I added a private location variable so I could define a setter for CurrentLocation.
      * -I created a setter method for Currentlocation so it could automatically update the status.
      * -I made the list of opponentsFound opponents public for easier game saving/restoration.
@@ -64,6 +64,8 @@ namespace HideAndSeek
         /// The player's current location in the house
         /// </summary>
         public Location CurrentLocation { get; private set; }
+
+        public House House { get; private set; }
 
         /// <summary>
         /// Status of game
@@ -148,6 +150,9 @@ namespace HideAndSeek
         {
             // Set file system
             _fileSystem = fileSystem;
+
+            // Create new House
+            House = House.CreateHouse(House.DefaultHouseFileName);
 
             // Create Opponents and store them in dictionary as keys
             OpponentsAndHidingLocations.Add(new Opponent("Joe"), null);
@@ -350,13 +355,9 @@ namespace HideAndSeek
             }
 
             // Initialize SavedGame object to store game state data
-            SavedGame savedGame = new SavedGame()
-            {
-                PlayerLocation = CurrentLocation.ToString(),
-                MoveNumber = this.MoveNumber,
-                OpponentsAndHidingLocations = opponentsAndHidingPlacesAsStrings,
-                FoundOpponents = this.FoundOpponents.Select((x) => x.ToString())
-            };
+            SavedGame savedGame = new SavedGame(
+                House, CurrentLocation.ToString(), MoveNumber, 
+                opponentsAndHidingPlacesAsStrings, FoundOpponents.Select((x) => x.ToString()));
 
             // Save game as JSON to file and return success message
             string savedGameAsJSON = JsonSerializer.Serialize(savedGame); // Convert game's state data to JSON

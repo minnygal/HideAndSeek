@@ -9,11 +9,10 @@ namespace HideAndSeek
     /// </summary>
     public class GameControllerParseInputTests
     {
-
         GameController gameController;
 
         [SetUp]
-        public void Initialize()
+        public void SetUp()
         {
             gameController = new GameController();
         }
@@ -121,11 +120,11 @@ namespace HideAndSeek
                 // Create enumerable of places for opponents to hide
                 IEnumerable<LocationWithHidingPlace> hidingPlaces = new List<LocationWithHidingPlace>() 
                 {
-                    House.GetLocationWithHidingPlaceByName("Garage"),
-                    House.GetLocationWithHidingPlaceByName("Kitchen"),
-                    House.GetLocationWithHidingPlaceByName("Attic"),
-                    House.GetLocationWithHidingPlaceByName("Attic"),
-                    House.GetLocationWithHidingPlaceByName("Kitchen")
+                    gameController.House.GetLocationWithHidingPlaceByName("Garage"),
+                    gameController.House.GetLocationWithHidingPlaceByName("Kitchen"),
+                    gameController.House.GetLocationWithHidingPlaceByName("Attic"),
+                    gameController.House.GetLocationWithHidingPlaceByName("Attic"),
+                    gameController.House.GetLocationWithHidingPlaceByName("Kitchen")
                 };
 
                 // Hide Opponents is specific hiding places

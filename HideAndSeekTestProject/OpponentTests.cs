@@ -12,10 +12,13 @@ namespace HideAndSeek
     [TestFixture]
     public class OpponentTests
     {
+        private House house;
+
         [SetUp]
         public void SetUp()
         {
-            House.ClearHidingPlaces();
+            house = new House();
+            house.ClearHidingPlaces();
         }
 
         [Test, Category("Opponent Name")]

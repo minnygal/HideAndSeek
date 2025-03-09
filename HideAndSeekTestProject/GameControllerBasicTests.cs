@@ -15,7 +15,7 @@ namespace HideAndSeek
         GameController gameController;
 
         [SetUp]
-        public void Initialize()
+        public void SetUp()
         {
             gameController = new GameController();
         }
@@ -33,11 +33,14 @@ namespace HideAndSeek
                 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent 5 in Pantry
             ];
 
-            // Set House random number generator to mock random
-            House.Random = new MockRandomWithValueList(mockRandomValuesList);
-
             // Create new GameController
             gameController = new GameController();
+
+            // Set House random number generator to mock random
+            gameController.House.Random = new MockRandomWithValueList(mockRandomValuesList);
+
+            // Reset game to rehide Opponents with new MockRandom
+            gameController.RestartGame();
 
             // Assert that hiding places (values) in OpponentsAndHidingLocations dictionary are set correctly
             Assert.Multiple(() =>
