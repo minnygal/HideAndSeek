@@ -27,6 +27,54 @@ namespace HideAndSeek
             validOpponentsAndHidingPlacesDictionary.Add("Bob", "Bathroom");
         }
 
+
+        [Test]
+        [Category("SavedGame Constructor Success")]
+        public void Test_SavedGame_Constructor_WithValidHouseFileName()
+        {
+            // Create SavedGame using parameterized constructor
+            savedGame = new SavedGame(new House(), "MyHouseFileName", "Entry", 1, validOpponentsAndHidingPlacesDictionary, new List<string>());
+            
+            // Assert that SavedGame properties are as expected
+            Assert.Multiple(() =>
+            {
+                Assert.That(savedGame.HouseFileName, Is.EqualTo("MyHouseFileName"), "house file name");
+                Assert.That(savedGame.PlayerLocation, Is.EqualTo("Entry"), "player location");
+                Assert.That(savedGame.MoveNumber, Is.EqualTo(1), "move number");
+                Assert.That(savedGame.OpponentsAndHidingLocations.Count(), Is.EqualTo(validOpponentsAndHidingPlacesDictionary.Count()), "number of opponents and hiding locations items");
+                Assert.That(savedGame.FoundOpponents, Is.Empty, "no found opponents");
+            });
+        }
+
+        [TestCase("")]
+        [TestCase(" ")]
+        [TestCase("my file")]
+        [TestCase(" myFile")]
+        [TestCase("myFile ")]
+        [TestCase("\\")]
+        [TestCase("\\myFile")]
+        [TestCase("myFile\\")]
+        [TestCase("my\\File")]
+        [TestCase("/")]
+        [TestCase("/myFile")]
+        [TestCase("myFile/")]
+        [TestCase("my/File")]
+        [Category("SavedGame Constructor Failure")]
+        public void Test_SavedGame_Constructor_WithInvalidHouseFileName(string fileName)
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that creating a SavedGame object with an invalid file name raises an exception
+                var exception = Assert.Throws<InvalidDataException>(() =>
+                {
+                    savedGame = new SavedGame(new House(), fileName, "Entry", 1, validOpponentsAndHidingPlacesDictionary, new List<string>());
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+            });
+        }
+
         [Test]
         [Category("SavedGame HouseFileName Success")]
         public void Test_SavedGame_SetHouseFileName_ToValidValue_AndGet()
