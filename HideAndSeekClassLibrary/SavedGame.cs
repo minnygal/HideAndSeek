@@ -31,7 +31,7 @@ namespace HideAndSeek
      * -I added data validation in each setter method.
      * -I added a parameterless constructor for JSON deserialization.
      * -I added a House property and a _houseFileName variable.
-     * -I added a parameterized constructor for 
+     * -I added parameterized constructors for 
      *  easily setting properties upon initialization.
      * -I added comments for easier reading.
      **/
@@ -63,15 +63,15 @@ namespace HideAndSeek
         /// <summary>
         /// Player's current location
         /// </summary>
-        public required string PlayerLocation { 
-            get 
+        public required string PlayerLocation {
+            get
             {
                 return _playerLocation;
-            } 
+            }
             set
             {
                 // If location does not exist, throw exception
-                if( !(house.DoesLocationExist(value)) )
+                if (!(house.DoesLocationExist(value)))
                 {
                     throw new InvalidDataException("Cannot process because data is corrupt - invalid CurrentLocation");
                 }
@@ -95,7 +95,7 @@ namespace HideAndSeek
             set
             {
                 // If move number is invalid, throw exception
-                if(value < 1)
+                if (value < 1)
                 {
                     throw new InvalidDataException("Cannot process because data is corrupt - invalid MoveNumber");
                 }
@@ -111,8 +111,8 @@ namespace HideAndSeek
         /// Opponents and their locations with hiding place
         /// (opponent name as key, location with hiding place name as value)
         /// </summary>
-        public required Dictionary<string, string> OpponentsAndHidingLocations 
-        { 
+        public required Dictionary<string, string> OpponentsAndHidingLocations
+        {
             get
             {
                 return _opponentsAndHidingLocations;
@@ -120,7 +120,7 @@ namespace HideAndSeek
             set
             {
                 // If no opponents, throw exception
-                if ( value.Count == 0 )
+                if (value.Count == 0)
                 {
                     throw new InvalidDataException("Cannot process because data is corrupt - no opponents");
                 }
@@ -128,7 +128,7 @@ namespace HideAndSeek
                 // If any of the LocationWithHidingPlaces do not exist, throw exception
                 foreach (KeyValuePair<string, string> opponentInfo in value)
                 {
-                    if( !(house.DoesLocationWithHidingPlaceExist(opponentInfo.Value)) )
+                    if (!(house.DoesLocationWithHidingPlaceExist(opponentInfo.Value)))
                     {
                         throw new InvalidDataException("Cannot process because data is corrupt - invalid hiding location for opponent");
                     }
@@ -155,7 +155,7 @@ namespace HideAndSeek
                 // If any found opponents do not exist in OpponentsAndHidingLocations dictionary, throw exception
                 foreach (string foundOpponent in value)
                 {
-                    if ( !(OpponentsAndHidingLocations.Keys.Contains(foundOpponent)) )
+                    if (!(OpponentsAndHidingLocations.Keys.Contains(foundOpponent)))
                     {
                         throw new InvalidDataException("Cannot process because data is corrupt - found opponent is not an opponent");
                     }
@@ -172,7 +172,7 @@ namespace HideAndSeek
         public SavedGame() { }
 
         /// <summary>
-        /// Constructor for setting properties
+        /// Constructor for setting properties (Opponents and Locations accepted as strings)
         /// </summary>
         /// <param name="house">House object being used</param>
         /// <param name="playerLocation">Current location of player</param>
@@ -186,11 +186,40 @@ namespace HideAndSeek
             HouseFileName = house.HouseFileName;
             PlayerLocation = playerLocation;
             MoveNumber = moveNumber;
-            MoveNumber = moveNumber;
-            OpponentsAndHidingLocations = opponentsAndHidingLocations;
             OpponentsAndHidingLocations = opponentsAndHidingLocations;
             FoundOpponents = foundOpponents;
-            FoundOpponents = foundOpponents;
+        }
+
+        /// <summary>
+        /// Constructor for setting properties (Opponents and Locations accepted as objects)
+        /// </summary>
+        /// <param name="house">House object being used</param>
+        /// <param name="playerLocation">Current location of player</param>
+        /// <param name="moveNumber">Current move number</param>
+        /// <param name="opponentsAndHidingLocations">Opponents and their hiding locations</param>
+        /// <param name="foundOpponents">Opponents who have been found</param>
+        [SetsRequiredMembers]
+        public SavedGame(House house, Location playerLocation, int moveNumber, Dictionary<Opponent, LocationWithHidingPlace> opponentsAndHidingLocations, IEnumerable<Opponent> foundOpponents)
+               : this(house, playerLocation.ToString(), moveNumber, ConvertOpponentsAndHidingPlacesToStringDictionary(opponentsAndHidingLocations), foundOpponents.Select((o) => o.Name)) { }
+
+        /// <summary>
+        /// Convert a Dictionary of Opponents and LocationWithHidingPlaces to a Dictionary of representative strings
+        /// </summary>
+        /// <param name="opponentsAndHidingLocations">Dictionary of Opponents and LocationWithHidingPlaces</param>
+        /// <returns>Dictionary of strings representing Opponents and LocationWithHidingPlaces</returns>
+        private static Dictionary<string, string> ConvertOpponentsAndHidingPlacesToStringDictionary(Dictionary<Opponent, LocationWithHidingPlace> opponentsAndHidingLocations)
+        {
+            // Initialize variable to store Dictionary of strings
+            Dictionary<string, string> opponentsAndHidingLocationsAsStrings = new Dictionary<string, string>();
+            
+            // For each Dictionary entry, add Opponent and LocationWithHidingPlace represented as string to string Dictionary
+            foreach (KeyValuePair<Opponent, LocationWithHidingPlace> kvp in opponentsAndHidingLocations)
+            {
+                opponentsAndHidingLocationsAsStrings.Add(kvp.Key.Name, kvp.Value.Name);
+            }
+
+            // Return Dictionary of string representations of Opponents and LocationWithHidingPlaces
+            return opponentsAndHidingLocationsAsStrings;
         }
     }
 }

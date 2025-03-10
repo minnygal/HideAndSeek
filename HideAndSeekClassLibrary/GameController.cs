@@ -355,10 +355,8 @@ namespace HideAndSeek
             }
 
             // Initialize SavedGame object to store game state data
-            SavedGame savedGame = new SavedGame(
-                House, CurrentLocation.ToString(), MoveNumber, 
-                opponentsAndHidingPlacesAsStrings, FoundOpponents.Select((x) => x.ToString()));
-
+            SavedGame savedGame = new SavedGame(House, CurrentLocation, MoveNumber, OpponentsAndHidingLocations, FoundOpponents);
+            
             // Save game as JSON to file and return success message
             string savedGameAsJSON = JsonSerializer.Serialize(savedGame); // Convert game's state data to JSON
             _fileSystem.File.WriteAllText(fullFileName, savedGameAsJSON); // Save game's state data in file
