@@ -20,7 +20,8 @@ namespace HideAndSeek
             mockFileSystem = new Mock<IFileSystem>();
         }
 
-        [Test, Category("GameController Save Load Delete Error")]
+        [Test]
+        [Category("GameController Save Load Delete Error")]
         public void Test_GameController_ParseInput_ToSaveLoadOrDeleteGame_AndCheckErrorMessage_WhenFileNameIsInvalid(
             [Values("save", "load", "delete")] string commandKeyword,
             [Values(" ", " my saved game", " my\\saved\\game", " my/saved/game", " my/saved\\ game")] string restOfCommand)
@@ -151,7 +152,8 @@ namespace HideAndSeek
             });
         }
 
-        [Test, Category("GameController Load Error")]
+        [Test]
+        [Category("GameController Load Error")]
         public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenFileDoesNotExist()
         {
             // Set up mock for file system
@@ -185,7 +187,8 @@ namespace HideAndSeek
             Assert.That(message, Is.EqualTo(errorMessage));
         }
 
-        [Test, Category("GameController Delete Error")]
+        [Test]
+        [Category("GameController Delete Error")]
         public void Test_GameController_ParseInput_ToDeleteGame_AndCheckErrorMessage_WhenFileDoesNotExist()
         {
             // Set up mock for file system
@@ -201,7 +204,8 @@ namespace HideAndSeek
             Assert.That(message, Is.EqualTo("Could not delete game because file my_saved_game does not exist"));
         }
 
-        [Test, Category("GameController Delete Success")]
+        [Test]
+        [Category("GameController Delete Success")]
         public void Test_GameController_ParseInput_ToDeleteGame_AndCheckSuccessMessage()
         {
             // Set up mock for file system
