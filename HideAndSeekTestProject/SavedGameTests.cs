@@ -13,14 +13,10 @@ namespace HideAndSeek
     public class SavedGameTests
     {
         private Dictionary<string, string> validOpponentsAndHidingPlacesDictionary;
-        private House house;
 
         [SetUp]
         public void SetUp()
         {
-            // Create House
-            house = new House();
-
             // Initialize dictionary to opponent names and valid hiding places
             validOpponentsAndHidingPlacesDictionary = new Dictionary<string, string>();
             validOpponentsAndHidingPlacesDictionary.Add("Joe", "Kitchen");
