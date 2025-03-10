@@ -23,11 +23,22 @@ namespace HideAndSeek
         [Test, Category("GameController Save Load Delete Error")]
         public void Test_GameController_ParseInput_ToSaveLoadOrDeleteGame_AndCheckErrorMessage_WhenFileNameIsInvalid(
             [Values("save", "load", "delete")] string commandKeyword,
-            [Values("", " ", " my saved game", " my\\saved\\game", " my/saved/game", " my/saved\\ game")] string restOfCommand)
+            [Values(" ", " my saved game", " my\\saved\\game", " my/saved/game", " my/saved\\ game")] string restOfCommand)
         {
             gameController = new GameController();
             message = gameController.ParseInput(commandKeyword + restOfCommand);
-            Assert.That(message, Is.EqualTo("Cannot perform action because file name is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+            Assert.That(message, Is.EqualTo($"Cannot perform action because file name \"{restOfCommand.Substring(1)}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+        }
+
+        [TestCase("save")]
+        [TestCase("load")]
+        [TestCase("delete")]
+        [Category("GameController Save Load Delete Error")]
+        public void Test_GameController_ParseInput_ToSaveLoadOrDeleteGame_AndCheckErrorMessage_WhenNoFileNameEntered(string commandWord)
+        {
+            gameController = new GameController();
+            message = gameController.ParseInput(commandWord);
+            Assert.That(message, Is.EqualTo("Cannot perform action because no file name was entered"));
         }
 
         [Test, Category("GameController Save Error")]

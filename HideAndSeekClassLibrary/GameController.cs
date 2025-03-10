@@ -264,7 +264,7 @@ namespace HideAndSeek
                     string fileName = input.Substring(indexOfSpace + 1);
 
                     // If file name is valid
-                    if (_fileSystem.IsValidName(fileName))
+                    if(_fileSystem.IsValidName(fileName))
                     {
                         // If input requests save game
                         if (lowercaseCommand == "save")
@@ -280,10 +280,15 @@ namespace HideAndSeek
                             return DeleteGame(fileName); // Delete game and return message
                         }
                     }
+                    else // If the file name is invalid
+                    {
+                        return $"Cannot perform action because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"; // Return failure message
+                    }
+                } 
+                else // If input does not include a space
+                {
+                    return "Cannot perform action because no file name was entered"; // Return failure message
                 }
-
-                // If any of the requirements for file name input are not met, return failure message
-                return "Cannot perform action because file name is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)";
             }
             else if ( !(Enum.TryParse(originalCommand, out Direction direction)) ) // If input cannot be parsed to Direction enum value
             {

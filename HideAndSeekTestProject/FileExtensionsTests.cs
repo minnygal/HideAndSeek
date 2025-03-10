@@ -23,10 +23,39 @@ namespace HideAndSeekTestProject
         }
 
         [Test]
-        [Category("FileExtensions GetFullFileNameForJson")]
-        public void Test_FileExtensions_GetFullFileNameForJson()
+        [Category("FileExtensions GetFullFileNameForJson Success")]
+        public void Test_FileExtensions_GetFullFileNameForJson_WithValidFileName()
         {
             Assert.That(fileSystem.GetFullFileNameForJson("myFile"), Is.EqualTo("myFile.json"));
+        }
+
+        [TestCase("")]
+        [TestCase(" ")]
+        [TestCase("my file")]
+        [TestCase(" myFile")]
+        [TestCase("myFile ")]
+        [TestCase("\\")]
+        [TestCase("\\myFile")]
+        [TestCase("myFile\\")]
+        [TestCase("my\\File")]
+        [TestCase("/")]
+        [TestCase("/myFile")]
+        [TestCase("myFile/")]
+        [TestCase("my/File")]
+        [Category("FileExtensions GetFullFileNameForJson Failure")]
+        public void Test_FileExtensions_GetFullFileNameForJson_WithInvalidFileName_ThrowsException(string fileName)
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that getting full file name with invalid file name raises an exception
+                var exception = Assert.Throws<InvalidDataException>(() =>
+                {
+                    fileSystem.GetFullFileNameForJson(fileName);
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+            });
         }
 
         [TestCase("myFile")]
