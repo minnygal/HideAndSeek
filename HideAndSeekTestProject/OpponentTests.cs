@@ -21,14 +21,16 @@ namespace HideAndSeek
             house.ClearHidingPlaces();
         }
 
-        [Test, Category("Opponent Name")]
+        [Test]
+        [Category("Opponent Name")]
         public void Test_Opponent_SpecifiedName_IsSetCorrectly()
         {
             Opponent opponent = new Opponent("John Doe");
             Assert.That(opponent.Name, Is.EqualTo("John Doe"));
         }
 
-        [Test, Category("Opponent Name")]
+        [Test]
+        [Category("Opponent Name")]
         public void Test_Opponent_UnspecifiedName_IsSetCorrectly()
         {
             Opponent.ResetDefaultNumbersForOpponentNames();
