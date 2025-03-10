@@ -166,7 +166,7 @@ namespace HideAndSeek
                 // MISSING KEY/VALUE SET
                 // Missing current location
                 yield return new TestCaseData("Cannot process because data is corrupt",
-                                              "{\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[]}")
+                                              "{\"HouseFileName\":\"DefaultHouse\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[]}")
                     .SetName("Test_GameController_Load_CheckErrorMessage_FileDataInvalid - missing current location");
 
                 // Missing move number
