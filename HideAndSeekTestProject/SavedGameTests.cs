@@ -433,11 +433,11 @@ namespace HideAndSeek
             // Assert that SavedGame properties are as expected
             Assert.Multiple(() =>
             {
-                Assert.That(savedGame.HouseFileName, Is.EqualTo("DefaultHouse"));
-                Assert.That(savedGame.PlayerLocation, Is.EqualTo("Entry"));
-                Assert.That(savedGame.MoveNumber, Is.EqualTo(1));
-                Assert.That(savedGame.OpponentsAndHidingLocations.Count(), Is.EqualTo(5));
-                Assert.That(savedGame.FoundOpponents, Is.Empty);
+                Assert.That(savedGame.HouseFileName, Is.EqualTo("DefaultHouse"), "house file name");
+                Assert.That(savedGame.PlayerLocation, Is.EqualTo("Entry"), "player location");
+                Assert.That(savedGame.MoveNumber, Is.EqualTo(1), "move number");
+                Assert.That(savedGame.OpponentsAndHidingLocations.Count(), Is.EqualTo(5), "number of opponents and hiding locations items");
+                Assert.That(savedGame.FoundOpponents, Is.Empty, "no found opponents");
             });
         }
     }
