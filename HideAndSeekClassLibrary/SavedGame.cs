@@ -44,11 +44,27 @@ namespace HideAndSeek
         [JsonIgnore]
         public House House { get; set; }
 
-        private string _houseFileName = House.DefaultHouseFileName; // Set house file name to default house file name
+        private string _houseFileName = House.DefaultHouseFileName; // Set house file name to default house file name; set in both a method and property
+
+        /// <summary>
+        /// Set the House file name private variable, bypassing the HouseFileName property setter which calls House's CreateHouse method
+        /// </summary>
+        /// <param name="fileName">Name of file to set</param>
+        /// <exception cref="InvalidDataException">Exception thrown if file name in invalid</exception>
+        private void SetHouseFileName_WithoutCreatingHouse(string fileName)
+        {
+            // If House file name is invalid
+            if (!(new FileSystem().IsValidName(fileName)))
+            {
+                throw new InvalidDataException($"Cannot perform action because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"); // Throw exception
+            }
+            _houseFileName = fileName;
+        }
 
         /// <summary>
         /// Name of file storing House object for layout (w/o JSON extension)
         /// Should only be used by JSON deserializer and tests
+        /// CAUTION: setter calls House's CreateHouse method
         /// </summary>
         public required string HouseFileName
         {
@@ -58,7 +74,6 @@ namespace HideAndSeek
             }
             set
             {
-                
                 House = House.CreateHouse(value); // Create House from value (must have this line for JSON deserializer)
                 _houseFileName = value; // Set house file name
             }
@@ -190,7 +205,7 @@ namespace HideAndSeek
         public SavedGame(House house, string houseFileName, string playerLocation, int moveNumber, Dictionary<string, string> opponentsAndHidingLocations, IEnumerable<string> foundOpponents)
         {
             this.House = house;
-            _houseFileName = houseFileName; // Set private variable rather than property to get around CreateHouse call in property setter
+            SetHouseFileName_WithoutCreatingHouse(houseFileName); // Set private variable rather than property to get around CreateHouse call in property setter
             PlayerLocation = playerLocation;
             MoveNumber = moveNumber;
             OpponentsAndHidingLocations = opponentsAndHidingLocations;
