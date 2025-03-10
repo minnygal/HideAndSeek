@@ -23,7 +23,8 @@ namespace HideAndSeek
             validOpponentsAndHidingPlacesDictionary.Add("Bob", "Bathroom");
         }
 
-        [TestCase]
+        [Test]
+        [Category("SavedGame HouseFileName Success")]
         public void Test_SavedGame_SetHouseFileName_ToValidValue_AndGet()
         {
             // Create SavedGame object with valid House file name
@@ -41,8 +42,9 @@ namespace HideAndSeek
             Assert.That(savedGame.HouseFileName, Is.EqualTo("DefaultHouse"));
         }
 
-        [TestCase]
-        public void Test_SavedGame_SetHouseFileName_ToInvalidValue_NonexistentFile_AndGet()
+        [Test]
+        [Category("SavedGame HouseFileName Failure")]
+        public void Test_SavedGame_SetHouseFileName_ToInvalidValue_NonexistentFile()
         {
             Assert.Multiple(() =>
             {
@@ -61,6 +63,42 @@ namespace HideAndSeek
 
                 // Assert that exception message is as expected
                 Assert.That(exception.Message, Is.EqualTo("Cannot load game because file NonexistentHouse does not exist"));
+            });
+        }
+
+        [TestCase("")]
+        [TestCase(" ")]
+        [TestCase("my file")]
+        [TestCase(" myFile")]
+        [TestCase("myFile ")]
+        [TestCase("\\")]
+        [TestCase("\\myFile")]
+        [TestCase("myFile\\")]
+        [TestCase("my\\File")]
+        [TestCase("/")]
+        [TestCase("/myFile")]
+        [TestCase("myFile/")]
+        [TestCase("my/File")]
+        [Category("SavedGame HouseFileName Failure")]
+        public void Test_SavedGame_SetHouseFileName_ToInvalidValue_InvalidFileName(string fileName)
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that creating a SavedGame object with an invalid file name raises an exception
+                var exception = Assert.Throws<InvalidDataException>(() =>
+                {
+                    SavedGame savedGame = new SavedGame()
+                    {
+                        HouseFileName = fileName,
+                        PlayerLocation = "Entry",
+                        MoveNumber = 1,
+                        OpponentsAndHidingLocations = validOpponentsAndHidingPlacesDictionary,
+                        FoundOpponents = new List<string>()
+                    };
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
             });
         }
 

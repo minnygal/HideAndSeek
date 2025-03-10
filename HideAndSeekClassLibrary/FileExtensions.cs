@@ -26,8 +26,16 @@ namespace HideAndSeek
         /// <param name="fileSystem"></param>
         /// <param name="fileName">Name of file not including extension</param>
         /// <returns>Full name of file including extension</returns>
+        /// <exception cref="InvalidDataException">Exception thrown if file name is invalid</exception>
         public static string GetFullFileNameForJson(this IFileSystem fileSystem, string fileName)
         {
+            // If file name is invalid
+            if( !(fileSystem.IsValidName(fileName)) )
+            {
+                throw new InvalidDataException($"Cannot perform action because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)");
+            }
+
+            // Return file name with extension
             return $"{fileName}{JsonFileExtension}";
         }
 
