@@ -141,7 +141,7 @@ Game successfully saved in MyGameName
 
 If the game was not saved successfully because the file name was invalid, you'll see something like:
 ```
-Cannot perform action because file name is invalid (is empty or contains illegal characters, e.g. \, /, or whitespace)
+Cannot perform action because file name MyGameName is invalid (is empty or contains illegal characters, e.g. \, /, or whitespace)
 ```
 
 If the game was not saved successfully because the file name is already in use, you'll see something like:
