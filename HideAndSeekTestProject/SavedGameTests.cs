@@ -23,6 +23,47 @@ namespace HideAndSeek
             validOpponentsAndHidingPlacesDictionary.Add("Bob", "Bathroom");
         }
 
+        [TestCase]
+        public void Test_SavedGame_SetHouseFileName_ToValidValue_AndGet()
+        {
+            // Create SavedGame object with valid House file name
+            SavedGame savedGame = new SavedGame()
+            {
+                HouseFileName = "DefaultHouse",
+                PlayerLocation = "Entry",
+                MoveNumber = 1,
+                OpponentsAndHidingLocations = validOpponentsAndHidingPlacesDictionary,
+                FoundOpponents = new List<string>()
+            };
+
+            // Assume no exception is thrown (House loaded successfully from setter)
+            // Assert that House file name property's getter returns expected value
+            Assert.That(savedGame.HouseFileName, Is.EqualTo("DefaultHouse"));
+        }
+
+        [TestCase]
+        public void Test_SavedGame_SetHouseFileName_ToInvalidValue_NonexistentFile_AndGet()
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that creating a SavedGame object with nonexistent House file name raises an exception
+                var exception = Assert.Throws<FileNotFoundException>(() =>
+                {
+                    SavedGame savedGame = new SavedGame()
+                    {
+                        HouseFileName = "NonexistentHouse",
+                        PlayerLocation = "Entry",
+                        MoveNumber = 1,
+                        OpponentsAndHidingLocations = validOpponentsAndHidingPlacesDictionary,
+                        FoundOpponents = new List<string>()
+                    };
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo("Cannot load game because file NonexistentHouse does not exist"));
+            });
+        }
+
         [TestCase("Entry")]
         [TestCase("Pantry")]
         [TestCase("Landing")]
