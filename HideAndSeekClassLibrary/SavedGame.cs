@@ -25,7 +25,7 @@ namespace HideAndSeek
      * **/
 
     /** CHANGES
-     * -I marked each property as required to ensure it is set.
+     * -I marked each property as required to ensure it is set (except House).
      * -I created a private variable for each public property.
      * -I created a body for each property's getter and setter methods.
      * -I added data validation in each setter method.
@@ -195,7 +195,7 @@ namespace HideAndSeek
         public SavedGame() { }
 
         /// <summary>
-        /// Constructor for setting properties
+        /// Constructor for setting properties (does not load House from file or validate that file exists)
         /// </summary>
         /// <param name="house">House object being used</param>
         /// <param name="houseFileName">Name of House file</param>
@@ -208,6 +208,24 @@ namespace HideAndSeek
         {
             this.House = house;
             SetHouseFileName_WithoutCreatingHouse(houseFileName); // Set private variable rather than property to get around CreateHouse call in property setter
+            PlayerLocation = playerLocation;
+            MoveNumber = moveNumber;
+            OpponentsAndHidingLocations = opponentsAndHidingLocations;
+            FoundOpponents = foundOpponents;
+        }
+
+        /// <summary>
+        /// Constructor for setting properties (loads House from file)
+        /// </summary>
+        /// <param name="houseFileName">Name of House file</param>
+        /// <param name="playerLocation">Current location of player</param>
+        /// <param name="moveNumber">Current move number</param>
+        /// <param name="opponentsAndHidingLocations">Opponents and their hiding locations</param>
+        /// <param name="foundOpponents">Opponents who have been found</param>
+        [SetsRequiredMembers]
+        public SavedGame(string houseFileName, string playerLocation, int moveNumber, Dictionary<string, string> opponentsAndHidingLocations, IEnumerable<string> foundOpponents)
+        {
+            HouseFileName = houseFileName;
             PlayerLocation = playerLocation;
             MoveNumber = moveNumber;
             OpponentsAndHidingLocations = opponentsAndHidingLocations;
