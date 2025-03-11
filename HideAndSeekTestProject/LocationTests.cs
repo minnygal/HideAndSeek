@@ -303,5 +303,38 @@ namespace HideAndSeek
                 Assert.That(northLocation.ExitList, Is.EqualTo(expectedNorthLocationExitList), "north location exit list");
             });
         }
+
+        /// <summary>
+        /// Call AddExit method with a string name and description for a new LocationWithHidingPlace
+        /// and make sure the LocationWithHidingPlace is created and added properly
+        /// </summary>
+        [Test]
+        [Category("Location AddExit GetExit ExitList")]
+        public void Test_Location_AddExit_WithConstructorAcceptingNameAndHidingPlace()
+        {
+            // Create expected exit list for yard
+            IEnumerable<string> expectedYardExitList = new List<string>() {
+                "the living room is In",
+                "the shed is to the North"
+            };
+
+            // Create expected exit list for north location
+            IEnumerable<string> expectedNorthLocationExitList = new List<string>() { "the yard is to the South" };
+
+            // Call method to add LocationWithHidingPlace to north of yard
+            out_yard.AddExit(Direction.North, "shed", "in the wheelbarrow");
+
+            // Get the location north of yard and convert to LocationWithHidingPlace
+            LocationWithHidingPlace northLocation = (LocationWithHidingPlace)out_yard.GetExit(Direction.North);
+
+            // Assert that exit lists and north location properties are as expected
+            Assert.Multiple(() =>
+            {
+                Assert.That(out_yard.ExitList, Is.EquivalentTo(expectedYardExitList), "yard exit list");
+                Assert.That(northLocation.Name, Is.EqualTo("shed"), "north location name");
+                Assert.That(northLocation.HidingPlace, Is.EqualTo("in the wheelbarrow"));
+                Assert.That(northLocation.ExitList, Is.EqualTo(expectedNorthLocationExitList), "north location exit list");
+            });
+        }
     }
 }
