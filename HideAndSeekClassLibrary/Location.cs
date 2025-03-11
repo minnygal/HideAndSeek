@@ -1,4 +1,8 @@
-﻿namespace HideAndSeek
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
+using System.Text.Json.Serialization;
+
+namespace HideAndSeek
 {
     /// <summary>
     /// Class to represent a location in the House
@@ -30,28 +34,117 @@
      * -I modified the Direction changing logic in AddReturnExit (just my approach).
      * -I used Direction changing in AddExit (just my approach).
      * -I converted lambdas to regular method bodies for easier modification.
+     * -I added a property and method for JSON serialization.
      * -I added comments for easier reading.
      * **/
 
     public class Location
     {
+        private string _name;
+
         /// <summary>
         /// The name of this location
         /// </summary>
-        public string Name { get; private set; }
+        [JsonRequired]
+        public required string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                // If invalid name is entered
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new InvalidDataException($"Cannot perform action because location name \"{value}\" is invalid (is empty or contains only whitespace"); // Throw exception
+                }
 
+                // Set name variable
+                _name = value;
+            }
+        }
+
+        private IDictionary<Direction, string> _exitsForSerialization;
+
+        /// <summary>
+        /// Exits for JSON serialization 
+        /// (Locations as strings so duplicate Locations 
+        /// are not created when multiple linked Locations are restored)
+        /// </summary>
+        [JsonRequired]
+        public IDictionary<Direction, string> ExitsForSerialization
+        {
+            get
+            {
+                return _exitsForSerialization;
+            }
+            set
+            {
+                // Check each location name in Dictionary
+                foreach(KeyValuePair<Direction, string> kvp in value)
+                {
+                    // If name is invalid
+                    if(string.IsNullOrWhiteSpace(kvp.Value))
+                    {
+                        throw new InvalidDataException($"Cannot perform action because location name \"{kvp.Value}\" is invalid (is empty or contains only whitespace"); // Throw exception
+                    }
+                }
+
+                // If location names in Dictionary are valid
+                _exitsForSerialization = value;
+            }
+        }
+
+        /// <summary>
+        /// Prepare object for serialization
+        /// by setting ExitsForSerialization property
+        /// </summary>
+        private void PrepForSerialization()
+        {
+            // Create Dictionary of directions and Location names
+            IDictionary<Direction, string> exitsForSerialization = new Dictionary<Direction, string>();
+            foreach (KeyValuePair<Direction, Location> kvp in Exits)
+            {
+                exitsForSerialization.Add(kvp.Key, kvp.Value.Name);
+            }
+
+            // Set exits for serialization property to Dictionary
+            ExitsForSerialization = exitsForSerialization;
+        }
+
+        /// <summary>
+        /// Serialize object and return as string
+        /// Calls private PrepForSerialization method
+        /// which must be called prior to object serialization.
+        /// </summary>
+        /// <returns>Serialized object as string</returns>
+        public virtual string Serialize()
+        {
+            PrepForSerialization();
+            return JsonSerializer.Serialize(this);
+        }
+
+        [JsonIgnore]
         /// <summary>
         /// The exits out of this location
         /// </summary>
         public IDictionary<Direction, Location> Exits { get; private set; } = new Dictionary<Direction, Location>();
 
         /// <summary>
+        /// Constructor for JSON deserialization
+        /// </summary>
+        public Location() { }
+
+        /// <summary>
         /// The constructor sets the location name
         /// </summary>
         /// <param name="name">Name of the location</param>
+        [SetsRequiredMembers]
         public Location(string name)
         {
             Name = name;
+            ExitsForSerialization = new Dictionary<Direction, string>();
         }
 
         public override string ToString() => Name;
