@@ -25,13 +25,15 @@ namespace HideAndSeek
      * **/
 
     /** CHANGES
-     * -I marked each property as required to ensure it is set.
+     * -I marked each property as required to ensure it is set (except House).
      * -I created a private variable for each public property.
      * -I created a body for each property's getter and setter methods.
      * -I added data validation in each setter method.
      * -I added a parameterless constructor for JSON deserialization.
      * -I added a House property (used for property data validation)
      * -I added a HouseFileName property and a _houseFileName variable.
+     * -I added a method to set _houseFileName variable
+     *  without using HouseFileName setter (which calls House.CreateHouse)
      * -I added a parameterized constructor for setting properties upon initialization.
      * -I added comments for easier reading.
      **/
@@ -50,7 +52,7 @@ namespace HideAndSeek
         /// Set the House file name private variable, bypassing the HouseFileName property setter which calls House's CreateHouse method
         /// </summary>
         /// <param name="fileName">Name of file to set</param>
-        /// <exception cref="InvalidDataException">Exception thrown if file name in invalid</exception>
+        /// <exception cref="InvalidDataException">Exception thrown if file name is invalid</exception>
         private void SetHouseFileName_WithoutCreatingHouse(string fileName)
         {
             // If House file name is invalid
@@ -58,6 +60,8 @@ namespace HideAndSeek
             {
                 throw new InvalidDataException($"Cannot perform action because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"); // Throw exception
             }
+
+            // Set House file name private variable, bypassing the HouseFileName property setter which calls House's CreateHouse method
             _houseFileName = fileName;
         }
 
@@ -193,7 +197,7 @@ namespace HideAndSeek
         public SavedGame() { }
 
         /// <summary>
-        /// Constructor for setting properties
+        /// Constructor for setting properties (does not load House from file or validate that file exists)
         /// </summary>
         /// <param name="house">House object being used</param>
         /// <param name="houseFileName">Name of House file</param>
@@ -206,6 +210,24 @@ namespace HideAndSeek
         {
             this.House = house;
             SetHouseFileName_WithoutCreatingHouse(houseFileName); // Set private variable rather than property to get around CreateHouse call in property setter
+            PlayerLocation = playerLocation;
+            MoveNumber = moveNumber;
+            OpponentsAndHidingLocations = opponentsAndHidingLocations;
+            FoundOpponents = foundOpponents;
+        }
+
+        /// <summary>
+        /// Constructor for setting properties (loads House from file)
+        /// </summary>
+        /// <param name="houseFileName">Name of House file</param>
+        /// <param name="playerLocation">Current location of player</param>
+        /// <param name="moveNumber">Current move number</param>
+        /// <param name="opponentsAndHidingLocations">Opponents and their hiding locations</param>
+        /// <param name="foundOpponents">Opponents who have been found</param>
+        [SetsRequiredMembers]
+        public SavedGame(string houseFileName, string playerLocation, int moveNumber, Dictionary<string, string> opponentsAndHidingLocations, IEnumerable<string> foundOpponents)
+        {
+            HouseFileName = houseFileName;
             PlayerLocation = playerLocation;
             MoveNumber = moveNumber;
             OpponentsAndHidingLocations = opponentsAndHidingLocations;
