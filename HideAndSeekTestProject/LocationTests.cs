@@ -1,9 +1,11 @@
 namespace HideAndSeek
 {
     using HideAndSeek;
+    using Newtonsoft.Json.Linq;
     using NUnit.Framework;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text.Json;
 
     /// <summary>
     /// Location tests for testing GetExit, ExitList, and AddExit methods
@@ -204,7 +206,7 @@ namespace HideAndSeek
             IEnumerable<string> expectedStorageRoomExitList = new List<string>() { "the living room is to the Southeast" };
             IEnumerable<string> expectedBasementExitList = new List<string>() { "the living room is Up" };
             IEnumerable<string> expectedYardExitList = new List<string>() { "the living room is In" };
-            
+
             // Assert that exit lists are as expected
             Assert.Multiple(() =>
             {
@@ -230,13 +232,13 @@ namespace HideAndSeek
         [Test]
         [Category("Location AddExit ExitList")]
         public void Test_Location_AddHall_CheckExitLists()
-        { 
+        {
             // Create hallway and add to basement
-            Location hallway = new Location("hallway"); 
-            down_basement.AddExit(Direction.East, hallway); 
+            Location hallway = new Location("hallway");
+            down_basement.AddExit(Direction.East, hallway);
 
             // Create new rooms
-            Location north_bathroom = new Location("bathroom"); 
+            Location north_bathroom = new Location("bathroom");
             Location south_gym = new Location("gym");
 
             // Add new rooms to hallway
@@ -256,7 +258,7 @@ namespace HideAndSeek
                 Assert.That(basementExitList.Count, Is.EqualTo(2), "2 basement exits");
                 Assert.That(basementExitList.ElementAt(0), Is.EqualTo("the living room is Up"), "first basement exit is living room");
                 Assert.That(basementExitList.ElementAt(1), Is.EqualTo("the hallway is to the East"), "second basement exit is hallway");
-                
+
                 // Exit list for hallway
                 Assert.That(hallwayExitList.Count, Is.EqualTo(3), "3 hallway exits");
                 Assert.That(hallwayExitList.ElementAt(0), Is.EqualTo("the bathroom is to the North"), "first exit is bathroom");
@@ -281,7 +283,7 @@ namespace HideAndSeek
         public void Test_Location_AddExit_WithConstructorAcceptingName()
         {
             // Create expected exit list for yard
-            IEnumerable<string> expectedYardExitList = new List<string>() { 
+            IEnumerable<string> expectedYardExitList = new List<string>() {
                 "the living room is In",
                 "the shed is to the North"
             };
@@ -334,6 +336,175 @@ namespace HideAndSeek
                 Assert.That(northLocation.Name, Is.EqualTo("shed"), "north location name");
                 Assert.That(northLocation.HidingPlace, Is.EqualTo("in the wheelbarrow"));
                 Assert.That(northLocation.ExitList, Is.EqualTo(expectedNorthLocationExitList), "north location exit list");
+            });
+        }
+
+        [Test]
+        [Category("Location Name Success")]
+        public void Test_Location_NameSetter()
+        {
+            // Create Location
+            Location myLocation = new Location("secret attic");
+
+            Assert.Multiple(() =>
+            {
+                // Assert that Location has expected name
+                Assert.That(myLocation.Name, Is.EqualTo("secret attic"));
+
+                // Change Location Name and assert that it was set successfully
+                myLocation.Name = "secret basement";
+                Assert.That(myLocation.Name, Is.EqualTo("secret basement"));
+            });
+
+        }
+
+        [TestCase("")]
+        [TestCase(" ")]
+        [Category("Location Name Failure")]
+        public void Test_Location_NameSetter_ThrowsException_WhenInvalidNamePassed(string name)
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that setting the Name to an invalid name throws exception
+                var exception = Assert.Throws<InvalidDataException>(() =>
+                {
+                    center.Name = name;
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because location name \"{name}\" is invalid (is empty or contains only whitespace"));
+            });
+        }
+
+        [Test]
+        [Category("Location Serialization")]
+        public void Test_Location_Serialization()
+        {
+            // Set expected serialized Location text
+            string expectedSerializedLocation =
+                "{\"Name\":\"living room\"," +
+                "\"ExitsForSerialization\":{" +
+                    "\"North\":\"kitchen\"," +
+                    "\"Northeast\":\"pantry\"," +
+                    "\"East\":\"game room\"," +
+                    "\"Southeast\":\"study\"," +
+                    "\"South\":\"office\"," +
+                    "\"Southwest\":\"sensory room\"," +
+                    "\"West\":\"bedroom\"," +
+                    "\"Northwest\":\"storage room\"," +
+                    "\"In\":\"closet\"," +
+                    "\"Out\":\"yard\"," +
+                    "\"Up\":\"attic\"," +
+                    "\"Down\":\"basement\"}}";
+
+            // Serialize Location
+            string serializedLocation = center.Serialize();
+
+            // Assert that serialized Location text is as expected
+            Assert.That(serializedLocation, Is.EqualTo(expectedSerializedLocation));
+        }
+
+        // Does not test restoring Exits dictionary (this is done in House class)
+        [Test]
+        [Category("Location Deserialization")]
+        public void Test_Location_Deserialization()
+        {
+            // Set expected ExitsForSerialization property value
+            IDictionary<Direction, string> expectedExitsForSerialization = new Dictionary<Direction, string>();
+            expectedExitsForSerialization.Add(Direction.North, "kitchen");
+            expectedExitsForSerialization.Add(Direction.Northeast, "pantry");
+            expectedExitsForSerialization.Add(Direction.East, "game room");
+            expectedExitsForSerialization.Add(Direction.Southeast, "study");
+            expectedExitsForSerialization.Add(Direction.South, "office");
+            expectedExitsForSerialization.Add(Direction.Southwest, "sensory room");
+            expectedExitsForSerialization.Add(Direction.West, "bedroom");
+            expectedExitsForSerialization.Add(Direction.Northwest, "storage room");
+            expectedExitsForSerialization.Add(Direction.In, "closet");
+            expectedExitsForSerialization.Add(Direction.Out, "yard");
+            expectedExitsForSerialization.Add(Direction.Up, "attic");
+            expectedExitsForSerialization.Add(Direction.Down, "basement");
+
+            // Text representing serialized location
+            string serializedLocation = 
+                "{\"Name\":\"living room\"," +
+                "\"ExitsForSerialization\":{" +
+                    "\"North\":\"kitchen\"," +
+                    "\"Northeast\":\"pantry\"," +
+                    "\"East\":\"game room\"," +
+                    "\"Southeast\":\"study\"," +
+                    "\"South\":\"office\"," +
+                    "\"Southwest\":\"sensory room\"," +
+                    "\"West\":\"bedroom\"," +
+                    "\"Northwest\":\"storage room\"," +
+                    "\"In\":\"closet\"," +
+                    "\"Out\":\"yard\"," +
+                    "\"Up\":\"attic\"," +
+                    "\"Down\":\"basement\"}}";
+
+            // Deserialize Location
+            Location deserializedLocation = JsonSerializer.Deserialize<Location>(serializedLocation);
+
+            // Assert that deserialized Location's Name and ExitsForSerialization properties are as expected
+            Assert.Multiple(() =>
+            {
+                Assert.That(deserializedLocation.Name, Is.EqualTo("living room"));
+                Assert.That(deserializedLocation.ExitsForSerialization, Is.EquivalentTo(expectedExitsForSerialization));
+            });
+        }
+
+        [TestCase("")]
+        [TestCase(" ")]
+        [Category("Location Deserialization Failure")]
+        public void Test_Location_Deserialization_ThrowsException_OverInvalidName(string name)
+        {
+            // Set expected ExitsForSerialization property value
+            IDictionary<Direction, string> expectedExitsForSerialization = new Dictionary<Direction, string>();
+            expectedExitsForSerialization.Add(Direction.North, "kitchen");
+
+            // Text representing serialized Location
+            string serializedLocation = 
+                "{\"Name\":\"" + name + "\"," +
+                "\"ExitsForSerialization\":{" +
+                    "\"North\":\"kitchen\"}}";
+
+            Assert.Multiple(() =>
+            {
+                // Assert that deserializing throws exception
+                var exception = Assert.Throws<InvalidDataException>(() =>
+                {
+                    JsonSerializer.Deserialize<Location>(serializedLocation);
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because location name \"{name}\" is invalid (is empty or contains only whitespace"));
+            });
+        }
+
+        [TestCase("")]
+        [TestCase(" ")]
+        [Category("Location Deserialization Failure")]
+        public void Test_Location_Deserialization_ThrowsException_OverInvalidExitLocationName(string name)
+        {
+            // Set expected ExitsForSerialization property value
+            IDictionary<Direction, string> expectedExitsForSerialization = new Dictionary<Direction, string>();
+            expectedExitsForSerialization.Add(Direction.North, "kitchen");
+
+            // Text representing serialized Location
+            string serializedLocation =
+                "{\"Name\":\"living room\"," +
+                "\"ExitsForSerialization\":{" +
+                    "\"North\":\"" + name + "\"}}";
+
+            Assert.Multiple(() =>
+            {
+                // Assert that deserializing throws exception
+                var exception = Assert.Throws<InvalidDataException>(() =>
+                {
+                    JsonSerializer.Deserialize<Location>(serializedLocation);
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because location name \"{name}\" is invalid (is empty or contains only whitespace"));
             });
         }
     }

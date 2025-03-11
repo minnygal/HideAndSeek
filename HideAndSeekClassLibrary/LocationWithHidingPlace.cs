@@ -1,8 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace HideAndSeek
 {
@@ -35,9 +40,41 @@ namespace HideAndSeek
     public class LocationWithHidingPlace : Location
     {
         /// <summary>
+        /// Serialize object and return as string
+        /// Calls private PrepForSerialization method
+        /// which must be called prior to object serialization.
+        /// </summary>
+        /// <returns>Serialized object as string</returns>
+        public override string Serialize()
+        {
+            base.Serialize(); // Prepare object for serialization but ignore object serialized as Location
+            return JsonSerializer.Serialize(this); // Serialize this object as a LocationWithHidingPlace
+        }
+
+        private string _hidingPlace;
+
+        /// <summary>
         /// Name of hiding place
         /// </summary>
-        public string HidingPlace { get; private set; }
+        [JsonRequired]
+        public required string HidingPlace
+        {
+            get
+            {
+                return _hidingPlace;
+            }
+            set
+            {
+                // If invalid name is entered
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new InvalidDataException($"Cannot perform action because hiding place \"{value}\" is invalid (is empty or contains only whitespace"); // Throw exception
+                }
+
+                // Set name variable
+                _hidingPlace = value;
+            }
+        }
 
         /// <summary>
         /// Opponents hidden in this hiding place
@@ -45,10 +82,16 @@ namespace HideAndSeek
         private List<Opponent> opponentsHiding = new List<Opponent>();
 
         /// <summary>
-        /// Constructor
+        /// Constructor for JSON deserialization
+        /// </summary>
+        public LocationWithHidingPlace() : base() { }
+
+        /// <summary>
+        /// Constructor to set name and description
         /// </summary>
         /// <param name="locationName">Name of location hiding place is in</param>
-        /// <param name="hidingPlaceDescription">Name of hiding place</param>
+        /// <param name="hidingPlaceDescription">Description of hiding place</param>
+        [SetsRequiredMembers]
         public LocationWithHidingPlace(string locationName, string hidingPlaceDescription) : base(locationName)
         {
             HidingPlace = hidingPlaceDescription;

@@ -26,12 +26,12 @@ namespace HideAndSeek
             Assert.Multiple(() =>
             {
                 // Move East from StartingPoint to Hallway.
-                Assert.That(gameController.ParseInput("East"), Is.EqualTo("Moving East"), "parsing \"East\" from StartingPoint returns appropriate text");
+                Assert.That(gameController.ParseInput("East"), Is.EqualTo("Moving East"), "parsing \"East\" from Entry returns appropriate text");
                 Assert.That(gameController.Status, Is.EqualTo("You are in the Hallway. You see the following exits:" +
                     Environment.NewLine + " - the Landing is Up" +
                     Environment.NewLine + " - the Bathroom is to the North" +
                     Environment.NewLine + " - the Living Room is to the South" +
-                    Environment.NewLine + " - the StartingPoint is to the West" +
+                    Environment.NewLine + " - the Entry is to the West" +
                     Environment.NewLine + " - the Kitchen is to the Northwest" +
                     Environment.NewLine + "You have not found any opponents"), "game status appropriately changed to text for Hallway");
 
@@ -132,7 +132,7 @@ namespace HideAndSeek
 
                 // Check the StartingPoint -- there are no players hiding there
                 Assert.That(gameController.MoveNumber, Is.EqualTo(1), "check game move number");
-                Assert.That(gameController.ParseInput("Check"), Is.EqualTo("There is no hiding place in the StartingPoint"), "check string returned when check in StartingPoint");
+                Assert.That(gameController.ParseInput("Check"), Is.EqualTo("There is no hiding place in the Entry"), "check string returned when check in StartingPoint");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(2), "check game move number");
 
                 // Move to the Garage
@@ -144,7 +144,7 @@ namespace HideAndSeek
 
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Garage. You see the following exits:" +
-                    Environment.NewLine + " - the StartingPoint is In" +
+                    Environment.NewLine + " - the Entry is In" +
                     Environment.NewLine + "Someone could hide behind the car" +
                     Environment.NewLine + "You have found 1 of 5 opponents: Joe"), "check status after finding opponent in Garage");
 

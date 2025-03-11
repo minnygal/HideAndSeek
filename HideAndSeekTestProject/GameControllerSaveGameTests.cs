@@ -104,7 +104,7 @@ namespace HideAndSeek
         public void Test_GameController_ParseInput_ToLoadGame_AndCheckSuccessMessage(string fileName, string expected)
         {
             // Initialize variable to text stored in mock file
-            string textInFile = "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"StartingPoint\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[]}";
+            string textInFile = "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"Entry\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[]}";
 
             // Set up mock for file system
             mockFileSystem.Setup(manager => manager.File.Exists($"{fileName}.json")).Returns(true); // Mock that file exists
