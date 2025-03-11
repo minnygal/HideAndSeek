@@ -174,7 +174,7 @@ namespace HideAndSeek
         public House() 
         {
             // Create StartingPoint and connect to new locations: Garage, Hallway
-            StartingPoint = new Location("StartingPoint");
+            StartingPoint = new Location("Entry");
             LocationWithHidingPlace garage = StartingPoint.AddExit(Direction.Out, "Garage", "behind the car");
             Location hallway = StartingPoint.AddExit(Direction.East, "Hallway");
 

@@ -50,7 +50,7 @@ namespace HideAndSeek
             Assert.Multiple(() =>
             {
                 // Assert that name of StartingPoint is correct
-                Assert.That(house.StartingPoint.Name, Is.EqualTo("StartingPoint"), "name of StartingPoint");
+                Assert.That(house.StartingPoint.Name, Is.EqualTo("Entry"), "name of StartingPoint");
 
                 // Assert that Garage is located "Out" from StartingPoint
                 var garage = house.StartingPoint.GetExit(Direction.Out);
@@ -112,7 +112,7 @@ namespace HideAndSeek
         {
             Assert.Multiple(() =>
             {
-                Assert.That(house.GetLocationByName("StartingPoint").Name, Is.EqualTo("StartingPoint"), "get StartingPoint");
+                Assert.That(house.GetLocationByName("Entry").Name, Is.EqualTo("Entry"), "get StartingPoint");
                 Assert.That(house.GetLocationByName("Attic").Name, Is.EqualTo("Attic"), "get Attic");
                 Assert.That(house.GetLocationByName("Garage").Name, Is.EqualTo("Garage"), "get Garage");
                 Assert.That(house.GetLocationByName("Master Bedroom").Name, Is.EqualTo("Master Bedroom"), "get Master Bedroom");
@@ -150,7 +150,7 @@ namespace HideAndSeek
         {
             Assert.Multiple(() =>
             {
-                Assert.That(house.GetLocationWithHidingPlaceByName("StartingPoint"), Is.Null, "try \"StartingPoint\"");
+                Assert.That(house.GetLocationWithHidingPlaceByName("Entry"), Is.Null, "try \"StartingPoint\"");
                 Assert.That(house.GetLocationWithHidingPlaceByName("Hallway"), Is.Null, "try \"Hallway\"");
                 Assert.That(house.GetLocationWithHidingPlaceByName("Landing"), Is.Null, "try \"Landing\"");
             });
@@ -172,7 +172,7 @@ namespace HideAndSeek
         [Category("House DoesLocationExist Success")]
         public void Test_House_DoesLocationExist_ReturnsTrue()
         {
-            Assert.That(house.DoesLocationExist("StartingPoint"), Is.True);
+            Assert.That(house.DoesLocationExist("Entry"), Is.True);
         }
 
         [Test]
