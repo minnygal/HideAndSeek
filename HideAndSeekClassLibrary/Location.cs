@@ -40,11 +40,30 @@ namespace HideAndSeek
 
     public class Location
     {
+        private string _name;
+
         /// <summary>
         /// The name of this location
         /// </summary>
         [JsonRequired]
-        public required string Name { get; set; }
+        public required string Name
+        {
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                // If invalid name is entered
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new InvalidDataException($"Cannot perform action because location name \"{value}\" is invalid (is empty or contains only whitespace"); // Throw exception
+                }
+
+                // Set name variable
+                _name = value;
+            }
+        }
 
         /// <summary>
         /// Exits for JSON serialization 

@@ -1,11 +1,13 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace HideAndSeek
 {
@@ -49,11 +51,30 @@ namespace HideAndSeek
             return JsonSerializer.Serialize(this); // Serialize this object as a LocationWithHidingPlace
         }
 
+        private string _hidingPlace;
+
         /// <summary>
         /// Name of hiding place
         /// </summary>
         [JsonRequired]
-        public required string HidingPlace { get; set; }
+        public required string HidingPlace
+        {
+            get
+            {
+                return _hidingPlace;
+            }
+            set
+            {
+                // If invalid name is entered
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new InvalidDataException($"Cannot perform action because hiding location \"{value}\" is invalid (is empty or contains only whitespace"); // Throw exception
+                }
+
+                // Set name variable
+                _hidingPlace = value;
+            }
+        }
 
         /// <summary>
         /// Opponents hidden in this hiding place

@@ -55,6 +55,46 @@
         }
 
         [Test]
+        [Category("LocationWithHidingPlace HidingPlace Success")]
+        public void Test_LocationWithHidingPlace_HidingPlaceSetter()
+        {
+            // Create LocationWithHidingPlace
+            LocationWithHidingPlace myLocation = new LocationWithHidingPlace("garden", "in the bushes");
+
+            Assert.Multiple(() =>
+            {
+                // Assert that LocationWithHidingPlace has expected hiding place
+                Assert.That(myLocation.HidingPlace, Is.EqualTo("in the bushes"));
+
+                // Change LocationWithHidingPlace hiding place and assert that it was set successfully
+                myLocation.HidingPlace = "in a tree";
+                Assert.That(myLocation.HidingPlace, Is.EqualTo("in a tree"));
+            });
+
+        }
+
+        [TestCase("")]
+        [TestCase(" ")]
+        [Category("LocationWithHidingPlace HidingPlace Failure")]
+        public void Test_LocationWithHidingPlace_HidingPlace_ThrowsException_WhenInvalidDescriptionPassed(string description)
+        {
+            // Create LocationWithHidingPlace
+            LocationWithHidingPlace locationWithHidingPlace = new LocationWithHidingPlace("Garden", "in the bushes");
+            
+            Assert.Multiple(() =>
+            {
+                // Assert that setting the hiding place to an invalid description throws exception
+                var exception = Assert.Throws<InvalidDataException>(() =>
+                {
+                    locationWithHidingPlace.HidingPlace = description;
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because hiding location \"{description}\" is invalid (is empty or contains only whitespace"));
+            });
+        }
+
+        [Test]
         [Category("LocationWithHidingPlace Serialization Success")]
         public void Test_LocationWithHidingPlace_Serialization()
         {

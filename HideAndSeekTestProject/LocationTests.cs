@@ -1,6 +1,7 @@
 namespace HideAndSeek
 {
     using HideAndSeek;
+    using Newtonsoft.Json.Linq;
     using NUnit.Framework;
     using System.Collections.Generic;
     using System.Linq;
@@ -339,7 +340,44 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("Location Serialization Success")]
+        [Category("Location Name Success")]
+        public void Test_Location_NameSetter()
+        {
+            // Create Location
+            Location myLocation = new Location("secret attic");
+
+            Assert.Multiple(() =>
+            {
+                // Assert that Location has expected name
+                Assert.That(myLocation.Name, Is.EqualTo("secret attic"));
+
+                // Change Location Name and assert that it was set successfully
+                myLocation.Name = "secret basement";
+                Assert.That(myLocation.Name, Is.EqualTo("secret basement"));
+            });
+            
+        }
+
+        [TestCase("")]
+        [TestCase(" ")]
+        [Category("Location Name Failure")]
+        public void Test_Location_NameSetter_ThrowsException_WhenInvalidNamePassed(string name)
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that setting the Name to an invalid name throws exception
+                var exception = Assert.Throws<InvalidDataException>(() =>
+                {
+                    center.Name = name;
+                });
+
+            // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because location name \"{name}\" is invalid (is empty or contains only whitespace"));
+            });
+        }
+
+        [Test]
+        [Category("Location Serialization")]
         public void Test_Location_Serialization()
         {
             // Set expected serialized Location text
@@ -368,7 +406,7 @@ namespace HideAndSeek
 
         // Does not test restoring Exits dictionary (this is done in House class)
         [Test]
-        [Category("Location Deserialization Success")]
+        [Category("Location Deserialization")]
         public void Test_Location_Deserialization()
         {
             // Set expected ExitsForSerialization property value
@@ -386,9 +424,8 @@ namespace HideAndSeek
             expectedExitsForSerialization.Add(Direction.Up, "attic");
             expectedExitsForSerialization.Add(Direction.Down, "basement");
 
-            // Set text representing serialized object
-            string serializedLocation = 
-                "{\"Name\":\"living room\"," +
+            // Deserialize Location
+            string serializedLocation = "{\"Name\":\"living room\"," +
                 "\"ExitsForSerialization\":{" +
                     "\"North\":\"kitchen\"," +
                     "\"Northeast\":\"pantry\"," +
@@ -403,7 +440,6 @@ namespace HideAndSeek
                     "\"Up\":\"attic\"," +
                     "\"Down\":\"basement\"}}";
 
-            // Deserialize Location
             Location deserializedLocation = JsonSerializer.Deserialize<Location>(serializedLocation);
             
             // Assert that deserialized Location's Name and ExitsForSerialization properties are as expected
