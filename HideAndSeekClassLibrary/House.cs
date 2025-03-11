@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -76,7 +77,7 @@ namespace HideAndSeek
             // If file does not exist
             if (!(FileSystem.File.Exists(fullFileName)))
             {
-                throw new FileNotFoundException($"Cannot load game because file {fileName} does not exist"); // Return error message
+                throw new FileNotFoundException($"Cannot load game because house layout file {fileName} does not exist"); // Return error message
             }
 
             // Get text from House file
@@ -89,23 +90,27 @@ namespace HideAndSeek
             }
             catch (JsonException e)
             {
-                throw new JsonException("Cannot process because data is corrupt");
+                throw new JsonException($"Cannot process because data in house layout file {fileName} is corrupt");
             }
             catch (InvalidOperationException e)
             {
-                throw new InvalidOperationException("Cannot process because data is corrupt");
+                throw new JsonException($"Cannot process because data in house layout file {fileName} is corrupt");
+            }
+            catch(Exception e)
+            {
+                throw e;
             }
         }
 
         /// <summary>
         /// Name of House
         /// </summary>
-        public string Name { get; private set; } = "my house";
+        public string Name { get; set; } = "my house";
 
         /// <summary>
         /// Name of file from which House is loaded (w/o JSON extension)
         /// </summary>
-        public string HouseFileName { get; private set; } = "DefaultHouse";
+        public string HouseFileName { get; set; } = "DefaultHouse";
 
         /// <summary>
         /// Entry of House
