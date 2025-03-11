@@ -32,6 +32,8 @@ namespace HideAndSeek
      * -I added a parameterless constructor for JSON deserialization.
      * -I added a House property (used for property data validation)
      * -I added a HouseFileName property and a _houseFileName variable.
+     * -I added a method to set _houseFileName variable
+     *  without using HouseFileName setter (which calls House.CreateHouse)
      * -I added a parameterized constructor for setting properties upon initialization.
      * -I added comments for easier reading.
      **/
