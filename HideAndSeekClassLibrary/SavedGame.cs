@@ -52,7 +52,7 @@ namespace HideAndSeek
         /// Set the House file name private variable, bypassing the HouseFileName property setter which calls House's CreateHouse method
         /// </summary>
         /// <param name="fileName">Name of file to set</param>
-        /// <exception cref="InvalidDataException">Exception thrown if file name in invalid</exception>
+        /// <exception cref="InvalidDataException">Exception thrown if file name is invalid</exception>
         private void SetHouseFileName_WithoutCreatingHouse(string fileName)
         {
             // If House file name is invalid
@@ -60,6 +60,8 @@ namespace HideAndSeek
             {
                 throw new InvalidDataException($"Cannot perform action because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"); // Throw exception
             }
+
+            // Set House file name private variable, bypassing the HouseFileName property setter which calls House's CreateHouse method
             _houseFileName = fileName;
         }
 
