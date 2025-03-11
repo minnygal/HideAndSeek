@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Linq.Expressions;
@@ -102,15 +103,53 @@ namespace HideAndSeek
             }
         }
 
+        private string _name = "my house";
+
         /// <summary>
         /// Name of House
         /// </summary>
-        public string Name { get; set; } = "my house";
+        public required string Name
+        { 
+            get
+            {
+                return _name;
+            }
+            set
+            {
+                // If invalid name is entered
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new InvalidDataException($"Cannot perform action because house name \"{value}\" is invalid (is empty or contains only whitespace"); // Throw exception
+                }
+
+                // Set name variable
+                _name = value;
+            }
+        }
+
+        private string _houseFileName = "DefaultHouse";
 
         /// <summary>
         /// Name of file from which House is loaded (w/o JSON extension)
         /// </summary>
-        public string HouseFileName { get; set; } = "DefaultHouse";
+        public required string HouseFileName
+        {
+            get
+            {
+                return _houseFileName;
+            }
+            set
+            {
+                // If file name is invalid
+                if ( !(FileSystem.IsValidName(value)) )
+                {
+                    throw new InvalidDataException($"Cannot perform action because House file name \"{value}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"); // Throw exception
+                }
+
+                // Set name variable
+                _houseFileName = value;
+            }
+        }
 
         /// <summary>
         /// Entry of House
@@ -174,6 +213,18 @@ namespace HideAndSeek
                 livingRoom,
                 Entry
             };
+        }
+
+        /// <summary>
+        /// Constructor to create a new House object
+        /// </summary>
+        /// <param name="name">Name of House</param>
+        /// <param name="houseFileName">Name of file in which House layout is stored</param>
+        [SetsRequiredMembers]
+        public House(string name, string houseFileName) : this()
+        {
+            Name = name;
+            HouseFileName = houseFileName;
         }
 
         /// <summary>

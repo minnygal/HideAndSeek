@@ -5,7 +5,9 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Moq;
+using Newtonsoft.Json.Linq;
 
 namespace HideAndSeek
 {
@@ -22,7 +24,7 @@ namespace HideAndSeek
         [SetUp]
         public void SetUp()
         {
-            house = new House();
+            house = new House("my house", "DefaultHouse");
         }
 
         /// <summary>
@@ -382,6 +384,70 @@ namespace HideAndSeek
 
                 // Assert that exception message is as expected
                 Assert.That(exception.Message, Is.EqualTo("Cannot process because data in house layout file MyCorruptFile is corrupt"));
+            });
+        }
+
+        // Calls properties' setters and setters successfully
+        [Test]
+        [Category("House Constructor Success")]
+        public void Test_House_Constructor()
+        {
+            // Create House
+            house = new House("special house", "SpecialHouse");
+
+            // Assume no exceptions were thrown
+            // Assert that properties are set correctly
+            Assert.Multiple(() =>
+            {
+                Assert.That(house.Name, Is.EqualTo("special house"));
+                Assert.That(house.HouseFileName, Is.EqualTo("SpecialHouse"));
+            });
+        }
+
+        [TestCase("")]
+        [TestCase(" ")]
+        [Category("House Name Failure")]
+        public void Test_House_NameSetter_WithInvalidName(string name)
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that setting the house name to an invalid name raises an exception
+                var exception = Assert.Throws<InvalidDataException>(() =>
+                {
+                    house.Name = name;
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because house name \"{name}\" is invalid (is empty or contains only whitespace"));
+            });
+        }
+
+        [TestCase("")]
+        [TestCase(" ")]
+        [TestCase("my file")]
+        [TestCase(" myFile")]
+        [TestCase("myFile ")]
+        [TestCase("\\")]
+        [TestCase("\\myFile")]
+        [TestCase("myFile\\")]
+        [TestCase("my\\File")]
+        [TestCase("/")]
+        [TestCase("/myFile")]
+        [TestCase("myFile/")]
+        [TestCase("my/File")]
+        [Category("House HouseFileName Failure")]
+        public void Test_House_HouseFileNameSetter_WithInvalidHouseFileName(string houseFileName)
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that setting the house file name to an invalid file name raises an exception
+                var exception = Assert.Throws<InvalidDataException>(() =>
+                {
+                    house.HouseFileName = houseFileName;
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because House file name \"{houseFileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
             });
         }
     }
