@@ -132,7 +132,7 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo("Cannot load game because file NonexistentHouse does not exist"));
+                Assert.That(exception.Message, Is.EqualTo("Cannot load game because house layout file NonexistentHouse does not exist"));
             });
         }
 
@@ -407,15 +407,24 @@ namespace HideAndSeek
         public void Test_SavedGame_Deserialization()
         {
             // Initialize variable to text stored in mock file
-            string textInFile = "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"Entry\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[]}";
+            string textInFile = "{\"HouseFileName\":\"MyHouseFile\",\"PlayerLocation\":\"Entry\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[]}";
 
+            // Set up mock file system and assign to House property
+            string textInHouseFile = "{\"Name\":\"my house\",\"HouseFileName\":\"MyHouseFile\"}";
+            Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
+            fileSystemMock.Setup((s) => s.File.Exists("MyHouseFile.json")).Returns(true);
+            fileSystemMock.Setup((s) => s.File.ReadAllText("MyHouseFile.json")).Returns(textInHouseFile);
+            House.FileSystem = fileSystemMock.Object;
+            
             // Attempt to deserialize text from file into SavedGame object
             savedGame = JsonSerializer.Deserialize<SavedGame>(textInFile);
         
             // Assert that SavedGame properties are as expected
             Assert.Multiple(() =>
             {
-                Assert.That(savedGame.HouseFileName, Is.EqualTo("DefaultHouse"), "house file name");
+                Assert.That(savedGame.House.Name, Is.EqualTo("my house"));
+                Assert.That(savedGame.House.HouseFileName, Is.EqualTo("MyHouseFile"));
+                Assert.That(savedGame.HouseFileName, Is.EqualTo("MyHouseFile"), "house file name");
                 Assert.That(savedGame.PlayerLocation, Is.EqualTo("Entry"), "player location");
                 Assert.That(savedGame.MoveNumber, Is.EqualTo(1), "move number");
                 Assert.That(savedGame.OpponentsAndHidingLocations.Count(), Is.EqualTo(5), "number of opponents and hiding locations items");

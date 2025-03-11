@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
 using System.Threading.Tasks;
 using Moq;
 
@@ -17,7 +19,7 @@ namespace HideAndSeek
     {
         private House house;
 
-        [SetUp] 
+        [SetUp]
         public void SetUp()
         {
             house = new House();
@@ -166,7 +168,7 @@ namespace HideAndSeek
 
         [Test]
         [Category("House DoesLocationExist Success")]
-        public void Test_House_DoesLocationExist_ReturnsTrue() 
+        public void Test_House_DoesLocationExist_ReturnsTrue()
         {
             Assert.That(house.DoesLocationExist("Entry"), Is.True);
         }
@@ -180,7 +182,7 @@ namespace HideAndSeek
 
         [Test]
         [Category("House DoesLocationWithHidingPlaceExist Success")]
-        public  void Test_House_DoesLocationWithHidingPlaceExist_ReturnsTrue()
+        public void Test_House_DoesLocationWithHidingPlaceExist_ReturnsTrue()
         {
             Assert.That(house.DoesLocationWithHidingPlaceExist("Pantry"), Is.True);
         }
@@ -312,6 +314,74 @@ namespace HideAndSeek
             {
                 Assert.That(garage.CheckHidingPlace(), Is.Empty, "no opponents in garage");
                 Assert.That(attic.CheckHidingPlace(), Is.Empty, "no opponents in attic");
+            });
+        }
+
+        [Test]
+        [Category("House CreateHouse Success")]
+        public void Test_House_CreateHouse()
+        {
+            // Set up mock file system and assign to House property
+            string textInHouseFile = "{\"Name\":\"my house\",\"HouseFileName\":\"MyHouseFile\"}";
+            Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
+            fileSystemMock.Setup((s) => s.File.Exists("MyHouseFile.json")).Returns(true);
+            fileSystemMock.Setup((s) => s.File.ReadAllText("MyHouseFile.json")).Returns(textInHouseFile);
+            House.FileSystem = fileSystemMock.Object;
+
+            // Call method to create House
+            House house = House.CreateHouse("MyHouseFile");
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(house.Name, Is.EqualTo("my house"));
+                Assert.That(house.HouseFileName, Is.EqualTo("MyHouseFile"));
+            });
+        }
+
+        [Test]
+        [Category("House CreateHouse Failure")]
+        public void Test_House_CreateHouse_WithNameOfNonexistingFile_ThrowsException()
+        {
+            // Set up mock file system and assign to House property
+            Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
+            fileSystemMock.Setup((s) => s.File.Exists("MyNonexistentFile.json")).Returns(false);
+            House.FileSystem = fileSystemMock.Object;
+
+            Assert.Multiple(() =>
+            {
+                // Assert that creating a SavedGame object with an invalid file name raises an exception
+                var exception = Assert.Throws<FileNotFoundException>(() =>
+                {
+                    House.CreateHouse("MyNonexistentFile");
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo("Cannot load game because house layout file MyNonexistentFile does not exist"));
+            });
+        }
+
+        [TestCase("")]
+        [TestCase(" ")]
+        [TestCase("ABCDeaoueou[{}}({}")]
+        [Category("House CreateHouse Failure")]
+        public void Test_House_CreateHouse_FromCorruptFile_ThrowsException(string fileText)
+        {
+            // Set up mock file system and assign to House property
+            Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
+            fileSystemMock.Setup((s) => s.File.Exists("MyCorruptFile.json")).Returns(true);
+            fileSystemMock.Setup((s) => s.File.ReadAllText("MyCorruptFile.json")).Returns(fileText);
+            House.FileSystem = fileSystemMock.Object;
+
+            Assert.Multiple(() =>
+            {
+                // Assert that creating a SavedGame object with an invalid file name raises an exception
+                var exception = Assert.Throws<JsonException>(() =>
+                {
+                    House.CreateHouse("MyCorruptFile");
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo("Cannot process because data in house layout file MyCorruptFile is corrupt"));
             });
         }
     }
