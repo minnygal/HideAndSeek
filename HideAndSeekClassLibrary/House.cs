@@ -7,6 +7,7 @@ using System.Linq.Expressions;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace HideAndSeek
@@ -109,6 +110,7 @@ namespace HideAndSeek
         /// <summary>
         /// Name of House
         /// </summary>
+        [JsonRequired]
         public required string Name
         { 
             get
@@ -133,6 +135,7 @@ namespace HideAndSeek
         /// <summary>
         /// Name of file from which House is loaded (w/o JSON extension)
         /// </summary>
+        [JsonRequired]
         public required string HouseFileName
         {
             get
