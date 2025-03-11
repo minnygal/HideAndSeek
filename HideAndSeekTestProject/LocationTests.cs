@@ -4,6 +4,7 @@ namespace HideAndSeek
     using NUnit.Framework;
     using System.Collections.Generic;
     using System.Linq;
+    using System.Text.Json;
 
     /// <summary>
     /// Location tests for testing GetExit, ExitList, and AddExit methods
@@ -334,6 +335,82 @@ namespace HideAndSeek
                 Assert.That(northLocation.Name, Is.EqualTo("shed"), "north location name");
                 Assert.That(northLocation.HidingPlace, Is.EqualTo("in the wheelbarrow"));
                 Assert.That(northLocation.ExitList, Is.EqualTo(expectedNorthLocationExitList), "north location exit list");
+            });
+        }
+
+        [Test]
+        [Category("Location Serialization Success")]
+        public void Test_Location_Serialization()
+        {
+            // Set expected serialized Location text
+            string expectedSerializedLocation = 
+                "{\"Name\":\"living room\"," +
+                "\"ExitsForSerialization\":{" +
+                    "\"North\":\"kitchen\"," +
+                    "\"Northeast\":\"pantry\"," +
+                    "\"East\":\"game room\"," +
+                    "\"Southeast\":\"study\"," +
+                    "\"South\":\"office\"," +
+                    "\"Southwest\":\"sensory room\"," +
+                    "\"West\":\"bedroom\"," +
+                    "\"Northwest\":\"storage room\"," +
+                    "\"In\":\"closet\"," +
+                    "\"Out\":\"yard\"," +
+                    "\"Up\":\"attic\"," +
+                    "\"Down\":\"basement\"}}";
+
+            // Serialize Location
+            string serializedLocation = center.Serialize();
+
+            // Assert that serialized Location text is as expected
+            Assert.That(serializedLocation, Is.EqualTo(expectedSerializedLocation));
+        }
+
+        // Does not test restoring Exits dictionary (this is done in House class)
+        [Test]
+        [Category("Location Deserialization Success")]
+        public void Test_Location_Deserialization()
+        {
+            // Set expected ExitsForSerialization property value
+            IDictionary<Direction, string> expectedExitsForSerialization = new Dictionary<Direction, string>();
+            expectedExitsForSerialization.Add(Direction.North, "kitchen");
+            expectedExitsForSerialization.Add(Direction.Northeast, "pantry");
+            expectedExitsForSerialization.Add(Direction.East, "game room");
+            expectedExitsForSerialization.Add(Direction.Southeast, "study");
+            expectedExitsForSerialization.Add(Direction.South, "office");
+            expectedExitsForSerialization.Add(Direction.Southwest, "sensory room");
+            expectedExitsForSerialization.Add(Direction.West, "bedroom");
+            expectedExitsForSerialization.Add(Direction.Northwest, "storage room");
+            expectedExitsForSerialization.Add(Direction.In, "closet");
+            expectedExitsForSerialization.Add(Direction.Out, "yard");
+            expectedExitsForSerialization.Add(Direction.Up, "attic");
+            expectedExitsForSerialization.Add(Direction.Down, "basement");
+
+            // Set text representing serialized object
+            string serializedLocation = 
+                "{\"Name\":\"living room\"," +
+                "\"ExitsForSerialization\":{" +
+                    "\"North\":\"kitchen\"," +
+                    "\"Northeast\":\"pantry\"," +
+                    "\"East\":\"game room\"," +
+                    "\"Southeast\":\"study\"," +
+                    "\"South\":\"office\"," +
+                    "\"Southwest\":\"sensory room\"," +
+                    "\"West\":\"bedroom\"," +
+                    "\"Northwest\":\"storage room\"," +
+                    "\"In\":\"closet\"," +
+                    "\"Out\":\"yard\"," +
+                    "\"Up\":\"attic\"," +
+                    "\"Down\":\"basement\"}}";
+
+            // Deserialize Location
+            Location deserializedLocation = JsonSerializer.Deserialize<Location>(serializedLocation);
+            
+            // Assert that deserialized Location's Name and ExitsForSerialization properties are as expected
+            Assert.Multiple(() =>
+            {
+                Assert.That(deserializedLocation.Name, Is.EqualTo("living room"));
+                Assert.That(deserializedLocation.ExitsForSerialization, Is.EquivalentTo(expectedExitsForSerialization));
             });
         }
     }

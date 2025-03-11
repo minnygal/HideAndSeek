@@ -1,4 +1,5 @@
 ﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json;
 using System.Text.Json.Serialization;
 
 namespace HideAndSeek
@@ -57,7 +58,7 @@ namespace HideAndSeek
         /// Prepare object for serialization
         /// by setting ExitsForSerialization property
         /// </summary>
-        public void PrepForSerialization()
+        private void PrepForSerialization()
         {
             ExitsForSerialization = new Dictionary<Direction, string>();
             foreach(KeyValuePair<Direction, Location> kvp in Exits)
@@ -66,11 +67,28 @@ namespace HideAndSeek
             }
         }
 
+        /// <summary>
+        /// Serialize object and return as string
+        /// Calls private PrepForSerialization method
+        /// which must be called prior to object serialization.
+        /// </summary>
+        /// <returns>Serialized object as string</returns>
+        public virtual string Serialize()
+        {
+            PrepForSerialization();
+            return JsonSerializer.Serialize(this);
+        }
+
         [JsonIgnore]
         /// <summary>
         /// The exits out of this location
         /// </summary>
         public IDictionary<Direction, Location> Exits { get; private set; } = new Dictionary<Direction, Location>();
+
+        /// <summary>
+        /// Constructor for JSON deserialization
+        /// </summary>
+        public Location() { }
 
         /// <summary>
         /// The constructor sets the location name
