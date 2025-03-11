@@ -90,7 +90,7 @@
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because hiding location \"{description}\" is invalid (is empty or contains only whitespace"));
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because hiding place \"{description}\" is invalid (is empty or contains only whitespace"));
             });
         }
 
@@ -170,6 +170,35 @@
                 Assert.That(deserializedLocation.Name, Is.EqualTo("living room"));
                 Assert.That(deserializedLocation.HidingPlace, Is.EqualTo("behind the piano"));
                 Assert.That(deserializedLocation.ExitsForSerialization, Is.EquivalentTo(expectedExitsForSerialization));
+            });
+        }
+
+        [TestCase("")]
+        [TestCase(" ")]
+        [Category("LocationWithHidingPlace Deserialization Failure")]
+        public void Test_LocationWithHidingPlace_Deserialization_ThrowsException_OverInvalidHidingLocation(string hidingPlace)
+        {
+            // Set expected ExitsForSerialization property value
+            IDictionary<Direction, string> expectedExitsForSerialization = new Dictionary<Direction, string>();
+            expectedExitsForSerialization.Add(Direction.North, "kitchen");
+
+            // Set text representing serialized object
+            string serializedLocation =
+                "{\"HidingPlace\":\"" + hidingPlace + "\"," +
+                "\"Name\":\"living room\"," +
+                "\"ExitsForSerialization\":{" +
+                    "\"North\":\"kitchen\"}}";
+
+            Assert.Multiple(() =>
+            {
+                // Assert that deserializing throws exception
+                var exception = Assert.Throws<InvalidDataException>(() =>
+                {
+                    JsonSerializer.Deserialize<LocationWithHidingPlace>(serializedLocation);
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because hiding place \"{hidingPlace}\" is invalid (is empty or contains only whitespace"));
             });
         }
 
