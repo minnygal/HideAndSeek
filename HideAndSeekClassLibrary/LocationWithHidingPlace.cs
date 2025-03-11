@@ -1,7 +1,9 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Text;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace HideAndSeek
@@ -37,7 +39,8 @@ namespace HideAndSeek
         /// <summary>
         /// Name of hiding place
         /// </summary>
-        public string HidingPlace { get; private set; }
+        [JsonRequired]
+        public required string HidingPlace { get; set; }
 
         /// <summary>
         /// Opponents hidden in this hiding place
@@ -49,6 +52,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="locationName">Name of location hiding place is in</param>
         /// <param name="hidingPlaceDescription">Name of hiding place</param>
+        [SetsRequiredMembers]
         public LocationWithHidingPlace(string locationName, string hidingPlaceDescription) : base(locationName)
         {
             HidingPlace = hidingPlaceDescription;

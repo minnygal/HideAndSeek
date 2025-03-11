@@ -1,4 +1,7 @@
-﻿namespace HideAndSeek
+﻿using System.Diagnostics.CodeAnalysis;
+using System.Text.Json.Serialization;
+
+namespace HideAndSeek
 {
     /// <summary>
     /// Class to represent a location in the House
@@ -30,6 +33,7 @@
      * -I modified the Direction changing logic in AddReturnExit (just my approach).
      * -I used Direction changing in AddExit (just my approach).
      * -I converted lambdas to regular method bodies for easier modification.
+     * -I added a property and method for JSON serialization.
      * -I added comments for easier reading.
      * **/
 
@@ -38,8 +42,31 @@
         /// <summary>
         /// The name of this location
         /// </summary>
-        public string Name { get; private set; }
+        [JsonRequired]
+        public required string Name { get; set; }
 
+        /// <summary>
+        /// Exits for JSON serialization 
+        /// (Locations as strings so duplicate Locations 
+        /// are not created when multiple linked Locations are restored)
+        /// </summary>
+        [JsonRequired]
+        public IDictionary<Direction, string> ExitsForSerialization { get; set; }
+
+        /// <summary>
+        /// Prepare object for serialization
+        /// by setting ExitsForSerialization property
+        /// </summary>
+        public void PrepForSerialization()
+        {
+            ExitsForSerialization = new Dictionary<Direction, string>();
+            foreach(KeyValuePair<Direction, Location> kvp in Exits)
+            {
+                ExitsForSerialization.Add(kvp.Key, kvp.Value.Name);
+            }
+        }
+
+        [JsonIgnore]
         /// <summary>
         /// The exits out of this location
         /// </summary>
@@ -49,9 +76,11 @@
         /// The constructor sets the location name
         /// </summary>
         /// <param name="name">Name of the location</param>
+        [SetsRequiredMembers]
         public Location(string name)
         {
             Name = name;
+            ExitsForSerialization = new Dictionary<Direction, string>();
         }
 
         public override string ToString() => Name;
