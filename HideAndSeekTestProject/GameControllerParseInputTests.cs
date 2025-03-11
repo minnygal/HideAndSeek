@@ -25,13 +25,13 @@ namespace HideAndSeek
 
             Assert.Multiple(() =>
             {
-                // Move East from Entry to Hallway.
-                Assert.That(gameController.ParseInput("East"), Is.EqualTo("Moving East"), "parsing \"East\" from Entry returns appropriate text");
+                // Move East from StartingPoint to Hallway.
+                Assert.That(gameController.ParseInput("East"), Is.EqualTo("Moving East"), "parsing \"East\" from StartingPoint returns appropriate text");
                 Assert.That(gameController.Status, Is.EqualTo("You are in the Hallway. You see the following exits:" +
                     Environment.NewLine + " - the Landing is Up" +
                     Environment.NewLine + " - the Bathroom is to the North" +
                     Environment.NewLine + " - the Living Room is to the South" +
-                    Environment.NewLine + " - the Entry is to the West" +
+                    Environment.NewLine + " - the StartingPoint is to the West" +
                     Environment.NewLine + " - the Kitchen is to the Northwest" +
                     Environment.NewLine + "You have not found any opponents"), "game status appropriately changed to text for Hallway");
 
@@ -130,9 +130,9 @@ namespace HideAndSeek
                 // Hide Opponents is specific hiding places
                 gameController.RehideAllOpponents(hidingPlaces);
 
-                // Check the Entry -- there are no players hiding there
+                // Check the StartingPoint -- there are no players hiding there
                 Assert.That(gameController.MoveNumber, Is.EqualTo(1), "check game move number");
-                Assert.That(gameController.ParseInput("Check"), Is.EqualTo("There is no hiding place in the Entry"), "check string returned when check in Entry");
+                Assert.That(gameController.ParseInput("Check"), Is.EqualTo("There is no hiding place in the StartingPoint"), "check string returned when check in StartingPoint");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(2), "check game move number");
 
                 // Move to the Garage
@@ -144,7 +144,7 @@ namespace HideAndSeek
 
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Garage. You see the following exits:" +
-                    Environment.NewLine + " - the Entry is In" +
+                    Environment.NewLine + " - the StartingPoint is In" +
                     Environment.NewLine + "Someone could hide behind the car" +
                     Environment.NewLine + "You have found 1 of 5 opponents: Joe"), "check status after finding opponent in Garage");
 
@@ -216,7 +216,7 @@ namespace HideAndSeek
             {
                 gameController.ParseInput("Out"); // Move Out to Garage
                 Assert.That(gameController.Prompt, Is.EqualTo("2: Which direction do you want to go (or type 'check'): "), "prompt in Garage");
-                gameController.ParseInput("In"); // Move In to Entry
+                gameController.ParseInput("In"); // Move In to StartingPoint
                 gameController.ParseInput("East"); // Move East to Hallway
                 gameController.ParseInput("North"); // Move North to Bathroom
                 Assert.That(gameController.Prompt, Is.EqualTo("5: Which direction do you want to go (or type 'check'): "), "prompt in Bathroom");
@@ -256,7 +256,7 @@ namespace HideAndSeek
         {
             Assert.Multiple(() =>
             {
-                Assert.That(gameController.Prompt, Is.EqualTo("1: Which direction do you want to go: "), "prompt in Entry");
+                Assert.That(gameController.Prompt, Is.EqualTo("1: Which direction do you want to go: "), "prompt in StartingPoint");
                 gameController.ParseInput("East"); // Move East to Hallway
                 Assert.That(gameController.Prompt, Is.EqualTo("2: Which direction do you want to go: "), "prompt in Hallway");
                 gameController.ParseInput("Up"); // Move Up to Landing

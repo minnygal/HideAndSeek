@@ -49,16 +49,16 @@ namespace HideAndSeek
         {
             Assert.Multiple(() =>
             {
-                // Assert that name of Entry is correct
-                Assert.That(house.Entry.Name, Is.EqualTo("Entry"), "name of Entry");
+                // Assert that name of StartingPoint is correct
+                Assert.That(house.StartingPoint.Name, Is.EqualTo("StartingPoint"), "name of StartingPoint");
 
-                // Assert that Garage is located "Out" from Entry
-                var garage = house.Entry.GetExit(Direction.Out);
-                Assert.That(garage.Name, Is.EqualTo("Garage"), "Garage is Out from Entry");
+                // Assert that Garage is located "Out" from StartingPoint
+                var garage = house.StartingPoint.GetExit(Direction.Out);
+                Assert.That(garage.Name, Is.EqualTo("Garage"), "Garage is Out from StartingPoint");
 
-                // Assert that Hallway is located "East" of Entry
-                var hallway = house.Entry.GetExit(Direction.East);
-                Assert.That(hallway.Name, Is.EqualTo("Hallway"), "Hallway is East of Entry");
+                // Assert that Hallway is located "East" of StartingPoint
+                var hallway = house.StartingPoint.GetExit(Direction.East);
+                Assert.That(hallway.Name, Is.EqualTo("Hallway"), "Hallway is East of StartingPoint");
 
                 // Assert that Kitchen is located "Northwest" of Hallway
                 var kitchen = hallway.GetExit(Direction.Northwest);
@@ -112,7 +112,7 @@ namespace HideAndSeek
         {
             Assert.Multiple(() =>
             {
-                Assert.That(house.GetLocationByName("Entry").Name, Is.EqualTo("Entry"), "get Entry");
+                Assert.That(house.GetLocationByName("StartingPoint").Name, Is.EqualTo("StartingPoint"), "get StartingPoint");
                 Assert.That(house.GetLocationByName("Attic").Name, Is.EqualTo("Attic"), "get Attic");
                 Assert.That(house.GetLocationByName("Garage").Name, Is.EqualTo("Garage"), "get Garage");
                 Assert.That(house.GetLocationByName("Master Bedroom").Name, Is.EqualTo("Master Bedroom"), "get Master Bedroom");
@@ -150,7 +150,7 @@ namespace HideAndSeek
         {
             Assert.Multiple(() =>
             {
-                Assert.That(house.GetLocationWithHidingPlaceByName("Entry"), Is.Null, "try \"Entry\"");
+                Assert.That(house.GetLocationWithHidingPlaceByName("StartingPoint"), Is.Null, "try \"StartingPoint\"");
                 Assert.That(house.GetLocationWithHidingPlaceByName("Hallway"), Is.Null, "try \"Hallway\"");
                 Assert.That(house.GetLocationWithHidingPlaceByName("Landing"), Is.Null, "try \"Landing\"");
             });
@@ -172,7 +172,7 @@ namespace HideAndSeek
         [Category("House DoesLocationExist Success")]
         public void Test_House_DoesLocationExist_ReturnsTrue()
         {
-            Assert.That(house.DoesLocationExist("Entry"), Is.True);
+            Assert.That(house.DoesLocationExist("StartingPoint"), Is.True);
         }
 
         [Test]

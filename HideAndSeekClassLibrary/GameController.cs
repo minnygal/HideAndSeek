@@ -166,7 +166,7 @@ namespace HideAndSeek
         }
 
         /// <summary>
-        /// Restart game from beginning (Entry)
+        /// Restart game from beginning (StartingPoint)
         /// </summary>
         public void RestartGame()
         {
@@ -175,7 +175,7 @@ namespace HideAndSeek
 
             // Reset properties
             MoveNumber = 1; // Reset move number
-            CurrentLocation = House.Entry; // Reset current location
+            CurrentLocation = House.StartingPoint; // Reset current location
         }
 
         /// <summary>

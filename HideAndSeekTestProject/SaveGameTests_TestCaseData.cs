@@ -11,7 +11,7 @@ namespace HideAndSeek
     public class SaveGameTests_TestCaseData
     {
         // Text file version of saved GameController returned by StartNewGameWithSpecificHidingInfo_MockFileSystem method
-        private static readonly string fileText_GameWithSpecificHidingInfo_NoOpponentsFound = "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"Entry\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[]}";
+        private static readonly string fileText_GameWithSpecificHidingInfo_NoOpponentsFound = "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"StartingPoint\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[]}";
 
         /// <summary>
         /// Helper method to start new game with Opponents in specific hiding places and with specified file system
@@ -138,7 +138,7 @@ namespace HideAndSeek
         {
             get
             {
-                yield return new TestCaseData("Entry", 1, new List<string>(), fileText_GameWithSpecificHidingInfo_NoOpponentsFound)
+                yield return new TestCaseData("StartingPoint", 1, new List<string>(), fileText_GameWithSpecificHidingInfo_NoOpponentsFound)
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckGameIsLoadedSuccessfully - no opponents found");
                 yield return new TestCaseData("Bathroom", 7, new List<string>() { "Joe", "Owen", "Ana" }, fileText_GameWithSpecificHidingInfo_3OpponentsFound)
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckGameIsLoadedSuccessfully - 3 opponents found");
@@ -171,17 +171,17 @@ namespace HideAndSeek
 
                 // Missing move number
                 yield return new TestCaseData("Cannot process because data is corrupt",
-                                              "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"Entry\",\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[\"Joe\",\"Bob\",\"Ana\",\"Owen\",\"Jimmy\"]}")
+                                              "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"StartingPoint\",\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[\"Joe\",\"Bob\",\"Ana\",\"Owen\",\"Jimmy\"]}")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_CheckErrorMessage_FileDataInvalid - missing move number");
 
                 // Missing all opponents
                 yield return new TestCaseData("Cannot process because data is corrupt",
-                                              "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"Entry\",\"MoveNumber\":1,\"FoundOpponents\":[]}")
+                                              "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"StartingPoint\",\"MoveNumber\":1,\"FoundOpponents\":[]}")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_CheckErrorMessage_FileDataInvalid - missing all opponents");
 
                 // Missing found opponents
                 yield return new TestCaseData("Cannot process because data is corrupt",
-                                              "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"Entry\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"}}")
+                                              "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"StartingPoint\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"}}")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_CheckErrorMessage_FileDataInvalid - missing found opponents");
 
                 // INVALID VALUE DATA
@@ -192,27 +192,27 @@ namespace HideAndSeek
 
                 // Invalid (negative) move number
                 yield return new TestCaseData("Cannot process because data is corrupt - invalid MoveNumber",
-                                              "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"Entry\",\"MoveNumber\":-1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[]}")
+                                              "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"StartingPoint\",\"MoveNumber\":-1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[]}")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_CheckErrorMessage_FileDataInvalid - invalid MoveNumber");
 
                 // No opponents
                 yield return new TestCaseData("Cannot process because data is corrupt - no opponents",
-                                              "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"Entry\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{},\"FoundOpponents\":[]}")
+                                              "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"StartingPoint\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{},\"FoundOpponents\":[]}")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_CheckErrorMessage_FileDataInvalid - no opponents");
 
                 // Invalid hiding place for Joe (not yet found) because location does not exist
                 yield return new TestCaseData("Cannot process because data is corrupt - invalid hiding location for opponent",
-                                              "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"Entry\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Tree\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[]}")
+                                              "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"StartingPoint\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Tree\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[]}")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_CheckErrorMessage_FileDataInvalid - invalid hiding place for opponent - Location does not exist");
 
                 // Invalid hiding place for Joe (not yet found) because hiding location is not of type LocationWithHidingPlace
                 yield return new TestCaseData("Cannot process because data is corrupt - invalid hiding location for opponent",
-                                              "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"Entry\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Hallway\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[]}")
+                                              "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"StartingPoint\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Hallway\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[]}")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_CheckErrorMessage_FileDataInvalid - invalid hiding place for opponent - not LocationWithHidingPlace");
 
                 // Found opponent is not in all opponents list
                 yield return new TestCaseData("Cannot process because data is corrupt - found opponent is not an opponent",
-                                              "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"Entry\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[\"Steve\"]}")
+                                              "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"StartingPoint\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[\"Steve\"]}")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_CheckErrorMessage_FileDataInvalid - found opponent Steve is not opponent");
             }
         }

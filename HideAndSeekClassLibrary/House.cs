@@ -34,6 +34,7 @@ namespace HideAndSeek
      *  (necessary for saving game).
      * -In the constructor, I created and added exits to Locations in the same area of code
      *  and in a different order for easier comprehension (just my approach).
+     * -I renamed Entry to StartingPoint since the starting point may not always be the entry.
      * -I added a method to tell whether a Location exists to make restoring a saved game easier.
      * -I added a method to tell whether a LocationWithHidingPlace exists to make restoring a saved game easier.
      * -I used a shorter code approach in GetLocationByName.
@@ -152,9 +153,9 @@ namespace HideAndSeek
         }
 
         /// <summary>
-        /// Entry of House
+        /// Player starting point in House
         /// </summary>
-        public Location Entry { get; private set; }
+        public Location StartingPoint { get; private set; }
 
         /// <summary>
         /// List of all Locations in House
@@ -172,10 +173,10 @@ namespace HideAndSeek
         /// </summary>
         public House() 
         {
-            // Create Entry and connect to new locations: Garage, Hallway
-            Entry = new Location("Entry");
-            LocationWithHidingPlace garage = Entry.AddExit(Direction.Out, "Garage", "behind the car");
-            Location hallway = Entry.AddExit(Direction.East, "Hallway");
+            // Create StartingPoint and connect to new locations: Garage, Hallway
+            StartingPoint = new Location("StartingPoint");
+            LocationWithHidingPlace garage = StartingPoint.AddExit(Direction.Out, "Garage", "behind the car");
+            Location hallway = StartingPoint.AddExit(Direction.East, "Hallway");
 
             // Connect Hallway to new locations: Kitchen, Bathroom, Living Room, Landing
             LocationWithHidingPlace kitchen = hallway.AddExit(Direction.Northwest, "Kitchen", "next to the stove");
@@ -211,7 +212,7 @@ namespace HideAndSeek
                 garage,
                 landing,
                 livingRoom,
-                Entry
+                StartingPoint
             };
         }
 
@@ -311,7 +312,7 @@ namespace HideAndSeek
         public LocationWithHidingPlace GetRandomLocationWithHidingPlace()
         {
             // Current Location of Opponent moving through House to find hiding place
-            Location opponentCurrentLocation = Entry;
+            Location opponentCurrentLocation = StartingPoint;
 
             // Minimum number of moves Opponent must make through House to find a LocationWithHidingPlace
             int minNumberOfMoves = Random.Next(10, 51);
