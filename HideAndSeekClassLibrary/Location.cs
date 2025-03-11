@@ -65,13 +65,36 @@ namespace HideAndSeek
             }
         }
 
+        private IDictionary<Direction, string> _exitsForSerialization;
+
         /// <summary>
         /// Exits for JSON serialization 
         /// (Locations as strings so duplicate Locations 
         /// are not created when multiple linked Locations are restored)
         /// </summary>
         [JsonRequired]
-        public IDictionary<Direction, string> ExitsForSerialization { get; set; }
+        public IDictionary<Direction, string> ExitsForSerialization
+        {
+            get
+            {
+                return _exitsForSerialization;
+            }
+            set
+            {
+                // Check each location name in Dictionary
+                foreach(KeyValuePair<Direction, string> kvp in value)
+                {
+                    // If name is invalid
+                    if(string.IsNullOrWhiteSpace(kvp.Value))
+                    {
+                        throw new InvalidDataException($"Cannot perform action because location name \"{kvp.Value}\" is invalid (is empty or contains only whitespace"); // Throw exception
+                    }
+                }
+
+                // If location names in Dictionary are valid
+                _exitsForSerialization = value;
+            }
+        }
 
         /// <summary>
         /// Prepare object for serialization
@@ -79,11 +102,15 @@ namespace HideAndSeek
         /// </summary>
         private void PrepForSerialization()
         {
-            ExitsForSerialization = new Dictionary<Direction, string>();
-            foreach(KeyValuePair<Direction, Location> kvp in Exits)
+            // Create Dictionary of directions and Location names
+            IDictionary<Direction, string> exitsForSerialization = new Dictionary<Direction, string>();
+            foreach (KeyValuePair<Direction, Location> kvp in Exits)
             {
-                ExitsForSerialization.Add(kvp.Key, kvp.Value.Name);
+                exitsForSerialization.Add(kvp.Key, kvp.Value.Name);
             }
+
+            // Set exits for serialization property to Dictionary
+            ExitsForSerialization = exitsForSerialization;
         }
 
         /// <summary>

@@ -479,5 +479,33 @@ namespace HideAndSeek
                 Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because location name \"{name}\" is invalid (is empty or contains only whitespace"));
             });
         }
+
+        [TestCase("")]
+        [TestCase(" ")]
+        [Category("Location Deserialization Failure")]
+        public void Test_Location_Deserialization_ThrowsException_OverInvalidExitLocationName(string name)
+        {
+            // Set expected ExitsForSerialization property value
+            IDictionary<Direction, string> expectedExitsForSerialization = new Dictionary<Direction, string>();
+            expectedExitsForSerialization.Add(Direction.North, "kitchen");
+
+            // Text representing serialized Location
+            string serializedLocation =
+                "{\"Name\":\"living room\"," +
+                "\"ExitsForSerialization\":{" +
+                    "\"North\":\"" + name + "\"}}";
+
+            Assert.Multiple(() =>
+            {
+                // Assert that deserializing throws exception
+                var exception = Assert.Throws<InvalidDataException>(() =>
+                {
+                    JsonSerializer.Deserialize<Location>(serializedLocation);
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because location name \"{name}\" is invalid (is empty or contains only whitespace"));
+            });
+        }
     }
 }
