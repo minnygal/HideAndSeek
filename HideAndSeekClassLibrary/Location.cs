@@ -35,6 +35,7 @@ namespace HideAndSeek
      * -I used Direction changing in AddExit (just my approach).
      * -I converted lambdas to regular method bodies for easier modification.
      * -I added a property and method for JSON serialization.
+     * -I added a method to set Exits property (called from House after JSON deserialization).
      * -I added comments for easier reading.
      * **/
 
@@ -130,6 +131,16 @@ namespace HideAndSeek
         /// The exits out of this location
         /// </summary>
         public IDictionary<Direction, Location> Exits { get; private set; } = new Dictionary<Direction, Location>();
+
+        /// <summary>
+        /// Set the Exits dictionary
+        /// Should only be called by House method
+        /// </summary>
+        /// <param name="exits"></param>
+        public void SetExitsDictionary(IDictionary<Direction, Location> exits)
+        {
+            Exits = exits;
+        }
 
         /// <summary>
         /// Constructor for JSON deserialization

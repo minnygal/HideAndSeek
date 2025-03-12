@@ -5,6 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using HideAndSeekTestProject;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Moq;
 using Newtonsoft.Json.Linq;
@@ -24,7 +25,7 @@ namespace HideAndSeek
         [SetUp]
         public void SetUp()
         {
-            house = new House("my house", "DefaultHouse", "Entry");
+            house = HouseTests_Data.GetNewTestHouse();
         }
 
         /// <summary>
@@ -324,19 +325,19 @@ namespace HideAndSeek
         public void Test_House_CreateHouse()
         {
             // Set up mock file system and assign to House property
-            string textInHouseFile = "{\"Name\":\"my house\",\"HouseFileName\":\"MyHouseFile\",\"PlayerStartingPoint\":\"Entry\"}";
+            string textInHouseFile = HouseTests_Data.SerializedTestHouse;
             Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
-            fileSystemMock.Setup((s) => s.File.Exists("MyHouseFile.json")).Returns(true);
-            fileSystemMock.Setup((s) => s.File.ReadAllText("MyHouseFile.json")).Returns(textInHouseFile);
+            fileSystemMock.Setup((s) => s.File.Exists("TestHouse.json")).Returns(true);
+            fileSystemMock.Setup((s) => s.File.ReadAllText("TestHouse.json")).Returns(textInHouseFile);
             House.FileSystem = fileSystemMock.Object;
 
             // Call method to create House
-            House house = House.CreateHouse("MyHouseFile");
+            House house = House.CreateHouse("TestHouse");
 
             Assert.Multiple(() =>
             {
-                Assert.That(house.Name, Is.EqualTo("my house"));
-                Assert.That(house.HouseFileName, Is.EqualTo("MyHouseFile"));
+                Assert.That(house.Name, Is.EqualTo("test house"));
+                Assert.That(house.HouseFileName, Is.EqualTo("TestHouse"));
                 Assert.That(house.PlayerStartingPoint, Is.EqualTo("Entry"));
             });
         }
@@ -391,12 +392,8 @@ namespace HideAndSeek
         // Calls properties' setters and setters successfully
         [Test]
         [Category("House Constructor Success")]
-        public void Test_House_Constructor()
-        {
-            // Create House
-            house = new House("special house", "SpecialHouse", "Entry");
-
-            // Create list of expected Location names
+        public void Test_House_Constructor_Parameterized()
+        {// Create list of expected Location names
             IEnumerable<string> expectedLocationNames = new List<string>()
             {
                 "Attic",
@@ -443,8 +440,8 @@ namespace HideAndSeek
             // Assert that properties are set correctly
             Assert.Multiple(() =>
             {
-                Assert.That(house.Name, Is.EqualTo("special house"));
-                Assert.That(house.HouseFileName, Is.EqualTo("SpecialHouse"));
+                Assert.That(house.Name, Is.EqualTo("test house"));
+                Assert.That(house.HouseFileName, Is.EqualTo("TestHouse"));
                 Assert.That(house.StartingPoint.Name, Is.EqualTo("Entry"));
                 Assert.That(house.PlayerStartingPoint, Is.EqualTo("Entry"));
                 Assert.That(house.Locations.Select((l) => l.Name), Is.EquivalentTo(expectedLocationNames));
@@ -539,144 +536,11 @@ namespace HideAndSeek
         [Category("House Serialize")]
         public void Test_House_SerializeMethod()
         {
-            // Expected serialized House text
-            string expectedSerializedHouse =
-                "{\"Name\":\"my house\"," +
-                "\"HouseFileName\":\"DefaultHouse\"," +
-                "\"PlayerStartingPoint\":\"Entry\"," +
-                "\"LocationsWithoutHidingPlaces\":" +
-                    "[" +
-                        "{" +
-                            "\"Name\":\"Hallway\"," +
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"West\":\"Entry\"," +
-                                "\"Northwest\":\"Kitchen\"," +
-                                "\"North\":\"Bathroom\"," +
-                                "\"South\":\"Living Room\"," +
-                                "\"Up\":\"Landing\"" +
-                            "}" +
-                        "}," +
-                        "{" +
-                            "\"Name\":\"Landing\"," +
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"Down\":\"Hallway\"," +
-                                "\"Up\":\"Attic\"," +
-                                "\"Southeast\":\"Kids Room\"," +
-                                "\"Northwest\":\"Master Bedroom\"," +
-                                "\"Southwest\":\"Nursery\"," +
-                                "\"South\":\"Pantry\"," +
-                                "\"West\":\"Second Bathroom\"" +
-                            "}" +
-                        "}," +
-                        "{" +
-                            "\"Name\":\"Entry\"," +
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"Out\":\"Garage\"," +
-                                "\"East\":\"Hallway\"" +
-                            "}" +
-                        "}" +
-                    "]," +
-                    "\"LocationsWithHidingPlaces\":" +
-                    "[" +
-                        "{" +
-                            "\"HidingPlace\":\"in a trunk\"," +
-                            "\"Name\":\"Attic\"," +
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"Down\":\"Landing\"" +
-                            "}" +
-                        "}," +
-                        "{\"HidingPlace\":\"behind the door\"," +
-                            "\"Name\":\"Bathroom\"," +
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"South\":\"Hallway\"" +
-                                "}" +
-                        "}," +
-                        "{" +
-                            "\"HidingPlace\":\"in the bunk beds\"," +
-                            "\"Name\":\"Kids Room\"," +
-                            "\"ExitsForSerialization\":" +
-                                "{" +
-                                    "\"Northwest\":\"Landing\"" +
-                                "}" +
-                            "}," +
-                        "{" +
-                            "\"HidingPlace\":\"under the bed\"," +
-                            "\"Name\":\"Master Bedroom\"," +
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"Southeast\":\"Landing\"," +
-                                "\"East\":\"Master Bath\"" +
-                            "}" +
-                        "}," +
-                        "{" +
-                            "\"HidingPlace\":\"behind the changing table\"," +
-                            "\"Name\":\"Nursery\"," +
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"Northeast\":\"Landing\"" +
-                            "}" +
-                        "}," +
-                        "{" +
-                            "\"HidingPlace\":\"inside a cabinet\"," +
-                            "\"Name\":\"Pantry\"," +
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"North\":\"Landing\"" +
-                            "}" +
-                        "}," +
-                        "{" +
-                            "\"HidingPlace\":\"in the shower\"," +
-                            "\"Name\":\"Second Bathroom\"," +
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"East\":\"Landing\"" +
-                            "}" +
-                        "}," +
-                        "{" +
-                            "\"HidingPlace\":\"next to the stove\"," +
-                            "\"Name\":\"Kitchen\"," +
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"Southeast\":\"Hallway\"" +
-                            "}" +
-                        "}," +
-                        "{" +
-                            "\"HidingPlace\":\"in the tub\"," +
-                            "\"Name\":\"Master Bath\"," +
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"West\":\"Master Bedroom\"" +
-                            "}" +
-                        "}," +
-                        "{" +
-                            "\"HidingPlace\":\"behind the car\"," +
-                            "\"Name\":\"Garage\"," +
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"In\":\"Entry\"" +
-                            "}" +
-                        "}," +
-                        "{" +
-                            "\"HidingPlace\":\"behind the sofa\"," +
-                            "\"Name\":\"Living Room\"," +
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"North\":\"Hallway\"" +
-                            "}" +
-                        "}" +
-                    "]" +
-                "}";
-            
             // Serialize House
             string serializedHouse = house.Serialize();
 
             // Assert that serialized text is as expected
-            Assert.That(serializedHouse, Is.EqualTo(expectedSerializedHouse));
+            Assert.That(serializedHouse, Is.EqualTo(HouseTests_Data.SerializedTestHouse));
         }
     }
 }

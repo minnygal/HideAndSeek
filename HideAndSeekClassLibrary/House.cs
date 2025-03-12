@@ -27,6 +27,7 @@ namespace HideAndSeek
      * **/
 
     /** CHANGES
+     * -I renamed Entry to StartingPoint since the starting point may not always be the entry.
      * -I made the class non-static so GameController can have an instance of House.
      * -I added a static method to create a House object from a file.
      * -I added a static public property for the file system used in CreateHouse for testing purposes.
@@ -36,9 +37,11 @@ namespace HideAndSeek
      * -I added a player starting point property for JSON deserialization.
      * -I added a property storing locations without hiding places for JSON deserialization.
      * -I added a property storing locations with hiding places for JSON deserialization.
-     * -In the constructor, I created and added exits to Locations in the same area of code
-     *  and in a different order for easier comprehension (just my approach).
-     * -I renamed Entry to StartingPoint since the starting point may not always be the entry.
+     * -I added a parameterless constructor for JSON deserialization.
+     * -I added a parameterized constructor for creating a new House with specific property values.
+     * -I added a method to set up House after deserialization.
+     * -I added a method to set StartingPoint and Locations properties 
+     *  (called from parameterized constructor and method to set up House after deserialization).
      * -I added a method to tell whether a Location exists to make restoring a saved game easier.
      * -I added a method to tell whether a LocationWithHidingPlace exists to make restoring a saved game easier.
      * -I used a shorter code approach in GetLocationByName.
@@ -77,6 +80,9 @@ namespace HideAndSeek
         /// <exception cref="InvalidOperationException">Exception thrown if House file data is corrupt</exception>
         public static House CreateHouse(string fileName)
         {
+            // Create variable to store deserialized House
+            House house;
+
             // Get full file name including extension
             string fullFileName = FileSystem.GetFullFileNameForJson(fileName);
 
@@ -92,7 +98,7 @@ namespace HideAndSeek
             // Deserialize text from file into House object and set house private variable to it
             try
             {
-                return JsonSerializer.Deserialize<House>(houseFileText);
+                house = JsonSerializer.Deserialize<House>(houseFileText); // Deserialize House
             }
             catch (JsonException e)
             {
@@ -102,10 +108,13 @@ namespace HideAndSeek
             {
                 throw new JsonException($"Cannot process because data in house layout file {fileName} is corrupt");
             }
-            catch(Exception e)
+            catch (Exception e)
             {
                 throw e;
             }
+
+            house.SetUpHouseAfterDeserialization(); // Set Locations and StartingPoint
+            return house; // Return House
         }
 
         private string _name = "my house";
@@ -115,7 +124,7 @@ namespace HideAndSeek
         /// </summary>
         [JsonRequired]
         public required string Name
-        { 
+        {
             get
             {
                 return _name;
@@ -148,7 +157,7 @@ namespace HideAndSeek
             set
             {
                 // If file name is invalid
-                if ( !(FileSystem.IsValidName(value)) )
+                if (!(FileSystem.IsValidName(value)))
                 {
                     throw new InvalidDataException($"Cannot perform action because House file name \"{value}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"); // Throw exception
                 }
@@ -198,7 +207,7 @@ namespace HideAndSeek
             set
             {
                 // If Location does not exist in House
-                if ( !(DoesLocationExist(value.Name)) )
+                if (!(DoesLocationExist(value.Name)))
                 {
                     throw new InvalidDataException($"Cannot perform action because player starting point location \"{value}\" is not a location in the house"); // Throw exception
                 }
@@ -212,13 +221,13 @@ namespace HideAndSeek
         /// <summary>
         /// List of all Locations without hiding places in House
         /// </summary>
-        //[JsonRequired]
+        [JsonRequired]
         public IEnumerable<Location> LocationsWithoutHidingPlaces { get; set; }
 
         /// <summary>
         /// /List of all LocationWithHidingPlace objects in House
         /// </summary>
-        //[JsonRequired]
+        [JsonRequired]
         public IEnumerable<LocationWithHidingPlace> LocationsWithHidingPlaces { get; set; }
 
         /// <summary>
@@ -235,60 +244,8 @@ namespace HideAndSeek
 
         /// <summary>
         /// Parameterless constructor for JSON deserializer
-        /// Should only be called directly from HouseHelper unless default house is desired
         /// </summary>
-        public House() 
-        {
-            // Create Entry and connect to new locations: Garage, Hallway
-            Location entry = new Location("Entry");
-            LocationWithHidingPlace garage = entry.AddExit(Direction.Out, "Garage", "behind the car");
-            Location hallway = entry.AddExit(Direction.East, "Hallway");
-
-            // Connect Hallway to new locations: Kitchen, Bathroom, Living Room, Landing
-            LocationWithHidingPlace kitchen = hallway.AddExit(Direction.Northwest, "Kitchen", "next to the stove");
-            LocationWithHidingPlace bathroom = hallway.AddExit(Direction.North, "Bathroom", "behind the door");
-            LocationWithHidingPlace livingRoom = hallway.AddExit(Direction.South, "Living Room", "behind the sofa");
-            Location landing = hallway.AddExit(Direction.Up, "Landing");
-
-            // Connect Landing to new locations: Attic, Kids Room, Master Bedroom, Nursery, Pantry, Second Bathroom
-            LocationWithHidingPlace attic = landing.AddExit(Direction.Up, "Attic", "in a trunk");
-            LocationWithHidingPlace kidsRoom = landing.AddExit(Direction.Southeast, "Kids Room", "in the bunk beds");
-            LocationWithHidingPlace masterBedroom = landing.AddExit(Direction.Northwest, "Master Bedroom", "under the bed");
-            LocationWithHidingPlace nursery = landing.AddExit(Direction.Southwest, "Nursery", "behind the changing table");
-            LocationWithHidingPlace pantry = landing.AddExit(Direction.South, "Pantry", "inside a cabinet");
-            LocationWithHidingPlace secondBathroom = landing.AddExit(Direction.West, "Second Bathroom", "in the shower");
-
-            // Connect Master Bedroom to new location: Master Bath
-            LocationWithHidingPlace masterBath = masterBedroom.AddExit(Direction.East, "Master Bath", "in the tub");
-
-            // Set list of all Locations in House
-            Locations = new List<Location>()
-            {
-                attic,
-                hallway,
-                bathroom,
-                kidsRoom,
-                masterBedroom,
-                nursery,
-                pantry,
-                secondBathroom,
-                kitchen,
-                masterBath,
-                garage,
-                landing,
-                livingRoom,
-                entry
-            };
-
-            // Set list of all LocationWithHidingPlace objects in House
-            LocationsWithHidingPlaces = Locations.Where((l) => l.GetType() == typeof(LocationWithHidingPlace)).Select((l) => (LocationWithHidingPlace)l );
-            
-            // Set list of all Location objects in House which are not LocationWithHidingPlaces
-            LocationsWithoutHidingPlaces = Locations.Except(LocationsWithHidingPlaces);
-
-            // Set Entry as StartingPoint
-            StartingPoint = entry;
-        }
+        public House() { }
 
         /// <summary>
         /// Constructor to create a new House object and initialize required properties
@@ -296,12 +253,56 @@ namespace HideAndSeek
         /// <param name="name">Name of House</param>
         /// <param name="houseFileName">Name of file in which House layout is stored</param>
         /// <param name="playerStartingPoint">Name of Location where player should start a new game</param>
+        /// <param name="locationsWithoutHidingPlaces">Enumerable of Location objects (without hiding places)</param>
+        /// <param name="locationsWithHidingPlaces">Enumerable of LocationWithHidingPlace objects</param>
         [SetsRequiredMembers]
-        public House(string name, string houseFileName, string playerStartingPoint) : this()
+        public House(string name, string houseFileName, string playerStartingPoint, IEnumerable<Location> locationsWithoutHidingPlaces, IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces)
         {
             Name = name;
             HouseFileName = houseFileName;
             PlayerStartingPoint = playerStartingPoint;
+            LocationsWithoutHidingPlaces = locationsWithoutHidingPlaces;
+            LocationsWithHidingPlaces = locationsWithHidingPlaces;
+            SetLocationsAndStartingPoint();
+        }
+
+        /// <summary>
+        /// Helper method to set Locations and StartingPoint properties
+        /// after LocationsWithoutHidingPlaces and LocationsWithHidingPlaces are set
+        /// </summary>
+        private void SetLocationsAndStartingPoint()
+        {
+            // Set list of all Locations in House
+            Locations = LocationsWithHidingPlaces.Concat(LocationsWithoutHidingPlaces).ToList();
+
+            // Set StartingPoint
+            StartingPoint = GetLocationByName(PlayerStartingPoint);
+        }
+        
+        /// <summary>
+        /// Set up House after deserialization
+        /// Sets Locations, StartingPoint, and Exits property for each Location in House
+        /// </summary>
+        public void SetUpHouseAfterDeserialization()
+        {
+            // Set Locations and StartingPoint properties
+            SetLocationsAndStartingPoint();
+
+            // Set Exit list for each Location
+            foreach (Location location in Locations)
+            {
+                // Initialize empty Dictionary to store exits
+                IDictionary<Direction, Location> exitsDictionary = new Dictionary<Direction, Location>();
+
+                // Add each exit to Dictionary
+                foreach (KeyValuePair<Direction, string> exit in location.ExitsForSerialization)
+                {
+                    exitsDictionary.Add(exit.Key, GetLocationByName(exit.Value));
+                }
+
+                // Set Location's Exits Dictionary
+                location.SetExitsDictionary(exitsDictionary);
+            }
         }
 
         /// <summary>

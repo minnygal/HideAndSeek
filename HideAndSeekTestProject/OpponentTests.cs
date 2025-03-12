@@ -1,4 +1,5 @@
-﻿using System;
+﻿using HideAndSeekTestProject;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,8 +18,8 @@ namespace HideAndSeek
         [SetUp]
         public void SetUp()
         {
-            house = new House("my house", "DefaultHouse", "Entry");
-            house.ClearHidingPlaces();
+            house = HouseTests_Data.GetNewTestHouse(); // Create test House
+            house.ClearHidingPlaces(); // Clear hiding places
         }
 
         [Test]
