@@ -118,13 +118,9 @@ namespace HideAndSeek
                 Assert.That(gameController.GameOver, Is.False, "check game not over at beginning");
 
                 // Create enumerable of places for opponents to hide
-                IEnumerable<LocationWithHidingPlace> hidingPlaces = new List<LocationWithHidingPlace>() 
+                IEnumerable<string> hidingPlaces = new List<string>() 
                 {
-                    gameController.House.GetLocationWithHidingPlaceByName("Garage"),
-                    gameController.House.GetLocationWithHidingPlaceByName("Kitchen"),
-                    gameController.House.GetLocationWithHidingPlaceByName("Attic"),
-                    gameController.House.GetLocationWithHidingPlaceByName("Attic"),
-                    gameController.House.GetLocationWithHidingPlaceByName("Kitchen")
+                    "Garage", "Kitchen", "Attic", "Attic", "Kitchen"
                 };
 
                 // Hide Opponents is specific hiding places

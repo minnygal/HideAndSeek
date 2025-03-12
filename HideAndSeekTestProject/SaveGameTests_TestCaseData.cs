@@ -49,17 +49,13 @@ namespace HideAndSeek
         /// <returns>GameController set up for game</returns>
         private static GameController StartNewGameWithSpecificHidingInfo(GameController gameController)
         {
-            // Create enumerable of places to hide opponents
-            IEnumerable<LocationWithHidingPlace> hidingPlaces = new List<LocationWithHidingPlace>()
+            // Create enumerable of hiding places for opponents to hide
+            IEnumerable<string> hidingPlaces = new List<string>()
             {
-                gameController.House.GetLocationWithHidingPlaceByName("Kitchen"),
-                gameController.House.GetLocationWithHidingPlaceByName("Pantry"),
-                gameController.House.GetLocationWithHidingPlaceByName("Bathroom"),
-                gameController.House.GetLocationWithHidingPlaceByName("Kitchen"),
-                gameController.House.GetLocationWithHidingPlaceByName("Pantry")
+                "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry"
             };
 
-            // Hide all Opponents in specific hiding places
+            // Hide all opponents in specified locations
             gameController.RehideAllOpponents(hidingPlaces);
 
             // Return set up GameController

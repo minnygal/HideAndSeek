@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32.SafeHandles;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO.Abstractions;
@@ -183,7 +184,7 @@ namespace HideAndSeek
         /// Should only be called from GameController and tests
         /// </summary>
         /// <param name="hidingPlaces">Places to hide Opponents</param>
-        public void RehideAllOpponents(IEnumerable<LocationWithHidingPlace> hidingPlaces)
+        private void RehideAllOpponents(IEnumerable<LocationWithHidingPlace> hidingPlaces)
         {
             // Clear hiding places
             House.ClearHidingPlaces();
@@ -200,6 +201,18 @@ namespace HideAndSeek
 
             // Set Opponents and hiding locations dictionary to dictionary with new hiding locations
             OpponentsAndHidingLocations = opponentsAndNewHidingLocations;
+        }
+
+        public void RehideAllOpponents(IEnumerable<string> hidingPlaces)
+        {
+            List<LocationWithHidingPlace> hidingPlacesAsObjects = new List<LocationWithHidingPlace>();
+
+            foreach(string hidingPlace in hidingPlaces)
+            {
+                hidingPlacesAsObjects.Add(House.GetLocationWithHidingPlaceByName(hidingPlace));
+            }
+
+            RehideAllOpponents(hidingPlacesAsObjects);
         }
 
         /// <summary>
