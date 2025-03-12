@@ -180,16 +180,38 @@ namespace HideAndSeek
             }
         }
 
+        private Location _startingPoint;
+
         /// <summary>
         /// Player starting point in House
         /// </summary>
-        public Location StartingPoint { get; private set; }
+        [JsonIgnore]
+        public Location StartingPoint
+        {
+            get
+            {
+                return _startingPoint;
+            }
+            set
+            {
+                // If Location does not exist in House
+                if ( !(DoesLocationExist(value.Name)) )
+                {
+                    throw new InvalidDataException($"Cannot perform action because player starting point location \"{value}\" is not a location in the house"); // Throw exception
+                }
+
+                // Set starting point to Location
+                _startingPoint = value;
+            }
+        }
 
         /// <summary>
         /// List of all Locations in House
         /// </summary>
+        [JsonIgnore]
         public List<Location> Locations { get; set; }
 
+        [JsonIgnore]
         /// <summary>
         /// Random number generator (used for returning random hiding place)
         /// </summary>
@@ -201,10 +223,10 @@ namespace HideAndSeek
         /// </summary>
         public House() 
         {
-            // Create StartingPoint and connect to new locations: Garage, Hallway
-            StartingPoint = new Location("Entry");
-            LocationWithHidingPlace garage = StartingPoint.AddExit(Direction.Out, "Garage", "behind the car");
-            Location hallway = StartingPoint.AddExit(Direction.East, "Hallway");
+            // Create Entry and connect to new locations: Garage, Hallway
+            Location entry = new Location("Entry");
+            LocationWithHidingPlace garage = entry.AddExit(Direction.Out, "Garage", "behind the car");
+            Location hallway = entry.AddExit(Direction.East, "Hallway");
 
             // Connect Hallway to new locations: Kitchen, Bathroom, Living Room, Landing
             LocationWithHidingPlace kitchen = hallway.AddExit(Direction.Northwest, "Kitchen", "next to the stove");
@@ -240,8 +262,11 @@ namespace HideAndSeek
                 garage,
                 landing,
                 livingRoom,
-                StartingPoint
+                entry
             };
+
+            // Set Entry as StartingPoint
+            StartingPoint = entry;
         }
 
         /// <summary>

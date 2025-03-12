@@ -469,5 +469,22 @@ namespace HideAndSeek
                 Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because player starting point location name \"{locationName}\" is invalid (is empty or contains only whitespace"));
             });
         }
+
+        [Test]
+        [Category("House StartingPoint Failure")]
+        public void Test_House_StartingPointSetter_WithLocationNotExistingInHouse()
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that setting the starting point location to a Location not in the House raises an exception
+                var exception = Assert.Throws<InvalidDataException>(() =>
+                {
+                    house.StartingPoint = new Location("not in house");
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo("Cannot perform action because player starting point location \"not in house\" is not a location in the house"));
+            });  
+        }
     }
 }
