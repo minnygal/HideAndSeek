@@ -402,6 +402,8 @@ namespace HideAndSeek
             {
                 Assert.That(house.Name, Is.EqualTo("special house"));
                 Assert.That(house.HouseFileName, Is.EqualTo("SpecialHouse"));
+                Assert.That(house.StartingPoint.Name, Is.EqualTo("Entry"));
+                Assert.That(house.PlayerStartingPoint, Is.EqualTo("Entry"));
             });
         }
 

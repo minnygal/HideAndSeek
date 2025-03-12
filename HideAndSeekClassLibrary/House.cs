@@ -200,11 +200,12 @@ namespace HideAndSeek
                     throw new InvalidDataException($"Cannot perform action because player starting point location \"{value}\" is not a location in the house"); // Throw exception
                 }
 
-                // Set starting point to Location
-                _startingPoint = value;
+                // Set variable and property
+                _startingPoint = value; // Set starting point private variable
+                PlayerStartingPoint = StartingPoint.Name; // Set player starting point property (for JSON serialization)
             }
         }
-
+        
         /// <summary>
         /// List of all Locations in House
         /// </summary>
