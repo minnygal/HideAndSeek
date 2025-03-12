@@ -279,7 +279,7 @@ namespace HideAndSeek
 
             // Set list of all LocationWithHidingPlace objects in House
             LocationsWithHidingPlaces = Locations.Where((l) => l.GetType() == typeof(LocationWithHidingPlace)).Select((l) => (LocationWithHidingPlace)l );
-
+            
             // Set list of all Location objects in House which are not LocationWithHidingPlaces
             LocationsWithoutHidingPlaces = Locations.Except(LocationsWithHidingPlaces);
 
@@ -299,6 +299,22 @@ namespace HideAndSeek
             Name = name;
             HouseFileName = houseFileName;
             PlayerStartingPoint = playerStartingPoint;
+        }
+
+        /// <summary>
+        /// Return text for serialized House
+        /// </summary>
+        /// <returns>Text for serialized House</returns>
+        public string Serialize()
+        {
+            // For each Location in House
+            foreach (Location location in Locations)
+            {
+                location.Serialize(); // Prep for serialization
+            }
+
+            // Return serialized House
+            return JsonSerializer.Serialize(this);
         }
 
         /// <summary>
