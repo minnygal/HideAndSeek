@@ -452,7 +452,7 @@ namespace HideAndSeek
                 Assert.That(house.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(expectedLocationWithoutHidingPlaceNames));
             });
         }
-
+        
         [TestCase("")]
         [TestCase(" ")]
         [Category("House Name Failure")]
@@ -533,6 +533,150 @@ namespace HideAndSeek
                 // Assert that exception message is as expected
                 Assert.That(exception.Message, Is.EqualTo("Cannot perform action because player starting point location \"not in house\" is not a location in the house"));
             });  
+        }
+
+        [Test]
+        [Category("House Serialize")]
+        public void Test_House_SerializeMethod()
+        {
+            // Expected serialized House text
+            string expectedSerializedHouse =
+                "{\"Name\":\"my house\"," +
+                "\"HouseFileName\":\"DefaultHouse\"," +
+                "\"PlayerStartingPoint\":\"Entry\"," +
+                "\"LocationsWithoutHidingPlaces\":" +
+                    "[" +
+                        "{" +
+                            "\"Name\":\"Hallway\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"West\":\"Entry\"," +
+                                "\"Northwest\":\"Kitchen\"," +
+                                "\"North\":\"Bathroom\"," +
+                                "\"South\":\"Living Room\"," +
+                                "\"Up\":\"Landing\"" +
+                            "}" +
+                        "}," +
+                        "{" +
+                            "\"Name\":\"Landing\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"Down\":\"Hallway\"," +
+                                "\"Up\":\"Attic\"," +
+                                "\"Southeast\":\"Kids Room\"," +
+                                "\"Northwest\":\"Master Bedroom\"," +
+                                "\"Southwest\":\"Nursery\"," +
+                                "\"South\":\"Pantry\"," +
+                                "\"West\":\"Second Bathroom\"" +
+                            "}" +
+                        "}," +
+                        "{" +
+                            "\"Name\":\"Entry\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"Out\":\"Garage\"," +
+                                "\"East\":\"Hallway\"" +
+                            "}" +
+                        "}" +
+                    "]," +
+                    "\"LocationsWithHidingPlaces\":" +
+                    "[" +
+                        "{" +
+                            "\"HidingPlace\":\"in a trunk\"," +
+                            "\"Name\":\"Attic\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"Down\":\"Landing\"" +
+                            "}" +
+                        "}," +
+                        "{\"HidingPlace\":\"behind the door\"," +
+                            "\"Name\":\"Bathroom\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"South\":\"Hallway\"" +
+                                "}" +
+                        "}," +
+                        "{" +
+                            "\"HidingPlace\":\"in the bunk beds\"," +
+                            "\"Name\":\"Kids Room\"," +
+                            "\"ExitsForSerialization\":" +
+                                "{" +
+                                    "\"Northwest\":\"Landing\"" +
+                                "}" +
+                            "}," +
+                        "{" +
+                            "\"HidingPlace\":\"under the bed\"," +
+                            "\"Name\":\"Master Bedroom\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"Southeast\":\"Landing\"," +
+                                "\"East\":\"Master Bath\"" +
+                            "}" +
+                        "}," +
+                        "{" +
+                            "\"HidingPlace\":\"behind the changing table\"," +
+                            "\"Name\":\"Nursery\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"Northeast\":\"Landing\"" +
+                            "}" +
+                        "}," +
+                        "{" +
+                            "\"HidingPlace\":\"inside a cabinet\"," +
+                            "\"Name\":\"Pantry\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"North\":\"Landing\"" +
+                            "}" +
+                        "}," +
+                        "{" +
+                            "\"HidingPlace\":\"in the shower\"," +
+                            "\"Name\":\"Second Bathroom\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"East\":\"Landing\"" +
+                            "}" +
+                        "}," +
+                        "{" +
+                            "\"HidingPlace\":\"next to the stove\"," +
+                            "\"Name\":\"Kitchen\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"Southeast\":\"Hallway\"" +
+                            "}" +
+                        "}," +
+                        "{" +
+                            "\"HidingPlace\":\"in the tub\"," +
+                            "\"Name\":\"Master Bath\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"West\":\"Master Bedroom\"" +
+                            "}" +
+                        "}," +
+                        "{" +
+                            "\"HidingPlace\":\"behind the car\"," +
+                            "\"Name\":\"Garage\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"In\":\"Entry\"" +
+                            "}" +
+                        "}," +
+                        "{" +
+                            "\"HidingPlace\":\"behind the sofa\"," +
+                            "\"Name\":\"Living Room\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"North\":\"Hallway\"" +
+                            "}" +
+                        "}" +
+                    "]" +
+                "}";
+            
+            // Serialize House
+            string serializedHouse = house.Serialize();
+
+            // Assert that serialized text is as expected
+            Assert.That(serializedHouse, Is.EqualTo(expectedSerializedHouse));
         }
     }
 }
