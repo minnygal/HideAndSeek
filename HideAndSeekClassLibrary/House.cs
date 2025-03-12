@@ -33,6 +33,9 @@ namespace HideAndSeek
      * -I added a Name property so a House object can have a name.
      * -I added a name of file property to store the name of the file from which this House was loaded 
      *  (necessary for saving game).
+     * -I added a player starting point property for JSON deserialization.
+     * -I added a property storing locations without hiding places for JSON deserialization.
+     * -I added a property storing locations with hiding places for JSON deserialization.
      * -In the constructor, I created and added exits to Locations in the same area of code
      *  and in a different order for easier comprehension (just my approach).
      * -I renamed Entry to StartingPoint since the starting point may not always be the entry.
