@@ -374,7 +374,7 @@ namespace HideAndSeek
         public void ClearHidingPlaces()
         {
             // For each LocationWithHidingPlace
-            foreach(LocationWithHidingPlace location in Locations.Where((l) => l.GetType() == typeof(LocationWithHidingPlace)))
+            foreach(LocationWithHidingPlace location in LocationsWithHidingPlaces)
             {
                 location.CheckHidingPlace(); // Check hiding place which clears hiding place as well
             }
