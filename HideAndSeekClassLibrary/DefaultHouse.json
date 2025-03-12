@@ -1,4 +1,5 @@
 {
   "Name": "my house",
-  "HouseFileName" : "DefaultHouse"
+  "HouseFileName": "DefaultHouse",
+  "PlayerStartingPoint": "Entry"
 }

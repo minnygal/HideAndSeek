@@ -155,6 +155,31 @@ namespace HideAndSeek
             }
         }
 
+        private string _playerStartingPoint;
+
+        /// <summary>
+        /// Player starting point in House as string
+        /// </summary>
+        [JsonRequired]
+        public required string PlayerStartingPoint
+        {
+            get
+            {
+                return _playerStartingPoint;
+            }
+            set
+            {
+                // If invalid Location name is entered
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new InvalidDataException($"Cannot perform action because player starting point location name \"{value}\" is invalid (is empty or contains only whitespace"); // Throw exception
+                }
+
+                // Set player starting point variable
+                _playerStartingPoint = value;
+            }
+        }
+
         /// <summary>
         /// Player starting point in House
         /// </summary>
@@ -220,15 +245,17 @@ namespace HideAndSeek
         }
 
         /// <summary>
-        /// Constructor to create a new House object
+        /// Constructor to create a new House object and initialize required properties
         /// </summary>
         /// <param name="name">Name of House</param>
         /// <param name="houseFileName">Name of file in which House layout is stored</param>
+        /// <param name="playerStartingPoint">Name of Location where player should start a new game</param>
         [SetsRequiredMembers]
-        public House(string name, string houseFileName) : this()
+        public House(string name, string houseFileName, string playerStartingPoint) : this()
         {
             Name = name;
             HouseFileName = houseFileName;
+            PlayerStartingPoint = playerStartingPoint;
         }
 
         /// <summary>
