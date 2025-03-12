@@ -396,6 +396,49 @@ namespace HideAndSeek
             // Create House
             house = new House("special house", "SpecialHouse", "Entry");
 
+            // Create list of expected Location names
+            IEnumerable<string> expectedLocationNames = new List<string>()
+            {
+                "Attic",
+                "Hallway",
+                "Bathroom",
+                "Kids Room",
+                "Master Bedroom",
+                "Nursery",
+                "Pantry",
+                "Second Bathroom",
+                "Kitchen",
+                "Master Bath",
+                "Garage",
+                "Landing",
+                "Living Room",
+                "Entry"
+            };
+
+            // Create list of expected LocationWithHidingPlace names
+            IEnumerable<string> expectedLocationWithHidingPlaceNames = new List<string>()
+            {
+                "Attic",
+                "Bathroom",
+                "Kids Room",
+                "Master Bedroom",
+                "Nursery",
+                "Pantry",
+                "Second Bathroom",
+                "Kitchen",
+                "Master Bath",
+                "Garage",
+                "Living Room",
+            };
+
+            // Create list of expected Location names not including LocationWithHidingPlace objects
+            IEnumerable<string> expectedLocationWithoutHidingPlaceNames = new List<string>()
+            {
+                "Hallway",
+                "Landing",
+                "Entry"
+            };
+
             // Assume no exceptions were thrown
             // Assert that properties are set correctly
             Assert.Multiple(() =>
@@ -404,6 +447,9 @@ namespace HideAndSeek
                 Assert.That(house.HouseFileName, Is.EqualTo("SpecialHouse"));
                 Assert.That(house.StartingPoint.Name, Is.EqualTo("Entry"));
                 Assert.That(house.PlayerStartingPoint, Is.EqualTo("Entry"));
+                Assert.That(house.Locations.Select((l) => l.Name), Is.EquivalentTo(expectedLocationNames));
+                Assert.That(house.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(expectedLocationWithHidingPlaceNames));
+                Assert.That(house.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(expectedLocationWithoutHidingPlaceNames));
             });
         }
 

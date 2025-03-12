@@ -205,7 +205,19 @@ namespace HideAndSeek
                 PlayerStartingPoint = StartingPoint.Name; // Set player starting point property (for JSON serialization)
             }
         }
-        
+
+        /// <summary>
+        /// List of all Locations without hiding places in House
+        /// </summary>
+        //[JsonRequired]
+        public IEnumerable<Location> LocationsWithoutHidingPlaces { get; set; }
+
+        /// <summary>
+        /// /List of all LocationWithHidingPlace objects in House
+        /// </summary>
+        //[JsonRequired]
+        public IEnumerable<LocationWithHidingPlace> LocationsWithHidingPlaces { get; set; }
+
         /// <summary>
         /// List of all Locations in House
         /// </summary>
@@ -246,7 +258,7 @@ namespace HideAndSeek
             // Connect Master Bedroom to new location: Master Bath
             LocationWithHidingPlace masterBath = masterBedroom.AddExit(Direction.East, "Master Bath", "in the tub");
 
-            // Add Locations to Locations list
+            // Set list of all Locations in House
             Locations = new List<Location>()
             {
                 attic,
@@ -258,13 +270,18 @@ namespace HideAndSeek
                 pantry,
                 secondBathroom,
                 kitchen,
-                hallway,
                 masterBath,
                 garage,
                 landing,
                 livingRoom,
                 entry
             };
+
+            // Set list of all LocationWithHidingPlace objects in House
+            LocationsWithHidingPlaces = Locations.Where((l) => l.GetType() == typeof(LocationWithHidingPlace)).Select((l) => (LocationWithHidingPlace)l );
+
+            // Set list of all Location objects in House which are not LocationWithHidingPlaces
+            LocationsWithoutHidingPlaces = Locations.Except(LocationsWithHidingPlaces);
 
             // Set Entry as StartingPoint
             StartingPoint = entry;
@@ -301,7 +318,6 @@ namespace HideAndSeek
         /// <returns>True if LocationWithHidingPlace exists</returns>
         public bool DoesLocationWithHidingPlaceExist(string name)
         {
-
             return GetLocationWithHidingPlaceByName(name) != null;
         }
 
@@ -322,7 +338,7 @@ namespace HideAndSeek
         /// <returns>LocationWithHidingPlace with specified name (or null if not found)</returns>
         public LocationWithHidingPlace GetLocationWithHidingPlaceByName(string name)
         {
-            return (LocationWithHidingPlace) Locations.Where((x) => x.GetType() == typeof(LocationWithHidingPlace) && x.Name == name).FirstOrDefault();
+            return LocationsWithHidingPlaces.Where((x) => x.Name == name).FirstOrDefault();
         }
 
         /// <summary>
