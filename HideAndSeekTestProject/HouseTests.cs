@@ -24,7 +24,7 @@ namespace HideAndSeek
         [SetUp]
         public void SetUp()
         {
-            house = new House("my house", "DefaultHouse");
+            house = new House("my house", "DefaultHouse", "Entry");
         }
 
         /// <summary>
@@ -324,7 +324,7 @@ namespace HideAndSeek
         public void Test_House_CreateHouse()
         {
             // Set up mock file system and assign to House property
-            string textInHouseFile = "{\"Name\":\"my house\",\"HouseFileName\":\"MyHouseFile\"}";
+            string textInHouseFile = "{\"Name\":\"my house\",\"HouseFileName\":\"MyHouseFile\",\"PlayerStartingPoint\":\"Entry\"}";
             Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
             fileSystemMock.Setup((s) => s.File.Exists("MyHouseFile.json")).Returns(true);
             fileSystemMock.Setup((s) => s.File.ReadAllText("MyHouseFile.json")).Returns(textInHouseFile);
@@ -337,6 +337,7 @@ namespace HideAndSeek
             {
                 Assert.That(house.Name, Is.EqualTo("my house"));
                 Assert.That(house.HouseFileName, Is.EqualTo("MyHouseFile"));
+                Assert.That(house.PlayerStartingPoint, Is.EqualTo("Entry"));
             });
         }
 
@@ -393,7 +394,7 @@ namespace HideAndSeek
         public void Test_House_Constructor()
         {
             // Create House
-            house = new House("special house", "SpecialHouse");
+            house = new House("special house", "SpecialHouse", "Entry");
 
             // Assume no exceptions were thrown
             // Assert that properties are set correctly
@@ -401,6 +402,8 @@ namespace HideAndSeek
             {
                 Assert.That(house.Name, Is.EqualTo("special house"));
                 Assert.That(house.HouseFileName, Is.EqualTo("SpecialHouse"));
+                Assert.That(house.StartingPoint.Name, Is.EqualTo("Entry"));
+                Assert.That(house.PlayerStartingPoint, Is.EqualTo("Entry"));
             });
         }
 
@@ -449,6 +452,41 @@ namespace HideAndSeek
                 // Assert that exception message is as expected
                 Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because House file name \"{houseFileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
             });
+        }
+
+        [TestCase("")]
+        [TestCase(" ")]
+        [Category("House PlayerStartingPoint Failure")]
+        public void Test_House_PlayerStartingPointSetter_WithInvalidLocationName(string locationName)
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that setting the player starting point location name to an invalid location name raises an exception
+                var exception = Assert.Throws<InvalidDataException>(() =>
+                {
+                    house.PlayerStartingPoint = locationName;
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because player starting point location name \"{locationName}\" is invalid (is empty or contains only whitespace"));
+            });
+        }
+
+        [Test]
+        [Category("House StartingPoint Failure")]
+        public void Test_House_StartingPointSetter_WithLocationNotExistingInHouse()
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that setting the starting point location to a Location not in the House raises an exception
+                var exception = Assert.Throws<InvalidDataException>(() =>
+                {
+                    house.StartingPoint = new Location("not in house");
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo("Cannot perform action because player starting point location \"not in house\" is not a location in the house"));
+            });  
         }
     }
 }
