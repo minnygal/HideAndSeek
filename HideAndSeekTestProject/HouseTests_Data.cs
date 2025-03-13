@@ -13,10 +13,59 @@ namespace HideAndSeekTestProject
     public static class HouseTests_Data
     {
         /// <summary>
-        /// Get new House object for testing purposes
+        /// Enumerable of expected Location names in Locations property in test House
         /// </summary>
-        /// <returns>House object for testing purposes</returns>
-        public static House GetNewTestHouse()
+        public static readonly IEnumerable<string> TestHouseExpectedProperties_Locations_Names = new List<string>()
+        {
+            "Attic",
+            "Hallway",
+            "Bathroom",
+            "Kids Room",
+            "Master Bedroom",
+            "Nursery",
+            "Pantry",
+            "Second Bathroom",
+            "Kitchen",
+            "Master Bath",
+            "Garage",
+            "Landing",
+            "Living Room",
+            "Entry"
+        };
+
+        /// <summary>
+        /// Enumerable of expected LocationWithHidingPlace names in LocationsWithHidingPlaces property in test House
+        /// </summary>
+        public static readonly IEnumerable<string> TestHouseExpectedProperties_LocationsWithHidingPlaces_Names = new List<string>()
+        {
+            "Attic",
+            "Bathroom",
+            "Kids Room",
+            "Master Bedroom",
+            "Nursery",
+            "Pantry",
+            "Second Bathroom",
+            "Kitchen",
+            "Master Bath",
+            "Garage",
+            "Living Room",
+        };
+
+        /// <summary>
+        /// Enumerable of expected Location names in LocationsWithoutHidingPlaces property in test House
+        /// </summary>
+        public static readonly IEnumerable<string> TestHouseExpectedProperties_LocationsWithoutHidingPlaces_Names = new List<string>()
+        {
+            "Hallway",
+            "Landing",
+            "Entry"
+        };
+
+    /// <summary>
+    /// Get new House object for testing purposes
+    /// </summary>
+    /// <returns>House object for testing purposes</returns>
+    public static House GetNewTestHouse()
         {
             // Create Entry and connect to new locations: Garage, Hallway
             Location entry = new Location("Entry");

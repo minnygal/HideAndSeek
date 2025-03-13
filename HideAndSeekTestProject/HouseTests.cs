@@ -334,11 +334,67 @@ namespace HideAndSeek
             // Call method to create House
             House house = House.CreateHouse("TestHouse");
 
+            // Set variable for Landing from LocationsWithoutHidingPlaces
+            Location landingFromLocationsWithoutHidingPlaces = house.LocationsWithoutHidingPlaces.Where((l) => l.Name == "Landing").First();
+            
+            // Set variables for expected Exits for Landing (taking objects from House Locations property)
+            Location hallwayFromLocations = house.Locations.Where((l) => l.Name == "Hallway").First();
+            Location atticFromLocations = house.Locations.Where((l) => l.Name == "Attic").First();
+            Location kidsRoomFromLocations = house.Locations.Where((l) => l.Name == "Kids Room").First();
+            Location masterBedroomFromLocations = house.Locations.Where((l) => l.Name == "Master Bedroom").First();
+            Location nurseryFromLocations = house.Locations.Where((l) => l.Name == "Nursery").First();
+            Location pantryFromLocations = house.Locations.Where((l) => l.Name == "Pantry").First();
+            Location secondBathroomFromLocations = house.Locations.Where((l) => l.Name == "Second Bathroom").First();
+            
+            // Set variable for Master Bedroom from LocationsWithHidingPlaces
+            LocationWithHidingPlace masterBedroomFromLocationsWithHidingPlaces = house.LocationsWithHidingPlaces.Where((l) => l.Name == "Master Bedroom").First();
+            
+            // Set variables for expected Exits for Master Bedroom (taking objects from House Locations property)
+            Location landingFromLocations = house.Locations.Where((l) => l.Name == "Landing").First();
+            Location masterBathFromLocations = house.Locations.Where((l) => l.Name == "Master Bath").First();
+
+            // Assert that properties are as expected
             Assert.Multiple(() =>
             {
-                Assert.That(house.Name, Is.EqualTo("test house"));
-                Assert.That(house.HouseFileName, Is.EqualTo("TestHouse"));
-                Assert.That(house.PlayerStartingPoint, Is.EqualTo("Entry"));
+                // Assert that House properties are as expected
+                Assert.That(house.Name, Is.EqualTo("test house"), "Name property");
+                Assert.That(house.HouseFileName, Is.EqualTo("TestHouse"), "HouseFileName property");
+                Assert.That(house.PlayerStartingPoint, Is.EqualTo("Entry"), "PlayerStartingPoint property");
+                Assert.That(house.StartingPoint.Name, Is.EqualTo("Entry"), "StartingPoint property Location Name");
+                Assert.That(house.Locations.Select((l) => l.Name), Is.EquivalentTo(HouseTests_Data.TestHouseExpectedProperties_Locations_Names), "Locations property (check each Location Name)");
+                Assert.That(house.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(HouseTests_Data.TestHouseExpectedProperties_LocationsWithoutHidingPlaces_Names), "LocationsWithoutHidingPlaces property (check each Location Name)");
+                Assert.That(house.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(HouseTests_Data.TestHouseExpectedProperties_LocationsWithHidingPlaces_Names), "LocationsWithHidingPlaces property (check each LocationWithHidingPlace Name");
+
+                //Assert that Landing Location Name property is as expected
+                Assert.That(landingFromLocationsWithoutHidingPlaces.Name, Is.EqualTo("Landing"), "Landing Location Name property");
+                
+                // Assert that Landing Location Exits properties' keys and values are as expected
+                // (and values are the same objects as those stored in the House Locations property)
+                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(0).Key, Is.EqualTo(Direction.Down), "1st Landing Exits key is Down");
+                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(0).Value, Is.SameAs(hallwayFromLocations), "1st Landing Exits value same as Hallway from Locations");
+                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(1).Key, Is.EqualTo(Direction.Up), "2nd Landing Exits key is Up");
+                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(1).Value, Is.SameAs(atticFromLocations), "2nd Landing Exits value same as Attic from Locations");
+                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(2).Key, Is.EqualTo(Direction.Southeast), "3rd Landing Exits Key is Southeast");
+                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(2).Value, Is.SameAs(kidsRoomFromLocations), "3rd Landing Exits value same as Kids Room from Locations");
+                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(3).Key, Is.EqualTo(Direction.Northwest), "4th Landing Exits Key is Northwest");
+                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(3).Value, Is.SameAs(masterBedroomFromLocations), "4th Landing Exits value same as Master Bedroom from Locations");
+                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(4).Key, Is.EqualTo(Direction.Southwest), "5th Landing Exits Key is Southwest");
+                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(4).Value, Is.SameAs(nurseryFromLocations), "5th Landing Exits value same as Nursery from Locations");
+                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(5).Key, Is.EqualTo(Direction.South), "6th Landing Exits Key is South");
+                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(5).Value, Is.SameAs(pantryFromLocations), "6th Landing Exits value same as Pantry from Locations");
+                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(6).Key, Is.EqualTo(Direction.West), "6th Landing Exits Key is West");
+                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(6).Value, Is.SameAs(secondBathroomFromLocations), "6th Landing Exits value same as Second Bathroom from Locations");
+
+                //Assert that Master Bedroom LocationWithHidingPlace Name and HidingPlace properties are as expected
+                Assert.That(masterBedroomFromLocationsWithHidingPlaces.Name, Is.EqualTo("Master Bedroom"), "Master Bedroom LocationWithHidingPlace Name property");
+                Assert.That(masterBedroomFromLocationsWithHidingPlaces.HidingPlace, Is.EqualTo("under the bed"), "Master Bedroom LocationWithHidingPlace property");
+
+                // Assert that Master Bedroom LocationWithHidingPlace Exits properties' keys and values are as expected
+                // (and values are the same objects as those stored in the House Locations property)
+                Assert.That(masterBedroomFromLocationsWithHidingPlaces.Exits.ElementAt(0).Key, Is.EqualTo(Direction.Southeast), "1st Master Bedroom Exits key is Southeast");
+                Assert.That(masterBedroomFromLocationsWithHidingPlaces.Exits.ElementAt(0).Value, Is.SameAs(landingFromLocationsWithoutHidingPlaces), "1st Master Bedroom Exits value same as Landing from Locations");
+                Assert.That(masterBedroomFromLocationsWithHidingPlaces.Exits.ElementAt(1).Key, Is.EqualTo(Direction.East), "2nd Master Bedroom Exits key is Southeast");
+                Assert.That(masterBedroomFromLocationsWithHidingPlaces.Exits.ElementAt(1).Value, Is.SameAs(masterBathFromLocations), "2nd Master Bedroom Exits value same as Landing from Locations");
             });
         }
 
@@ -393,49 +449,7 @@ namespace HideAndSeek
         [Test]
         [Category("House Constructor Success")]
         public void Test_House_Constructor_Parameterized()
-        {// Create list of expected Location names
-            IEnumerable<string> expectedLocationNames = new List<string>()
-            {
-                "Attic",
-                "Hallway",
-                "Bathroom",
-                "Kids Room",
-                "Master Bedroom",
-                "Nursery",
-                "Pantry",
-                "Second Bathroom",
-                "Kitchen",
-                "Master Bath",
-                "Garage",
-                "Landing",
-                "Living Room",
-                "Entry"
-            };
-
-            // Create list of expected LocationWithHidingPlace names
-            IEnumerable<string> expectedLocationWithHidingPlaceNames = new List<string>()
-            {
-                "Attic",
-                "Bathroom",
-                "Kids Room",
-                "Master Bedroom",
-                "Nursery",
-                "Pantry",
-                "Second Bathroom",
-                "Kitchen",
-                "Master Bath",
-                "Garage",
-                "Living Room",
-            };
-
-            // Create list of expected Location names not including LocationWithHidingPlace objects
-            IEnumerable<string> expectedLocationWithoutHidingPlaceNames = new List<string>()
-            {
-                "Hallway",
-                "Landing",
-                "Entry"
-            };
-
+        {
             // Assume no exceptions were thrown
             // Assert that properties are set correctly
             Assert.Multiple(() =>
@@ -444,9 +458,9 @@ namespace HideAndSeek
                 Assert.That(house.HouseFileName, Is.EqualTo("TestHouse"));
                 Assert.That(house.StartingPoint.Name, Is.EqualTo("Entry"));
                 Assert.That(house.PlayerStartingPoint, Is.EqualTo("Entry"));
-                Assert.That(house.Locations.Select((l) => l.Name), Is.EquivalentTo(expectedLocationNames));
-                Assert.That(house.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(expectedLocationWithHidingPlaceNames));
-                Assert.That(house.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(expectedLocationWithoutHidingPlaceNames));
+                Assert.That(house.Locations.Select((l) => l.Name), Is.EquivalentTo(HouseTests_Data.TestHouseExpectedProperties_Locations_Names));
+                Assert.That(house.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(HouseTests_Data.TestHouseExpectedProperties_LocationsWithoutHidingPlaces_Names));
+                Assert.That(house.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(HouseTests_Data.TestHouseExpectedProperties_LocationsWithHidingPlaces_Names));
             });
         }
         
