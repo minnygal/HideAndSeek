@@ -400,7 +400,7 @@ namespace HideAndSeek
 
         [Test]
         [Category("House CreateHouse Failure")]
-        public void Test_House_CreateHouse_WithNameOfNonexistingFile_ThrowsException()
+        public void Test_House_CreateHouse_AndCheckErrorMessage_WhenFileDoesNotExist()
         {
             // Set up mock file system and assign to House property
             Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
@@ -420,11 +420,9 @@ namespace HideAndSeek
             });
         }
 
-        [TestCase("")]
-        [TestCase(" ")]
-        [TestCase("ABCDeaoueou[{}}({}")]
+        [TestCaseSource(typeof(HouseTests_TestCaseData), nameof(HouseTests_TestCaseData.TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_ForJsonException_WhenFileIsCorrupt))]
         [Category("House CreateHouse Failure")]
-        public void Test_House_CreateHouse_FromCorruptFile_ThrowsException(string fileText)
+        public void Test_House_CreateHouse_AndCheckErrorMessage_ForJsonException_WhenFileIsCorrupt(string fileText)
         {
             // Set up mock file system and assign to House property
             Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
