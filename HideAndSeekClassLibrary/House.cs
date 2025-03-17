@@ -289,7 +289,7 @@ namespace HideAndSeek
             }
 
             // Set StartingPoint
-            StartingPoint = GetLocationByName(PlayerStartingPoint);
+            StartingPoint = startingPoint;
         }
         
         /// <summary>
