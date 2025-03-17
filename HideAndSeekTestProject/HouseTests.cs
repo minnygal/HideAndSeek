@@ -420,9 +420,9 @@ namespace HideAndSeek
             });
         }
 
-        [TestCaseSource(typeof(HouseTests_TestCaseData), nameof(HouseTests_TestCaseData.TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_ForJsonException_WhenFileDataIsInvalid))]
+        [TestCaseSource(typeof(HouseTests_TestCaseData), nameof(HouseTests_TestCaseData.TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_ForJsonException_WhenFileFormatIsInvalid))]
         [Category("House CreateHouse Failure")]
-        public void Test_House_CreateHouse_AndCheckErrorMessage_ForJsonException_WhenFileDataIsInvalid(string fileText, string exceptionMessageEnding)
+        public void Test_House_CreateHouse_AndCheckErrorMessage_ForJsonException_WhenFileFormatIsInvalid(string fileText, string exceptionMessageEnding)
         {
             // Set up mock file system and assign to House property
             Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
@@ -432,17 +432,17 @@ namespace HideAndSeek
 
             Assert.Multiple(() =>
             {
-                // Assert that creating a SavedGame object with an invalid file name raises an exception
+                // Assert that creating a SavedGame object with a file with an invalid format throws an exception
                 var exception = Assert.Throws<JsonException>(() =>
                 {
                     House.CreateHouse("MyCorruptFile");
                 });
-
+                
                 // Assert that exception message is as expected
                 Assert.That(exception.Message, Is.EqualTo($"Cannot process because data in house layout file MyCorruptFile is corrupt - {exceptionMessageEnding}"));
             });
         }
-        
+
         // Calls properties' setters and setters successfully
         [Test]
         [Category("House Constructor Success")]
