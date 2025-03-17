@@ -443,9 +443,9 @@ namespace HideAndSeek
             });
         }
 
-        [TestCaseSource(typeof(HouseTests_TestCaseData), nameof(HouseTests_TestCaseData.TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataIsInvalid))]
+        [TestCaseSource(typeof(HouseTests_TestCaseData), nameof(HouseTests_TestCaseData.TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasWhitespaceValue))]
         [Category("House CreateHouse Failure")]
-        public void Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataIsInvalid(string fileText, string exceptionMessageEnding)
+        public void Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasWhitespaceValue(string fileText, string exceptionMessageEnding)
         {
             // Set up mock file system and assign to House property
             Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
@@ -455,12 +455,12 @@ namespace HideAndSeek
 
             Assert.Multiple(() =>
             {
-                // Assert that creating a SavedGame object with a file with invalid data for a property throws an exception
+                // Assert that creating a SavedGame object with a file with a whitespace value for a property throws an exception
                 var exception = Assert.Throws<InvalidDataException>(() =>
                 {
                     House.CreateHouse("MyInvalidDataFile");
                 });
-                Console.WriteLine(exception.Message);
+                
                 // Assert that exception message is as expected
                 Assert.That(exception.Message, Is.EqualTo($"Cannot process because data in house layout file MyInvalidDataFile is invalid - {exceptionMessageEnding}"));
             });
