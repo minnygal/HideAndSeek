@@ -283,7 +283,7 @@ namespace HideAndSeek
         /// Set up House after deserialization
         /// Sets Locations, StartingPoint, and Exits property for each Location in House
         /// </summary>
-        public void SetUpHouseAfterDeserialization()
+        private void SetUpHouseAfterDeserialization()
         {
             // Set Locations and StartingPoint properties
             SetLocationsAndStartingPoint();
