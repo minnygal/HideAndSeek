@@ -420,9 +420,9 @@ namespace HideAndSeek
             });
         }
 
-        [TestCaseSource(typeof(HouseTests_TestCaseData), nameof(HouseTests_TestCaseData.TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_ForJsonException_WhenFileIsCorrupt))]
+        [TestCaseSource(typeof(HouseTests_TestCaseData), nameof(HouseTests_TestCaseData.TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_ForJsonException_WhenFileFormatIsInvalid))]
         [Category("House CreateHouse Failure")]
-        public void Test_House_CreateHouse_AndCheckErrorMessage_ForJsonException_WhenFileIsCorrupt(string fileText)
+        public void Test_House_CreateHouse_AndCheckErrorMessage_ForJsonException_WhenFileFormatIsInvalid(string fileText, string exceptionMessageEnding)
         {
             // Set up mock file system and assign to House property
             Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
@@ -439,7 +439,7 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo("Cannot process because data in house layout file MyCorruptFile is corrupt"));
+                Assert.That(exception.Message, Is.EqualTo($"Cannot process because data in house layout file MyCorruptFile is corrupt - {exceptionMessageEnding}"));
             });
         }
         
