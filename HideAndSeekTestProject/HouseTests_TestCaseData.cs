@@ -228,6 +228,26 @@ namespace HideAndSeekTestProject
                        "}",
                        "Cannot perform action because location \"Hallway\" must be assigned at least one exit")
                    .SetName("Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue - invalid LocationsWithoutHidingPlaces - no exits");
+
+                // Invalid LocationsWithHidingPlaces - LocationWithHidingPlace has no exits
+                yield return new TestCaseData("{" +
+                           TestHouse_Data.SerializedTestHouse_Name + "," +
+                           TestHouse_Data.SerializedHouse_HouseFileName + "," +
+                           TestHouse_Data.SerializedHouse_PlayerStartingPoint + "," + 
+                           TestHouse_Data.SerializedHouse_LocationsWithoutHidingPlaces + "," +
+                           "\"LocationsWithHidingPlaces\":" +
+                           "[" +
+                                "{" +
+                                    "\"HidingPlace\":\"in a trunk\"," +
+                                    "\"Name\":\"Attic\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                    "}" +
+                                "}" +
+                           "]" +
+                       "}",
+                       "Cannot perform action because location \"Attic\" must be assigned at least one exit")
+                   .SetName("Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue - invalid LocationsWithHidingPlaces - no exits");
             }
         }
     }
