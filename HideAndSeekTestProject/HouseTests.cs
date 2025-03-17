@@ -476,7 +476,7 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because house name \"{name}\" is invalid (is empty or contains only whitespace"));
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because house name \"{name}\" is invalid (is empty or contains only whitespace)"));
             });
         }
 
