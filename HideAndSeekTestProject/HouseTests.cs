@@ -399,6 +399,54 @@ namespace HideAndSeek
         }
 
         [Test]
+        [Category("House CreateHouse Success")]
+        public void Test_House_CreateHouse_WithNoLocationsWithoutHidingPlaces()
+        {
+            // Initialize variable to string representing text in House file (with empty LocationsWithoutHidingPlaces)
+            string textInHouseFile = 
+                "{" +
+                    TestHouse_Data.SerializedTestHouse_Name + "," +
+                    TestHouse_Data.SerializedHouse_HouseFileName + "," +
+                    "\"PlayerStartingPoint\":\"Master Bedroom\"" + "," +
+                    "\"LocationsWithoutHidingPlaces\":" +
+                    "[" +
+                    "]" + "," +
+                    "\"LocationsWithHidingPlaces\":" +
+                    "[" +
+                        "{" +
+                            "\"HidingPlace\":\"under the bed\"," +
+                            "\"Name\":\"Master Bedroom\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"East\":\"Master Bath\"" +
+                            "}" +
+                        "}," +
+                        "{" +
+                            "\"HidingPlace\":\"in the tub\"," +
+                            "\"Name\":\"Master Bath\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"West\":\"Master Bedroom\"" +
+                            "}" +
+                        "}" +
+                    "]" +
+                "}";
+
+            // Set up mock file system and assign to House property
+            Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
+            fileSystemMock.Setup((s) => s.File.Exists("TestHouse.json")).Returns(true);
+            fileSystemMock.Setup((s) => s.File.ReadAllText("TestHouse.json")).Returns(textInHouseFile);
+            House.FileSystem = fileSystemMock.Object;
+
+            // Call method to create House
+            House house = House.CreateHouse("TestHouse");
+
+            // Assume no exceptions were thrown
+            // Assert that there are no Locations in LocationsWithoutHidingPlaces
+            Assert.That(house.LocationsWithoutHidingPlaces.Count(), Is.EqualTo(0));
+        }
+
+        [Test]
         [Category("House CreateHouse Failure")]
         public void Test_House_CreateHouse_AndCheckErrorMessage_WhenFileDoesNotExist()
         {
