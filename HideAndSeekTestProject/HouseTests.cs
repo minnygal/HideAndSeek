@@ -466,6 +466,29 @@ namespace HideAndSeek
             });
         }
 
+        [TestCaseSource(typeof(HouseTests_TestCaseData), nameof(HouseTests_TestCaseData.TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue))]
+        [Category("House CreateHouse Failure")]
+        public void Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue(string fileText, string exceptionMessage)
+        {
+            // Set up mock file system and assign to House property
+            Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
+            fileSystemMock.Setup((s) => s.File.Exists("MyInvalidDataFile.json")).Returns(true);
+            fileSystemMock.Setup((s) => s.File.ReadAllText("MyInvalidDataFile.json")).Returns(fileText);
+            House.FileSystem = fileSystemMock.Object;
+
+            Assert.Multiple(() =>
+            {
+                // Assert that creating a SavedGame object with a file with an invalid value for a property throws an exception
+                var exception = Assert.Throws<InvalidDataException>(() =>
+                {
+                    House.CreateHouse("MyInvalidDataFile");
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo(exceptionMessage));
+            });
+        }
+
         // Calls properties' setters and setters successfully
         [Test]
         [Category("House Constructor Success")]

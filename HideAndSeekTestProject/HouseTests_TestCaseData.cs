@@ -186,5 +186,22 @@ namespace HideAndSeekTestProject
                    .SetName("Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasWhitespaceValue - LocationsWithHidingPlaces - invalid Location HidingPlace - whitespace");
             }
         }
+
+        public static IEnumerable TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue
+        {
+            get
+            {
+                // Invalid PlayerStartingPoint - not a Location
+                yield return new TestCaseData("{" +
+                           TestHouse_Data.SerializedTestHouse_Name + "," +
+                           TestHouse_Data.SerializedHouse_HouseFileName + "," +
+                           "\"PlayerStartingPoint\":\"Dungeon\"" + "," +
+                           TestHouse_Data.SerializedHouse_LocationsWithoutHidingPlaces + "," +
+                           TestHouse_Data.SerializedTestHouse_LocationsWithHidingPlaces +
+                       "}",
+                       "Cannot perform action because player starting point location \"Dungeon\" is not a location in the house")
+                   .SetName("Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue - invalid PlayerStartingPoint - nonexistent");
+            }
+        }
     }
 }

@@ -279,6 +279,15 @@ namespace HideAndSeek
             // Set list of all Locations in House
             Locations = LocationsWithHidingPlaces.Concat(LocationsWithoutHidingPlaces).ToList();
 
+            // Attempt to get player starting point location
+            Location startingPoint = GetLocationByName(PlayerStartingPoint);
+
+            // If starting point is not in House
+            if(startingPoint == null)
+            {
+                throw new InvalidDataException($"Cannot perform action because player starting point location \"{PlayerStartingPoint}\" is not a location in the house"); // Throw exception
+            }
+
             // Set StartingPoint
             StartingPoint = GetLocationByName(PlayerStartingPoint);
         }
