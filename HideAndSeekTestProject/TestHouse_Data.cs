@@ -123,10 +123,10 @@ namespace HideAndSeekTestProject
             get
             {
                 return "{" +
-                        SerializedTestHouse_Name +
-                        SerializedHouse_HouseFileName +
-                        SerializedHouse_PlayerStartingPoint +
-                        SerializedHouse_LocationsWithoutHidingPlaces +
+                        SerializedTestHouse_Name + "," +
+                        SerializedHouse_HouseFileName + "," +
+                        SerializedHouse_PlayerStartingPoint + "," +
+                        SerializedHouse_LocationsWithoutHidingPlaces + "," +
                         SerializedTestHouse_LocationsWithHidingPlaces +
                         "}";
             }
@@ -139,7 +139,7 @@ namespace HideAndSeekTestProject
         {
             get
             {
-                return "\"Name\":\"test house\",";
+                return "\"Name\":\"test house\"";
             }
         }
 
@@ -150,7 +150,7 @@ namespace HideAndSeekTestProject
         {
             get
             {
-                return "\"HouseFileName\":\"TestHouse\",";
+                return "\"HouseFileName\":\"TestHouse\"";
             }
         }
 
@@ -161,7 +161,7 @@ namespace HideAndSeekTestProject
         {
             get
             {
-                return "\"PlayerStartingPoint\":\"Entry\",";
+                return "\"PlayerStartingPoint\":\"Entry\"";
             }
         }
 
@@ -206,7 +206,7 @@ namespace HideAndSeekTestProject
                                     "\"East\":\"Hallway\"" +
                                 "}" +
                             "}" +
-                        "],";
+                        "]";
             }
         }
 
