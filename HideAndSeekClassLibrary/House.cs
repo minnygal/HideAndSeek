@@ -108,6 +108,10 @@ namespace HideAndSeek
             {
                 throw new InvalidOperationException($"Cannot process because data in house layout file {fileName} is corrupt - {e.Message}");
             }
+            catch (InvalidDataException e)
+            {
+                throw new InvalidDataException($"Cannot process because data in house layout file {fileName} is invalid - {e.Message}");
+            }
             catch (Exception e)
             {
                 throw e;
@@ -159,7 +163,7 @@ namespace HideAndSeek
                 // If file name is invalid
                 if (!(FileSystem.IsValidName(value)))
                 {
-                    throw new InvalidDataException($"Cannot perform action because House file name \"{value}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"); // Throw exception
+                    throw new InvalidDataException($"Cannot perform action because house file name \"{value}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"); // Throw exception
                 }
 
                 // Set name variable
@@ -184,7 +188,7 @@ namespace HideAndSeek
                 // If invalid Location name is entered
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    throw new InvalidDataException($"Cannot perform action because player starting point location name \"{value}\" is invalid (is empty or contains only whitespace"); // Throw exception
+                    throw new InvalidDataException($"Cannot perform action because player starting point location name \"{value}\" is invalid (is empty or contains only whitespace)"); // Throw exception
                 }
 
                 // Set player starting point variable
