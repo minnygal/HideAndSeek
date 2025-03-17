@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.ExceptionServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -291,11 +292,12 @@ namespace HideAndSeek
             // Set StartingPoint
             StartingPoint = startingPoint;
         }
-        
+
         /// <summary>
         /// Set up House after deserialization
         /// Sets Locations, StartingPoint, and Exits property for each Location in House
         /// </summary>
+        /// <exception cref="InvalidDataException">Exception thrown if exit Location does not exist</exception>
         private void SetUpHouseAfterDeserialization()
         {
             // Set Locations and StartingPoint properties
@@ -307,10 +309,22 @@ namespace HideAndSeek
                 // Initialize empty Dictionary to store exits
                 IDictionary<Direction, Location> exitsDictionary = new Dictionary<Direction, Location>();
 
-                // Add each exit to Dictionary
+                // For each exit
                 foreach (KeyValuePair<Direction, string> exit in location.ExitsForSerialization)
                 {
-                    exitsDictionary.Add(exit.Key, GetLocationByName(exit.Value));
+                    // Get exit Location
+                    Location exitLocation = GetLocationByName(exit.Value);
+                    
+                    // If exit Location does not exist
+                    if(exitLocation == null)
+                    {
+                        throw new InvalidDataException(
+                            $"Cannot perform action because \"{location.Name}\" exit location \"{exit.Value}\" " +
+                            $"in direction \"{exit.Key}\" does not exist"); // Throw exception
+                    }
+
+                    // Add exit location to Dictionary
+                    exitsDictionary.Add(exit.Key, exitLocation);
                 }
 
                 // Set Location's Exits Dictionary

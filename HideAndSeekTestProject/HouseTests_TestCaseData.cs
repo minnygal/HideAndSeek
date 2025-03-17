@@ -209,18 +209,31 @@ namespace HideAndSeekTestProject
                            TestHouse_Data.SerializedHouse_PlayerStartingPoint + "," +
                            "\"LocationsWithoutHidingPlaces\":" +
                            "[" +
-                                "{" + // Entry required for setting StartingLocation
+                                "{" +
+                                    "\"Name\":\"Hallway\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                    "}" +
+                                "}," +
+                                "{" +
+                                    "\"Name\":\"Landing\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                        "\"Down\":\"Hallway\"," +
+                                        "\"Up\":\"Attic\"," +
+                                        "\"Southeast\":\"Kids Room\"," +
+                                        "\"Northwest\":\"Master Bedroom\"," +
+                                        "\"Southwest\":\"Nursery\"," +
+                                        "\"South\":\"Pantry\"," +
+                                        "\"West\":\"Second Bathroom\"" +
+                                    "}" +
+                                "}," +
+                                "{" +
                                     "\"Name\":\"Entry\"," +
                                     "\"ExitsForSerialization\":" +
                                     "{" +
                                         "\"Out\":\"Garage\"," +
                                         "\"East\":\"Hallway\"" +
-                                    "}" +
-                                "}," +
-                                "{" +
-                                    "\"Name\":\"Hallway\"," +
-                                    "\"ExitsForSerialization\":" +
-                                    "{" +
                                     "}" +
                                 "}" +
                            "]" + "," +
@@ -248,6 +261,154 @@ namespace HideAndSeekTestProject
                        "}",
                        "Cannot perform action because location \"Attic\" must be assigned at least one exit")
                    .SetName("Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue - invalid LocationsWithHidingPlaces - no exits");
+
+                // Invalid LocationsWithoutHidingPlaces - Location has nonexistent exit
+                yield return new TestCaseData("{" +
+                           TestHouse_Data.SerializedTestHouse_Name + "," +
+                           TestHouse_Data.SerializedHouse_HouseFileName + "," +
+                           TestHouse_Data.SerializedHouse_PlayerStartingPoint + "," +
+                           "\"LocationsWithoutHidingPlaces\":" +
+                           "[" +
+                                "{" +
+                                    "\"Name\":\"Hallway\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                        "\"Down\":\"Dungeon\"," +
+                                        "\"West\":\"Entry\"," +
+                                        "\"Northwest\":\"Kitchen\"," +
+                                        "\"North\":\"Bathroom\"," +
+                                        "\"South\":\"Living Room\"," +
+                                        "\"Up\":\"Landing\"" +
+                                    "}" +
+                                "}," +
+                                "{" +
+                                    "\"Name\":\"Landing\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                        "\"Down\":\"Hallway\"," +
+                                        "\"Up\":\"Attic\"," +
+                                        "\"Southeast\":\"Kids Room\"," +
+                                        "\"Northwest\":\"Master Bedroom\"," +
+                                        "\"Southwest\":\"Nursery\"," +
+                                        "\"South\":\"Pantry\"," +
+                                        "\"West\":\"Second Bathroom\"" +
+                                    "}" +
+                                "}," +
+                                "{" +
+                                    "\"Name\":\"Entry\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                        "\"Out\":\"Garage\"," +
+                                        "\"East\":\"Hallway\"" +
+                                    "}" +
+                                "}" +
+                           "]" + "," +
+                           TestHouse_Data.SerializedTestHouse_LocationsWithHidingPlaces +
+                       "}",
+                       "Cannot perform action because \"Hallway\" exit location \"Dungeon\" in direction \"Down\" does not exist")
+                   .SetName("Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue - invalid LocationsWithoutHidingPlaces - nonexistent exit");
+
+                // Invalid LocationsWithHidingPlaces - LocationWithHidingPlace has nonexistent exit
+                yield return new TestCaseData("{" +
+                           TestHouse_Data.SerializedTestHouse_Name + "," +
+                           TestHouse_Data.SerializedHouse_HouseFileName + "," +
+                           TestHouse_Data.SerializedHouse_PlayerStartingPoint + "," +
+                           TestHouse_Data.SerializedHouse_LocationsWithoutHidingPlaces + "," +
+                           "\"LocationsWithHidingPlaces\":" +
+                           "[" +
+                                "{" +
+                                    "\"HidingPlace\":\"in a trunk\"," +
+                                    "\"Name\":\"Attic\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                        "\"Down\":\"Landing\"" +
+                                    "}" +
+                                "}," +
+                                "{\"HidingPlace\":\"behind the door\"," +
+                                    "\"Name\":\"Bathroom\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                        "\"South\":\"Hallway\"," +
+                                        "\"Down\":\"Dungeon\"" +
+                                    "}" +
+                                "}," +
+                                "{" +
+                                    "\"HidingPlace\":\"in the bunk beds\"," +
+                                    "\"Name\":\"Kids Room\"," +
+                                    "\"ExitsForSerialization\":" +
+                                        "{" +
+                                            "\"Northwest\":\"Landing\"" +
+                                        "}" +
+                                    "}," +
+                                "{" +
+                                    "\"HidingPlace\":\"under the bed\"," +
+                                    "\"Name\":\"Master Bedroom\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                        "\"Southeast\":\"Landing\"," +
+                                        "\"East\":\"Master Bath\"" +
+                                    "}" +
+                                "}," +
+                                "{" +
+                                    "\"HidingPlace\":\"behind the changing table\"," +
+                                    "\"Name\":\"Nursery\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                        "\"Northeast\":\"Landing\"" +
+                                    "}" +
+                                "}," +
+                                "{" +
+                                    "\"HidingPlace\":\"inside a cabinet\"," +
+                                    "\"Name\":\"Pantry\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                        "\"North\":\"Landing\"" +
+                                    "}" +
+                                "}," +
+                                "{" +
+                                    "\"HidingPlace\":\"in the shower\"," +
+                                    "\"Name\":\"Second Bathroom\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                        "\"East\":\"Landing\"" +
+                                    "}" +
+                                "}," +
+                                "{" +
+                                    "\"HidingPlace\":\"next to the stove\"," +
+                                    "\"Name\":\"Kitchen\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                        "\"Southeast\":\"Hallway\"" +
+                                    "}" +
+                                "}," +
+                                "{" +
+                                    "\"HidingPlace\":\"in the tub\"," +
+                                    "\"Name\":\"Master Bath\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                        "\"West\":\"Master Bedroom\"" +
+                                    "}" +
+                                "}," +
+                                "{" +
+                                    "\"HidingPlace\":\"behind the car\"," +
+                                    "\"Name\":\"Garage\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                        "\"In\":\"Entry\"" +
+                                    "}" +
+                                "}," +
+                                "{" +
+                                    "\"HidingPlace\":\"behind the sofa\"," +
+                                    "\"Name\":\"Living Room\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                        "\"North\":\"Hallway\"" +
+                                    "}" +
+                                "}" +
+                           "]" +
+                       "}",
+                       "Cannot perform action because \"Bathroom\" exit location \"Dungeon\" in direction \"Down\" does not exist")
+                   .SetName("Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue - invalid LocationsWithHidingPlaces - nonexistent exit");
             }
         }
     }
