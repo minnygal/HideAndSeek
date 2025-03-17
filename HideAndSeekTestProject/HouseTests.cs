@@ -25,7 +25,7 @@ namespace HideAndSeek
         [SetUp]
         public void SetUp()
         {
-            house = HouseTests_Data.GetNewTestHouse();
+            house = TestHouse_Data.GetNewTestHouse();
         }
 
         /// <summary>
@@ -325,7 +325,7 @@ namespace HideAndSeek
         public void Test_House_CreateHouse()
         {
             // Set up mock file system and assign to House property
-            string textInHouseFile = HouseTests_Data.SerializedTestHouse;
+            string textInHouseFile = TestHouse_Data.SerializedTestHouse;
             Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
             fileSystemMock.Setup((s) => s.File.Exists("TestHouse.json")).Returns(true);
             fileSystemMock.Setup((s) => s.File.ReadAllText("TestHouse.json")).Returns(textInHouseFile);
@@ -361,9 +361,9 @@ namespace HideAndSeek
                 Assert.That(house.HouseFileName, Is.EqualTo("TestHouse"), "HouseFileName property");
                 Assert.That(house.PlayerStartingPoint, Is.EqualTo("Entry"), "PlayerStartingPoint property");
                 Assert.That(house.StartingPoint.Name, Is.EqualTo("Entry"), "StartingPoint property Location Name");
-                Assert.That(house.Locations.Select((l) => l.Name), Is.EquivalentTo(HouseTests_Data.TestHouseExpectedProperties_Locations_Names), "Locations property (check each Location Name)");
-                Assert.That(house.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(HouseTests_Data.TestHouseExpectedProperties_LocationsWithoutHidingPlaces_Names), "LocationsWithoutHidingPlaces property (check each Location Name)");
-                Assert.That(house.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(HouseTests_Data.TestHouseExpectedProperties_LocationsWithHidingPlaces_Names), "LocationsWithHidingPlaces property (check each LocationWithHidingPlace Name");
+                Assert.That(house.Locations.Select((l) => l.Name), Is.EquivalentTo(TestHouse_Data.TestHouseExpectedProperties_Locations_Names), "Locations property (check each Location Name)");
+                Assert.That(house.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestHouse_Data.TestHouseExpectedProperties_LocationsWithoutHidingPlaces_Names), "LocationsWithoutHidingPlaces property (check each Location Name)");
+                Assert.That(house.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestHouse_Data.TestHouseExpectedProperties_LocationsWithHidingPlaces_Names), "LocationsWithHidingPlaces property (check each LocationWithHidingPlace Name");
 
                 //Assert that Landing Location Name property is as expected
                 Assert.That(landingFromLocationsWithoutHidingPlaces.Name, Is.EqualTo("Landing"), "Landing Location Name property");
@@ -444,7 +444,7 @@ namespace HideAndSeek
                 Assert.That(exception.Message, Is.EqualTo("Cannot process because data in house layout file MyCorruptFile is corrupt"));
             });
         }
-
+        
         // Calls properties' setters and setters successfully
         [Test]
         [Category("House Constructor Success")]
@@ -458,9 +458,9 @@ namespace HideAndSeek
                 Assert.That(house.HouseFileName, Is.EqualTo("TestHouse"));
                 Assert.That(house.StartingPoint.Name, Is.EqualTo("Entry"));
                 Assert.That(house.PlayerStartingPoint, Is.EqualTo("Entry"));
-                Assert.That(house.Locations.Select((l) => l.Name), Is.EquivalentTo(HouseTests_Data.TestHouseExpectedProperties_Locations_Names));
-                Assert.That(house.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(HouseTests_Data.TestHouseExpectedProperties_LocationsWithoutHidingPlaces_Names));
-                Assert.That(house.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(HouseTests_Data.TestHouseExpectedProperties_LocationsWithHidingPlaces_Names));
+                Assert.That(house.Locations.Select((l) => l.Name), Is.EquivalentTo(TestHouse_Data.TestHouseExpectedProperties_Locations_Names));
+                Assert.That(house.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestHouse_Data.TestHouseExpectedProperties_LocationsWithoutHidingPlaces_Names));
+                Assert.That(house.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestHouse_Data.TestHouseExpectedProperties_LocationsWithHidingPlaces_Names));
             });
         }
         
@@ -554,7 +554,7 @@ namespace HideAndSeek
             string serializedHouse = house.Serialize();
 
             // Assert that serialized text is as expected
-            Assert.That(serializedHouse, Is.EqualTo(HouseTests_Data.SerializedTestHouse));
+            Assert.That(serializedHouse, Is.EqualTo(TestHouse_Data.SerializedTestHouse));
         }
     }
 }
