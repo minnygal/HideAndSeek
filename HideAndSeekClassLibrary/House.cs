@@ -229,11 +229,30 @@ namespace HideAndSeek
         [JsonRequired]
         public IEnumerable<Location> LocationsWithoutHidingPlaces { get; set; }
 
+        private IEnumerable<LocationWithHidingPlace> _locationsWithHidingPlaces;
+
         /// <summary>
         /// /List of all LocationWithHidingPlace objects in House
         /// </summary>
         [JsonRequired]
-        public IEnumerable<LocationWithHidingPlace> LocationsWithHidingPlaces { get; set; }
+        public IEnumerable<LocationWithHidingPlace> LocationsWithHidingPlaces
+        {
+            get
+            {
+                return _locationsWithHidingPlaces;
+            }
+            set
+            {
+                // If enumerable is empty
+                if(value.Count() == 0)
+                {
+                    throw new InvalidDataException("Cannot perform action because locations with hiding places list is empty"); // Throw exception
+                }
+
+                // Set locations with hiding places
+                _locationsWithHidingPlaces = value;
+            }
+        }
 
         /// <summary>
         /// List of all Locations in House

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -201,6 +202,35 @@ namespace HideAndSeekTestProject
                        "}",
                        "Cannot perform action because player starting point location \"Dungeon\" is not a location in the house")
                    .SetName("Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue - invalid PlayerStartingPoint - nonexistent");
+
+                // Invalid LocationsWithHidingPlaces - empty list
+                yield return new TestCaseData("{" +
+                           TestHouse_Data.SerializedTestHouse_Name + "," +
+                           TestHouse_Data.SerializedHouse_HouseFileName + "," +
+                           TestHouse_Data.SerializedHouse_PlayerStartingPoint + "," +
+                           "\"LocationsWithoutHidingPlaces\":" +
+                           "[" +
+                                "{" +
+                                    "\"Name\":\"Hallway\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                        "\"West\":\"Entry\"" +
+                                    "}" +
+                                "}," +
+                                "{" +
+                                    "\"Name\":\"Entry\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                        "\"East\":\"Hallway\"" +
+                                    "}" +
+                                "}" +
+                           "]" + "," +
+                           "\"LocationsWithHidingPlaces\":" +
+                           "[" +
+                           "]" +
+                       "}",
+                       "Cannot process because data in house layout file MyInvalidDataFile is invalid - Cannot perform action because locations with hiding places list is empty")
+                   .SetName("Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue - invalid LocationsWithHidingPlaces - empty");
 
                 // Invalid LocationsWithoutHidingPlaces - Location has no exits
                 yield return new TestCaseData("{" +
