@@ -232,7 +232,7 @@ namespace HideAndSeekTestProject
                                 "\"ExitsForSerialization\":" +
                                 "{" +
                                     "\"South\":\"Hallway\"" +
-                                    "}" +
+                                "}" +
                             "}," +
                             "{" +
                                 "\"HidingPlace\":\"in the bunk beds\"," +
