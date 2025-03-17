@@ -440,8 +440,8 @@ namespace HideAndSeek
                     House.CreateHouse("MyCorruptFile");
                 });
 
-                // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo("Cannot process because data in house layout file MyCorruptFile is corrupt"));
+                // Assert that exception message starts as expected
+                Assert.That(exception.Message, Does.StartWith("Cannot process because data in house layout file MyCorruptFile is corrupt - "));
             });
         }
 

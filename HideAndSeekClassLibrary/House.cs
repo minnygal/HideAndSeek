@@ -102,11 +102,11 @@ namespace HideAndSeek
             }
             catch (JsonException e)
             {
-                throw new JsonException($"Cannot process because data in house layout file {fileName} is corrupt");
+                throw new JsonException($"Cannot process because data in house layout file {fileName} is corrupt - {e.Message}");
             }
             catch (InvalidOperationException e)
             {
-                throw new JsonException($"Cannot process because data in house layout file {fileName} is corrupt");
+                throw new JsonException($"Cannot process because data in house layout file {fileName} is corrupt - {e.Message}");
             }
             catch (Exception e)
             {
