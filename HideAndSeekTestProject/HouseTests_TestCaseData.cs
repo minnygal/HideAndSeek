@@ -201,6 +201,33 @@ namespace HideAndSeekTestProject
                        "}",
                        "Cannot perform action because player starting point location \"Dungeon\" is not a location in the house")
                    .SetName("Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue - invalid PlayerStartingPoint - nonexistent");
+
+                // Invalid LocationsWithoutHidingPlaces - Location has no exits
+                yield return new TestCaseData("{" +
+                           TestHouse_Data.SerializedTestHouse_Name + "," +
+                           TestHouse_Data.SerializedHouse_HouseFileName + "," +
+                           TestHouse_Data.SerializedHouse_PlayerStartingPoint + "," +
+                           "\"LocationsWithoutHidingPlaces\":" +
+                           "[" +
+                                "{" + // Entry required for setting StartingLocation
+                                    "\"Name\":\"Entry\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                        "\"Out\":\"Garage\"," +
+                                        "\"East\":\"Hallway\"" +
+                                    "}" +
+                                "}," +
+                                "{" +
+                                    "\"Name\":\"Hallway\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                    "}" +
+                                "}" +
+                           "]" + "," +
+                           TestHouse_Data.SerializedTestHouse_LocationsWithHidingPlaces +
+                       "}",
+                       "Cannot perform action because location \"Hallway\" must be assigned at least one exit")
+                   .SetName("Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue - invalid LocationsWithoutHidingPlaces - no exits");
             }
         }
     }

@@ -131,14 +131,22 @@ namespace HideAndSeek
         /// The exits out of this location
         /// </summary>
         public IDictionary<Direction, Location> Exits { get; private set; } = new Dictionary<Direction, Location>();
-
+        
         /// <summary>
         /// Set the Exits dictionary
         /// Should only be called by House method
         /// </summary>
-        /// <param name="exits"></param>
+        /// <param name="exits">Dictionary of exits</param>
+        /// <exception cref="InvalidDataException">Exception thrown if dictionary is empty</exception>
         public void SetExitsDictionary(IDictionary<Direction, Location> exits)
         {
+            // If dictionary is empty
+            if(exits.Count() == 0)
+            {
+                throw new InvalidDataException($"Cannot perform action because location \"{Name}\" must be assigned at least one exit"); // Throw exception
+            }
+
+            // Set Exits property
             Exits = exits;
         }
 
