@@ -18,7 +18,7 @@ namespace HideAndSeek
         [SetUp]
         public void SetUp()
         {
-            house = HouseTests_Data.GetNewTestHouse(); // Create test House
+            house = TestHouse_Data.GetNewTestHouse(); // Create test House
             house.ClearHidingPlaces(); // Clear hiding places
         }
 

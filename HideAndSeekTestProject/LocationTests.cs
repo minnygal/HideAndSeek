@@ -6,9 +6,10 @@ namespace HideAndSeek
     using System.Collections.Generic;
     using System.Linq;
     using System.Text.Json;
+    using System.Xml.Linq;
 
     /// <summary>
-    /// Location tests for testing GetExit, ExitList, and AddExit methods
+    /// Location tests for testing GetExit, ExitList, AddExit, and SetExitsDictionary methods
     /// </summary>
     [TestFixture]
     public class LocationTests
@@ -372,7 +373,40 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because location name \"{name}\" is invalid (is empty or contains only whitespace"));
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because location name \"{name}\" is invalid (is empty or contains only whitespace)"));
+            });
+        }
+
+        [Test]
+        [Category("Location SetExitsDictionary Success")]
+        public void Test_Location_SetExitsDictionary()
+        {
+            // Create dictionary of exits
+            Dictionary<Direction, Location> exits = new Dictionary<Direction, Location>();
+            exits.Add(Direction.Out, out_yard);
+            exits.Add(Direction.North, north_kitchen);
+
+            // Set exits dictionary for center location
+            center.SetExitsDictionary(exits);
+
+            // Check that Exits property was set successfully
+            Assert.That(center.Exits, Is.EquivalentTo(exits));
+        }
+
+        [Test]
+        [Category("Location SetExitsDictionary Failure")]
+        public void Test_Location_SetExitsDictionary_ThrowsException_WhenDictionaryEmpty()
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that setting exits dictionary to empty dictionary throws exception
+                var exception = Assert.Throws<InvalidDataException>(() =>
+                {
+                    center.SetExitsDictionary(new Dictionary<Direction, Location>());
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo("Cannot perform action because location \"living room\" must be assigned at least one exit"));
             });
         }
 
@@ -476,7 +510,7 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because location name \"{name}\" is invalid (is empty or contains only whitespace"));
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because location name \"{name}\" is invalid (is empty or contains only whitespace)"));
             });
         }
 

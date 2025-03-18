@@ -25,7 +25,7 @@ namespace HideAndSeek
         [SetUp]
         public void SetUp()
         {
-            house = HouseTests_Data.GetNewTestHouse();
+            house = TestHouse_Data.GetNewTestHouse();
         }
 
         /// <summary>
@@ -325,7 +325,7 @@ namespace HideAndSeek
         public void Test_House_CreateHouse()
         {
             // Set up mock file system and assign to House property
-            string textInHouseFile = HouseTests_Data.SerializedTestHouse;
+            string textInHouseFile = TestHouse_Data.SerializedTestHouse;
             Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
             fileSystemMock.Setup((s) => s.File.Exists("TestHouse.json")).Returns(true);
             fileSystemMock.Setup((s) => s.File.ReadAllText("TestHouse.json")).Returns(textInHouseFile);
@@ -361,9 +361,9 @@ namespace HideAndSeek
                 Assert.That(house.HouseFileName, Is.EqualTo("TestHouse"), "HouseFileName property");
                 Assert.That(house.PlayerStartingPoint, Is.EqualTo("Entry"), "PlayerStartingPoint property");
                 Assert.That(house.StartingPoint.Name, Is.EqualTo("Entry"), "StartingPoint property Location Name");
-                Assert.That(house.Locations.Select((l) => l.Name), Is.EquivalentTo(HouseTests_Data.TestHouseExpectedProperties_Locations_Names), "Locations property (check each Location Name)");
-                Assert.That(house.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(HouseTests_Data.TestHouseExpectedProperties_LocationsWithoutHidingPlaces_Names), "LocationsWithoutHidingPlaces property (check each Location Name)");
-                Assert.That(house.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(HouseTests_Data.TestHouseExpectedProperties_LocationsWithHidingPlaces_Names), "LocationsWithHidingPlaces property (check each LocationWithHidingPlace Name");
+                Assert.That(house.Locations.Select((l) => l.Name), Is.EquivalentTo(TestHouse_Data.TestHouseExpectedProperties_Locations_Names), "Locations property (check each Location Name)");
+                Assert.That(house.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestHouse_Data.TestHouseExpectedProperties_LocationsWithoutHidingPlaces_Names), "LocationsWithoutHidingPlaces property (check each Location Name)");
+                Assert.That(house.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestHouse_Data.TestHouseExpectedProperties_LocationsWithHidingPlaces_Names), "LocationsWithHidingPlaces property (check each LocationWithHidingPlace Name");
 
                 //Assert that Landing Location Name property is as expected
                 Assert.That(landingFromLocationsWithoutHidingPlaces.Name, Is.EqualTo("Landing"), "Landing Location Name property");
@@ -399,8 +399,56 @@ namespace HideAndSeek
         }
 
         [Test]
+        [Category("House CreateHouse Success")]
+        public void Test_House_CreateHouse_WithNoLocationsWithoutHidingPlaces()
+        {
+            // Initialize variable to string representing text in House file (with empty LocationsWithoutHidingPlaces)
+            string textInHouseFile = 
+                "{" +
+                    TestHouse_Data.SerializedTestHouse_Name + "," +
+                    TestHouse_Data.SerializedHouse_HouseFileName + "," +
+                    "\"PlayerStartingPoint\":\"Master Bedroom\"" + "," +
+                    "\"LocationsWithoutHidingPlaces\":" +
+                    "[" +
+                    "]" + "," +
+                    "\"LocationsWithHidingPlaces\":" +
+                    "[" +
+                        "{" +
+                            "\"HidingPlace\":\"under the bed\"," +
+                            "\"Name\":\"Master Bedroom\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"East\":\"Master Bath\"" +
+                            "}" +
+                        "}," +
+                        "{" +
+                            "\"HidingPlace\":\"in the tub\"," +
+                            "\"Name\":\"Master Bath\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"West\":\"Master Bedroom\"" +
+                            "}" +
+                        "}" +
+                    "]" +
+                "}";
+
+            // Set up mock file system and assign to House property
+            Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
+            fileSystemMock.Setup((s) => s.File.Exists("TestHouse.json")).Returns(true);
+            fileSystemMock.Setup((s) => s.File.ReadAllText("TestHouse.json")).Returns(textInHouseFile);
+            House.FileSystem = fileSystemMock.Object;
+
+            // Call method to create House
+            House house = House.CreateHouse("TestHouse");
+
+            // Assume no exceptions were thrown
+            // Assert that there are no Locations in LocationsWithoutHidingPlaces
+            Assert.That(house.LocationsWithoutHidingPlaces.Count(), Is.EqualTo(0));
+        }
+
+        [Test]
         [Category("House CreateHouse Failure")]
-        public void Test_House_CreateHouse_WithNameOfNonexistingFile_ThrowsException()
+        public void Test_House_CreateHouse_AndCheckErrorMessage_WhenFileDoesNotExist()
         {
             // Set up mock file system and assign to House property
             Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
@@ -420,11 +468,9 @@ namespace HideAndSeek
             });
         }
 
-        [TestCase("")]
-        [TestCase(" ")]
-        [TestCase("ABCDeaoueou[{}}({}")]
+        [TestCaseSource(typeof(HouseTests_TestCaseData), nameof(HouseTests_TestCaseData.TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_ForJsonException_WhenFileFormatIsInvalid))]
         [Category("House CreateHouse Failure")]
-        public void Test_House_CreateHouse_FromCorruptFile_ThrowsException(string fileText)
+        public void Test_House_CreateHouse_AndCheckErrorMessage_ForJsonException_WhenFileFormatIsInvalid(string fileText, string exceptionMessageEnding)
         {
             // Set up mock file system and assign to House property
             Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
@@ -434,14 +480,83 @@ namespace HideAndSeek
 
             Assert.Multiple(() =>
             {
-                // Assert that creating a SavedGame object with an invalid file name raises an exception
+                // Assert that creating a SavedGame object with a file with an invalid format throws an exception
+                var exception = Assert.Throws<JsonException>(() =>
+                {
+                    House.CreateHouse("MyCorruptFile");
+                });
+                
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo($"Cannot process because data in house layout file MyCorruptFile is corrupt - {exceptionMessageEnding}"));
+            });
+        }
+
+        [TestCaseSource(typeof(HouseTests_TestCaseData), nameof(HouseTests_TestCaseData.TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_ForJsonException_WhenFileDataHasInvalidDirection))]
+        [Category("House CreateHouse Failure")]
+        public void Test_House_CreateHouse_AndCheckErrorMessage_ForJsonException_WhenFileDataHasInvalidDirection(string fileText)
+        {
+            // Set up mock file system and assign to House property
+            Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
+            fileSystemMock.Setup((s) => s.File.Exists("MyCorruptFile.json")).Returns(true);
+            fileSystemMock.Setup((s) => s.File.ReadAllText("MyCorruptFile.json")).Returns(fileText);
+            House.FileSystem = fileSystemMock.Object;
+
+            Assert.Multiple(() =>
+            {
+                // Assert that creating a SavedGame object with a file with an invalid Direction value throws an exception
                 var exception = Assert.Throws<JsonException>(() =>
                 {
                     House.CreateHouse("MyCorruptFile");
                 });
 
-                // Assert that exception message starts as expected
-                Assert.That(exception.Message, Does.StartWith("Cannot process because data in house layout file MyCorruptFile is corrupt - "));
+                // Assert that exception message starts with the expected string
+                Assert.That(exception.Message, Does.StartWith("Cannot process because data in house layout file MyCorruptFile is corrupt - The JSON value could not be converted to HideAndSeek.Direction."));
+            });
+        }
+
+        [TestCaseSource(typeof(HouseTests_TestCaseData), nameof(HouseTests_TestCaseData.TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasWhitespaceValue))]
+        [Category("House CreateHouse Failure")]
+        public void Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasWhitespaceValue(string fileText, string exceptionMessageEnding)
+        {
+            // Set up mock file system and assign to House property
+            Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
+            fileSystemMock.Setup((s) => s.File.Exists("MyInvalidDataFile.json")).Returns(true);
+            fileSystemMock.Setup((s) => s.File.ReadAllText("MyInvalidDataFile.json")).Returns(fileText);
+            House.FileSystem = fileSystemMock.Object;
+
+            Assert.Multiple(() =>
+            {
+                // Assert that creating a SavedGame object with a file with a whitespace value for a property throws an exception
+                var exception = Assert.Throws<InvalidDataException>(() =>
+                {
+                    House.CreateHouse("MyInvalidDataFile");
+                });
+                
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo($"Cannot process because data in house layout file MyInvalidDataFile is invalid - {exceptionMessageEnding}"));
+            });
+        }
+
+        [TestCaseSource(typeof(HouseTests_TestCaseData), nameof(HouseTests_TestCaseData.TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue))]
+        [Category("House CreateHouse Failure")]
+        public void Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue(string fileText, string exceptionMessage)
+        {
+            // Set up mock file system and assign to House property
+            Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
+            fileSystemMock.Setup((s) => s.File.Exists("MyInvalidDataFile.json")).Returns(true);
+            fileSystemMock.Setup((s) => s.File.ReadAllText("MyInvalidDataFile.json")).Returns(fileText);
+            House.FileSystem = fileSystemMock.Object;
+
+            Assert.Multiple(() =>
+            {
+                // Assert that creating a SavedGame object with a file with an invalid value for a property throws an exception
+                var exception = Assert.Throws<InvalidDataException>(() =>
+                {
+                    House.CreateHouse("MyInvalidDataFile");
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo(exceptionMessage));
             });
         }
 
@@ -458,9 +573,9 @@ namespace HideAndSeek
                 Assert.That(house.HouseFileName, Is.EqualTo("TestHouse"));
                 Assert.That(house.StartingPoint.Name, Is.EqualTo("Entry"));
                 Assert.That(house.PlayerStartingPoint, Is.EqualTo("Entry"));
-                Assert.That(house.Locations.Select((l) => l.Name), Is.EquivalentTo(HouseTests_Data.TestHouseExpectedProperties_Locations_Names));
-                Assert.That(house.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(HouseTests_Data.TestHouseExpectedProperties_LocationsWithoutHidingPlaces_Names));
-                Assert.That(house.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(HouseTests_Data.TestHouseExpectedProperties_LocationsWithHidingPlaces_Names));
+                Assert.That(house.Locations.Select((l) => l.Name), Is.EquivalentTo(TestHouse_Data.TestHouseExpectedProperties_Locations_Names));
+                Assert.That(house.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestHouse_Data.TestHouseExpectedProperties_LocationsWithoutHidingPlaces_Names));
+                Assert.That(house.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestHouse_Data.TestHouseExpectedProperties_LocationsWithHidingPlaces_Names));
             });
         }
         
@@ -478,7 +593,7 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because house name \"{name}\" is invalid (is empty or contains only whitespace"));
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because house name \"{name}\" is invalid (is empty or contains only whitespace)"));
             });
         }
 
@@ -507,7 +622,7 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because House file name \"{houseFileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because house file name \"{houseFileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
             });
         }
 
@@ -525,7 +640,7 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because player starting point location name \"{locationName}\" is invalid (is empty or contains only whitespace"));
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because player starting point location name \"{locationName}\" is invalid (is empty or contains only whitespace)"));
             });
         }
 
@@ -554,7 +669,7 @@ namespace HideAndSeek
             string serializedHouse = house.Serialize();
 
             // Assert that serialized text is as expected
-            Assert.That(serializedHouse, Is.EqualTo(HouseTests_Data.SerializedTestHouse));
+            Assert.That(serializedHouse, Is.EqualTo(TestHouse_Data.SerializedTestHouse));
         }
     }
 }

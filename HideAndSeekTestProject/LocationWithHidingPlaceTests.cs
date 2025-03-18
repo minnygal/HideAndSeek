@@ -90,7 +90,7 @@
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because hiding place \"{description}\" is invalid (is empty or contains only whitespace"));
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because hiding place \"{description}\" is invalid (is empty or contains only whitespace)"));
             });
         }
 
@@ -198,7 +198,7 @@
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because hiding place \"{hidingPlace}\" is invalid (is empty or contains only whitespace"));
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because hiding place \"{hidingPlace}\" is invalid (is empty or contains only whitespace)"));
             });
         }
 

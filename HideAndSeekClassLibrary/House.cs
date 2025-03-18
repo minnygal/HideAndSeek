@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Runtime.ExceptionServices;
 using System.Security.Cryptography;
 using System.Text;
 using System.Text.Json;
@@ -108,6 +109,10 @@ namespace HideAndSeek
             {
                 throw new InvalidOperationException($"Cannot process because data in house layout file {fileName} is corrupt - {e.Message}");
             }
+            catch (InvalidDataException e)
+            {
+                throw new InvalidDataException($"Cannot process because data in house layout file {fileName} is invalid - {e.Message}");
+            }
             catch (Exception e)
             {
                 throw e;
@@ -134,7 +139,7 @@ namespace HideAndSeek
                 // If invalid name is entered
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    throw new InvalidDataException($"Cannot perform action because house name \"{value}\" is invalid (is empty or contains only whitespace"); // Throw exception
+                    throw new InvalidDataException($"Cannot perform action because house name \"{value}\" is invalid (is empty or contains only whitespace)"); // Throw exception
                 }
 
                 // Set name variable
@@ -159,7 +164,7 @@ namespace HideAndSeek
                 // If file name is invalid
                 if (!(FileSystem.IsValidName(value)))
                 {
-                    throw new InvalidDataException($"Cannot perform action because House file name \"{value}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"); // Throw exception
+                    throw new InvalidDataException($"Cannot perform action because house file name \"{value}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"); // Throw exception
                 }
 
                 // Set name variable
@@ -184,7 +189,7 @@ namespace HideAndSeek
                 // If invalid Location name is entered
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    throw new InvalidDataException($"Cannot perform action because player starting point location name \"{value}\" is invalid (is empty or contains only whitespace"); // Throw exception
+                    throw new InvalidDataException($"Cannot perform action because player starting point location name \"{value}\" is invalid (is empty or contains only whitespace)"); // Throw exception
                 }
 
                 // Set player starting point variable
@@ -224,11 +229,30 @@ namespace HideAndSeek
         [JsonRequired]
         public IEnumerable<Location> LocationsWithoutHidingPlaces { get; set; }
 
+        private IEnumerable<LocationWithHidingPlace> _locationsWithHidingPlaces;
+
         /// <summary>
         /// /List of all LocationWithHidingPlace objects in House
         /// </summary>
         [JsonRequired]
-        public IEnumerable<LocationWithHidingPlace> LocationsWithHidingPlaces { get; set; }
+        public IEnumerable<LocationWithHidingPlace> LocationsWithHidingPlaces
+        {
+            get
+            {
+                return _locationsWithHidingPlaces;
+            }
+            set
+            {
+                // If enumerable is empty
+                if(value.Count() == 0)
+                {
+                    throw new InvalidDataException("Cannot perform action because locations with hiding places list is empty"); // Throw exception
+                }
+
+                // Set locations with hiding places
+                _locationsWithHidingPlaces = value;
+            }
+        }
 
         /// <summary>
         /// List of all Locations in House
@@ -275,14 +299,24 @@ namespace HideAndSeek
             // Set list of all Locations in House
             Locations = LocationsWithHidingPlaces.Concat(LocationsWithoutHidingPlaces).ToList();
 
+            // Attempt to get player starting point location
+            Location startingPoint = GetLocationByName(PlayerStartingPoint);
+
+            // If starting point is not in House
+            if(startingPoint == null)
+            {
+                throw new InvalidDataException($"Cannot perform action because player starting point location \"{PlayerStartingPoint}\" is not a location in the house"); // Throw exception
+            }
+
             // Set StartingPoint
-            StartingPoint = GetLocationByName(PlayerStartingPoint);
+            StartingPoint = startingPoint;
         }
-        
+
         /// <summary>
         /// Set up House after deserialization
         /// Sets Locations, StartingPoint, and Exits property for each Location in House
         /// </summary>
+        /// <exception cref="InvalidDataException">Exception thrown if exit Location does not exist</exception>
         private void SetUpHouseAfterDeserialization()
         {
             // Set Locations and StartingPoint properties
@@ -294,10 +328,22 @@ namespace HideAndSeek
                 // Initialize empty Dictionary to store exits
                 IDictionary<Direction, Location> exitsDictionary = new Dictionary<Direction, Location>();
 
-                // Add each exit to Dictionary
+                // For each exit
                 foreach (KeyValuePair<Direction, string> exit in location.ExitsForSerialization)
                 {
-                    exitsDictionary.Add(exit.Key, GetLocationByName(exit.Value));
+                    // Get exit Location
+                    Location exitLocation = GetLocationByName(exit.Value);
+                    
+                    // If exit Location does not exist
+                    if(exitLocation == null)
+                    {
+                        throw new InvalidDataException(
+                            $"Cannot perform action because \"{location.Name}\" exit location \"{exit.Value}\" " +
+                            $"in direction \"{exit.Key}\" does not exist"); // Throw exception
+                    }
+
+                    // Add exit location to Dictionary
+                    exitsDictionary.Add(exit.Key, exitLocation);
                 }
 
                 // Set Location's Exits Dictionary
