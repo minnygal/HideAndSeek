@@ -14,7 +14,7 @@ namespace HideAndSeek
     public class OpponentTests
     {
         [Test]
-        [Category("Opponent Constructor Name")]
+        [Category("Opponent Constructor Name Success")]
         public void Test_Opponent_Constructor_Parameterized_SetsToNamePassedIn()
         {
             Opponent opponent = new Opponent("John Doe");
@@ -22,7 +22,7 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("Opponent Constructor Name")]
+        [Category("Opponent Constructor Name Success")]
         public void Test_Opponent_Constructor_Unparameterized_SetsToDefaultName()
         {
             // Reset default numbers for Opponent names
@@ -42,7 +42,7 @@ namespace HideAndSeek
 
         [TestCase("")]
         [TestCase(" ")]
-        [Category("Opponent Constructor Name")]
+        [Category("Opponent Constructor Name Failure")]
         public void Test_Opponent_Constructor_Parameterized_AndCheckErrorMessage_ForInvalidName(string name)
         {
             Assert.Multiple(() =>
