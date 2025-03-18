@@ -679,6 +679,23 @@ namespace HideAndSeek
         }
 
         [Test]
+        [Category("House Locations Failure")]
+        public void Test_House_Locations_ErrorMessage_WhenSetToEmptyEnumerable()
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that setting the locations property to an empty dictionary raises an exception
+                var exception = Assert.Throws<InvalidDataException>(() =>
+                {
+                    house.Locations = new List<Location>();
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo("Cannot perform action because locations list is empty"));
+            });
+        }
+
+        [Test]
         [Category("House Serialize")]
         public void Test_House_SerializeMethod()
         {

@@ -254,11 +254,30 @@ namespace HideAndSeek
             }
         }
 
+        private IEnumerable<Location> _locations;
+
         /// <summary>
         /// List of all Locations in House
         /// </summary>
         [JsonIgnore]
-        public List<Location> Locations { get; set; }
+        public IEnumerable<Location> Locations
+        {
+            get
+            {
+                return _locations;
+            }
+            set
+            {
+                // If enumerable is empty
+                if(value.Count() == 0)
+                {
+                    throw new InvalidDataException("Cannot perform action because locations list is empty"); // Throw exception
+                }
+
+                // Set locations
+                _locations = value;
+            }
+        }
 
         [JsonIgnore]
         /// <summary>
