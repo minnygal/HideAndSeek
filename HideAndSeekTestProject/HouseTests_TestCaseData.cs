@@ -188,6 +188,79 @@ namespace HideAndSeekTestProject
             }
         }
 
+        public static IEnumerable TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_ForJsonException_WhenFileDataHasInvalidDirection
+        {
+            get
+            {
+                // Invalid LocationsWithoutHidingPlaces - exit Direction is invalid
+                yield return new TestCaseData("{" +
+                           TestHouse_Data.SerializedTestHouse_Name + "," +
+                           TestHouse_Data.SerializedHouse_HouseFileName + "," +
+                           TestHouse_Data.SerializedHouse_PlayerStartingPoint + "," +
+                           "\"LocationsWithoutHidingPlaces\":" +
+                           "[" +
+                                "{" +
+                                    "\"Name\":\"Hallway\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                        "\"West\":\"Entry\"," +
+                                        "\"Up\":\"Attic\"" +
+                                    "}" +
+                                "}," +
+                                "{" +
+                                    "\"Name\":\"Entry\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                        "\"Insideout\":\"Hallway\"" +
+                                    "}" +
+                                "}" +
+                            "]" + "," +
+                           "\"LocationsWithHidingPlaces\":" +
+                           "[" + // Must have at least one location with hiding place
+                                "{" +
+                                    "\"HidingPlace\":\"in a trunk\"," +
+                                    "\"Name\":\"Attic\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                        "\"Down\":\"Hallway\"" +
+                                    "}" +
+                                "}" +
+                           "]" +
+                       "}")
+                   .SetName("Test_House_CreateHouse_AndCheckErrorMessage_ForJsonException_WhenFileDataHasInvalidDirection - LocationsWithoutHidingPlaces");
+
+                // Invalid LocationsWithHidingPlaces - exit direction is invalid
+                yield return new TestCaseData("{" +
+                            TestHouse_Data.SerializedTestHouse_Name + "," +
+                            TestHouse_Data.SerializedHouse_HouseFileName + "," +
+                            "\"PlayerStartingPoint\":\"Master Bedroom\"" + "," +
+                            "\"LocationsWithoutHidingPlaces\":" +
+                            "[" +
+                            "]" + "," +
+                            "\"LocationsWithHidingPlaces\":" +
+                            "[" +
+                                "{" +
+                                    "\"HidingPlace\":\"under the bed\"," +
+                                    "\"Name\":\"Master Bedroom\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                        "\"East\":\"Master Bath\"" +
+                                    "}" +
+                                "}," +
+                                "{" +
+                                    "\"HidingPlace\":\"in the tub\"," +
+                                    "\"Name\":\"Master Bath\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                        "\"Insideout\":\"Master Bedroom\"" +
+                                    "}" +
+                                "}" +
+                            "]" +
+                        "}")
+                   .SetName("Test_House_CreateHouse_AndCheckErrorMessage_ForJsonException_WhenFileDataHasInvalidDirection - LocationsWithHidingPlaces");
+            }
+        }
+
         public static IEnumerable TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue
         {
             get

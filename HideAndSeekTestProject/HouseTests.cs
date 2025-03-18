@@ -491,6 +491,29 @@ namespace HideAndSeek
             });
         }
 
+        [TestCaseSource(typeof(HouseTests_TestCaseData), nameof(HouseTests_TestCaseData.TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_ForJsonException_WhenFileDataHasInvalidDirection))]
+        [Category("House CreateHouse Failure")]
+        public void Test_House_CreateHouse_AndCheckErrorMessage_ForJsonException_WhenFileDataHasInvalidDirection(string fileText)
+        {
+            // Set up mock file system and assign to House property
+            Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
+            fileSystemMock.Setup((s) => s.File.Exists("MyCorruptFile.json")).Returns(true);
+            fileSystemMock.Setup((s) => s.File.ReadAllText("MyCorruptFile.json")).Returns(fileText);
+            House.FileSystem = fileSystemMock.Object;
+
+            Assert.Multiple(() =>
+            {
+                // Assert that creating a SavedGame object with a file with an invalid Direction value throws an exception
+                var exception = Assert.Throws<JsonException>(() =>
+                {
+                    House.CreateHouse("MyCorruptFile");
+                });
+
+                // Assert that exception message starts with the expected string
+                Assert.That(exception.Message, Does.StartWith("Cannot process because data in house layout file MyCorruptFile is corrupt - The JSON value could not be converted to HideAndSeek.Direction."));
+            });
+        }
+
         [TestCaseSource(typeof(HouseTests_TestCaseData), nameof(HouseTests_TestCaseData.TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasWhitespaceValue))]
         [Category("House CreateHouse Failure")]
         public void Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasWhitespaceValue(string fileText, string exceptionMessageEnding)
