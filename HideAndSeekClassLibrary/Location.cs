@@ -19,6 +19,7 @@ namespace HideAndSeek
      * **/
 
     /** CHANGES
+     * -I added data validation for the Name property.
      * -I removed DescribeDirection method and put the logic in Direction file as Extension class
      *  for separation of concerns.
      * -I used a loop instead of LINQ in the ExitList method (just my approach).
@@ -34,7 +35,7 @@ namespace HideAndSeek
      * -I modified the Direction changing logic in AddReturnExit (just my approach).
      * -I used Direction changing in AddExit (just my approach).
      * -I converted lambdas to regular method bodies for easier modification.
-     * -I added a property and method for JSON serialization.
+     * -I added a property and method for JSON serialization of exits.
      * -I added a method to set Exits property (called from House after JSON deserialization).
      * -I added comments for easier reading.
      * **/
@@ -88,7 +89,7 @@ namespace HideAndSeek
                     // If name is invalid
                     if(string.IsNullOrWhiteSpace(kvp.Value))
                     {
-                        throw new InvalidDataException($"Cannot perform action because location name \"{kvp.Value}\" is invalid (is empty or contains only whitespace"); // Throw exception
+                        throw new InvalidDataException($"Cannot perform action because location name \"{kvp.Value}\" for exit in direction \"{kvp.Key}\" is invalid (is empty or contains only whitespace"); // Throw exception
                     }
                 }
 

@@ -377,6 +377,30 @@ namespace HideAndSeek
             });
         }
 
+        // Property setting success tested in deserialization test
+        [TestCase("")]
+        [TestCase(" ")]
+        [Category("Location ExitsForSerialization Failure")]
+        public void Test_Location_ExitsForSerialization_ThrowsException_OverInvalidExitLocationName(string locationName)
+        {
+            // Create dictionary of exits
+            Dictionary<Direction, string> exits = new Dictionary<Direction, string>();
+            exits.Add(Direction.South, "Game Room");
+            exits.Add(Direction.North, locationName);
+
+            Assert.Multiple(() =>
+            {
+                // Assert that setting the ExitsForSerialization property to a dictionary with an invalid location name throws an exception
+                var exception = Assert.Throws<InvalidDataException>(() =>
+                {
+                    center.ExitsForSerialization = exits;
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because location name \"{locationName}\" for exit in direction \"North\" is invalid (is empty or contains only whitespace"));
+            });
+        }
+
         [Test]
         [Category("Location SetExitsDictionary Success")]
         public void Test_Location_SetExitsDictionary()
@@ -538,7 +562,7 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because location name \"{name}\" is invalid (is empty or contains only whitespace"));
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because location name \"{name}\" for exit in direction \"North\" is invalid (is empty or contains only whitespace"));
             });
         }
     }
