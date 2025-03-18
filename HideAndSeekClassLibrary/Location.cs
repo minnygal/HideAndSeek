@@ -163,7 +163,6 @@ namespace HideAndSeek
         public Location(string name)
         {
             Name = name;
-            ExitsForSerialization = new Dictionary<Direction, string>();
         }
 
         public override string ToString() => Name;
