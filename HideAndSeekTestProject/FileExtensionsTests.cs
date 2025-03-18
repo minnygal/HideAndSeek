@@ -43,11 +43,11 @@ namespace HideAndSeekTestProject
         [TestCase("myFile/")]
         [TestCase("my/File")]
         [Category("FileExtensions GetFullFileNameForJson Failure")]
-        public void Test_FileExtensions_GetFullFileNameForJson_WithInvalidFileName_ThrowsException(string fileName)
+        public void Test_FileExtensions_GetFullFileNameForJson_AndCheckErrorMessage_ForInvalidFileName(string fileName)
         {
             Assert.Multiple(() =>
             {
-                // Assert that getting full file name with invalid file name raises an exception
+                // Assert that getting full file name with invalid file name raises exception
                 var exception = Assert.Throws<InvalidDataException>(() =>
                 {
                     fileSystem.GetFullFileNameForJson(fileName);
@@ -60,7 +60,7 @@ namespace HideAndSeekTestProject
 
         [TestCase("myFile")]
         [TestCase("123")]
-        [Category("FileExtensions IsNameValid Success")]
+        [Category("FileExtensions IsValidName Success")]
         public void Test_FileExtensions_IsValidName_ReturnsTrue(string fileName)
         {
             Assert.That(fileSystem.IsValidName(fileName), Is.True);
@@ -79,7 +79,7 @@ namespace HideAndSeekTestProject
         [TestCase("/myFile")]
         [TestCase("myFile/")]
         [TestCase("my/File")]
-        [Category("FileExtensions IsNameValid Failure")]
+        [Category("FileExtensions IsValidName Failure")]
         public void Test_FileExtensions_IsValidName_ReturnsFalse(string fileName)
         {
             Assert.That(fileSystem.IsValidName(fileName), Is.False);
