@@ -76,7 +76,7 @@ namespace HideAndSeek
             Assert.That(message, Is.EqualTo(expected));
         }
 
-        [TestCaseSource(typeof(SaveGameTests_TestCaseData), nameof(SaveGameTests_TestCaseData.TestCases_For_Test_GameController_ParseInput_AndCheckTextSavedToFile))]
+        [TestCaseSource(typeof(SaveGameTests_TestCaseData), nameof(SaveGameTests_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile))]
         [Category("GameController Save Success")]
         public string Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile(Func<IFileSystem, GameController> startNewGame)
         {
@@ -121,7 +121,7 @@ namespace HideAndSeek
         }
 
         // Does not check message
-        [TestCaseSource(typeof(SaveGameTests_TestCaseData), nameof(SaveGameTests_TestCaseData.TestCases_For_Test_GameController_ParseInput_LoadGame_AndCheckGameIsLoadedSuccessfully))]
+        [TestCaseSource(typeof(SaveGameTests_TestCaseData), nameof(SaveGameTests_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckGameIsLoadedSuccessfully))]
         [Category("GameController Load Success")]
         public void Test_GameController_ParseInput_ToLoadGame_AndCheckGameIsLoadedSuccessfully(string currentLocation, int moveNumber, List<string> foundOpponents, string textInFile)
         {
@@ -169,9 +169,9 @@ namespace HideAndSeek
             Assert.That(message, Is.EqualTo("Cannot load game because file my_saved_game does not exist"));
         }
 
-        [TestCaseSource(typeof(SaveGameTests_TestCaseData), nameof(SaveGameTests_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenFileDataIsInvalid))]
+        [TestCaseSource(typeof(SaveGameTests_TestCaseData), nameof(SaveGameTests_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData))]
         [Category("GameController Load Error")]
-        public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenFileDataIsInvalid(string errorMessage, string textInFile)
+        public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData(string errorMessage, string textInFile)
         {
             // Set up mock for file system
             mockFileSystem.Setup(manager => manager.File.Exists("my_saved_game.json")).Returns(true); // Mock that file exists
