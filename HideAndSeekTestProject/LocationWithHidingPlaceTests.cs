@@ -7,14 +7,14 @@
     using System.Text.Json;
 
     /// <summary>
-    /// LocationWithHidingPlace tests for testing properties and methods HideOpponent and CheckHidingPlace
+    /// LocationWithHidingPlace tests for testing properties and methods HideOpponent, CheckHidingPlace, and Serialize
     /// </summary>
     [TestFixture]
     public class LocationWithHidingPlaceTests
     {
         [Test]
-        [Category("LocationWithHidingPlace")]
-        public void Test_LocationWithHidingPlace_Properties()
+        [Category("LocationWithHidingPlace Success")]
+        public void Test_LocationWithHidingPlace_Constructor()
         {
             // Create a new LocationWithHidingPlace, setting the Name and HidingPlace properties
             var hidingLocation = new LocationWithHidingPlace("Room", "under the bed");
@@ -29,7 +29,7 @@
         }
 
         [Test]
-        [Category("LocationWithHidingPlace HideOpponent CheckHidingPlace")]
+        [Category("LocationWithHidingPlace HideOpponent CheckHidingPlace Success")]
         public void Test_LocationWithHidingPlace_HideOpponents_And_CheckHidingPlace()
         {
             // Create a new LocationWithHidingPlace
@@ -56,7 +56,7 @@
 
         [Test]
         [Category("LocationWithHidingPlace HidingPlace Success")]
-        public void Test_LocationWithHidingPlace_HidingPlaceSetter()
+        public void Test_LocationWithHidingPlace_Set_HidingPlace()
         {
             // Create LocationWithHidingPlace
             LocationWithHidingPlace myLocation = new LocationWithHidingPlace("garden", "in the bushes");
@@ -76,7 +76,7 @@
         [TestCase("")]
         [TestCase(" ")]
         [Category("LocationWithHidingPlace HidingPlace Failure")]
-        public void Test_LocationWithHidingPlace_HidingPlace_ThrowsException_WhenInvalidDescriptionPassed(string description)
+        public void Test_LocationWithHidingPlace_Set_HidingPlace_AndCheckErrorMessage_ForInvalidDescription(string description)
         {
             // Create LocationWithHidingPlace
             LocationWithHidingPlace locationWithHidingPlace = new LocationWithHidingPlace("Garden", "in the bushes");
@@ -95,8 +95,8 @@
         }
 
         [Test]
-        [Category("LocationWithHidingPlace Serialization Success")]
-        public void Test_LocationWithHidingPlace_Serialization()
+        [Category("LocationWithHidingPlace Serialize Success")]
+        public void Test_LocationWithHidingPlace_Serialize()
         {
             // Set expected serialized Location text
             string expectedSerializedLocation =
@@ -117,18 +117,18 @@
                     "\"Down\":\"basement\"}}";
 
             // Serialize Location
-            string serializedLocation = GetLocationWithSerializationTests().Serialize();
-            Console.WriteLine(serializedLocation);
+            string serializedLocation = GetLocationForSerializationTests().Serialize();
+            
             // Assert that serialized Location text is as expected
             Assert.That(serializedLocation, Is.EqualTo(expectedSerializedLocation));
         }
 
         // Does not test restoring Exits dictionary (this is done in House class)
         [Test]
-        [Category("LocationWithHidingPlace Deserialization Success")]
-        public void Test_LocationWithHidingPlace_Deserialization()
+        [Category("LocationWithHidingPlace Deserialize Success")]
+        public void Test_LocationWithHidingPlace_Deserialize()
         {
-            // Set expected ExitsForSerialization property value
+            // Initialize to expected ExitsForSerialization property value
             IDictionary<Direction, string> expectedExitsForSerialization = new Dictionary<Direction, string>();
             expectedExitsForSerialization.Add(Direction.North, "kitchen");
             expectedExitsForSerialization.Add(Direction.Northeast, "pantry");
@@ -143,7 +143,7 @@
             expectedExitsForSerialization.Add(Direction.Up, "attic");
             expectedExitsForSerialization.Add(Direction.Down, "basement");
 
-            // Set text representing serialized object
+            // Initialize to text representing serialized object
             string serializedLocation =
                 "{\"HidingPlace\":\"behind the piano\"," +
                 "\"Name\":\"living room\"," +
@@ -175,14 +175,14 @@
 
         [TestCase("")]
         [TestCase(" ")]
-        [Category("LocationWithHidingPlace Deserialization Failure")]
-        public void Test_LocationWithHidingPlace_Deserialization_ThrowsException_OverInvalidHidingLocation(string hidingPlace)
+        [Category("LocationWithHidingPlace Deserialize Failure")]
+        public void Test_LocationWithHidingPlace_Deserialize_AndCheckErrorMessage_ForInvalidHidingLocation(string hidingPlace)
         {
-            // Set expected ExitsForSerialization property value
+            // Initialize to expected ExitsForSerialization property value
             IDictionary<Direction, string> expectedExitsForSerialization = new Dictionary<Direction, string>();
             expectedExitsForSerialization.Add(Direction.North, "kitchen");
 
-            // Set text representing serialized object
+            // Initialize to text representing serialized object
             string serializedLocation =
                 "{\"HidingPlace\":\"" + hidingPlace + "\"," +
                 "\"Name\":\"living room\"," +
@@ -202,7 +202,11 @@
             });
         }
 
-        public LocationWithHidingPlace GetLocationWithSerializationTests()
+        /// <summary>
+        /// Helper method to get LocationWithHidingPlace for serialization tests
+        /// </summary>
+        /// <returns>LocationWithHidingPlace for serialization tests</returns>
+        private LocationWithHidingPlace GetLocationForSerializationTests()
         {
             // Initialize variables to new Locations/LocationWithHidingPlaces
             LocationWithHidingPlace center = new LocationWithHidingPlace("living room", "behind the piano");
