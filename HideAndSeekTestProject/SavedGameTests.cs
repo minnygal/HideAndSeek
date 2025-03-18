@@ -31,7 +31,7 @@ namespace HideAndSeek
 
         [Test]
         [Category("SavedGame Constructor Success")]
-        public void Test_SavedGame_Constructor_WithHouse_AndValidHouseFileName()
+        public void Test_SavedGame_Constructor_WithHouse_AndHouseFileName()
         {
             // Create new House
             House house = TestHouse_Data.GetNewTestHouse();
@@ -65,7 +65,7 @@ namespace HideAndSeek
         [TestCase("myFile/")]
         [TestCase("my/File")]
         [Category("SavedGame Constructor Failure")]
-        public void Test_SavedGame_Constructor_WithHouse_WithInvalidHouseFileName(string fileName)
+        public void Test_SavedGame_Constructor_WithHouse_AndHouseFileName_AndCheckErrorMessage_ForInvalidFileName(string fileName)
         {
             Assert.Multiple(() =>
             {
@@ -76,42 +76,13 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
-            });
-        }
-
-        [TestCase("")]
-        [TestCase(" ")]
-        [TestCase("my file")]
-        [TestCase(" myFile")]
-        [TestCase("myFile ")]
-        [TestCase("\\")]
-        [TestCase("\\myFile")]
-        [TestCase("myFile\\")]
-        [TestCase("my\\File")]
-        [TestCase("/")]
-        [TestCase("/myFile")]
-        [TestCase("myFile/")]
-        [TestCase("my/File")]
-        [Category("SavedGame Constructor Failure")]
-        public void Test_SavedGame_Constructor_WithoutHouse_WithInvalidHouseFileName(string fileName)
-        {
-            Assert.Multiple(() =>
-            {
-                // Assert that creating a SavedGame object with an invalid file name raises an exception
-                var exception = Assert.Throws<InvalidDataException>(() =>
-                {
-                    savedGame = new SavedGame(fileName, "Entry", 1, validOpponentsAndHidingPlacesDictionary, new List<string>());
-                });
-
-                // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because House file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
             });
         }
 
         [Test]
         [Category("SavedGame HouseFileName Success")]
-        public void Test_SavedGame_SetHouseFileName_ToValidValue_AndGet()
+        public void Test_SavedGame_Set_HouseFileName()
         {
             // Create SavedGame object with valid House file name
             savedGame = new SavedGame(TestHouse_Data.GetNewTestHouse(), "TestHouse", "Entry", 1, validOpponentsAndHidingPlacesDictionary, new List<string>());
@@ -121,23 +92,6 @@ namespace HideAndSeek
             Assert.That(savedGame.HouseFileName, Is.EqualTo("TestHouse"));
         }
 
-        [Test]
-        [Category("SavedGame HouseFileName Failure")]
-        public void Test_SavedGame_SetHouseFileName_ToInvalidValue_NonexistentFile()
-        {
-            Assert.Multiple(() =>
-            {
-                // Assert that creating a SavedGame object with nonexistent House file name raises an exception
-                var exception = Assert.Throws<FileNotFoundException>(() =>
-                {
-                    savedGame = new SavedGame("NonexistentHouse", "Entry", 1, validOpponentsAndHidingPlacesDictionary, new List<string>());
-                });
-
-                // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo("Cannot load game because house layout file NonexistentHouse does not exist"));
-            });
-        }
-
         [TestCase("")]
         [TestCase(" ")]
         [TestCase("my file")]
@@ -152,7 +106,7 @@ namespace HideAndSeek
         [TestCase("myFile/")]
         [TestCase("my/File")]
         [Category("SavedGame HouseFileName Failure")]
-        public void Test_SavedGame_SetHouseFileName_ToInvalidValue_InvalidFileName(string fileName)
+        public void Test_SavedGame_Set_HouseFileName_AndCheckErrorMessage_ForInvalidFileName(string fileName)
         {
             Assert.Multiple(() =>
             {
@@ -163,7 +117,7 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because House file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
             });
         }
 
@@ -171,7 +125,7 @@ namespace HideAndSeek
         [TestCase("Pantry")]
         [TestCase("Landing")]
         [Category("SavedGame PlayerLocation Success")]
-        public void Test_SavedGame_SetPlayerLocation_ToValidValue_AndGet(string playerLocation)
+        public void Test_SavedGame_Set_PlayerLocation(string playerLocation)
         {
             // Create SavedGame object with valid player location
             savedGame = new SavedGame(TestHouse_Data.GetNewTestHouse(), "TestHouse", playerLocation, 1, validOpponentsAndHidingPlacesDictionary, new List<string>());
@@ -181,8 +135,8 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("SavedGame PlayerLocation Error")]
-        public void Test_SavedGame_SetPlayerLocation_ToInvalidValue_AndCatchError()
+        [Category("SavedGame PlayerLocation Failure")]
+        public void Test_SavedGame_Set_PlayerLocation_AndCheckErrorMessage_ForInvalidValue()
         {
             Assert.Multiple(() =>
             {
@@ -202,7 +156,7 @@ namespace HideAndSeek
         [TestCase(545)]
         [TestCase(5562)]
         [Category("SavedGame MoveNumber Success")]
-        public void Test_SavedGame_SetMoveNumber_ToValidValue_AndGet(int moveNumber)
+        public void Test_SavedGame_Set_MoveNumber(int moveNumber)
         {
             // Create SavedGame object with valid move number
             savedGame = new SavedGame(TestHouse_Data.GetNewTestHouse(), "TestHouse", "Entry", moveNumber, validOpponentsAndHidingPlacesDictionary, new List<string>());
@@ -214,8 +168,8 @@ namespace HideAndSeek
         [TestCase(0)]
         [TestCase(-1)]
         [TestCase(-1000)]
-        [Category("SavedGame MoveNumber Error")]
-        public void Test_SavedGame_SetMoveNumber_ToInvalidValue_AndCatchError(int moveNumber)
+        [Category("SavedGame MoveNumber Failure")]
+        public void Test_SavedGame_Set_MoveNumber_AndCheckErrorMessage_ForInvalidValue(int moveNumber)
         {
             Assert.Multiple(() =>
             {
@@ -232,7 +186,7 @@ namespace HideAndSeek
 
         [Test]
         [Category("SavedGame OpponentsAndHidingLocations Success")]
-        public void Test_SavedGame_SetOpponentsAndHidingPlaces_ToValidValue_AndGet()
+        public void Test_SavedGame_Set_OpponentsAndHidingPlaces()
         {
             // Create dictionary of valid opponents and hiding places
             Dictionary<string, string> validOpponentsAndHidingPlaces = new Dictionary<string, string>();
@@ -250,8 +204,8 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("SavedGame OpponentsAndHidingLocations Error")]
-        public void Test_SavedGame_SetOpponentsAndHidingPlaces_ToInvalidValue_OfEmptyDictionary_AndCatchError()
+        [Category("SavedGame OpponentsAndHidingLocations Failure")]
+        public void Test_SavedGame_Set_OpponentsAndHidingPlaces_AndCheckErrorMessage_ForEmptyDictionary()
         {
             Assert.Multiple(() =>
             {
@@ -271,9 +225,9 @@ namespace HideAndSeek
         [TestCase("Bathroom", "Second Bathroom", "Dungeon", "Living Room", "Garage")]
         [TestCase("Kids Room", "Nursery", "Master Bathroom", "Dungeon", "Master Bedroom")]
         [TestCase("Kids Room", "Nursery", "Master Bathroom", "Master Bedroom", "Dungeon")]
-        [Category("SavedGame OpponentsAndHidingLocations Error")]
-        public void Test_SavedGame_SetOpponentsAndHidingPlaces_ToInvalidValue_OfNonexistentLocation_AndCatchError(
-            string location1, string location2, string location3, string location4, string location5)
+        [Category("SavedGame OpponentsAndHidingLocations Failure")]
+        public void Test_SavedGame_Set_OpponentsAndHidingPlaces_AndCheckErrorMessage_ForNonexistentLocation
+            (string location1, string location2, string location3, string location4, string location5)
         {
             // Create dictionary of opponents with invalid hiding places (nonexistent locations)
             Dictionary<string, string> invalidOpponentsAndHidingPlaces = new Dictionary<string, string>();
@@ -297,8 +251,8 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("SavedGame OpponentsAndHidingLocations Error")]
-        public void Test_SavedGame_SetOpponentsAndHidingPlaces_ToInvalidValue_OfLocationsWitoutHidingPlaces_AndCatchError()
+        [Category("SavedGame OpponentsAndHidingLocations Failure")]
+        public void Test_SavedGame_Set_OpponentsAndHidingPlaces_AndCheckErrorMessage_ForLocationWithoutHidingPlace()
         {
             // Create dictionary of opponents with invalid hiding places (locations without hiding places)
             Dictionary<string, string> invalidOpponentsAndHidingPlaces = new Dictionary<string, string>();
@@ -323,7 +277,7 @@ namespace HideAndSeek
 
         [Test]
         [Category("SavedGame FoundOpponents Success")]
-        public void Test_SavedGame_SetFoundOpponents_ToValidValue_OfEmptyList_AndGet()
+        public void Test_SavedGame_Set_FoundOpponents_ToEmptyList()
         {
             // Create SavedGame object with valid empty list for FoundOpponents
             savedGame = new SavedGame(TestHouse_Data.GetNewTestHouse(), "TestHouse", "Entry", 1, validOpponentsAndHidingPlacesDictionary, new List<string>());
@@ -341,7 +295,7 @@ namespace HideAndSeek
         [TestCase("Joe", "Bob", "Ana", "Owen", "Jimmy")]
         [TestCase("Ana", "Jimmy", "Bob", "Joe", "Owen")]
         [Category("SavedGame FoundOpponents Success")]
-        public void Test_SavedGame_SetFoundOpponents_ToValidValue_OfExistingPlayers_AndGet(params string[] foundOpponents)
+        public void Test_SavedGame_Set_FoundOpponents_ToList(params string[] foundOpponents)
         {
             // Convert array of existing (valid) found opponents to list
             List<string> foundOpponentsAsList = foundOpponents.ToList();
@@ -377,8 +331,8 @@ namespace HideAndSeek
         [TestCase("Joe", "Bob", "Methuselah", "Owen", "Jimmy")]
         [TestCase("Joe", "Bob", "Ana", "Methuselah", "Jimmy")]
         [TestCase("Joe", "Bob", "Ana", "Owen", "Methuselah")]
-        [Category("SavedGame FoundOpponents Error")]
-        public void Test_SavedGame_SetFoundOpponents_ToInvalidValue_AndCatchError(params string[] foundOpponents)
+        [Category("SavedGame FoundOpponents Failure")]
+        public void Test_SavedGame_Set_FoundOpponents_AndCheckErrorMessage_ForNonexistentOpponent(params string[] foundOpponents)
         {
             // Convert array of found opponents (including invalid, nonexistent opponent) to list
             List<string> foundOpponentsAsList = foundOpponents.ToList();
@@ -405,11 +359,25 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("SavedGame Deserialization")]
-        public void Test_SavedGame_Deserialization()
+        [Category("SavedGame Deserialize Success")]
+        public void Test_SavedGame_Deserialize()
         {
             // Initialize variable to text stored in mock serialized SaveGame file
-            string textInFile = "{\"HouseFileName\":\"TestHouse\",\"PlayerLocation\":\"Entry\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[]}";
+            string textInFile = 
+                "{" +
+                    "\"HouseFileName\":\"TestHouse\"," +
+                    "\"PlayerLocation\":\"Entry\"," +
+                    "\"MoveNumber\":1," +
+                    "\"OpponentsAndHidingLocations\":" +
+                    "{" +
+                        "\"Joe\":\"Kitchen\"," +
+                        "\"Bob\":\"Pantry\"," +
+                        "\"Ana\":\"Bathroom\"," +
+                        "\"Owen\":\"Kitchen\"," +
+                        "\"Jimmy\":\"Pantry\"" +
+                    "}," +
+                    "\"FoundOpponents\":[]" +
+                "}";
 
             // Set up mock file system and assign to House property
             string textInHouseFile = TestHouse_Data.SerializedTestHouse;

@@ -58,7 +58,7 @@ namespace HideAndSeek
             // If House file name is invalid
             if (!(new FileSystem().IsValidName(fileName)))
             {
-                throw new InvalidDataException($"Cannot perform action because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"); // Throw exception
+                throw new InvalidDataException($"Cannot perform action because House file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"); // Throw exception
             }
 
             // Set House file name private variable, bypassing the HouseFileName property setter which calls House's CreateHouse method
@@ -210,24 +210,6 @@ namespace HideAndSeek
         {
             this.House = house;
             SetHouseFileName_WithoutCreatingHouse(houseFileName); // Set private variable rather than property to get around CreateHouse call in property setter
-            PlayerLocation = playerLocation;
-            MoveNumber = moveNumber;
-            OpponentsAndHidingLocations = opponentsAndHidingLocations;
-            FoundOpponents = foundOpponents;
-        }
-
-        /// <summary>
-        /// Constructor for setting properties (loads House from file)
-        /// </summary>
-        /// <param name="houseFileName">Name of House file</param>
-        /// <param name="playerLocation">Current location of player</param>
-        /// <param name="moveNumber">Current move number</param>
-        /// <param name="opponentsAndHidingLocations">Opponents and their hiding locations</param>
-        /// <param name="foundOpponents">Opponents who have been found</param>
-        [SetsRequiredMembers]
-        public SavedGame(string houseFileName, string playerLocation, int moveNumber, Dictionary<string, string> opponentsAndHidingLocations, IEnumerable<string> foundOpponents)
-        {
-            HouseFileName = houseFileName;
             PlayerLocation = playerLocation;
             MoveNumber = moveNumber;
             OpponentsAndHidingLocations = opponentsAndHidingLocations;
