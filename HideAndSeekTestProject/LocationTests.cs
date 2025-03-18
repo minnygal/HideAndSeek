@@ -9,7 +9,7 @@ namespace HideAndSeek
     using System.Xml.Linq;
 
     /// <summary>
-    /// Location tests for testing GetExit, ExitList, AddExit, and SetExitsDictionary methods
+    /// Location tests for testing properties and GetExit, ExitList, AddExit, and SetExitsDictionary methods
     /// </summary>
     [TestFixture]
     public class LocationTests
@@ -91,7 +91,7 @@ namespace HideAndSeek
 
         [Test]
         [Category("Location GetExit Success")]
-        public void Test_Location_GetExit_ReturnsLocation_WhenLocationExists()
+        public void Test_Location_GetExit_ReturnsLocation()
         {
             // Initialize array of expected exits (one per direction)
             Location[] expectedExits =
@@ -163,7 +163,7 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("Location ExitList")]
+        [Category("Location ExitList Success")]
         public void Test_Location_ExitList_ForCenterLocation()
         {
             // Initialize array of expected exit descriptions
@@ -191,7 +191,7 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("Location ExitList")]
+        [Category("Location ExitList Success")]
         public void Test_Location_ExitList_ForNotCenterLocations()
         {
             // Expected exit lists for non-center locations
@@ -211,18 +211,18 @@ namespace HideAndSeek
             // Assert that exit lists are as expected
             Assert.Multiple(() =>
             {
-                Assert.That(in_closet.ExitList(), Is.EquivalentTo(expectedClosetExitList));
-                Assert.That(up_attic.ExitList(), Is.EquivalentTo(expectedAtticExitList));
-                Assert.That(southeast_study.ExitList(), Is.EquivalentTo(expectedStudyExitList));
-                Assert.That(northeast_pantry.ExitList(), Is.EquivalentTo(expectedPantryExitList));
-                Assert.That(east_gameRoom.ExitList(), Is.EquivalentTo(expectedGameRoomExitList));
-                Assert.That(north_kitchen.ExitList(), Is.EquivalentTo(expectedKitchenExitList));
-                Assert.That(south_office.ExitList(), Is.EquivalentTo(expectedOfficeExitList));
-                Assert.That(west_bedroom.ExitList(), Is.EquivalentTo(expectedBedroomExitList));
-                Assert.That(southwest_sensoryRoom.ExitList(), Is.EquivalentTo(expectedSensoryRoomExitList));
-                Assert.That(northwest_storageRoom.ExitList(), Is.EquivalentTo(expectedStorageRoomExitList));
-                Assert.That(down_basement.ExitList(), Is.EquivalentTo(expectedBasementExitList));
-                Assert.That(out_yard.ExitList(), Is.EquivalentTo(expectedYardExitList));
+                Assert.That(in_closet.ExitList(), Is.EquivalentTo(expectedClosetExitList), "closet exit list");
+                Assert.That(up_attic.ExitList(), Is.EquivalentTo(expectedAtticExitList), "attic exit list");
+                Assert.That(southeast_study.ExitList(), Is.EquivalentTo(expectedStudyExitList), "study exit list");
+                Assert.That(northeast_pantry.ExitList(), Is.EquivalentTo(expectedPantryExitList), "pantry exit list");
+                Assert.That(east_gameRoom.ExitList(), Is.EquivalentTo(expectedGameRoomExitList), "game room exit list");
+                Assert.That(north_kitchen.ExitList(), Is.EquivalentTo(expectedKitchenExitList), "kitchen exit list");
+                Assert.That(south_office.ExitList(), Is.EquivalentTo(expectedOfficeExitList), "office exit list");
+                Assert.That(west_bedroom.ExitList(), Is.EquivalentTo(expectedBedroomExitList), "bedroom exit list");
+                Assert.That(southwest_sensoryRoom.ExitList(), Is.EquivalentTo(expectedSensoryRoomExitList), "sensory room exit list");
+                Assert.That(northwest_storageRoom.ExitList(), Is.EquivalentTo(expectedStorageRoomExitList), "storage room exit list");
+                Assert.That(down_basement.ExitList(), Is.EquivalentTo(expectedBasementExitList), "basement exit list");
+                Assert.That(out_yard.ExitList(), Is.EquivalentTo(expectedYardExitList), "yard exit list");
             });
         }
 
@@ -232,7 +232,7 @@ namespace HideAndSeek
         /// </summary>
         [Test]
         [Category("Location AddExit ExitList")]
-        public void Test_Location_AddHall_CheckExitLists()
+        public void Test_Location_AddHall_AndCheckExitLists()
         {
             // Create hallway and add to basement
             Location hallway = new Location("hallway");
@@ -342,7 +342,7 @@ namespace HideAndSeek
 
         [Test]
         [Category("Location Name Success")]
-        public void Test_Location_NameSetter()
+        public void Test_Location_Set_Name()
         {
             // Create Location
             Location myLocation = new Location("secret attic");
@@ -362,7 +362,7 @@ namespace HideAndSeek
         [TestCase("")]
         [TestCase(" ")]
         [Category("Location Name Failure")]
-        public void Test_Location_NameSetter_ThrowsException_WhenInvalidNamePassed(string name)
+        public void Test_Location_Set_Name_AndCheckErrorMessage_ForInvalidName(string name)
         {
             Assert.Multiple(() =>
             {
@@ -377,11 +377,11 @@ namespace HideAndSeek
             });
         }
 
-        // Property setting success tested in deserialization test
+        // Test for successful set ExitsForSerialization is in deserialization test
         [TestCase("")]
         [TestCase(" ")]
         [Category("Location ExitsForSerialization Failure")]
-        public void Test_Location_ExitsForSerialization_ThrowsException_OverInvalidExitLocationName(string locationName)
+        public void Test_Location_Set_ExitsForSerialization_AndCheckErrorMessage_ForInvalidExitLocationName(string locationName)
         {
             // Create dictionary of exits
             Dictionary<Direction, string> exits = new Dictionary<Direction, string>();
@@ -419,7 +419,7 @@ namespace HideAndSeek
 
         [Test]
         [Category("Location SetExitsDictionary Failure")]
-        public void Test_Location_SetExitsDictionary_ThrowsException_WhenDictionaryEmpty()
+        public void Test_Location_SetExitsDictionary_AndCheckErrorMessage_ForEmptyDictionary()
         {
             Assert.Multiple(() =>
             {
@@ -435,7 +435,7 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("Location Serialization")]
+        [Category("Location Serialization Success")]
         public void Test_Location_Serialization()
         {
             // Set expected serialized Location text
@@ -464,7 +464,7 @@ namespace HideAndSeek
 
         // Does not test restoring Exits dictionary (this is done in House class)
         [Test]
-        [Category("Location Deserialization")]
+        [Category("Location Deserialization Success")]
         public void Test_Location_Deserialization()
         {
             // Set expected ExitsForSerialization property value
@@ -513,7 +513,7 @@ namespace HideAndSeek
         [TestCase("")]
         [TestCase(" ")]
         [Category("Location Deserialization Failure")]
-        public void Test_Location_Deserialization_ThrowsException_OverInvalidName(string name)
+        public void Test_Location_Deserialization_AndCheckErrorMessage_ForInvalidName(string name)
         {
             // Set expected ExitsForSerialization property value
             IDictionary<Direction, string> expectedExitsForSerialization = new Dictionary<Direction, string>();
@@ -541,7 +541,7 @@ namespace HideAndSeek
         [TestCase("")]
         [TestCase(" ")]
         [Category("Location Deserialization Failure")]
-        public void Test_Location_Deserialization_ThrowsException_OverInvalidExitLocationName(string name)
+        public void Test_Location_Deserialization_AndCheckErrorMessage_ForInvalidExitLocationName(string name)
         {
             // Set expected ExitsForSerialization property value
             IDictionary<Direction, string> expectedExitsForSerialization = new Dictionary<Direction, string>();
