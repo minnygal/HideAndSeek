@@ -14,7 +14,7 @@ namespace HideAndSeek
     public class OpponentTests
     {
         [Test]
-        [Category("Opponent Name")]
+        [Category("Opponent Constructor Name")]
         public void Test_Opponent_Constructor_Parameterized_SetsToNamePassedIn()
         {
             Opponent opponent = new Opponent("John Doe");
@@ -22,7 +22,7 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("Opponent Name")]
+        [Category("Opponent Constructor Name")]
         public void Test_Opponent_Constructor_Unparameterized_SetsToDefaultName()
         {
             // Reset default numbers for Opponent names
@@ -37,6 +37,24 @@ namespace HideAndSeek
             {
                 Assert.That(opponent1.Name, Is.EqualTo("Random Opponent 1"));
                 Assert.That(opponent2.Name, Is.EqualTo("Random Opponent 2"));
+            });
+        }
+
+        [TestCase("")]
+        [TestCase(" ")]
+        [Category("Opponent Constructor Name")]
+        public void Test_Opponent_Constructor_Parameterized_AndCheckErrorMessage_ForInvalidName(string name)
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that creating a new opponent with an invalid name raises exception
+                var exception = Assert.Throws<InvalidDataException>(() =>
+                {
+                    new Opponent(name);
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because opponent name \"{name}\" is invalid (is empty or contains only whitespace)"));
             });
         }
     }
