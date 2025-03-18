@@ -26,6 +26,9 @@ namespace HideAndSeek
      **/
 
     /** CHANGES
+     * -I added a method for JSON serialization.
+     * -I added a constructor for JSON deserialization.
+     * -I added data validation for the HidingPlace property.
      * -I renamed the parameters in the constructor for easier comprehension.
      * -I renamed the private list to opponentsHiding for easier comprehension.
      * -I renamed the Hide method to HideOpponent so it's easier to 

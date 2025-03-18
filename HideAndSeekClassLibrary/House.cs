@@ -41,7 +41,7 @@ namespace HideAndSeek
      * -I added a parameterless constructor for JSON deserialization.
      * -I added a parameterized constructor for creating a new House with specific property values.
      * -I added a method to set up House after deserialization.
-     * -I added a method to set StartingPoint and Locations properties 
+     * -I added a method to set StartingPoint and Locations properties.
      *  (called from parameterized constructor and method to set up House after deserialization).
      * -I added a method to tell whether a Location exists to make restoring a saved game easier.
      * -I added a method to tell whether a LocationWithHidingPlace exists to make restoring a saved game easier.
