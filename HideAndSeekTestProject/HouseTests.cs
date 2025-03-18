@@ -15,7 +15,8 @@ namespace HideAndSeek
     /// <summary>
     /// House tests for testing House layout and functions 
     /// (get Location or LocationWithHidingPlace by name, get random exit, get random LocationWithHidingPlace, 
-    /// clear LocationWithHidingPlaces, find out whether Location or LocationWithHidingPlace exists)
+    /// clear LocationWithHidingPlaces, find out whether Location or LocationWithHidingPlace exists,
+    /// [de]serialization, property setters, etc.)
     /// </summary>
     [TestFixture]
     public class HouseTests
@@ -45,21 +46,21 @@ namespace HideAndSeek
         /// -I added messages to the assertions to make them easier to debug.
         /// </summary>
         [Test]
-        [Category("House Layout")]
+        [Category("House Layout GetExit")]
         public void Test_House_Layout()
         {
             Assert.Multiple(() =>
             {
                 // Assert that name of StartingPoint is correct
-                Assert.That(house.StartingPoint.Name, Is.EqualTo("Entry"), "name of StartingPoint");
+                Assert.That(house.StartingPoint.Name, Is.EqualTo("Entry"), "name of starting point");
 
                 // Assert that Garage is located "Out" from StartingPoint
                 var garage = house.StartingPoint.GetExit(Direction.Out);
-                Assert.That(garage.Name, Is.EqualTo("Garage"), "Garage is Out from StartingPoint");
+                Assert.That(garage.Name, Is.EqualTo("Garage"), "Garage is Out from Entry");
 
                 // Assert that Hallway is located "East" of StartingPoint
                 var hallway = house.StartingPoint.GetExit(Direction.East);
-                Assert.That(hallway.Name, Is.EqualTo("Hallway"), "Hallway is East of StartingPoint");
+                Assert.That(hallway.Name, Is.EqualTo("Hallway"), "Hallway is East of Entry");
 
                 // Assert that Kitchen is located "Northwest" of Hallway
                 var kitchen = hallway.GetExit(Direction.Northwest);
@@ -107,66 +108,77 @@ namespace HideAndSeek
             });
         }
 
-        [Test]
+        [TestCase("Entry")]
+        [TestCase("Hallway")]
+        [TestCase("Landing")]
+        [Category("House LocationType")]
+        public void Test_House_Locations_AreNotOfType_LocationWithHidingPlace(string locationName)
+        {
+            Assert.That(house.Locations.Where((l) => l.Name == locationName).First(), Is.Not.InstanceOf<LocationWithHidingPlace>());
+        }
+
+        [TestCase("Garage")]
+        [TestCase("Kitchen")]
+        [TestCase("Living Room")]
+        [TestCase("Bathroom")]
+        [TestCase("Master Bedroom")]
+        [TestCase("Master Bath")]
+        [TestCase("Second Bathroom")]
+        [TestCase("Kids Room")]
+        [TestCase("Nursery")]
+        [TestCase("Pantry")]
+        [TestCase("Attic")]
+        [Category("House LocationType")]
+        public void Test_House_Locations_AreOfType_LocationWithHidingPlace(string locationName)
+        {
+            Assert.That(house.Locations.Where((l) => l.Name == locationName).First(), Is.InstanceOf<LocationWithHidingPlace>());
+        }
+
         [Category("House GetLocationByName Success")]
-        public void Test_House_GetLocationByName_WhenNameFound_ReturnThatLocation()
+        public void Test_House_GetLocationByName_ReturnsLocation()
         {
             Assert.Multiple(() =>
             {
-                Assert.That(house.GetLocationByName("Entry").Name, Is.EqualTo("Entry"), "get StartingPoint");
-                Assert.That(house.GetLocationByName("Attic").Name, Is.EqualTo("Attic"), "get Attic");
-                Assert.That(house.GetLocationByName("Garage").Name, Is.EqualTo("Garage"), "get Garage");
-                Assert.That(house.GetLocationByName("Master Bedroom").Name, Is.EqualTo("Master Bedroom"), "get Master Bedroom");
+                Assert.That(house.GetLocationByName("Entry").Name, Is.EqualTo("Entry"));
             });
         }
 
-        [Test]
+        [TestCase("Secret Library")]
+        [TestCase("master bedroom")]
+        [TestCase("MasterBedroom")]
+        [TestCase(" ")]
+        [TestCase("")]
         [Category("House GetLocationByName Failure")]
-        public void Test_House_GetLocationByName_WhenNameNotFound_ReturnNull()
+        public void Test_House_GetLocationByName_ReturnsNull_WhenLocationWithName_DoesNotExist(string locationName)
         {
-            Assert.Multiple(() =>
-            {
-                Assert.That(house.GetLocationByName("Secret Library"), Is.Null, "try \"Secret Library\"");
-                Assert.That(house.GetLocationByName("master bedroom"), Is.Null, "try \"master bedroom\"");
-                Assert.That(house.GetLocationByName("MasterBedroom"), Is.Null, "try \"MasterBedroom\"");
-            });
+            Assert.That(house.GetLocationByName(locationName), Is.Null);
         }
 
         [Test]
         [Category("House GetLocationWithHidingPlaceByName Success")]
-        public void Test_House_GetLocationWithHidingPlaceByName_WhenFound_ReturnThatLocation()
+        public void Test_House_GetLocationWithHidingPlaceByName_ReturnsLocation_WhenLocationWithHidingPlaceWithName_Exists()
         {
-            Assert.Multiple(() =>
-            {
-                Assert.That(house.GetLocationWithHidingPlaceByName("Pantry").Name, Is.EqualTo("Pantry"), "get Pantry");
-                Assert.That(house.GetLocationWithHidingPlaceByName("Attic").Name, Is.EqualTo("Attic"), "get Attic");
-                Assert.That(house.GetLocationWithHidingPlaceByName("Garage").Name, Is.EqualTo("Garage"), "get Garage");
-                Assert.That(house.GetLocationWithHidingPlaceByName("Master Bedroom").Name, Is.EqualTo("Master Bedroom"), "get Master Bedroom");
-            });
+            Assert.That(house.GetLocationWithHidingPlaceByName("Pantry").Name, Is.EqualTo("Pantry"));
         }
 
-        [Test]
+        [TestCase("Entry")]
+        [TestCase("Hallway")]
+        [TestCase("Landing")]
         [Category("House GetLocationWithHidingPlaceByName Failure")]
-        public void Test_House_GetLocationWithHidingPlaceByName_WhenNotFound_BecauseLocationIsNotHidingPlaceType_ReturnsNull()
+        public void Test_House_GetLocationWithHidingPlaceByName_ReturnsNull_WhenLocationWithName_IsLocationWithoutHidingPlace(string locationName)
         {
-            Assert.Multiple(() =>
-            {
-                Assert.That(house.GetLocationWithHidingPlaceByName("Entry"), Is.Null, "try \"StartingPoint\"");
-                Assert.That(house.GetLocationWithHidingPlaceByName("Hallway"), Is.Null, "try \"Hallway\"");
-                Assert.That(house.GetLocationWithHidingPlaceByName("Landing"), Is.Null, "try \"Landing\"");
-            });
+            Assert.That(house.GetLocationWithHidingPlaceByName(locationName), Is.Null);
         }
 
-        [Test]
+        [TestCase("Secret Library")]
+        [TestCase("master bedroom")]
+        [TestCase("MasterBedroom")]
+        [TestCase(" ")]
+        [TestCase("")]
         [Category("House GetLocationWithHidingPlaceByName Failure")]
-        public void Test_House_GetLocationWithHidingPlaceByName_WhenNotFound_BecauseNoLocationWithThatName_ReturnsNull()
+        public void Test_House_GetLocationWithHidingPlaceByName_ReturnsNull_WhenLocationWithName_DoesNotExist(string locationName)
         {
-            Assert.Multiple(() =>
-            {
-                Assert.That(house.GetLocationWithHidingPlaceByName("Secret Library"), Is.Null, "try \"Secret Library\"");
-                Assert.That(house.GetLocationWithHidingPlaceByName("master bedroom"), Is.Null, "try \"master bedroom\"");
-                Assert.That(house.GetLocationWithHidingPlaceByName("MasterBedroom"), Is.Null, "try \"MasterBedroom\"");
-            });
+            Assert.That(house.GetLocationWithHidingPlaceByName(locationName), Is.Null);
         }
 
         [Test]
@@ -192,7 +204,7 @@ namespace HideAndSeek
 
         [Test]
         [Category("House DoesLocationWithHidingPlaceExist Failure")]
-        public void Test_House_DoesLocationWithHidingPlaceExist_ReturnsFalse_WhenNoLocationExists()
+        public void Test_House_DoesLocationWithHidingPlaceExist_ReturnsFalse()
         {
             Assert.That(house.DoesLocationWithHidingPlaceExist("Dungeon"), Is.False);
         }
@@ -222,12 +234,12 @@ namespace HideAndSeek
         /// -I moved the GetLocationByName method call for getting the Kitchen Location to the beginning of the test method.
         /// </summary>
         [Test]
-        [Category("House GetRandomExit")]
+        [Category("House GetRandomExit Success")]
         public void Test_House_GetRandomExit()
         {
             // Get locations
-            var landing = house.GetLocationByName("Landing");
-            var kitchen = house.GetLocationByName("Kitchen");
+            var landing = house.Locations.Where((l) => l.Name == "Landing").First();
+            var kitchen = house.Locations.Where((l) => l.Name == "Kitchen").First();
 
             Assert.Multiple(() =>
             {
@@ -268,72 +280,54 @@ namespace HideAndSeek
         [TestCase("Kitchen", 1, 0, 4, 0)] // no extra moves
         [TestCase("Pantry", 0, 1, 2)] // 1 extra move
         [TestCase("Bathroom", 1, 2, 3)] // 2 extra moves
-        [Category("House GetRandomLocationWithHidingPlace")]
-        public void Test_House_GetRandomHidingPlace(string hidingLocationName, params int[] mockRandomValueList)
+        [Category("House GetRandomLocationWithHidingPlace Success")]
+        public void Test_House_GetRandomLocationWithHidingPlace(string hidingLocationName, params int[] mockRandomValueList)
         {
             house.Random = new MockRandomWithValueList(mockRandomValueList); // Set House's Random number generator to mock
             Assert.That(house.GetRandomLocationWithHidingPlace().Name, Is.EqualTo(hidingLocationName)); // Assert that name of LocationWithHidingPlace returned is as expected
         }
 
         [Test]
-        [Category("House LocationTypes")]
-        public void Test_House_LocationsAreOfType_LocationWithHidingPlace()
-        {
-            Assert.Multiple(() =>
-            {
-                Assert.That(house.GetLocationByName("Garage"), Is.InstanceOf<LocationWithHidingPlace>(), "Garage");
-                Assert.That(house.GetLocationByName("Kitchen"), Is.InstanceOf<LocationWithHidingPlace>(), "Kitchen");
-                Assert.That(house.GetLocationByName("Living Room"), Is.InstanceOf<LocationWithHidingPlace>(), "Living Room");
-                Assert.That(house.GetLocationByName("Bathroom"), Is.InstanceOf<LocationWithHidingPlace>(), "Bathroom");
-                Assert.That(house.GetLocationByName("Master Bedroom"), Is.InstanceOf<LocationWithHidingPlace>(), "Master Bedroom");
-                Assert.That(house.GetLocationByName("Master Bath"), Is.InstanceOf<LocationWithHidingPlace>(), "Master Bath");
-                Assert.That(house.GetLocationByName("Second Bathroom"), Is.InstanceOf<LocationWithHidingPlace>(), "Second Bathroom");
-                Assert.That(house.GetLocationByName("Kids Room"), Is.InstanceOf<LocationWithHidingPlace>(), "Kids Room");
-                Assert.That(house.GetLocationByName("Nursery"), Is.InstanceOf<LocationWithHidingPlace>(), "Nursery");
-                Assert.That(house.GetLocationByName("Pantry"), Is.InstanceOf<LocationWithHidingPlace>(), "Pantry");
-                Assert.That(house.GetLocationByName("Attic"), Is.InstanceOf<LocationWithHidingPlace>(), "Attic");
-            });
-        }
-
-        [Test]
-        [Category("House ClearHidingPlaces CheckHidingPlace")]
+        [Category("House ClearHidingPlaces CheckHidingPlace HideOpponent")]
         public void Test_House_ClearHidingPlaces()
         {
+            // ARRANGE
             // Hide opponent in garage
-            var garage = house.GetLocationWithHidingPlaceByName("Garage"); // Get garage reference
+            LocationWithHidingPlace garage = (LocationWithHidingPlace)house.Locations.Where((l) => l.Name == "Garage").First(); // Get garage reference
             garage.HideOpponent(new Opponent());
 
             // Hide 3 more opponents in attic
-            var attic = house.GetLocationWithHidingPlaceByName("Attic"); // Get attic reference
+            LocationWithHidingPlace attic = (LocationWithHidingPlace)house.Locations.Where((l) => l.Name == "Attic").First(); // Get attic reference
             attic.HideOpponent(new Opponent());
             attic.HideOpponent(new Opponent());
             attic.HideOpponent(new Opponent());
 
+            // ACT
             // Clear hiding places in house
             house.ClearHidingPlaces();
 
+            // ASSERT
             // Assert that no opponents are in cleared hiding places
             Assert.Multiple(() =>
             {
-                Assert.That(garage.CheckHidingPlace(), Is.Empty, "no opponents in garage");
-                Assert.That(attic.CheckHidingPlace(), Is.Empty, "no opponents in attic");
+                Assert.That(garage.CheckHidingPlace(), Is.Empty, "no opponents in Garage");
+                Assert.That(attic.CheckHidingPlace(), Is.Empty, "no opponents in Attic");
             });
         }
 
         [Test]
         [Category("House CreateHouse Success")]
-        public void Test_House_CreateHouse()
+        public void Test_House_CreateHouse_WithLocationsWithoutHidingPlaces()
         {
-            // Set up mock file system and assign to House property
-            string textInHouseFile = TestHouse_Data.SerializedTestHouse;
-            Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
-            fileSystemMock.Setup((s) => s.File.Exists("TestHouse.json")).Returns(true);
-            fileSystemMock.Setup((s) => s.File.ReadAllText("TestHouse.json")).Returns(textInHouseFile);
-            House.FileSystem = fileSystemMock.Object;
+            // ARRANGE
+            // Assign mock file system to House property
+            House.FileSystem = CreateMockFileSystem("TestHouse.json", TestHouse_Data.SerializedTestHouse);
 
+            // ACT
             // Call method to create House
             House house = House.CreateHouse("TestHouse");
 
+            // PRE-ASSERT ARRANGE
             // Set variable for Landing from LocationsWithoutHidingPlaces
             Location landingFromLocationsWithoutHidingPlaces = house.LocationsWithoutHidingPlaces.Where((l) => l.Name == "Landing").First();
             
@@ -353,7 +347,7 @@ namespace HideAndSeek
             Location landingFromLocations = house.Locations.Where((l) => l.Name == "Landing").First();
             Location masterBathFromLocations = house.Locations.Where((l) => l.Name == "Master Bath").First();
 
-            // Assert that properties are as expected
+            // ASSERT
             Assert.Multiple(() =>
             {
                 // Assert that House properties are as expected
@@ -402,6 +396,7 @@ namespace HideAndSeek
         [Category("House CreateHouse Success")]
         public void Test_House_CreateHouse_WithNoLocationsWithoutHidingPlaces()
         {
+            // ARRANGE
             // Initialize variable to string representing text in House file (with empty LocationsWithoutHidingPlaces)
             string textInHouseFile = 
                 "{" +
@@ -432,15 +427,14 @@ namespace HideAndSeek
                     "]" +
                 "}";
 
-            // Set up mock file system and assign to House property
-            Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
-            fileSystemMock.Setup((s) => s.File.Exists("TestHouse.json")).Returns(true);
-            fileSystemMock.Setup((s) => s.File.ReadAllText("TestHouse.json")).Returns(textInHouseFile);
-            House.FileSystem = fileSystemMock.Object;
+            // Assign mock file system to House property
+            House.FileSystem = CreateMockFileSystem("TestHouse.json", textInHouseFile);
 
+            // ACT
             // Call method to create House
             House house = House.CreateHouse("TestHouse");
 
+            // ASSERT
             // Assume no exceptions were thrown
             // Assert that there are no Locations in LocationsWithoutHidingPlaces
             Assert.That(house.LocationsWithoutHidingPlaces.Count(), Is.EqualTo(0));
@@ -472,11 +466,8 @@ namespace HideAndSeek
         [Category("House CreateHouse Failure")]
         public void Test_House_CreateHouse_AndCheckErrorMessage_ForJsonException_WhenFileFormatIsInvalid(string fileText, string exceptionMessageEnding)
         {
-            // Set up mock file system and assign to House property
-            Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
-            fileSystemMock.Setup((s) => s.File.Exists("MyCorruptFile.json")).Returns(true);
-            fileSystemMock.Setup((s) => s.File.ReadAllText("MyCorruptFile.json")).Returns(fileText);
-            House.FileSystem = fileSystemMock.Object;
+            // Assign mock file system to House property
+            House.FileSystem = CreateMockFileSystem("MyCorruptFile.json", fileText);
 
             Assert.Multiple(() =>
             {
@@ -495,11 +486,8 @@ namespace HideAndSeek
         [Category("House CreateHouse Failure")]
         public void Test_House_CreateHouse_AndCheckErrorMessage_ForJsonException_WhenFileDataHasInvalidDirection(string fileText)
         {
-            // Set up mock file system and assign to House property
-            Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
-            fileSystemMock.Setup((s) => s.File.Exists("MyCorruptFile.json")).Returns(true);
-            fileSystemMock.Setup((s) => s.File.ReadAllText("MyCorruptFile.json")).Returns(fileText);
-            House.FileSystem = fileSystemMock.Object;
+            // Assign mock file system to House property
+            House.FileSystem = CreateMockFileSystem("MyCorruptFile.json", fileText);
 
             Assert.Multiple(() =>
             {
@@ -518,11 +506,8 @@ namespace HideAndSeek
         [Category("House CreateHouse Failure")]
         public void Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasWhitespaceValue(string fileText, string exceptionMessageEnding)
         {
-            // Set up mock file system and assign to House property
-            Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
-            fileSystemMock.Setup((s) => s.File.Exists("MyInvalidDataFile.json")).Returns(true);
-            fileSystemMock.Setup((s) => s.File.ReadAllText("MyInvalidDataFile.json")).Returns(fileText);
-            House.FileSystem = fileSystemMock.Object;
+            // Assign mock file system to House property
+            House.FileSystem = CreateMockFileSystem("MyInvalidDataFile.json", fileText);
 
             Assert.Multiple(() =>
             {
@@ -541,11 +526,8 @@ namespace HideAndSeek
         [Category("House CreateHouse Failure")]
         public void Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue(string fileText, string exceptionMessage)
         {
-            // Set up mock file system and assign to House property
-            Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
-            fileSystemMock.Setup((s) => s.File.Exists("MyInvalidDataFile.json")).Returns(true);
-            fileSystemMock.Setup((s) => s.File.ReadAllText("MyInvalidDataFile.json")).Returns(fileText);
-            House.FileSystem = fileSystemMock.Object;
+            // Assign mock file system to House property
+            House.FileSystem = CreateMockFileSystem("MyInvalidDataFile.json", fileText);
 
             Assert.Multiple(() =>
             {
@@ -560,10 +542,10 @@ namespace HideAndSeek
             });
         }
 
-        // Calls properties' setters and setters successfully
+        // Calls properties' setters successfully
         [Test]
         [Category("House Constructor Success")]
-        public void Test_House_Constructor_Parameterized()
+        public void Test_House_Constructor_Parameterized_SetsProperties()
         {
             // Assume no exceptions were thrown
             // Assert that properties are set correctly
@@ -582,7 +564,7 @@ namespace HideAndSeek
         [TestCase("")]
         [TestCase(" ")]
         [Category("House Name Failure")]
-        public void Test_House_NameSetter_WithInvalidName(string name)
+        public void Test_House_Set_Name_AndCheckErrorMessage_ForInvalidName(string name)
         {
             Assert.Multiple(() =>
             {
@@ -611,7 +593,7 @@ namespace HideAndSeek
         [TestCase("myFile/")]
         [TestCase("my/File")]
         [Category("House HouseFileName Failure")]
-        public void Test_House_HouseFileNameSetter_WithInvalidHouseFileName(string houseFileName)
+        public void Test_House_Set_HouseFileName_AndCheckErrorMessage_ForInvalidHouseFileName(string houseFileName)
         {
             Assert.Multiple(() =>
             {
@@ -629,7 +611,7 @@ namespace HideAndSeek
         [TestCase("")]
         [TestCase(" ")]
         [Category("House PlayerStartingPoint Failure")]
-        public void Test_House_PlayerStartingPointSetter_WithInvalidLocationName(string locationName)
+        public void Test_House_Set_PlayerStartingPoint_AndCheckErrorMessage_ForInvalidLocationName(string locationName)
         {
             Assert.Multiple(() =>
             {
@@ -646,7 +628,7 @@ namespace HideAndSeek
 
         [Test]
         [Category("House StartingPoint Failure")]
-        public void Test_House_StartingPointSetter_WithLocationNotExistingInHouse()
+        public void Test_House_Set_StartingPoint_AndCheckErrorMessage_ForLocationNotExistingInHouse()
         {
             Assert.Multiple(() =>
             {
@@ -663,11 +645,11 @@ namespace HideAndSeek
 
         [Test]
         [Category("House LocationsWithHidingPlaces")]
-        public void Test_House_LocationsWithHidingPlaces_ErrorMessage_WhenSetToEmptyEnumerable()
+        public void Test_House_Set_LocationsWithHidingPlaces_AndCheckErrorMessage_ForEmptyEnumerable()
         {
             Assert.Multiple(() =>
             {
-                // Assert that setting the locations with hiding places property to an empty dictionary raises an exception
+                // Assert that setting the locations with hiding places property to an empty list raises an exception
                 var exception = Assert.Throws<InvalidDataException>(() =>
                 {
                     house.LocationsWithHidingPlaces = new List<LocationWithHidingPlace>();
@@ -680,11 +662,11 @@ namespace HideAndSeek
 
         [Test]
         [Category("House Locations Failure")]
-        public void Test_House_Locations_ErrorMessage_WhenSetToEmptyEnumerable()
+        public void Test_House_Set_Locations_AndCheckErrorMessage_ForEmptyEnumerable()
         {
             Assert.Multiple(() =>
             {
-                // Assert that setting the locations property to an empty dictionary raises an exception
+                // Assert that setting the locations property to an empty list raises an exception
                 var exception = Assert.Throws<InvalidDataException>(() =>
                 {
                     house.Locations = new List<Location>();
@@ -696,7 +678,7 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("House Serialize")]
+        [Category("House Serialize Success")]
         public void Test_House_SerializeMethod()
         {
             // Serialize House
@@ -704,6 +686,20 @@ namespace HideAndSeek
 
             // Assert that serialized text is as expected
             Assert.That(serializedHouse, Is.EqualTo(TestHouse_Data.SerializedTestHouse));
+        }
+
+        /// <summary>
+        /// Helper method to create and return a mock file system
+        /// </summary>
+        /// <param name="fileName">Name of file</param>
+        /// <param name="textInFile">Text to return when File.ReadAllText called</param>
+        /// <returns></returns>
+        private IFileSystem CreateMockFileSystem(string fileName, string textInFile)
+        {
+            Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>(); // Create mock file system
+            fileSystemMock.Setup((s) => s.File.Exists(fileName)).Returns(true); // Mock that file exists
+            fileSystemMock.Setup((s) => s.File.ReadAllText(fileName)).Returns(textInFile); // Mock text read from file
+            return fileSystemMock.Object; // Return file system
         }
     }
 }
