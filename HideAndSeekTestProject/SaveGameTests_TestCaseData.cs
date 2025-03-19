@@ -6,7 +6,7 @@ using System.IO.Abstractions;
 namespace HideAndSeek
 {
     /// <summary>
-    /// TestCaseData for some GameController tests for saving/loading/deleting games and SavedGame tests
+    /// TestCaseData for some GameController tests for saving/loading/deleting games
     /// </summary>
     public class SaveGameTests_TestCaseData
     {

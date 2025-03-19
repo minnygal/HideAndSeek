@@ -359,6 +359,56 @@ namespace HideAndSeek
         }
 
         [Test]
+        [Category("SavedGame Serialize Success")]
+        public void Test_SavedGame_Serialize_NoFoundOpponents()
+        {
+            SavedGame savedGame = new SavedGame(
+                TestHouse_Data.GetNewTestHouse(), "TestHouse", "Entry", 1, validOpponentsAndHidingPlacesDictionary, new List<string>());
+
+            string serializedGame = JsonSerializer.Serialize(savedGame);
+
+            string expectedSerializedGame =
+                "{" +
+                    TestHouse_Data.SerializedHouse_HouseFileName + "," +
+                    "\"PlayerLocation\":\"Entry\"" + "," +
+                    "\"MoveNumber\":1" + "," +
+                    "\"OpponentsAndHidingLocations\":" +
+                    "{" +
+                        "\"Joe\":\"Kitchen\"," +
+                        "\"Bob\":\"Bathroom\"" +
+                    "}" + "," +
+                    "\"FoundOpponents\":[]" +
+                "}";
+
+            Assert.That(serializedGame, Is.EqualTo(expectedSerializedGame));
+        }
+
+        [Test]
+        [Category("SavedGame Serialize Success")]
+        public void Test_SavedGame_Serialize_1FoundOpponent()
+        {
+            SavedGame savedGame = new SavedGame(
+                TestHouse_Data.GetNewTestHouse(), "TestHouse", "Bathroom", 7, validOpponentsAndHidingPlacesDictionary, new List<string>() { "Bob" });
+
+            string serializedGame = JsonSerializer.Serialize(savedGame);
+
+            string expectedSerializedGame =
+                "{" +
+                    TestHouse_Data.SerializedHouse_HouseFileName + "," +
+                    "\"PlayerLocation\":\"Bathroom\"" + "," +
+                    "\"MoveNumber\":7" + "," +
+                    "\"OpponentsAndHidingLocations\":" +
+                    "{" +
+                        "\"Joe\":\"Kitchen\"," +
+                        "\"Bob\":\"Bathroom\"" +
+                    "}" + "," +
+                    "\"FoundOpponents\":[\"Bob\"]" +
+                "}";
+
+            Assert.That(serializedGame, Is.EqualTo(expectedSerializedGame));
+        }
+
+        [Test]
         [Category("SavedGame Deserialize Success")]
         public void Test_SavedGame_Deserialize()
         {
