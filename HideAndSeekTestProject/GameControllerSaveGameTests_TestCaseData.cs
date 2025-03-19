@@ -109,13 +109,11 @@ namespace HideAndSeek
             get
             {
                 // No Opponents found
-                yield return new TestCaseData(StartNewGameWithSpecificHidingInfo_MockFileSystem)
-                    .Returns(TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents)
+                yield return new TestCaseData(StartNewGameWithSpecificHidingInfo_MockFileSystem, TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents)
                     .SetName("Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile - no opponents found");
 
                 // 3 Opponents found
-                yield return new TestCaseData(StartNewGameAndFind3Opponents_MockFileSystem)
-                    .Returns(TestSavedGame_Data.SerializedTestSavedGame_3FoundOpponents)
+                yield return new TestCaseData(StartNewGameAndFind3Opponents_MockFileSystem, TestSavedGame_Data.SerializedTestSavedGame_3FoundOpponents)
                     .SetName("Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile - 3 opponents found");
             }
         }

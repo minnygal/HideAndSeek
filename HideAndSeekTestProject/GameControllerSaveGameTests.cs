@@ -62,7 +62,7 @@ namespace HideAndSeek
 
         [TestCaseSource(typeof(GameControllerSaveGameTests_TestCaseData), nameof(GameControllerSaveGameTests_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile))]
         [Category("GameController Save Success")]
-        public string Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile(Func<IFileSystem, GameController> startNewGame)
+        public void Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile(Func<IFileSystem, GameController> startNewGame, string expectedTextInFile)
         {
             // Create variable to store text written to file
             string? actualTextInFile = null;
@@ -78,8 +78,8 @@ namespace HideAndSeek
             gameController = startNewGame(mockFileSystem.Object);
             gameController.ParseInput("save my_saved_game");
 
-            // Return actual text written to file
-            return actualTextInFile;
+            // Assert that actual text in file is equal to expected text in file
+            Assert.That(actualTextInFile, Is.EqualTo(expectedTextInFile));
         }
 
         [Test]
