@@ -36,7 +36,7 @@ namespace HideAndSeek
         public static SavedGame GetNewTestSavedGame_NoFoundOpponents()
         {
             return new SavedGame(
-                TestHouse_Data.GetNewTestHouse(), "TestHouse", "Entry", 1, OpponentsAndHidingPlaces, new List<string>());
+                TestHouse_Data.GetNewTestHouse(), "DefaultHouse", "Entry", 1, OpponentsAndHidingPlaces, new List<string>());
         }
 
         /// <summary>
@@ -46,7 +46,7 @@ namespace HideAndSeek
         public static SavedGame GetNewTestSavedGame_3FoundOpponents()
         {
             return new SavedGame(
-                TestHouse_Data.GetNewTestHouse(), "TestHouse", "Bathroom", 7, OpponentsAndHidingPlaces, 
+                TestHouse_Data.GetNewTestHouse(), "DefaultHouse", "Bathroom", 7, OpponentsAndHidingPlaces, 
                 new List<string>() { "Joe", "Owen", "Ana" }
             );
         }
