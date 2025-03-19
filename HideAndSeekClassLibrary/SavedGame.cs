@@ -44,7 +44,7 @@ namespace HideAndSeek
         /// House object associated with game (used for property validation)
         /// </summary>
         [JsonIgnore]
-        public House House { get; set; }
+        public House House { get; private set; }
 
         private string _houseFileName = House.DefaultHouseFileName; // Set house file name to default house file name; set in both a method and property
 
@@ -70,6 +70,7 @@ namespace HideAndSeek
         /// Should only be used by JSON deserializer and tests
         /// CAUTION: setter calls House's CreateHouse method
         /// </summary>
+        [JsonRequired]
         public required string HouseFileName
         {
             get
@@ -88,6 +89,7 @@ namespace HideAndSeek
         /// <summary>
         /// Player's current location
         /// </summary>
+        [JsonRequired]
         public required string PlayerLocation {
             get
             {
@@ -111,6 +113,7 @@ namespace HideAndSeek
         /// <summary>
         /// Current move number
         /// </summary>
+        [JsonRequired]
         public required int MoveNumber
         {
             get
@@ -136,6 +139,7 @@ namespace HideAndSeek
         /// Opponents and their locations with hiding place
         /// (opponent name as key, location with hiding place name as value)
         /// </summary>
+        [JsonRequired]
         public required Dictionary<string, string> OpponentsAndHidingLocations
         {
             get
@@ -169,6 +173,7 @@ namespace HideAndSeek
         /// <summary>
         /// All found opponents' names
         /// </summary>
+        [JsonRequired]
         public required IEnumerable<string> FoundOpponents
         {
             get
