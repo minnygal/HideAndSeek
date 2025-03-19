@@ -9,7 +9,8 @@ using System.Text.Json;
 namespace HideAndSeek
 {
     /// <summary>
-    /// SavedGame tests to test setters for SavedGame public properties and object deserialization
+    /// SavedGame tests to test setters for SavedGame public properties and basic object serialization/deserialization
+    /// Thorough testing of SavedGame deserialization failures is in SaveGameTests_TestCaseData and GameControllerSaveGameTests
     /// </summary>
     public class SavedGameTests
     {
@@ -27,7 +28,6 @@ namespace HideAndSeek
             validOpponentsAndHidingPlacesDictionary.Add("Joe", "Kitchen");
             validOpponentsAndHidingPlacesDictionary.Add("Bob", "Bathroom");
         }
-
 
         [Test]
         [Category("SavedGame Constructor Success")]
