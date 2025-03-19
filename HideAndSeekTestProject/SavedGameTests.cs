@@ -441,5 +441,32 @@ namespace HideAndSeek
                 Assert.That(savedGame.FoundOpponents, Is.Empty, "no found opponents");
             });
         }
+
+
+
+        [Test]
+        [Category("SavedGame Deserialize Failure")]
+        public void Test_SavedGame_Deserialize_AndCheckErrorMessage_ForNullReferenceException_ForMissingHouseFileName()
+        {
+            string textInFile =
+                "{" +
+                    TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
+                    TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_MoveNumber + "," +
+                    TestSavedGame_Data.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
+                    TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_FoundOpponents +
+                "}";
+
+            Assert.Multiple(() =>
+            {
+                // Assert that deserializing with a missing house file name property raises an exception
+                var exception = Assert.Throws<NullReferenceException>(() =>
+                {
+                    JsonSerializer.Deserialize<SavedGame>(textInFile);
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo("House has not been set"));
+            });
+        }
     }
 }
