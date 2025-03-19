@@ -442,8 +442,7 @@ namespace HideAndSeek
             });
         }
 
-
-
+        // Tests House property getter as well
         [Test]
         [Category("SavedGame Deserialize Failure")]
         public void Test_SavedGame_Deserialize_AndCheckErrorMessage_ForNullReferenceException_ForMissingHouseFileName()

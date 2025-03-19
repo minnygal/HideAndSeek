@@ -40,7 +40,7 @@ namespace HideAndSeek
 
     public class SavedGame
     {
-        private House _house = null;
+        private House _house;
 
         /// <summary>
         /// House object associated with game (used for property validation)
