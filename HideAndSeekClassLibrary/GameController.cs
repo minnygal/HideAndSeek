@@ -181,7 +181,6 @@ namespace HideAndSeek
 
         /// <summary>
         /// Rehide all Opponents in specified hiding places
-        /// Should only be called from GameController and tests
         /// </summary>
         /// <param name="hidingPlaces">Places to hide Opponents</param>
         private void RehideAllOpponents(IEnumerable<LocationWithHidingPlace> hidingPlaces)
@@ -203,6 +202,11 @@ namespace HideAndSeek
             OpponentsAndHidingLocations = opponentsAndNewHidingLocations;
         }
 
+        /// <summary>
+        /// Rehide all Opponents in specified hiding places
+        /// Should only be called from GameController and tests
+        /// </summary>
+        /// <param name="hidingPlaces">Names of hiding places for Opponents</param>
         public void RehideAllOpponents(IEnumerable<string> hidingPlaces)
         {
             List<LocationWithHidingPlace> hidingPlacesAsObjects = new List<LocationWithHidingPlace>();
