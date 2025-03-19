@@ -10,7 +10,7 @@ namespace HideAndSeek
 {
     /// <summary>
     /// SavedGame tests to test setters for SavedGame public properties and basic object serialization/deserialization
-    /// Thorough testing of SavedGame deserialization failures is in SaveGameTests_TestCaseData and GameControllerSaveGameTests
+    /// Thorough testing of SavedGame deserialization failures is in GameControllerSaveGameTests_TestCaseData and GameControllerSaveGameTests
     /// </summary>
     public class SavedGameTests
     {

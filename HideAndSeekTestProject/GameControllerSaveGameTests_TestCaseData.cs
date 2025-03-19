@@ -8,7 +8,7 @@ namespace HideAndSeek
     /// <summary>
     /// TestCaseData for some GameController tests for saving/loading/deleting games
     /// </summary>
-    public class SaveGameTests_TestCaseData
+    public class GameControllerSaveGameTests_TestCaseData
     {
         // Text file version of default saved GameController HouseFileName property
         private static readonly string fileText_Property_HouseFileName = "\"HouseFileName\":\"DefaultHouse\"";

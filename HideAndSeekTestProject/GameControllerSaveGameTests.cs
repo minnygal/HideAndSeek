@@ -60,7 +60,7 @@ namespace HideAndSeek
             Assert.That(message, Is.EqualTo(expected));
         }
 
-        [TestCaseSource(typeof(SaveGameTests_TestCaseData), nameof(SaveGameTests_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile))]
+        [TestCaseSource(typeof(GameControllerSaveGameTests_TestCaseData), nameof(GameControllerSaveGameTests_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile))]
         [Category("GameController Save Success")]
         public string Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile(Func<IFileSystem, GameController> startNewGame)
         {
@@ -122,7 +122,7 @@ namespace HideAndSeek
         }
 
         // Does not check message
-        [TestCaseSource(typeof(SaveGameTests_TestCaseData), nameof(SaveGameTests_TestCaseData.Test_GameController_ParseInput_ToLoadGame_AndCheckProperties))]
+        [TestCaseSource(typeof(GameControllerSaveGameTests_TestCaseData), nameof(GameControllerSaveGameTests_TestCaseData.Test_GameController_ParseInput_ToLoadGame_AndCheckProperties))]
         [Category("GameController Load Success")]
         public void Test_GameController_ParseInput_ToLoadGame_AndCheckProperties(string currentLocation, int moveNumber, List<string> foundOpponents, string textInFile)
         {
@@ -170,7 +170,7 @@ namespace HideAndSeek
             Assert.That(message, Is.EqualTo("Cannot load game because file my_saved_game does not exist"));
         }
 
-        [TestCaseSource(typeof(SaveGameTests_TestCaseData), nameof(SaveGameTests_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData))]
+        [TestCaseSource(typeof(GameControllerSaveGameTests_TestCaseData), nameof(GameControllerSaveGameTests_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData))]
         [Category("GameController Load Failure")]
         public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData(string errorMessage, string textInFile)
         {
