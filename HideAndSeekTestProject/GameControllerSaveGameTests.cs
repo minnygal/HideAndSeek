@@ -183,7 +183,7 @@ namespace HideAndSeek
 
             // Have game controller parse file name with load command
             message = gameController.ParseInput("load my_corrupt_game");
-            Console.WriteLine(message);
+            
             // Assert that error message is correct
             Assert.That(message, Is.EqualTo($"Cannot process because data in saved game file my_corrupt_game is corrupt - {endOfErrorMessage}"));
         }
