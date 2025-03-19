@@ -169,18 +169,18 @@ namespace HideAndSeek
             }
         }
 
-        // Test case data for Test_GameController_ParseInput_ToLoadGame_AndCheckGameIsLoadedSuccessfully
-        public static IEnumerable TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckGameIsLoadedSuccessfully
+        // Test case data for Test_GameController_ParseInput_ToLoadGame_AndCheckProperties
+        public static IEnumerable Test_GameController_ParseInput_ToLoadGame_AndCheckProperties
         {
             get
             {
                 // No Opponents found
                 yield return new TestCaseData("Entry", 1, new List<string>(), fileText_GameWithSpecificHidingInfo_NoOpponentsFound)
-                    .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckGameIsLoadedSuccessfully - no opponents found");
+                    .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckProperties - no opponents found");
                 
                 // 3 Opponents found
                 yield return new TestCaseData("Bathroom", 7, new List<string>() { "Joe", "Owen", "Ana" }, fileText_GameWithSpecificHidingInfo_3OpponentsFound)
-                    .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckGameIsLoadedSuccessfully - 3 opponents found");
+                    .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckProperties - 3 opponents found");
             }
         }
 
