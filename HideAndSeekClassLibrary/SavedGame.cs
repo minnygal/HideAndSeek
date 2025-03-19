@@ -46,7 +46,7 @@ namespace HideAndSeek
         [JsonIgnore]
         public House House { get; private set; }
 
-        private string _houseFileName = House.DefaultHouseFileName; // Set house file name to default house file name; set in both a method and property
+        private string _houseFileName;
 
         /// <summary>
         /// Set the House file name private variable, bypassing the HouseFileName property setter which calls House's CreateHouse method
@@ -84,7 +84,7 @@ namespace HideAndSeek
             }
         }
 
-        private string _playerLocation = "";
+        private string _playerLocation;
 
         /// <summary>
         /// Player's current location
