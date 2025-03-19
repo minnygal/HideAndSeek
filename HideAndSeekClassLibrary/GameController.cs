@@ -412,16 +412,12 @@ namespace HideAndSeek
             {
                 savedGame = JsonSerializer.Deserialize<SavedGame>(fileText);
             } 
-            catch(InvalidDataException e) // If data for specific field (evauluated in property setter) is invalid
-            {
-                return e.Message; // Return exception's message as error message
-            }
             catch(Exception e)
             {
-                // If problem due to JSON or an invalid error
-                if(e is JsonException || e is InvalidOperationException)
+                // If problem due to invalid property value, JSON format issue, or an invalid operation
+                if(e is InvalidDataException || e is JsonException || e is InvalidOperationException)
                 {
-                    return "Cannot process because data is corrupt"; // Return error message
+                    return $"Cannot process because data in saved game file {fileName} is corrupt - {e.Message}"; // Return error message
                 }
                 else // If any other exception
                 {

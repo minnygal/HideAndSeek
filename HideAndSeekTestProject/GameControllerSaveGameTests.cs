@@ -172,7 +172,7 @@ namespace HideAndSeek
 
         [TestCaseSource(typeof(GameControllerSaveGameTests_TestCaseData), nameof(GameControllerSaveGameTests_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData))]
         [Category("GameController Load Failure")]
-        public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData(string errorMessage, string textInFile)
+        public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData(string endOfErrorMessage, string textInFile)
         {
             // Set up mock for file system
             mockFileSystem.Setup(manager => manager.File.Exists("my_corrupt_game.json")).Returns(true); // Mock that file exists
@@ -183,9 +183,9 @@ namespace HideAndSeek
 
             // Have game controller parse file name with load command
             message = gameController.ParseInput("load my_corrupt_game");
-
+            Console.WriteLine(message);
             // Assert that error message is correct
-            Assert.That(message, Is.EqualTo(errorMessage));
+            Assert.That(message, Is.EqualTo($"Cannot process because data in saved game file my_corrupt_game is corrupt - {endOfErrorMessage}"));
         }
 
         [Test]

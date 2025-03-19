@@ -140,40 +140,40 @@ namespace HideAndSeek
             {
                 // RANDOM ISSUES
                 // No data in file
-                yield return new TestCaseData("Cannot process because data is corrupt", "")
+                yield return new TestCaseData("The input does not contain any JSON tokens. Expected the input to start with a valid JSON token, when isFinalBlock is true. Path: $ | LineNumber: 0 | BytePositionInLine: 0.", "")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - no data in file");
 
                 // Only whitespace in file
-                yield return new TestCaseData("Cannot process because data is corrupt", "  ")
+                yield return new TestCaseData("The input does not contain any JSON tokens. Expected the input to start with a valid JSON token, when isFinalBlock is true. Path: $ | LineNumber: 0 | BytePositionInLine: 2.", "  ")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - only whitespace in file");
 
                 // Just characters in file (not JSON)
-                yield return new TestCaseData("Cannot process because data is corrupt", "ABCDeaoueou[{}}({}")
+                yield return new TestCaseData("'A' is an invalid start of a value. Path: $ | LineNumber: 0 | BytePositionInLine: 0.", "ABCDeaoueou[{}}({}")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - just characters in file");
 
                 // MISSING KEY/VALUE SET
                 // Missing player location
-                yield return new TestCaseData("Cannot process because data is corrupt",
+                yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: PlayerLocation",
                         "{" +
                             TestSavedGame_Data.SerializedTestSavedGame_HouseFileName + "," +
                             TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_MoveNumber + "," +
-                            TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents + "," +
+                            TestSavedGame_Data.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
                             TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_FoundOpponents +
                         "}")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - missing player location");
 
                 // Missing move number
-                yield return new TestCaseData("Cannot process because data is corrupt",
+                yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: MoveNumber",
                         "{" +
                             TestSavedGame_Data.SerializedTestSavedGame_HouseFileName + "," +
                             TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
-                            TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents + "," +
+                            TestSavedGame_Data.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
                             TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_FoundOpponents +
                         "}")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - missing move number");
 
                 // Missing opponents and hiding locations
-                yield return new TestCaseData("Cannot process because data is corrupt",
+                yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: OpponentsAndHidingLocations",
                         "{" +
                             TestSavedGame_Data.SerializedTestSavedGame_HouseFileName + "," +
                             TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
@@ -183,40 +183,40 @@ namespace HideAndSeek
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - missing opponents and hiding locations");
 
                 // Missing found opponents
-                yield return new TestCaseData("Cannot process because data is corrupt",
+                yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: FoundOpponents",
                         "{" +
                             TestSavedGame_Data.SerializedTestSavedGame_HouseFileName + "," +
                             TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
                             TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_MoveNumber + "," +
-                            TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents + "," +
+                            TestSavedGame_Data.SerializedTestSavedGame_OpponentsAndHidingLocations +
                         "}")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - missing found opponents");
 
                 // INVALID VALUE DATA
                 // Invalid current location
-                yield return new TestCaseData("Cannot process because data is corrupt - invalid CurrentLocation",
+                yield return new TestCaseData("invalid CurrentLocation",
                         "{" +
                             TestSavedGame_Data.SerializedTestSavedGame_HouseFileName + "," +
                             "\"PlayerLocation\":\"Tree\"," +
                             TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_MoveNumber + "," +
-                            TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents + "," +
+                            TestSavedGame_Data.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
                             TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_FoundOpponents +
                         "}")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - invalid CurrentLocation");
 
                 // Invalid (negative) move number
-                yield return new TestCaseData("Cannot process because data is corrupt - invalid MoveNumber",
+                yield return new TestCaseData("invalid MoveNumber",
                         "{" +
                             TestSavedGame_Data.SerializedTestSavedGame_HouseFileName + "," +
                             TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
                             "\"MoveNumber\":-1" + "," +
-                            TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents + "," +
+                            TestSavedGame_Data.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
                             TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_FoundOpponents +
                         "}")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - invalid MoveNumber");
 
                 // No opponents
-                yield return new TestCaseData("Cannot process because data is corrupt - no opponents",
+                yield return new TestCaseData("no opponents",
                         "{" +
                             TestSavedGame_Data.SerializedTestSavedGame_HouseFileName + "," +
                             TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
@@ -227,7 +227,7 @@ namespace HideAndSeek
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - no opponents");
 
                 // Invalid hiding place for Joe (not yet found) because location does not exist
-                yield return new TestCaseData("Cannot process because data is corrupt - invalid hiding location for opponent",
+                yield return new TestCaseData("invalid hiding location for opponent",
                         "{" +
                             TestSavedGame_Data.SerializedTestSavedGame_HouseFileName + "," +
                             TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
@@ -245,7 +245,7 @@ namespace HideAndSeek
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - invalid hiding place for opponent - Location does not exist");
 
                 // Invalid hiding place for Joe (not yet found) because hiding location is not of type LocationWithHidingPlace
-                yield return new TestCaseData("Cannot process because data is corrupt - invalid hiding location for opponent",
+                yield return new TestCaseData("invalid hiding location for opponent",
                         "{" +
                             TestSavedGame_Data.SerializedTestSavedGame_HouseFileName + "," +
                             TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
@@ -263,7 +263,7 @@ namespace HideAndSeek
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - invalid hiding place for opponent - not LocationWithHidingPlace");
 
                 // Found opponent is not in all opponents list
-                yield return new TestCaseData("Cannot process because data is corrupt - found opponent is not an opponent",
+                yield return new TestCaseData("found opponent is not an opponent",
                         "{" +
                             TestSavedGame_Data.SerializedTestSavedGame_HouseFileName + "," +
                             TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +

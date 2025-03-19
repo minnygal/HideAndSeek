@@ -38,7 +38,7 @@ namespace HideAndSeek
 
             // Create SavedGame using parameterized constructor
             savedGame = new SavedGame(house, "TestHouse", "Entry", 1, validOpponentsAndHidingPlacesDictionary, new List<string>());
-            
+
             // Assert that SavedGame properties are as expected
             Assert.Multiple(() =>
             {
@@ -76,7 +76,7 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because House file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+                Assert.That(exception.Message, Is.EqualTo($"House file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
             });
         }
 
@@ -117,7 +117,7 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because House file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+                Assert.That(exception.Message, Is.EqualTo($"House file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
             });
         }
 
@@ -147,7 +147,7 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo("Cannot process because data is corrupt - invalid CurrentLocation"));
+                Assert.That(exception.Message, Is.EqualTo("invalid CurrentLocation"));
             });
         }
 
@@ -180,7 +180,7 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo("Cannot process because data is corrupt - invalid MoveNumber"));
+                Assert.That(exception.Message, Is.EqualTo("invalid MoveNumber"));
             });
         }
 
@@ -216,7 +216,7 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo("Cannot process because data is corrupt - no opponents"));
+                Assert.That(exception.Message, Is.EqualTo("no opponents"));
             });
         }
 
@@ -246,7 +246,7 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo("Cannot process because data is corrupt - invalid hiding location for opponent"));
+                Assert.That(exception.Message, Is.EqualTo("invalid hiding location for opponent"));
             });
         }
 
@@ -271,7 +271,7 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo("Cannot process because data is corrupt - invalid hiding location for opponent"));
+                Assert.That(exception.Message, Is.EqualTo("invalid hiding location for opponent"));
             });
         }
 
@@ -354,7 +354,7 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo("Cannot process because data is corrupt - found opponent is not an opponent"));
+                Assert.That(exception.Message, Is.EqualTo("found opponent is not an opponent"));
             });
         }
 
@@ -413,7 +413,7 @@ namespace HideAndSeek
         public void Test_SavedGame_Deserialize()
         {
             // Initialize variable to text stored in mock serialized SaveGame file
-            string textInFile = 
+            string textInFile =
                 "{" +
                     "\"HouseFileName\":\"TestHouse\"," +
                     "\"PlayerLocation\":\"Entry\"," +
@@ -435,10 +435,10 @@ namespace HideAndSeek
             fileSystemMock.Setup((s) => s.File.Exists("TestHouse.json")).Returns(true);
             fileSystemMock.Setup((s) => s.File.ReadAllText("TestHouse.json")).Returns(textInHouseFile);
             House.FileSystem = fileSystemMock.Object;
-            
+
             // Attempt to deserialize text from file into SavedGame object
             savedGame = JsonSerializer.Deserialize<SavedGame>(textInFile);
-        
+
             // Assert that SavedGame properties are as expected
             Assert.Multiple(() =>
             {
@@ -450,6 +450,23 @@ namespace HideAndSeek
                 Assert.That(savedGame.MoveNumber, Is.EqualTo(1), "move number");
                 Assert.That(savedGame.OpponentsAndHidingLocations.Count(), Is.EqualTo(5), "number of opponents and hiding locations items");
                 Assert.That(savedGame.FoundOpponents, Is.Empty, "no found opponents");
+            });
+        }
+
+        
+        [Category("SavedGame Deserialize Failure")]
+        public void Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenFileFormatIsInvalid(string exceptionMessageEnding, string fileText)
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that deserializing the file to a SavedGame object throws an exception
+                var exception = Assert.Throws<JsonException>(() =>
+                {
+                    JsonSerializer.Deserialize<SavedGame>(fileText);
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo($"Cannot process because data in house layout file MyCorruptSavedGame is corrupt - {exceptionMessageEnding}"));
             });
         }
     }

@@ -58,7 +58,7 @@ namespace HideAndSeek
             // If House file name is invalid
             if (!(new FileSystem().IsValidName(fileName)))
             {
-                throw new InvalidDataException($"Cannot perform action because House file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"); // Throw exception
+                throw new InvalidDataException($"House file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"); // Throw exception
             }
 
             // Set House file name private variable, bypassing the HouseFileName property setter which calls House's CreateHouse method
@@ -100,7 +100,7 @@ namespace HideAndSeek
                 // If location does not exist, throw exception
                 if (!(House.DoesLocationExist(value)))
                 {
-                    throw new InvalidDataException("Cannot process because data is corrupt - invalid CurrentLocation");
+                    throw new InvalidDataException("invalid CurrentLocation");
                 }
 
                 // Set player location
@@ -125,7 +125,7 @@ namespace HideAndSeek
                 // If move number is invalid, throw exception
                 if (value < 1)
                 {
-                    throw new InvalidDataException("Cannot process because data is corrupt - invalid MoveNumber");
+                    throw new InvalidDataException("invalid MoveNumber");
                 }
 
                 // Set move number
@@ -151,7 +151,7 @@ namespace HideAndSeek
                 // If no opponents, throw exception
                 if (value.Count == 0)
                 {
-                    throw new InvalidDataException("Cannot process because data is corrupt - no opponents");
+                    throw new InvalidDataException("no opponents");
                 }
 
                 // If any of the LocationWithHidingPlaces do not exist, throw exception
@@ -159,7 +159,7 @@ namespace HideAndSeek
                 {
                     if (!(House.DoesLocationWithHidingPlaceExist(opponentInfo.Value)))
                     {
-                        throw new InvalidDataException("Cannot process because data is corrupt - invalid hiding location for opponent");
+                        throw new InvalidDataException("invalid hiding location for opponent");
                     }
                 }
 
@@ -187,7 +187,7 @@ namespace HideAndSeek
                 {
                     if (!(OpponentsAndHidingLocations.Keys.Contains(foundOpponent)))
                     {
-                        throw new InvalidDataException("Cannot process because data is corrupt - found opponent is not an opponent");
+                        throw new InvalidDataException("found opponent is not an opponent");
                     }
                 }
 
