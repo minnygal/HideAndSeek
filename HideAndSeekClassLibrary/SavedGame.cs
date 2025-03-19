@@ -40,11 +40,30 @@ namespace HideAndSeek
 
     public class SavedGame
     {
+        private House _house = null;
+
         /// <summary>
         /// House object associated with game (used for property validation)
         /// </summary>
         [JsonIgnore]
-        public House House { get; private set; }
+        public House House
+        {
+            get
+            {
+                // If house has not been set
+                if(_house == null)
+                {
+                    throw new NullReferenceException("House has not been set"); // Throw exception
+                }
+
+                // Return house
+                return _house;
+            }
+            set
+            {
+                _house = value; // Set house to value
+            }
+        }
 
         private string _houseFileName;
 

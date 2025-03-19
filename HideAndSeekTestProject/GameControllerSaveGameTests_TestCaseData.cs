@@ -152,6 +152,16 @@ namespace HideAndSeek
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - just characters in file");
 
                 // MISSING KEY/VALUE SET
+                // Missing house file name
+                yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: HouseFileName",
+                        "{" +
+                            TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
+                            TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_MoveNumber + "," +
+                            TestSavedGame_Data.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
+                            TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_FoundOpponents +
+                        "}")
+                    .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - missing house file name");
+                
                 // Missing player location
                 yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: PlayerLocation",
                         "{" +

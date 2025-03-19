@@ -412,6 +412,19 @@ namespace HideAndSeek
             {
                 savedGame = JsonSerializer.Deserialize<SavedGame>(fileText);
             } 
+            catch(NullReferenceException e)
+            {
+                // If SavedGame House has not been set
+                if(e.Message == "House has not been set")
+                {
+                    // Return custom message
+                    return $"Cannot process because data in saved game file {fileName} is corrupt - JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: HouseFileName";
+                }
+                else // if other NullReferenceException
+                {
+                    throw; // Bubble up exception
+                }
+            }
             catch(Exception e)
             {
                 // If problem due to invalid property value, JSON format issue, or an invalid operation
