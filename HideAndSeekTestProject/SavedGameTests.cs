@@ -23,7 +23,7 @@ namespace HideAndSeek
             savedGame = null;
         }
 
-        // Tests all setters except House and HouseFileName
+        // Tests all setters except House and HouseFileName (accesses House and HouseFileName propertyes' backing fields)
         [Test]
         [Category("SavedGame Constructor Success")]
         public void Test_SavedGame_Constructor_WithHouse_AndHouseFileName()
@@ -73,6 +73,46 @@ namespace HideAndSeek
 
                 // Assert that exception message is as expected
                 Assert.That(exception.Message, Is.EqualTo($"House file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+            });
+        }
+
+        [Test]
+        [Category("SavedGame House Failure")]
+        public void Test_SavedGame_Set_House_AndCheckErrorMessage_ForAlreadyHasValue()
+        {
+            // Create new SavedGame (giving House property's backing field a value)
+            savedGame = TestSavedGame_Data.GetNewTestSavedGame_NoFoundOpponents();
+
+            Assert.Multiple(() =>
+            {
+                // Assert that setting House property to another value raises an exception
+                var exception = Assert.Throws<InvalidOperationException>(() =>
+                {
+                    savedGame.House = new Mock<House>().Object;
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo("House property already has a value"));
+            });
+        }
+
+        [Test]
+        [Category("SavedGame HouseFileName Failure")]
+        public void Test_SavedGame_Set_HouseFileName_AndCheckErrorMessage_ForAlreadyHasValue()
+        {
+            // Create new SavedGame (giving HouseFileName property's backing field a value)
+            savedGame = TestSavedGame_Data.GetNewTestSavedGame_NoFoundOpponents();
+
+            Assert.Multiple(() =>
+            {
+                // Assert that setting HouseFileName property to another value raises an exception
+                var exception = Assert.Throws<InvalidOperationException>(() =>
+                {
+                    savedGame.HouseFileName = "NewFileName";
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo("HouseFileName property already has a value"));
             });
         }
 

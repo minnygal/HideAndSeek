@@ -44,31 +44,40 @@ namespace HideAndSeek
 
         /// <summary>
         /// House object associated with game (used for property validation)
+        /// Can only use setter when backing field has not been set
+        /// (security measure since other properties' setters rely on this property for data validation)
         /// </summary>
         [JsonIgnore]
         public House House
         {
             get
             {
-                // If house has not been set
+                // If backing field has not been set
                 if(_house == null)
                 {
                     throw new NullReferenceException("House has not been set"); // Throw exception
                 }
 
-                // Return house
+                // Return House
                 return _house;
             }
             set
             {
-                _house = value; // Set house to value
+                // If backing field already has a value
+                if(_house != null)
+                {
+                    throw new InvalidOperationException("House property already has a value"); // Throw exception
+                }
+
+                // Set backing field to value
+                _house = value;
             }
         }
 
         private string _houseFileName;
 
         /// <summary>
-        /// Set the House file name private variable, bypassing the HouseFileName property setter which calls House's CreateHouse method
+        /// Set the House file name backing field, bypassing the HouseFileName property setter which calls House's CreateHouse method
         /// </summary>
         /// <param name="fileName">Name of file to set</param>
         /// <exception cref="InvalidDataException">Exception thrown if file name is invalid</exception>
@@ -86,6 +95,8 @@ namespace HideAndSeek
 
         /// <summary>
         /// Name of file storing House object for layout (w/o JSON extension)
+        /// Can only use setter when backing field has not been set
+        /// (security measure since other properties' setters rely on House, which this sets, for data validation)
         /// Should only be used by JSON deserializer and tests
         /// CAUTION: setter calls House's CreateHouse method
         /// </summary>
@@ -98,8 +109,15 @@ namespace HideAndSeek
             }
             set
             {
-                House = House.CreateHouse(value); // Create House from value (must have this line for JSON deserializer)
+                // If backing field already has a value
+                if (_houseFileName != null)
+                {
+                    throw new InvalidOperationException("HouseFileName property already has a value"); // Throw exception
+                }
+
+                // Set property and create House
                 _houseFileName = value; // Set house file name
+                House = House.CreateHouse(HouseFileName); // Create House (must have this line for JSON deserializer because setters use House for data validation)
             }
         }
 
@@ -233,7 +251,7 @@ namespace HideAndSeek
         public SavedGame(House house, string houseFileName, string playerLocation, int moveNumber, Dictionary<string, string> opponentsAndHidingLocations, IEnumerable<string> foundOpponents)
         {
             this.House = house;
-            SetHouseFileName_WithoutCreatingHouse(houseFileName); // Set private variable rather than property to get around CreateHouse call in property setter
+            SetHouseFileName_WithoutCreatingHouse(houseFileName); // Set backing field rather than property to get around CreateHouse call in property setter
             PlayerLocation = playerLocation;
             MoveNumber = moveNumber;
             OpponentsAndHidingLocations = opponentsAndHidingLocations;
