@@ -23,6 +23,7 @@ namespace HideAndSeek
             savedGame = null;
         }
 
+        // Tests all setters except House and HouseFileName
         [Test]
         [Category("SavedGame Constructor Success")]
         public void Test_SavedGame_Constructor_WithHouse_AndHouseFileName()
@@ -45,6 +46,7 @@ namespace HideAndSeek
             });
         }
 
+        // Does NOT test House and HouseFileName setters
         [TestCase("")]
         [TestCase(" ")]
         [TestCase("my file")]
@@ -311,6 +313,7 @@ namespace HideAndSeek
             });
         }
 
+        // Tests all properties' getters
         [Test]
         [Category("SavedGame Serialize Success")]
         public void Test_SavedGame_Serialize_NoFoundOpponents()
@@ -319,6 +322,7 @@ namespace HideAndSeek
             Assert.That(serializedGame, Is.EqualTo(TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents));
         }
 
+        // Tests all properties' getters
         [Test]
         [Category("SavedGame Serialize Success")]
         public void Test_SavedGame_Serialize_3FoundOpponents()
@@ -327,6 +331,7 @@ namespace HideAndSeek
             Assert.That(serializedGame, Is.EqualTo(TestSavedGame_Data.SerializedTestSavedGame_3FoundOpponents));
         }
 
+        // Tests all properties' setters and House getter
         [Test]
         [Category("SavedGame Deserialize Success")]
         public void Test_SavedGame_Deserialize()
@@ -347,21 +352,24 @@ namespace HideAndSeek
             // Attempt to deserialize text from file into SavedGame object
             savedGame = JsonSerializer.Deserialize<SavedGame>(savedGameFileText);
 
-            // Assert that SavedGame properties are as expected
+            // Assert that properties are as expected
             Assert.Multiple(() =>
             {
-                Assert.That(savedGame.House.Name, Is.EqualTo("test house"));
-                Assert.That(savedGame.House.HouseFileName, Is.EqualTo("TestHouse"));
+                // Assert that SavedGame properties are as expected
                 Assert.That(savedGame.HouseFileName, Is.EqualTo("TestHouse"), "house file name");
-                Assert.That(savedGame.House.PlayerStartingPoint, Is.EqualTo("Entry"), "House player starting point");
                 Assert.That(savedGame.PlayerLocation, Is.EqualTo("Entry"), "player location");
                 Assert.That(savedGame.MoveNumber, Is.EqualTo(1), "move number");
                 Assert.That(savedGame.OpponentsAndHidingLocations.Count(), Is.EqualTo(5), "number of opponents and hiding locations items");
                 Assert.That(savedGame.FoundOpponents, Is.Empty, "no found opponents");
+
+                // Assert that House properties are as expected
+                Assert.That(savedGame.House.Name, Is.EqualTo("test house"));
+                Assert.That(savedGame.House.HouseFileName, Is.EqualTo("TestHouse"));
+                Assert.That(savedGame.House.PlayerStartingPoint, Is.EqualTo("Entry"), "House player starting point");
             });
         }
 
-        // Tests House property getter as well
+        // Tests all properties' setters and House getter
         [Test]
         [Category("SavedGame Deserialize Failure")]
         public void Test_SavedGame_Deserialize_AndCheckErrorMessage_ForNullReferenceException_ForMissingHouseFileName()
