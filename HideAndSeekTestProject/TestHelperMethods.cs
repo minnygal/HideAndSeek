@@ -6,7 +6,7 @@ using System.Text;
 using System.Threading.Tasks;
 using Moq;
 
-namespace HideAndSeekTestProject
+namespace HideAndSeek
 {
     /// <summary>
     /// Helper methods for tests

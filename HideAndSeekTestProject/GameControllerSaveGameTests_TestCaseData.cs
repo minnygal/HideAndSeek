@@ -1,5 +1,4 @@
-﻿using HideAndSeekTestProject;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using System.Collections; // From TestableIO
 using System.IO.Abstractions;
 
@@ -213,7 +212,6 @@ namespace HideAndSeek
                             TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_FoundOpponents +
                         "}")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - invalid HouseFileName");
-
 
                 // Invalid current location
                 yield return new TestCaseData("invalid CurrentLocation",

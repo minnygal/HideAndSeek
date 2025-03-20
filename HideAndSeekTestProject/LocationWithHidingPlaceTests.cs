@@ -1,11 +1,11 @@
-﻿namespace HideAndSeek
-{
-    using HideAndSeek;
-    using NUnit.Framework;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text.Json;
+﻿using HideAndSeek;
+using NUnit.Framework;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
 
+namespace HideAndSeek
+{
     /// <summary>
     /// LocationWithHidingPlace tests for testing properties and methods HideOpponent, CheckHidingPlace, and Serialize
     /// </summary>

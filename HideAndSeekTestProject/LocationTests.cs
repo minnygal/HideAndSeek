@@ -1,13 +1,13 @@
+using HideAndSeek;
+using Newtonsoft.Json.Linq;
+using NUnit.Framework;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text.Json;
+using System.Xml.Linq;
+
 namespace HideAndSeek
 {
-    using HideAndSeek;
-    using Newtonsoft.Json.Linq;
-    using NUnit.Framework;
-    using System.Collections.Generic;
-    using System.Linq;
-    using System.Text.Json;
-    using System.Xml.Linq;
-
     /// <summary>
     /// Location tests for testing properties and GetExit, ExitList, AddExit, and SetExitsDictionary methods
     /// </summary>

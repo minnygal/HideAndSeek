@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HideAndSeekTestProject
+namespace HideAndSeek
 {
     /// <summary>
     /// Class to test DirectionExtensions methods to get opposite direction and get direction description

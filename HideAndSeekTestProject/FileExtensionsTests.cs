@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HideAndSeekTestProject
+namespace HideAndSeek
 {
     /// <summary>
     /// Class to test FileExtensions methods for getting full file name for JSON and validating file name
