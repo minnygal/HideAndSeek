@@ -6,7 +6,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HideAndSeekTestProject
+namespace HideAndSeek
 {
     /// <summary>
     /// TestCaseData for some House tests for creating House objects with CreateHouse method

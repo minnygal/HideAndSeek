@@ -425,6 +425,10 @@ namespace HideAndSeek
                     throw; // Bubble up exception
                 }
             }
+            catch(FileNotFoundException e) // If House file not found
+            {
+                return e.Message; // Return error message
+            }
             catch(Exception e)
             {
                 // If problem due to invalid property value, JSON format issue, or an invalid operation

@@ -5,7 +5,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HideAndSeekTestProject
+namespace HideAndSeek
 {
     /// <summary>
     /// Static class providing House object for testing and serialized House text for testing

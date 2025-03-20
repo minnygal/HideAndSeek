@@ -17,7 +17,8 @@ namespace HideAndSeek
         {
             gameController = null;
             message = null;
-            mockFileSystem = new Mock<IFileSystem>();
+            mockFileSystem = new Mock<IFileSystem>(); // Set mock file system variable to new file system
+            House.FileSystem = new FileSystem(); // Set static House file system to new file system
         }
 
         [Test]
@@ -155,7 +156,7 @@ namespace HideAndSeek
 
         [Test]
         [Category("GameController Load Failure")]
-        public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForNonexistentFile()
+        public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForNonexistentSavedGameFile()
         {
             // Set up mock for file system
             mockFileSystem.Setup(manager => manager.File.Exists("my_saved_game.json")).Returns(false); // Mock that file does not exist
@@ -169,6 +170,42 @@ namespace HideAndSeek
             // Assert that error message is correct
             Assert.That(message, Is.EqualTo("Cannot load game because file my_saved_game does not exist"));
         }
+
+        [Test]
+        [Category("GameController Load Failure")]
+        public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForNonexistentHouseFile()
+        {
+            // Initialize variable to text in SavedGame file
+            string textInFile =
+            "{" +
+                "\"HouseFileName\":\"NonexistentHouse\"" + "," +
+                TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
+                TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_MoveNumber + "," +
+                TestSavedGame_Data.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
+                TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_FoundOpponents +
+            "}";
+
+            // Set up mock for GameController file system
+            mockFileSystem.Setup(manager => manager.File.Exists("my_saved_game.json")).Returns(true); // Mock that file exists
+            mockFileSystem.Setup(manager => manager.File.ReadAllText("my_saved_game.json")).Returns(textInFile); // Mock what file returns
+
+            // Set up mock for House file system
+            Mock<IFileSystem> houseMockFileSystem = new Mock<IFileSystem>(); // Create new mock file system for House
+            houseMockFileSystem.Setup((manager) => manager.File.Exists("DefaultHouse.json")).Returns(true); // Mock that default House file exists
+            houseMockFileSystem.Setup((manager) => manager.File.ReadAllText("DefaultHouse.json")).Returns(TestHouse_Data.SerializedTestHouse); // Mock text in default House file
+            houseMockFileSystem.Setup((manager) => manager.File.Exists("NonexistentHouse.json")).Returns(false); // Mock that nonexistent House file does not exist
+            House.FileSystem = houseMockFileSystem.Object; // Set House file system to mock file system
+
+            // Create new game controller (Random not mocked, so truly random hiding places generated)
+            gameController = new GameController(mockFileSystem.Object);
+
+            // Have game controller parse file name with load command
+            message = gameController.ParseInput("load my_saved_game");
+
+            // Assert that error message is correct
+            Assert.That(message, Is.EqualTo("Cannot load game because house layout file NonexistentHouse does not exist"));
+        }
+
 
         [TestCaseSource(typeof(GameControllerSaveGameTests_TestCaseData), nameof(GameControllerSaveGameTests_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData))]
         [Category("GameController Load Failure")]
