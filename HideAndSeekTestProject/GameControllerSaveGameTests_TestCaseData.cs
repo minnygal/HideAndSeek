@@ -203,6 +203,18 @@ namespace HideAndSeek
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - missing found opponents");
 
                 // INVALID VALUE DATA
+                // Invalid House file name
+                yield return new TestCaseData("Cannot perform action because file name \"a8}{{ /@uaou12 \" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)",
+                        "{" +
+                            "\"HouseFileName\":\"a8}{{ /@uaou12 \"" + "," +
+                            TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
+                            TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_MoveNumber + "," +
+                            TestSavedGame_Data.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
+                            TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_FoundOpponents +
+                        "}")
+                    .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - invalid HouseFileName");
+
+
                 // Invalid current location
                 yield return new TestCaseData("invalid CurrentLocation",
                         "{" +
