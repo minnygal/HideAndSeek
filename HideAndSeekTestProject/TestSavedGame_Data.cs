@@ -46,9 +46,20 @@ namespace HideAndSeek
         public static SavedGame GetNewTestSavedGame_3FoundOpponents()
         {
             return new SavedGame(
-                TestHouse_Data.GetNewTestHouse(), "DefaultHouse", "Bathroom", 7, OpponentsAndHidingPlaces, 
-                new List<string>() { "Joe", "Owen", "Ana" }
+                TestHouse_Data.GetNewTestHouse(), "DefaultHouse", "Bathroom", 7, OpponentsAndHidingPlaces,
+                FoundOpponents_3FoundOpponents
             );
+        }
+
+        /// <summary>
+        /// Names of Opponents found in test SavedGame with 3 Opponents found
+        /// </summary>
+        public static IEnumerable<string> FoundOpponents_3FoundOpponents 
+        {
+            get 
+            {
+                return new List<string>() { "Joe", "Owen", "Ana" };
+            }
         }
 
         /// <summary>

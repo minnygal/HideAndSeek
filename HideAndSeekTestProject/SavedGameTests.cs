@@ -334,7 +334,7 @@ namespace HideAndSeek
         // Tests all properties' setters and House getter
         [Test]
         [Category("SavedGame Deserialize Success")]
-        public void Test_SavedGame_Deserialize()
+        public void Test_SavedGame_Deserialize_NoFoundOpponents()
         {
             // Set mock file system to House property
             House.FileSystem = TestHelperMethods.CreateMockFileSystem_ToReadAllText("TestHouse.json", TestHouse_Data.SerializedTestHouse);
@@ -359,8 +359,53 @@ namespace HideAndSeek
                 Assert.That(savedGame.HouseFileName, Is.EqualTo("TestHouse"), "house file name");
                 Assert.That(savedGame.PlayerLocation, Is.EqualTo("Entry"), "player location");
                 Assert.That(savedGame.MoveNumber, Is.EqualTo(1), "move number");
-                Assert.That(savedGame.OpponentsAndHidingLocations.Count(), Is.EqualTo(5), "number of opponents and hiding locations items");
+                Assert.That(savedGame.OpponentsAndHidingLocations.Select((kvp) => kvp.Key),
+                    Is.EquivalentTo(TestSavedGame_Data.OpponentsAndHidingPlaces.Select((kvp) => kvp.Key)), "names of opponents in opponents and hiding locations dictionary");
+                Assert.That(savedGame.OpponentsAndHidingLocations.Select((kvp) => kvp.Value),
+                    Is.EquivalentTo(TestSavedGame_Data.OpponentsAndHidingPlaces.Select((kvp) => kvp.Value)), "names of hiding locations in opponents and hiding locations dictionary");
                 Assert.That(savedGame.FoundOpponents, Is.Empty, "no found opponents");
+
+                // Assert that House properties are as expected
+                Assert.That(savedGame.House.Name, Is.EqualTo("test house"));
+                Assert.That(savedGame.House.HouseFileName, Is.EqualTo("TestHouse"));
+                Assert.That(savedGame.House.PlayerStartingPoint, Is.EqualTo("Entry"), "House player starting point");
+            });
+        }
+
+        // Tests all properties' setters and House getter
+        [Test]
+        [Category("SavedGame Deserialize Success")]
+        public void Test_SavedGame_Deserialize_3FoundOpponents()
+        {
+            // Set mock file system to House property
+            House.FileSystem = TestHelperMethods.CreateMockFileSystem_ToReadAllText("TestHouse.json", TestHouse_Data.SerializedTestHouse);
+
+            // Initialize variable to serialized SavedGame
+            string savedGameFileText =
+                "{" +
+                    "\"HouseFileName\":\"TestHouse\"" + "," +
+                    TestSavedGame_Data.SerializedTestSavedGame_3FoundOpponents_PlayerLocation + "," +
+                    TestSavedGame_Data.SerializedTestSavedGame_3FoundOpponents_MoveNumber + "," +
+                    TestSavedGame_Data.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
+                    TestSavedGame_Data.SerializedTestSavedGame_3FoundOpponents_FoundOpponents +
+                "}";
+
+            // Attempt to deserialize text from file into SavedGame object
+            savedGame = JsonSerializer.Deserialize<SavedGame>(savedGameFileText);
+
+            // Assert that properties are as expected
+            Assert.Multiple(() =>
+            {
+                // Assert that SavedGame properties are as expected
+                Assert.That(savedGame.HouseFileName, Is.EqualTo("TestHouse"), "house file name");
+                Assert.That(savedGame.PlayerLocation, Is.EqualTo("Bathroom"), "player location");
+                Assert.That(savedGame.MoveNumber, Is.EqualTo(7), "move number");
+                Assert.That(savedGame.OpponentsAndHidingLocations.Select((kvp) => kvp.Key), 
+                    Is.EquivalentTo(TestSavedGame_Data.OpponentsAndHidingPlaces.Select((kvp) => kvp.Key)), "names of opponents in opponents and hiding locations dictionary");
+                Assert.That(savedGame.OpponentsAndHidingLocations.Select((kvp) => kvp.Value),
+                    Is.EquivalentTo(TestSavedGame_Data.OpponentsAndHidingPlaces.Select((kvp) => kvp.Value)), "names of hiding locations in opponents and hiding locations dictionary");
+                Assert.That(savedGame.FoundOpponents.Count(), Is.EqualTo(3), "3 found opponents");
+                Assert.That(savedGame.FoundOpponents, Is.EquivalentTo(TestSavedGame_Data.FoundOpponents_3FoundOpponents), "names of found opponents");
 
                 // Assert that House properties are as expected
                 Assert.That(savedGame.House.Name, Is.EqualTo("test house"));
