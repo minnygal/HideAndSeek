@@ -418,7 +418,7 @@ namespace HideAndSeek
                 if(e.Message == "House has not been set")
                 {
                     // Return custom message
-                    return $"Cannot process because data in saved game file {fileName} is corrupt - JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: HouseFileName";
+                    return $"Cannot process because data is corrupt - JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: HouseFileName";
                 }
                 else // if other NullReferenceException
                 {
@@ -434,7 +434,7 @@ namespace HideAndSeek
                 // If problem due to invalid property value, JSON format issue, or an invalid operation
                 if(e is InvalidDataException || e is JsonException || e is InvalidOperationException)
                 {
-                    return $"Cannot process because data in saved game file {fileName} is corrupt - {e.Message}"; // Return error message
+                    return $"Cannot process because data is corrupt - {e.Message}"; // Return error message
                 }
                 else // If any other exception
                 {

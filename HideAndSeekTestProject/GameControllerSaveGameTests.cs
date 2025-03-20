@@ -206,7 +206,6 @@ namespace HideAndSeek
             Assert.That(message, Is.EqualTo("Cannot load game because house layout file NonexistentHouse does not exist"));
         }
 
-
         [TestCaseSource(typeof(GameControllerSaveGameTests_TestCaseData), nameof(GameControllerSaveGameTests_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData))]
         [Category("GameController Load Failure")]
         public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData(string endOfErrorMessage, string textInFile)
@@ -222,7 +221,7 @@ namespace HideAndSeek
             message = gameController.ParseInput("load my_corrupt_game");
             
             // Assert that error message is correct
-            Assert.That(message, Is.EqualTo($"Cannot process because data in saved game file my_corrupt_game is corrupt - {endOfErrorMessage}"));
+            Assert.That(message, Is.EqualTo($"Cannot process because data is corrupt - {endOfErrorMessage}"));
         }
 
         [Test]
