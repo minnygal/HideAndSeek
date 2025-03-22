@@ -474,6 +474,18 @@ namespace HideAndSeek
             {
                 FoundOpponents.Add(OpponentsAndHidingLocations.Keys.First((x) => x.Name == opponent)); // Add Opponent object with matching name to FoundOpponents list
             }
+
+            // Clear hiding places in the House
+            House.ClearHidingPlaces();
+
+            // Initialize to dictionary of unfound Opponents who should still be hidden and their hiding locations
+            IDictionary<Opponent, LocationWithHidingPlace> unfoundOpponentsAndHidingLocations = OpponentsAndHidingLocations.Where((kvp) => !(FoundOpponents.Contains(kvp.Key))).ToDictionary();
+
+            // Hide each unfound Opponent in their hiding location
+            foreach(KeyValuePair<Opponent, LocationWithHidingPlace> kvp in unfoundOpponentsAndHidingLocations)
+            {
+                kvp.Value.HideOpponent(kvp.Key);
+            }
         }
 
         /// <summary>
