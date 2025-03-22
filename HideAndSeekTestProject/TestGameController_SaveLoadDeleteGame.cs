@@ -6,7 +6,8 @@ namespace HideAndSeek
     /// <summary>
     /// GameController tests for saving/loading/deleting games
     /// </summary>
-    public class GameControllerSaveGameTests
+    [TestFixture]
+    public class TestGameController_SaveLoadDeleteGame
     {
         private GameController gameController;
         private string message; // Message returned by GameController's ParseInput method
@@ -17,12 +18,13 @@ namespace HideAndSeek
         {
             gameController = null;
             message = null;
-            mockFileSystem = new Mock<IFileSystem>();
+            mockFileSystem = new Mock<IFileSystem>(); // Set mock file system variable to new file system
+            House.FileSystem = new FileSystem(); // Set static House file system to new file system
         }
 
         [Test]
-        [Category("GameController Save Load Delete Error")]
-        public void Test_GameController_ParseInput_ToSaveLoadOrDeleteGame_AndCheckErrorMessage_WhenFileNameIsInvalid(
+        [Category("GameController Save Load Delete Failure")]
+        public void Test_GameController_ParseInput_ToSaveLoadOrDeleteGame_AndCheckErrorMessage_ForInvalidFileName(
             [Values("save", "load", "delete")] string commandKeyword,
             [Values(" ", " my saved game", " my\\saved\\game", " my/saved/game", " my/saved\\ game")] string restOfCommand)
         {
@@ -34,34 +36,18 @@ namespace HideAndSeek
         [TestCase("save")]
         [TestCase("load")]
         [TestCase("delete")]
-        [Category("GameController Save Load Delete Error")]
-        public void Test_GameController_ParseInput_ToSaveLoadOrDeleteGame_AndCheckErrorMessage_WhenNoFileNameEntered(string commandWord)
+        [Category("GameController Save Load Delete Failure")]
+        public void Test_GameController_ParseInput_ToSaveLoadOrDeleteGame_AndCheckErrorMessage_ForNoFileName(string commandWord)
         {
             gameController = new GameController();
             message = gameController.ParseInput(commandWord);
             Assert.That(message, Is.EqualTo("Cannot perform action because no file name was entered"));
         }
 
-        [Test, Category("GameController Save Error")]
-        public void Test_GameController_ParseInput_ToSaveGame_AndCheckErrorMessage_WhenFileAlreadyExists()
-        {
-            // Set up mock for file system
-            mockFileSystem.Setup(system => system.File.Exists("fileName.json")).Returns(true); // Mock that file already exists
-
-            // Set up game cotroller
-            gameController = new GameController(mockFileSystem.Object);
-
-            // Attempt to save game
-            message = gameController.ParseInput($"save fileName");
-
-            // Assert that error message is correct
-            Assert.That(message, Is.EqualTo("Cannot perform action because a file named fileName already exists"));
-        }
-
-        [TestCase("a", "Game successfully saved in a"), ]
+        [TestCase("a", "Game successfully saved in a"),]
         [TestCase("my_saved_game", "Game successfully saved in my_saved_game")]
         [Category("GameController Save Success")]
-        public void Test_GameController_ParseInput_ToSaveGame_AndCheckSuccessMessage_WhenFileNameIsValid(string fileName, string expected)
+        public void Test_GameController_ParseInput_ToSaveGame_AndCheckSuccessMessage(string fileName, string expected)
         {
             // Set up mock for file system
             mockFileSystem.Setup(system => system.File.WriteAllText($"{fileName}.json", It.IsAny<string>())); // Accept any text written to file
@@ -76,9 +62,9 @@ namespace HideAndSeek
             Assert.That(message, Is.EqualTo(expected));
         }
 
-        [TestCaseSource(typeof(SaveGameTests_TestCaseData), nameof(SaveGameTests_TestCaseData.TestCases_For_Test_GameController_ParseInput_AndCheckTextSavedToFile))]
+        [TestCaseSource(typeof(TestGameController_SaveLoadDeleteGame_TestCaseData), nameof(TestGameController_SaveLoadDeleteGame_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile))]
         [Category("GameController Save Success")]
-        public string Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile(Func<IFileSystem, GameController> startNewGame)
+        public void Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile(Func<IFileSystem, GameController> startNewGame, string expectedTextInFile)
         {
             // Create variable to store text written to file
             string? actualTextInFile = null;
@@ -94,8 +80,25 @@ namespace HideAndSeek
             gameController = startNewGame(mockFileSystem.Object);
             gameController.ParseInput("save my_saved_game");
 
-            // Return actual text written to file
-            return actualTextInFile;
+            // Assert that actual text in file is equal to expected text in file
+            Assert.That(actualTextInFile, Is.EqualTo(expectedTextInFile));
+        }
+
+        [Test]
+        [Category("GameController Save Failure")]
+        public void Test_GameController_ParseInput_ToSaveGame_AndCheckErrorMessage_ForAlreadyExistingFile()
+        {
+            // Set up mock for file system
+            mockFileSystem.Setup(system => system.File.Exists("fileName.json")).Returns(true); // Mock that file already exists
+
+            // Set up game cotroller
+            gameController = new GameController(mockFileSystem.Object);
+
+            // Attempt to save game
+            message = gameController.ParseInput($"save fileName");
+
+            // Assert that error message is correct
+            Assert.That(message, Is.EqualTo("Cannot perform action because a file named fileName already exists"));
         }
 
         [TestCase("a", "Game successfully loaded from a")]
@@ -121,9 +124,9 @@ namespace HideAndSeek
         }
 
         // Does not check message
-        [TestCaseSource(typeof(SaveGameTests_TestCaseData), nameof(SaveGameTests_TestCaseData.TestCases_For_Test_GameController_ParseInput_LoadGame_AndCheckGameIsLoadedSuccessfully))]
+        [TestCaseSource(typeof(TestGameController_SaveLoadDeleteGame_TestCaseData), nameof(TestGameController_SaveLoadDeleteGame_TestCaseData.Test_GameController_ParseInput_ToLoadGame_AndCheckProperties))]
         [Category("GameController Load Success")]
-        public void Test_GameController_ParseInput_ToLoadGame_AndCheckGameIsLoadedSuccessfully(string currentLocation, int moveNumber, List<string> foundOpponents, string textInFile)
+        public void Test_GameController_ParseInput_ToLoadGame_AndCheckProperties(string currentLocation, int moveNumber, List<string> foundOpponents, string textInFile)
         {
             // Set up mock for file system
             mockFileSystem.Setup(manager => manager.File.Exists("my_saved_game.json")).Returns(true); // Mock that file exists
@@ -153,8 +156,8 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("GameController Load Error")]
-        public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenFileDoesNotExist()
+        [Category("GameController Load Failure")]
+        public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForNonexistentSavedGameFile()
         {
             // Set up mock for file system
             mockFileSystem.Setup(manager => manager.File.Exists("my_saved_game.json")).Returns(false); // Mock that file does not exist
@@ -169,39 +172,22 @@ namespace HideAndSeek
             Assert.That(message, Is.EqualTo("Cannot load game because file my_saved_game does not exist"));
         }
 
-        [TestCaseSource(typeof(SaveGameTests_TestCaseData), nameof(SaveGameTests_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenFileDataIsInvalid))]
-        [Category("GameController Load Error")]
-        public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenFileDataIsInvalid(string errorMessage, string textInFile)
+        [TestCaseSource(typeof(TestGameController_SaveLoadDeleteGame_TestCaseData), nameof(TestGameController_SaveLoadDeleteGame_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData))]
+        [Category("GameController Load Failure")]
+        public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData(string endOfErrorMessage, string textInFile)
         {
             // Set up mock for file system
-            mockFileSystem.Setup(manager => manager.File.Exists("my_saved_game.json")).Returns(true); // Mock that file exists
-            mockFileSystem.Setup(manager => manager.File.ReadAllText("my_saved_game.json")).Returns(textInFile); // Mock what file returns
+            mockFileSystem.Setup(manager => manager.File.Exists("my_corrupt_game.json")).Returns(true); // Mock that file exists
+            mockFileSystem.Setup(manager => manager.File.ReadAllText("my_corrupt_game.json")).Returns(textInFile); // Mock what file returns
 
             // Create new game controller (Random not mocked, so truly random hiding places generated)
             gameController = new GameController(mockFileSystem.Object);
 
             // Have game controller parse file name with load command
-            message = gameController.ParseInput("load my_saved_game");
-
+            message = gameController.ParseInput("load my_corrupt_game");
+            
             // Assert that error message is correct
-            Assert.That(message, Is.EqualTo(errorMessage));
-        }
-
-        [Test]
-        [Category("GameController Delete Error")]
-        public void Test_GameController_ParseInput_ToDeleteGame_AndCheckErrorMessage_WhenFileDoesNotExist()
-        {
-            // Set up mock for file system
-            mockFileSystem.Setup(manager => manager.File.Exists("my_saved_game.json")).Returns(false); // Mock that file does not exist
-
-            // Create new game controller
-            gameController = new GameController(mockFileSystem.Object);
-
-            // Have game controller parse file name with delete command
-            message = gameController.ParseInput("delete my_saved_game");
-
-            // Assert that error message is as expected
-            Assert.That(message, Is.EqualTo("Could not delete game because file my_saved_game does not exist"));
+            Assert.That(message, Is.EqualTo($"Cannot process because data is corrupt - {endOfErrorMessage}"));
         }
 
         [Test]
@@ -222,6 +208,23 @@ namespace HideAndSeek
 
             // Assert that success message is as expected
             Assert.That(message, Is.EqualTo("Game file my_saved_game has been successfully deleted"));
+        }
+
+        [Test]
+        [Category("GameController Delete Failure")]
+        public void Test_GameController_ParseInput_ToDeleteGame_AndCheckErrorMessage_ForNonexistentFile()
+        {
+            // Set up mock for file system
+            mockFileSystem.Setup(manager => manager.File.Exists("my_nonexistent_game.json")).Returns(false); // Mock that file does not exist
+
+            // Create new game controller
+            gameController = new GameController(mockFileSystem.Object);
+
+            // Have game controller parse file name with delete command
+            message = gameController.ParseInput("delete my_nonexistent_game");
+
+            // Assert that error message is as expected
+            Assert.That(message, Is.EqualTo("Could not delete game because file my_nonexistent_game does not exist"));
         }
     }
 }

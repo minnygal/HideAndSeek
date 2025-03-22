@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32.SafeHandles;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO.Abstractions;
@@ -180,10 +181,9 @@ namespace HideAndSeek
 
         /// <summary>
         /// Rehide all Opponents in specified hiding places
-        /// Should only be called from GameController and tests
         /// </summary>
         /// <param name="hidingPlaces">Places to hide Opponents</param>
-        public void RehideAllOpponents(IEnumerable<LocationWithHidingPlace> hidingPlaces)
+        private void RehideAllOpponents(IEnumerable<LocationWithHidingPlace> hidingPlaces)
         {
             // Clear hiding places
             House.ClearHidingPlaces();
@@ -200,6 +200,23 @@ namespace HideAndSeek
 
             // Set Opponents and hiding locations dictionary to dictionary with new hiding locations
             OpponentsAndHidingLocations = opponentsAndNewHidingLocations;
+        }
+
+        /// <summary>
+        /// Rehide all Opponents in specified hiding places
+        /// Should only be called from GameController and tests
+        /// </summary>
+        /// <param name="hidingPlaces">Names of hiding places for Opponents</param>
+        public void RehideAllOpponents(IEnumerable<string> hidingPlaces)
+        {
+            List<LocationWithHidingPlace> hidingPlacesAsObjects = new List<LocationWithHidingPlace>();
+
+            foreach(string hidingPlace in hidingPlaces)
+            {
+                hidingPlacesAsObjects.Add(House.GetLocationWithHidingPlaceByName(hidingPlace));
+            }
+
+            RehideAllOpponents(hidingPlacesAsObjects);
         }
 
         /// <summary>
@@ -395,16 +412,29 @@ namespace HideAndSeek
             {
                 savedGame = JsonSerializer.Deserialize<SavedGame>(fileText);
             } 
-            catch(InvalidDataException e) // If data for specific field (evauluated in property setter) is invalid
+            catch(NullReferenceException e)
             {
-                return e.Message; // Return exception's message as error message
+                // If SavedGame House has not been set
+                if(e.Message == "House has not been set")
+                {
+                    // Return custom message
+                    return $"Cannot process because data is corrupt - JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: HouseFileName";
+                }
+                else // if other NullReferenceException
+                {
+                    throw; // Bubble up exception
+                }
+            }
+            catch(FileNotFoundException e) // If House file not found
+            {
+                return e.Message; // Return error message
             }
             catch(Exception e)
             {
-                // If problem due to JSON or an invalid error
-                if(e is JsonException || e is InvalidOperationException)
+                // If problem due to invalid property value, JSON format issue, or an invalid operation
+                if(e is InvalidDataException || e is JsonException || e is InvalidOperationException)
                 {
-                    return "Cannot process because data is corrupt"; // Return error message
+                    return $"Cannot process because data is corrupt - {e.Message}"; // Return error message
                 }
                 else // If any other exception
                 {

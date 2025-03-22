@@ -19,6 +19,7 @@ namespace HideAndSeek
      * **/
 
     /** CHANGES
+     * -I added data validation for the Name property.
      * -I removed DescribeDirection method and put the logic in Direction file as Extension class
      *  for separation of concerns.
      * -I used a loop instead of LINQ in the ExitList method (just my approach).
@@ -34,7 +35,8 @@ namespace HideAndSeek
      * -I modified the Direction changing logic in AddReturnExit (just my approach).
      * -I used Direction changing in AddExit (just my approach).
      * -I converted lambdas to regular method bodies for easier modification.
-     * -I added a property and method for JSON serialization.
+     * -I added a property and method for JSON serialization of exits.
+     * -I added a method to set Exits property (called from House after JSON deserialization).
      * -I added comments for easier reading.
      * **/
 
@@ -57,7 +59,7 @@ namespace HideAndSeek
                 // If invalid name is entered
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    throw new InvalidDataException($"Cannot perform action because location name \"{value}\" is invalid (is empty or contains only whitespace"); // Throw exception
+                    throw new InvalidDataException($"Cannot perform action because location name \"{value}\" is invalid (is empty or contains only whitespace)"); // Throw exception
                 }
 
                 // Set name variable
@@ -87,7 +89,7 @@ namespace HideAndSeek
                     // If name is invalid
                     if(string.IsNullOrWhiteSpace(kvp.Value))
                     {
-                        throw new InvalidDataException($"Cannot perform action because location name \"{kvp.Value}\" is invalid (is empty or contains only whitespace"); // Throw exception
+                        throw new InvalidDataException($"Cannot perform action because location name \"{kvp.Value}\" for exit in direction \"{kvp.Key}\" is invalid (is empty or contains only whitespace"); // Throw exception
                     }
                 }
 
@@ -130,6 +132,24 @@ namespace HideAndSeek
         /// The exits out of this location
         /// </summary>
         public IDictionary<Direction, Location> Exits { get; private set; } = new Dictionary<Direction, Location>();
+        
+        /// <summary>
+        /// Set the Exits dictionary
+        /// Should only be called by House method
+        /// </summary>
+        /// <param name="exits">Dictionary of exits</param>
+        /// <exception cref="InvalidDataException">Exception thrown if dictionary is empty</exception>
+        public void SetExitsDictionary(IDictionary<Direction, Location> exits)
+        {
+            // If dictionary is empty
+            if(exits.Count() == 0)
+            {
+                throw new InvalidDataException($"Cannot perform action because location \"{Name}\" must be assigned at least one exit"); // Throw exception
+            }
+
+            // Set Exits property
+            Exits = exits;
+        }
 
         /// <summary>
         /// Constructor for JSON deserialization
@@ -144,7 +164,6 @@ namespace HideAndSeek
         public Location(string name)
         {
             Name = name;
-            ExitsForSerialization = new Dictionary<Direction, string>();
         }
 
         public override string ToString() => Name;
