@@ -147,11 +147,20 @@ namespace HideAndSeek
             // Assert that game state has been restored successfully
             Assert.Multiple(() =>
             {
+                // Assert that GameController properties are as expected
                 Assert.That(gameController.CurrentLocation.Name, Is.EqualTo(currentLocation), "player location");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(moveNumber), "move number");
                 Assert.That(gameController.OpponentsAndHidingLocations.Select((x) => x.Key.Name), Is.EquivalentTo(expectedAllOpponentsNames), "all opponents");
                 Assert.That(gameController.OpponentsAndHidingLocations.Select((x) => x.Value.Name), Is.EquivalentTo(expectedAllOpponentsHidingPlaces), "opponents' hiding places");
                 Assert.That(gameController.FoundOpponents.Select((x) => x.Name), Is.EquivalentTo(foundOpponents), "found opponents");
+
+                // Assert that House properties are as expected
+                Assert.That(gameController.House.Name, Is.EqualTo("my house"), "House name");
+                Assert.That(gameController.House.HouseFileName, Is.EqualTo("DefaultHouse"), "House file name");
+                Assert.That(gameController.House.PlayerStartingPoint, Is.EqualTo("Entry"), "House starting point");
+                Assert.That(gameController.House.Locations.Select((l) => l.Name), Is.EquivalentTo(MyTestHouse.TestHouseExpectedProperties_Locations_Names), "House all locations names");
+                Assert.That(gameController.House.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(MyTestHouse.TestHouseExpectedProperties_LocationsWithoutHidingPlaces_Names), "House locations without hiding places names");
+                Assert.That(gameController.House.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(MyTestHouse.TestHouseExpectedProperties_LocationsWithHidingPlaces_Names), "House locations with hiding places names");
             });
         }
 
