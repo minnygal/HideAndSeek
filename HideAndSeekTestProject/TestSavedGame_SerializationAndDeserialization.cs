@@ -206,7 +206,7 @@ namespace HideAndSeek
 
         [TestCaseSource(typeof(TestSavedGame_Deserialization_TestCaseData), nameof(TestSavedGame_Deserialization_TestCaseData.TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenHouseFileFormatIsInvalid))]
         [Category("SavedGame Deserialize House Failure")]
-        public void Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenHouseFileFormatIsInvalid(string houseFileText, string exceptionMessageEnding)
+        public void Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenHouseFileFormatIsInvalid(string exceptionMessageEnding, string houseFileText)
         {
             // Assign mock file system to House property
             House.FileSystem = MockFileSystemHelper.CreateMockFileSystem_ToReadAllText("DefaultHouse.json", houseFileText);
@@ -226,7 +226,7 @@ namespace HideAndSeek
 
         [TestCaseSource(typeof(TestSavedGame_Deserialization_TestCaseData), nameof(TestSavedGame_Deserialization_TestCaseData.TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenHouseFileDataInvalidValue))]
         [Category("SavedGame Deserialize House Failure")]
-        public void Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenHouseFileDataInvalidValue(string houseFileText, string exceptionMessageEnding)
+        public void Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenHouseFileDataInvalidValue(string exceptionMessageEnding, string houseFileText)
         {
             // Assign mock file system to House property
             House.FileSystem = MockFileSystemHelper.CreateMockFileSystem_ToReadAllText("DefaultHouse.json", houseFileText);

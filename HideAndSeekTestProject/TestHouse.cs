@@ -463,7 +463,7 @@ namespace HideAndSeek
 
         [TestCaseSource(typeof(TestHouse_TestCaseData), nameof(TestHouse_TestCaseData.TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_ForJsonException_WhenFileFormatIsInvalid))]
         [Category("House CreateHouse Failure")]
-        public void Test_House_CreateHouse_AndCheckErrorMessage_ForJsonException_WhenFileFormatIsInvalid(string fileText, string exceptionMessageEnding)
+        public void Test_House_CreateHouse_AndCheckErrorMessage_ForJsonException_WhenFileFormatIsInvalid(string exceptionMessageEnding, string fileText)
         {
             // Assign mock file system to House property
             House.FileSystem = MockFileSystemHelper.CreateMockFileSystem_ToReadAllText("MyCorruptFile.json", fileText);
@@ -503,7 +503,7 @@ namespace HideAndSeek
 
         [TestCaseSource(typeof(TestHouse_TestCaseData), nameof(TestHouse_TestCaseData.TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasWhitespaceValue))]
         [Category("House CreateHouse Failure")]
-        public void Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasWhitespaceValue(string fileText, string exceptionMessageEnding)
+        public void Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasWhitespaceValue(string exceptionMessageEnding, string fileText)
         {
             // Assign mock file system to House property
             House.FileSystem = MockFileSystemHelper.CreateMockFileSystem_ToReadAllText("MyInvalidDataFile.json", fileText);
@@ -523,7 +523,7 @@ namespace HideAndSeek
 
         [TestCaseSource(typeof(TestHouse_TestCaseData), nameof(TestHouse_TestCaseData.TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue))]
         [Category("House CreateHouse Failure")]
-        public void Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue(string fileText, string exceptionMessageEnding)
+        public void Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue(string exceptionMessageEnding, string fileText)
         {
             // Assign mock file system to House property
             House.FileSystem = MockFileSystemHelper.CreateMockFileSystem_ToReadAllText("MyInvalidDataFile.json", fileText);

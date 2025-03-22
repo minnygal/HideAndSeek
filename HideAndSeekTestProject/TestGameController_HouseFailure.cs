@@ -66,7 +66,7 @@ namespace HideAndSeek
         [TestCaseSource(typeof(TestGameController_HouseFailure_TestCaseData),
             nameof(TestGameController_HouseFailure_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileFormatIsInvalid))]
         [Category("GameController Load House Failure")]
-        public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileFormatIsInvalid(string fileText, string exceptionMessageEnding)
+        public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileFormatIsInvalid(string exceptionMessageEnding, string fileText)
         {
             // Get GameController
             gameController = GetGameControllerForCorruptHouseFileTests(fileText);
@@ -83,7 +83,7 @@ namespace HideAndSeek
         [TestCaseSource(typeof(TestGameController_HouseFailure_TestCaseData),
             nameof(TestGameController_HouseFailure_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileDataHasWhitespaceValue))]
         [Category("GameController Load House Failure")]
-        public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileDataHasWhitespaceValue(string fileText, string exceptionMessageEnding)
+        public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileDataHasWhitespaceValue(string exceptionMessageEnding, string fileText)
         {
             // Get GameController
             gameController = GetGameControllerForCorruptHouseFileTests(fileText);
@@ -116,7 +116,7 @@ namespace HideAndSeek
         [TestCaseSource(typeof(TestGameController_HouseFailure_TestCaseData),
             nameof(TestGameController_HouseFailure_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidValue))]
         [Category("GameController Load House Failure")]
-        public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidValue(string fileText, string errorMessageEnding)
+        public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidValue(string errorMessageEnding, string fileText)
         {
             // Get GameController
             gameController = GetGameControllerForCorruptHouseFileTests(fileText);
