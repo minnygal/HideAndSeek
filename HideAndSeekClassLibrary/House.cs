@@ -96,11 +96,11 @@ namespace HideAndSeek
             // Get text from House file
             string houseFileText = FileSystem.File.ReadAllText(fullFileName);
 
-            // Deserialize text from file into House object and set house private variable to it
+            // Deserialize text from file into House object, set house private variable to it, and set up House
             try
             {
                 house = JsonSerializer.Deserialize<House>(houseFileText); // Deserialize House
-                house.SetUpHouseAfterDeserialization(); // Set Locations and StartingPoint
+                house.SetUpHouseAfterDeserialization(); // Set up House after deserialization
             }
             catch (JsonException e)
             {
