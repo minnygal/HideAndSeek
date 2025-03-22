@@ -100,6 +100,7 @@ namespace HideAndSeek
             try
             {
                 house = JsonSerializer.Deserialize<House>(houseFileText); // Deserialize House
+                house.SetUpHouseAfterDeserialization(); // Set Locations and StartingPoint
             }
             catch (JsonException e)
             {
@@ -118,7 +119,6 @@ namespace HideAndSeek
                 throw e;
             }
 
-            house.SetUpHouseAfterDeserialization(); // Set Locations and StartingPoint
             return house; // Return House
         }
 

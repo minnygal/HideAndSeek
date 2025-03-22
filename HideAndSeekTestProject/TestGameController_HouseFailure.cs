@@ -125,7 +125,7 @@ namespace HideAndSeek
             message = gameController.ParseInput("load my_saved_game");
 
             // Assert that error message is correct
-            Assert.That(message, Is.EqualTo($"Cannot process because data is corrupt - {errorMessageEnding}"));
+            Assert.That(message, Is.EqualTo($"Cannot process because data is corrupt - Cannot process because data in house layout file CorruptHouse is invalid - {errorMessageEnding}"));
         }
 
         private GameController GetGameControllerForCorruptHouseFileTests(string fileText)

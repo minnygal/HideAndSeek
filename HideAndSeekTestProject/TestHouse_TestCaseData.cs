@@ -302,7 +302,7 @@ namespace HideAndSeek
                            "[" +
                            "]" +
                        "}",
-                       "Cannot process because data in house layout file MyInvalidDataFile is invalid - Cannot perform action because locations with hiding places list is empty")
+                       "Cannot perform action because locations with hiding places list is empty")
                    .SetName("Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue - invalid LocationsWithHidingPlaces - empty");
 
                 // Invalid LocationsWithoutHidingPlaces - Location has no exits

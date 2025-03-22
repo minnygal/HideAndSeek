@@ -523,7 +523,7 @@ namespace HideAndSeek
 
         [TestCaseSource(typeof(TestHouse_TestCaseData), nameof(TestHouse_TestCaseData.TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue))]
         [Category("House CreateHouse Failure")]
-        public void Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue(string fileText, string exceptionMessage)
+        public void Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue(string fileText, string exceptionMessageEnding)
         {
             // Assign mock file system to House property
             House.FileSystem = MockFileSystemHelper.CreateMockFileSystem_ToReadAllText("MyInvalidDataFile.json", fileText);
@@ -537,7 +537,7 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo(exceptionMessage));
+                Assert.That(exception.Message, Is.EqualTo($"Cannot process because data in house layout file MyInvalidDataFile is invalid - {exceptionMessageEnding}"));
             });
         }
 
