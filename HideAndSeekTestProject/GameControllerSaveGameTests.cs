@@ -224,6 +224,71 @@ namespace HideAndSeek
             Assert.That(message, Is.EqualTo($"Cannot process because data is corrupt - {endOfErrorMessage}"));
         }
 
+        [TestCaseSource(typeof(GameControllerSaveGameTests_CorruptHouse_TestCaseData), 
+            nameof(GameControllerSaveGameTests_CorruptHouse_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileFormatIsInvalid))]
+        [Category("GameController Load House Failure")]
+        public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileFormatIsInvalid(string fileText, string exceptionMessageEnding)
+        {
+            // Get GameController
+            gameController = GetGameControllerForCorruptHouseFileTests(fileText);
+
+            // Have game controller parse file name with load command
+            message = gameController.ParseInput("load my_saved_game");
+
+            // Assert that error message is correct
+            Assert.That(message, Is.EqualTo("Cannot process because data is corrupt - " +
+                                            "Cannot process because data in house layout file CorruptHouse is corrupt - " +
+                                            exceptionMessageEnding));
+        }
+
+        [TestCaseSource(typeof(GameControllerSaveGameTests_CorruptHouse_TestCaseData),
+            nameof(GameControllerSaveGameTests_CorruptHouse_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileDataHasWhitespaceValue))]
+        [Category("GameController Load House Failure")]
+        public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileDataHasWhitespaceValue(string fileText, string exceptionMessageEnding)
+        {
+            // Get GameController
+            gameController = GetGameControllerForCorruptHouseFileTests(fileText);
+
+            // Have game controller parse file name with load command
+            message = gameController.ParseInput("load my_saved_game");
+
+            // Assert that error message is correct
+            Assert.That(message, Is.EqualTo("Cannot process because data is corrupt - " +
+                                            "Cannot process because data in house layout file CorruptHouse is invalid - " +
+                                            exceptionMessageEnding));
+        }
+
+        [TestCaseSource(typeof(GameControllerSaveGameTests_CorruptHouse_TestCaseData),
+            nameof(GameControllerSaveGameTests_CorruptHouse_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidDirection))]
+        [Category("GameController Load House Failure")]
+        public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidDirection(string fileText)
+        {
+            // Get GameController
+            gameController = GetGameControllerForCorruptHouseFileTests(fileText);
+
+            // Have game controller parse file name with load command
+            message = gameController.ParseInput("load my_saved_game");
+
+            // Assert that error message is correct
+            Assert.That(message, Does.StartWith("Cannot process because data is corrupt - " +
+                                                "Cannot process because data in house layout file CorruptHouse is corrupt - The JSON value could not be converted to HideAndSeek.Direction."));
+        }
+
+        [TestCaseSource(typeof(GameControllerSaveGameTests_CorruptHouse_TestCaseData),
+            nameof(GameControllerSaveGameTests_CorruptHouse_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenFileDataHasInvalidValue))]
+        [Category("GameController Load House Failure")]
+        public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenFileDataHasInvalidValue(string fileText, string errorMessageEnding)
+        {
+            // Get GameController
+            gameController = GetGameControllerForCorruptHouseFileTests(fileText);
+
+            // Have game controller parse file name with load command
+            message = gameController.ParseInput("load my_saved_game");
+
+            // Assert that error message is correct
+            Assert.That(message, Is.EqualTo($"Cannot process because data is corrupt - {errorMessageEnding}"));
+        }
+
         [Test]
         [Category("GameController Delete Success")]
         public void Test_GameController_ParseInput_ToDeleteGame_AndCheckSuccessMessage()
@@ -259,6 +324,34 @@ namespace HideAndSeek
 
             // Assert that error message is as expected
             Assert.That(message, Is.EqualTo("Could not delete game because file my_nonexistent_game does not exist"));
+        }
+
+        private GameController GetGameControllerForCorruptHouseFileTests(string fileText)
+        {
+            // Initialize variable to text in SavedGame file
+            string textInFile =
+            "{" +
+                "\"HouseFileName\":\"CorruptHouse\"" + "," +
+                TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
+                TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_MoveNumber + "," +
+                TestSavedGame_Data.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
+                TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_FoundOpponents +
+            "}";
+
+            // Set up mock for GameController file system
+            mockFileSystem.Setup(manager => manager.File.Exists("my_saved_game.json")).Returns(true); // Mock that file exists
+            mockFileSystem.Setup(manager => manager.File.ReadAllText("my_saved_game.json")).Returns(textInFile); // Mock what file returns
+
+            // Set up mock for House file system
+            Mock<IFileSystem> houseMockFileSystem = new Mock<IFileSystem>(); // Create new mock file system for House
+            houseMockFileSystem.Setup((manager) => manager.File.Exists("DefaultHouse.json")).Returns(true); // Mock that default House file exists
+            houseMockFileSystem.Setup((manager) => manager.File.ReadAllText("DefaultHouse.json")).Returns(TestHouse_Data.SerializedTestHouse); // Mock text in default House file
+            houseMockFileSystem.Setup((manager) => manager.File.Exists("CorruptHouse.json")).Returns(true); // Mock that corrupt House file does exist
+            houseMockFileSystem.Setup((manager) => manager.File.ReadAllText("CorruptHouse.json")).Returns(fileText); // Mock text in corrupt House file
+            House.FileSystem = houseMockFileSystem.Object; // Set House file system to mock file system
+
+            // Return new game controller (Random not mocked, so truly random hiding places generated)
+            return new GameController(mockFileSystem.Object);
         }
     }
 }
