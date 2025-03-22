@@ -11,7 +11,7 @@ namespace HideAndSeek
     /// <summary>
     /// Helper methods for tests
     /// </summary>
-    public static class TestHelperMethods
+    public static class MockFileSystemHelper
     {
         /// <summary>
         /// Helper method to create and return a mock file system

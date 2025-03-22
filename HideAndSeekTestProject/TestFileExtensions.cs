@@ -12,7 +12,7 @@ namespace HideAndSeek
     /// Class to test FileExtensions methods for getting full file name for JSON and validating file name
     /// </summary>
     [TestFixture]
-    public class FileExtensionsTests
+    public class TestFileExtensions
     {
         IFileSystem fileSystem;
 

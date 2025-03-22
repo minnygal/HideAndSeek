@@ -11,7 +11,7 @@ namespace HideAndSeek
     /// Class to test DirectionExtensions methods to get opposite direction and get direction description
     /// </summary>
     [TestFixture]
-    public class DirectionExtensionsTests
+    public class TestDirectionExtensions
     {
         [TestCase(Direction.North, Direction.South)]
         [TestCase(Direction.South, Direction.North)]

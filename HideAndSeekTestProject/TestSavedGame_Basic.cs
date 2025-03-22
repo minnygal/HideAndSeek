@@ -8,10 +8,10 @@ using System.Text.Json;
 namespace HideAndSeek
 {
     /// <summary>
-    /// SavedGame tests to test setters for SavedGame public properties and basic object serialization/deserialization
-    /// Thorough testing of SavedGame deserialization failures is in GameControllerSaveGameTests_TestCaseData and GameControllerSaveGameTests
+    /// SavedGame tests to test SavedGame constructors and SavedGame public properties
     /// </summary>
-    public class SavedGameTests
+    [TestFixture]
+    public class TestSavedGame_Basic
     {
         private SavedGame savedGame;
 
@@ -28,10 +28,10 @@ namespace HideAndSeek
         public void Test_SavedGame_Constructor_WithHouse_AndHouseFileName()
         {
             // Create new House
-            House house = TestHouse_Data.GetNewTestHouse();
+            House house = MyTestHouse.GetNewTestHouse();
 
             // Create SavedGame using parameterized constructor
-            savedGame = new SavedGame(house, "TestHouse", "Entry", 1, TestSavedGame_Data.OpponentsAndHidingPlaces, new List<string>());
+            savedGame = new SavedGame(house, "TestHouse", "Entry", 1, MyTestSavedGame.OpponentsAndHidingPlaces, new List<string>());
 
             // Assert that SavedGame properties are as expected
             Assert.Multiple(() =>
@@ -40,7 +40,7 @@ namespace HideAndSeek
                 Assert.That(savedGame.HouseFileName, Is.EqualTo("TestHouse"), "house file name");
                 Assert.That(savedGame.PlayerLocation, Is.EqualTo("Entry"), "player location");
                 Assert.That(savedGame.MoveNumber, Is.EqualTo(1), "move number");
-                Assert.That(savedGame.OpponentsAndHidingLocations, Is.EquivalentTo(TestSavedGame_Data.OpponentsAndHidingPlaces), "opponents and hiding locations");
+                Assert.That(savedGame.OpponentsAndHidingLocations, Is.EquivalentTo(MyTestSavedGame.OpponentsAndHidingPlaces), "opponents and hiding locations");
                 Assert.That(savedGame.FoundOpponents, Is.Empty, "no found opponents");
             });
         }
@@ -67,7 +67,7 @@ namespace HideAndSeek
                 // Assert that creating a SavedGame object with an invalid file name raises an exception
                 var exception = Assert.Throws<InvalidDataException>(() =>
                 {
-                    savedGame = new SavedGame(TestHouse_Data.GetNewTestHouse(), fileName, "Entry", 1, TestSavedGame_Data.OpponentsAndHidingPlaces, new List<string>());
+                    savedGame = new SavedGame(MyTestHouse.GetNewTestHouse(), fileName, "Entry", 1, MyTestSavedGame.OpponentsAndHidingPlaces, new List<string>());
                 });
 
                 // Assert that exception message is as expected
@@ -80,7 +80,7 @@ namespace HideAndSeek
         public void Test_SavedGame_Set_House_AndCheckErrorMessage_ForAlreadyHasValue()
         {
             // Create new SavedGame (giving House property's backing field a value)
-            savedGame = TestSavedGame_Data.GetNewTestSavedGame_NoFoundOpponents();
+            savedGame = MyTestSavedGame.GetNewTestSavedGame_NoFoundOpponents();
 
             Assert.Multiple(() =>
             {
@@ -100,7 +100,7 @@ namespace HideAndSeek
         public void Test_SavedGame_Set_HouseFileName_AndCheckErrorMessage_ForAlreadyHasValue()
         {
             // Create new SavedGame (giving HouseFileName property's backing field a value)
-            savedGame = TestSavedGame_Data.GetNewTestSavedGame_NoFoundOpponents();
+            savedGame = MyTestSavedGame.GetNewTestSavedGame_NoFoundOpponents();
 
             Assert.Multiple(() =>
             {
@@ -122,7 +122,7 @@ namespace HideAndSeek
         public void Test_SavedGame_Set_PlayerLocation(string playerLocation)
         {
             // Create SavedGame object with valid player location
-            savedGame = new SavedGame(TestHouse_Data.GetNewTestHouse(), "TestHouse", playerLocation, 1, TestSavedGame_Data.OpponentsAndHidingPlaces, new List<string>());
+            savedGame = new SavedGame(MyTestHouse.GetNewTestHouse(), "TestHouse", playerLocation, 1, MyTestSavedGame.OpponentsAndHidingPlaces, new List<string>());
 
             // Assert that player location property's getter returns expected value
             Assert.That(savedGame.PlayerLocation, Is.EqualTo(playerLocation));
@@ -137,7 +137,7 @@ namespace HideAndSeek
                 // Assert that creating a SavedGame object with invalid player location raises an exception
                 var exception = Assert.Throws<InvalidDataException>(() =>
                 {
-                    savedGame = new SavedGame(TestHouse_Data.GetNewTestHouse(), "TestHouse", "Alaska", 1, TestSavedGame_Data.OpponentsAndHidingPlaces, new List<string>());
+                    savedGame = new SavedGame(MyTestHouse.GetNewTestHouse(), "TestHouse", "Alaska", 1, MyTestSavedGame.OpponentsAndHidingPlaces, new List<string>());
                 });
 
                 // Assert that exception message is as expected
@@ -153,7 +153,7 @@ namespace HideAndSeek
         public void Test_SavedGame_Set_MoveNumber(int moveNumber)
         {
             // Create SavedGame object with valid move number
-            savedGame = new SavedGame(TestHouse_Data.GetNewTestHouse(), "TestHouse", "Entry", moveNumber, TestSavedGame_Data.OpponentsAndHidingPlaces, new List<string>());
+            savedGame = new SavedGame(MyTestHouse.GetNewTestHouse(), "TestHouse", "Entry", moveNumber, MyTestSavedGame.OpponentsAndHidingPlaces, new List<string>());
 
             // Assert that move number property's getter returns expected value
             Assert.That(savedGame.MoveNumber, Is.EqualTo(moveNumber));
@@ -170,7 +170,7 @@ namespace HideAndSeek
                 // Assert that creating a SavedGame object with invalid move number raises an exception
                 var exception = Assert.Throws<InvalidDataException>(() =>
                 {
-                    savedGame = new SavedGame(TestHouse_Data.GetNewTestHouse(), "TestHouse", "Entry", moveNumber, TestSavedGame_Data.OpponentsAndHidingPlaces, new List<string>());
+                    savedGame = new SavedGame(MyTestHouse.GetNewTestHouse(), "TestHouse", "Entry", moveNumber, MyTestSavedGame.OpponentsAndHidingPlaces, new List<string>());
                 });
 
                 // Assert that exception message is as expected
@@ -191,7 +191,7 @@ namespace HideAndSeek
             validOpponentsAndHidingPlaces.Add("Jimmy", "Garage");
 
             // Create SavedGame object with valid opponents and hiding places dictionary
-            savedGame = new SavedGame(TestHouse_Data.GetNewTestHouse(), "TestHouse", "Entry", 1, validOpponentsAndHidingPlaces, new List<string>());
+            savedGame = new SavedGame(MyTestHouse.GetNewTestHouse(), "TestHouse", "Entry", 1, validOpponentsAndHidingPlaces, new List<string>());
 
             // Assert that opponents and hiding places property's getter returns expected value
             Assert.That(savedGame.OpponentsAndHidingLocations, Is.EquivalentTo(validOpponentsAndHidingPlaces));
@@ -206,7 +206,7 @@ namespace HideAndSeek
                 // Assert that creating a SavedGame object with empty dictionary for OpponentsAndHidingLocations raises an exception
                 var exception = Assert.Throws<InvalidDataException>(() =>
                 {
-                    savedGame = new SavedGame(TestHouse_Data.GetNewTestHouse(), "TestHouse", "Entry", 1, new Dictionary<string, string>(), new List<string>());
+                    savedGame = new SavedGame(MyTestHouse.GetNewTestHouse(), "TestHouse", "Entry", 1, new Dictionary<string, string>(), new List<string>());
                 });
 
                 // Assert that exception message is as expected
@@ -236,7 +236,7 @@ namespace HideAndSeek
                 // Assert that creating a SavedGame object with nonexistent (invalid) opponent hiding places raises an exception
                 var exception = Assert.Throws<InvalidDataException>(() =>
                 {
-                    savedGame = new SavedGame(TestHouse_Data.GetNewTestHouse(), "TestHouse", "Entry", 1, invalidOpponentsAndHidingPlaces, new List<string>());
+                    savedGame = new SavedGame(MyTestHouse.GetNewTestHouse(), "TestHouse", "Entry", 1, invalidOpponentsAndHidingPlaces, new List<string>());
                 });
 
                 // Assert that exception message is as expected
@@ -261,7 +261,7 @@ namespace HideAndSeek
                 // Assert that creating a SavedGame object with opponent hiding locations that don't have hiding places raises an exception
                 var exception = Assert.Throws<InvalidDataException>(() =>
                 {
-                    savedGame = new SavedGame(TestHouse_Data.GetNewTestHouse(), "TestHouse", "Entry", 1, invalidOpponentsAndHidingPlaces, new List<string>());
+                    savedGame = new SavedGame(MyTestHouse.GetNewTestHouse(), "TestHouse", "Entry", 1, invalidOpponentsAndHidingPlaces, new List<string>());
                 });
 
                 // Assert that exception message is as expected
@@ -274,7 +274,7 @@ namespace HideAndSeek
         public void Test_SavedGame_Set_FoundOpponents_ToEmptyList()
         {
             // Create SavedGame object with valid empty list for FoundOpponents
-            savedGame = new SavedGame(TestHouse_Data.GetNewTestHouse(), "TestHouse", "Entry", 1, TestSavedGame_Data.OpponentsAndHidingPlaces, new List<string>());
+            savedGame = new SavedGame(MyTestHouse.GetNewTestHouse(), "TestHouse", "Entry", 1, MyTestSavedGame.OpponentsAndHidingPlaces, new List<string>());
 
             // Assert that found opponents property's getter returns expected value
             Assert.That(savedGame.FoundOpponents, Is.Empty);
@@ -303,7 +303,7 @@ namespace HideAndSeek
             validOpponentsAndHidingPlaces.Add("Jimmy", "Garage");
 
             // Create SavedGame object with valid found opponents list
-            savedGame = new SavedGame(TestHouse_Data.GetNewTestHouse(), "TestHouse", "Entry", 1, validOpponentsAndHidingPlaces, foundOpponentsAsList);
+            savedGame = new SavedGame(MyTestHouse.GetNewTestHouse(), "TestHouse", "Entry", 1, validOpponentsAndHidingPlaces, foundOpponentsAsList);
 
             // Assert that found opponents property's getter returns expected value
             Assert.That(savedGame.FoundOpponents, Is.EquivalentTo(foundOpponentsAsList));
@@ -344,138 +344,11 @@ namespace HideAndSeek
                 // Assert that creating a SavedGame object with nonexistent found opponent raises an exception
                 var exception = Assert.Throws<InvalidDataException>(() =>
                 {
-                    savedGame = new SavedGame(TestHouse_Data.GetNewTestHouse(), "TestHouse", "Entry", 1, validOpponentsAndHidingPlaces, foundOpponentsAsList);
+                    savedGame = new SavedGame(MyTestHouse.GetNewTestHouse(), "TestHouse", "Entry", 1, validOpponentsAndHidingPlaces, foundOpponentsAsList);
                 });
 
                 // Assert that exception message is as expected
                 Assert.That(exception.Message, Is.EqualTo("found opponent is not an opponent"));
-            });
-        }
-
-        // Tests all properties' getters
-        [Test]
-        [Category("SavedGame Serialize Success")]
-        public void Test_SavedGame_Serialize_NoFoundOpponents()
-        {
-            string serializedGame = JsonSerializer.Serialize(TestSavedGame_Data.GetNewTestSavedGame_NoFoundOpponents());
-            Assert.That(serializedGame, Is.EqualTo(TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents));
-        }
-
-        // Tests all properties' getters
-        [Test]
-        [Category("SavedGame Serialize Success")]
-        public void Test_SavedGame_Serialize_3FoundOpponents()
-        {
-            string serializedGame = JsonSerializer.Serialize(TestSavedGame_Data.GetNewTestSavedGame_3FoundOpponents());
-            Assert.That(serializedGame, Is.EqualTo(TestSavedGame_Data.SerializedTestSavedGame_3FoundOpponents));
-        }
-
-        // Tests all properties' setters and House getter
-        [Test]
-        [Category("SavedGame Deserialize Success")]
-        public void Test_SavedGame_Deserialize_NoFoundOpponents()
-        {
-            // Set mock file system to House property
-            House.FileSystem = TestHelperMethods.CreateMockFileSystem_ToReadAllText("TestHouse.json", TestHouse_Data.SerializedTestHouse);
-
-            // Initialize variable to serialized SavedGame
-            string savedGameFileText =
-                "{" +
-                    "\"HouseFileName\":\"TestHouse\"" + "," +
-                    TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
-                    TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_MoveNumber + "," +
-                    TestSavedGame_Data.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
-                    TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_FoundOpponents +
-                "}";
-
-            // Attempt to deserialize text from file into SavedGame object
-            savedGame = JsonSerializer.Deserialize<SavedGame>(savedGameFileText);
-
-            // Assert that properties are as expected
-            Assert.Multiple(() =>
-            {
-                // Assert that SavedGame properties are as expected
-                Assert.That(savedGame.HouseFileName, Is.EqualTo("TestHouse"), "house file name");
-                Assert.That(savedGame.PlayerLocation, Is.EqualTo("Entry"), "player location");
-                Assert.That(savedGame.MoveNumber, Is.EqualTo(1), "move number");
-                Assert.That(savedGame.OpponentsAndHidingLocations.Select((kvp) => kvp.Key),
-                    Is.EquivalentTo(TestSavedGame_Data.OpponentsAndHidingPlaces.Select((kvp) => kvp.Key)), "names of opponents in opponents and hiding locations dictionary");
-                Assert.That(savedGame.OpponentsAndHidingLocations.Select((kvp) => kvp.Value),
-                    Is.EquivalentTo(TestSavedGame_Data.OpponentsAndHidingPlaces.Select((kvp) => kvp.Value)), "names of hiding locations in opponents and hiding locations dictionary");
-                Assert.That(savedGame.FoundOpponents, Is.Empty, "no found opponents");
-
-                // Assert that House properties are as expected
-                Assert.That(savedGame.House.Name, Is.EqualTo("test house"));
-                Assert.That(savedGame.House.HouseFileName, Is.EqualTo("TestHouse"));
-                Assert.That(savedGame.House.PlayerStartingPoint, Is.EqualTo("Entry"), "House player starting point");
-            });
-        }
-
-        // Tests all properties' setters and House getter
-        [Test]
-        [Category("SavedGame Deserialize Success")]
-        public void Test_SavedGame_Deserialize_3FoundOpponents()
-        {
-            // Set mock file system to House property
-            House.FileSystem = TestHelperMethods.CreateMockFileSystem_ToReadAllText("TestHouse.json", TestHouse_Data.SerializedTestHouse);
-
-            // Initialize variable to serialized SavedGame
-            string savedGameFileText =
-                "{" +
-                    "\"HouseFileName\":\"TestHouse\"" + "," +
-                    TestSavedGame_Data.SerializedTestSavedGame_3FoundOpponents_PlayerLocation + "," +
-                    TestSavedGame_Data.SerializedTestSavedGame_3FoundOpponents_MoveNumber + "," +
-                    TestSavedGame_Data.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
-                    TestSavedGame_Data.SerializedTestSavedGame_3FoundOpponents_FoundOpponents +
-                "}";
-
-            // Attempt to deserialize text from file into SavedGame object
-            savedGame = JsonSerializer.Deserialize<SavedGame>(savedGameFileText);
-
-            // Assert that properties are as expected
-            Assert.Multiple(() =>
-            {
-                // Assert that SavedGame properties are as expected
-                Assert.That(savedGame.HouseFileName, Is.EqualTo("TestHouse"), "house file name");
-                Assert.That(savedGame.PlayerLocation, Is.EqualTo("Bathroom"), "player location");
-                Assert.That(savedGame.MoveNumber, Is.EqualTo(7), "move number");
-                Assert.That(savedGame.OpponentsAndHidingLocations.Select((kvp) => kvp.Key), 
-                    Is.EquivalentTo(TestSavedGame_Data.OpponentsAndHidingPlaces.Select((kvp) => kvp.Key)), "names of opponents in opponents and hiding locations dictionary");
-                Assert.That(savedGame.OpponentsAndHidingLocations.Select((kvp) => kvp.Value),
-                    Is.EquivalentTo(TestSavedGame_Data.OpponentsAndHidingPlaces.Select((kvp) => kvp.Value)), "names of hiding locations in opponents and hiding locations dictionary");
-                Assert.That(savedGame.FoundOpponents.Count(), Is.EqualTo(3), "3 found opponents");
-                Assert.That(savedGame.FoundOpponents, Is.EquivalentTo(TestSavedGame_Data.FoundOpponents_3FoundOpponents), "names of found opponents");
-
-                // Assert that House properties are as expected
-                Assert.That(savedGame.House.Name, Is.EqualTo("test house"));
-                Assert.That(savedGame.House.HouseFileName, Is.EqualTo("TestHouse"));
-                Assert.That(savedGame.House.PlayerStartingPoint, Is.EqualTo("Entry"), "House player starting point");
-            });
-        }
-
-        // Tests all properties' setters and House getter
-        [Test]
-        [Category("SavedGame Deserialize Failure")]
-        public void Test_SavedGame_Deserialize_AndCheckErrorMessage_ForNullReferenceException_ForMissingHouseFileName()
-        {
-            string textInFile =
-                "{" +
-                    TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
-                    TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_MoveNumber + "," +
-                    TestSavedGame_Data.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
-                    TestSavedGame_Data.SerializedTestSavedGame_NoFoundOpponents_FoundOpponents +
-                "}";
-
-            Assert.Multiple(() =>
-            {
-                // Assert that deserializing with a missing house file name property raises an exception
-                var exception = Assert.Throws<NullReferenceException>(() =>
-                {
-                    JsonSerializer.Deserialize<SavedGame>(textInFile);
-                });
-
-                // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo("House has not been set"));
             });
         }
     }

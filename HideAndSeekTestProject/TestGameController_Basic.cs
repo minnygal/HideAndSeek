@@ -1,12 +1,10 @@
 ﻿namespace HideAndSeek
 {
     /// <summary>
-    /// GameController tests for:
-    /// -checking Opponents' hiding places in started game
-    /// -checking Opponents' hiding places in restarted game
+    /// GameController tests for Opponents' hiding locations when Opponents rehidden or game restarted
     /// </summary>
     [TestFixture]
-    public class GameControllerBasicTests
+    public class TestGameController_Basic
     {
         GameController gameController;
 

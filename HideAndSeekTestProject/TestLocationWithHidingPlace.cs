@@ -10,7 +10,7 @@ namespace HideAndSeek
     /// LocationWithHidingPlace tests for testing properties and methods HideOpponent, CheckHidingPlace, and Serialize
     /// </summary>
     [TestFixture]
-    public class LocationWithHidingPlaceTests
+    public class TestLocationWithHidingPlace
     {
         [Test]
         [Category("LocationWithHidingPlace Success")]

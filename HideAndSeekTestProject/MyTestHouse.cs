@@ -10,7 +10,7 @@ namespace HideAndSeek
     /// <summary>
     /// Static class providing House object for testing and serialized House text for testing
     /// </summary>
-    public static class TestHouse_Data
+    public static class MyTestHouse
     {
         /// <summary>
         /// Enumerable of expected Location names in Locations property in test House

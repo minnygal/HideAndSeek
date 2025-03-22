@@ -10,7 +10,7 @@ namespace HideAndSeek
     /// Opponent tests for setting name
     /// </summary>
     [TestFixture]
-    public class OpponentTests
+    public class TestOpponent
     {
         [Test]
         [Category("Opponent Constructor Name Success")]

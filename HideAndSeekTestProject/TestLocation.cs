@@ -12,7 +12,7 @@ namespace HideAndSeek
     /// Location tests for testing properties and GetExit, ExitList, AddExit, and SetExitsDictionary methods
     /// </summary>
     [TestFixture]
-    public class LocationTests
+    public class TestLocation
     {
         // Declare Location variables
         private Location center; // Center room (called living room)
@@ -32,10 +32,10 @@ namespace HideAndSeek
         /// <summary>
         /// Create a center Location and add a room in each direction before each test
         /// 
-        /// CREDIT: adapted from HideAndSeek project's LocationTests class's Initialize() method
+        /// CREDIT: adapted from HideAndSeek project's TestLocation class's Initialize() method
         ///         © 2023 Andrew Stellman and Jennifer Greene
         ///         Published under the MIT License
-        ///         https://github.com/head-first-csharp/fourth-edition/blob/master/Code/Chapter_10/HideAndSeek_part_3/HideAndSeekTests/LocationTests.cs
+        ///         https://github.com/head-first-csharp/fourth-edition/blob/master/Code/Chapter_10/HideAndSeek_part_3/HideAndSeekTests/TestLocation.cs
         ///         Link valid as of 02-26-2025
         /// 
         /// CHANGES:

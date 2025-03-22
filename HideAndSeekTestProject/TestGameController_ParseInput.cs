@@ -8,7 +8,7 @@ namespace HideAndSeek
     /// Also tests for value of Prompt property as navigate through House
     /// Not including save/load/delete game tests (contained in separate file)
     /// </summary>
-    public class GameControllerParseInputTests
+    public class TestGameController_ParseInput
     {
         GameController gameController;
 

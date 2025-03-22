@@ -9,7 +9,7 @@ namespace HideAndSeek
     /// <summary>
     /// Static class providing SavedGame object for testing and serialized SavedGame file text for testing
     /// </summary>
-    public static class TestSavedGame_Data
+    public static class MyTestSavedGame
     {
         /// <summary>
         /// Dictionary of names of opponents and hiding places in test SavedGame
@@ -35,7 +35,7 @@ namespace HideAndSeek
         public static SavedGame GetNewTestSavedGame_NoFoundOpponents()
         {
             return new SavedGame(
-                TestHouse_Data.GetNewTestHouse(), "DefaultHouse", "Entry", 1, OpponentsAndHidingPlaces, new List<string>());
+                MyTestHouse.GetNewTestHouse(), "DefaultHouse", "Entry", 1, OpponentsAndHidingPlaces, new List<string>());
         }
 
         /// <summary>
@@ -45,7 +45,7 @@ namespace HideAndSeek
         public static SavedGame GetNewTestSavedGame_3FoundOpponents()
         {
             return new SavedGame(
-                TestHouse_Data.GetNewTestHouse(), "DefaultHouse", "Bathroom", 7, OpponentsAndHidingPlaces,
+                MyTestHouse.GetNewTestHouse(), "DefaultHouse", "Bathroom", 7, OpponentsAndHidingPlaces,
                 FoundOpponents_3FoundOpponents
             );
         }
