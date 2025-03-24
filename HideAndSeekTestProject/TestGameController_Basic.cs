@@ -1,4 +1,6 @@
-﻿namespace HideAndSeek
+﻿using System.IO.Abstractions;
+
+namespace HideAndSeek
 {
     /// <summary>
     /// GameController tests for Opponents' hiding locations when Opponents rehidden or game restarted
@@ -11,6 +13,7 @@
         [SetUp]
         public void SetUp()
         {
+            House.FileSystem = new FileSystem();
             gameController = new GameController();
         }
 

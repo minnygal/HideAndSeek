@@ -141,19 +141,16 @@ namespace HideAndSeek
         /// <summary>
         /// Constructor to start game with default file system
         /// </summary>
-        public GameController() : this(new FileSystem()) {}
+        public GameController(string houseFileName = "DefaultHouse") : this(new FileSystem(), houseFileName) {}
 
         /// <summary>
         /// Constructor to start game with specific file system (called directly for testing)
         /// </summary>
         /// <param name="fileSystem">File system</param>
-        public GameController(IFileSystem fileSystem)
+        public GameController(IFileSystem fileSystem, string houseFileName = "DefaultHouse")
         {
             // Set file system
             _fileSystem = fileSystem;
-
-            // Create new House
-            House = House.CreateHouse(House.DefaultHouseFileName);
 
             // Create Opponents and store them in dictionary as keys
             OpponentsAndHidingLocations.Add(new Opponent("Joe"), null);
@@ -162,7 +159,17 @@ namespace HideAndSeek
             OpponentsAndHidingLocations.Add(new Opponent("Owen"), null);
             OpponentsAndHidingLocations.Add(new Opponent("Jimmy"), null);
 
-            // Start game
+            // Start game with specified House file
+            RestartGame(houseFileName);
+        }
+
+        /// <summary>
+        /// Restart game from beginning (StartingPoint) in House from specified file
+        /// </summary>
+        /// <param name="houseFileName">Name of House layout file</param>
+        public void RestartGame(string houseFileName)
+        {
+            House = House.CreateHouse(houseFileName);
             RestartGame();
         }
 
