@@ -3,7 +3,8 @@
 namespace HideAndSeek
 {
     /// <summary>
-    /// GameController tests for Opponents' hiding locations when Opponents rehidden or game restarted
+    /// GameController tests for RehideAllOpponents method
+    /// and Opponents' hiding locations when Opponents rehidden or game restarted
     /// </summary>
     [TestFixture]
     public class TestGameController_Basic
@@ -18,7 +19,7 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("GameController RestartGame HidingLocations")]
+        [Category("GameController RestartGame HidingLocations Success")]
         public void Test_GameController_RestartGame_AndCheckHidingLocations()
         {
             // Create mock random values list for hiding opponents
@@ -48,7 +49,7 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("GameController RehideAllOpponents HidingLocations")]
+        [Category("GameController RehideAllOpponents HidingLocations Success")]
         public void Test_GameController_RehideAllOpponents_InSpecificPlaces()
         {
             // Create enumerable of hiding places for opponents to hide
@@ -62,6 +63,45 @@ namespace HideAndSeek
 
             // Assert that hiding places (values) in OpponentsAndHidingLocations dictionary are set correctly
             Assert.That(gameController.OpponentsAndHidingLocations.Values.Select((l) => l.Name), Is.EquivalentTo(hidingPlaces));
+        }
+
+        [Test]
+        [Category("GameController RehideAllOpponents Failure")]
+        public void Test_GameController_RehideAllOpponents_InSpecificPlaces_AndCheckErrorMessage_ForNonexistentLocation()
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that hiding an Opponent in a location with an invalid name raises an exception
+                var exception = Assert.Throws<NullReferenceException>(() =>
+                {
+                    gameController.RehideAllOpponents(new List<string>() { "Dungeon", "Lavatory", "Eggshells", "Worm Hole", "Zoo" });
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo("Object reference not set to an instance of an object."));
+            });
+        }
+
+        [TestCase()]
+        [TestCase("Living Room")]
+        [TestCase("Living Room", "Kitchen")]
+        [TestCase("Living Room", "Kitchen", "Pantry")]
+        [TestCase("Living Room", "Kitchen", "Pantry", "Attic")]
+        [TestCase("Living Room", "Kitchen", "Pantry", "Attic", "Master Bedroom", "Kids Room")]
+        [Category("GameController RehideAllOpponents Failure")]
+        public void Test_GameController_RehideAllOpponents_InSpecificPlaces_AndCheckErrorMessage_ForIncorrectNumberOfHidingPlaces(params string[] hidingPlaces)
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that hiding an Opponent in a location with an invalid name raises an exception
+                var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+                {
+                    gameController.RehideAllOpponents(hidingPlaces);
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo("The number of hiding places must equal the number of opponents. (Parameter 'hidingPlaces')"));
+            });
         }
     }
 }
