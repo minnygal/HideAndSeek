@@ -6,6 +6,7 @@ namespace HideAndSeek
     /// <summary>
     /// GameController tests for moving and checking for opponents via ParseInput method
     /// Also tests for value of Prompt property as navigate through House
+    /// Automatically tests parameterless GameController constructor
     /// Not including save/load/delete game tests (contained in separate file)
     /// </summary>
     public class TestGameController_ParseInput

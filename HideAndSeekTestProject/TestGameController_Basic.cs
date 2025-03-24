@@ -28,6 +28,7 @@ namespace HideAndSeek
             House.FileSystem = new FileSystem(); // Set static House file system to new file system
         }
 
+        // Tests parameterless RestartGame method
         [Test]
         [Category("GameController RestartGame HidingLocations Success")]
         public void Test_GameController_RestartGame_AndCheckHidingLocations()
