@@ -10,7 +10,7 @@ namespace HideAndSeek
     /// <summary>
     /// TestCaseData for some GameController tests for loading games with corrupt House files
     /// </summary>
-    public class TestGameController_HouseFailure_TestCaseData
+    public static class TestGameController_HouseFailure_TestCaseData
     {
         public static IEnumerable TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileFormatIsInvalid
         {

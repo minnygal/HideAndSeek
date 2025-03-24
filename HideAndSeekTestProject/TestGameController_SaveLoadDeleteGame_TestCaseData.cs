@@ -7,7 +7,7 @@ namespace HideAndSeek
     /// <summary>
     /// TestCaseData for some GameController tests for saving/loading/deleting games
     /// </summary>
-    public class TestGameController_SaveLoadDeleteGame_TestCaseData
+    public static class TestGameController_SaveLoadDeleteGame_TestCaseData
     {
         /// <summary>
         /// Helper method to start new game with Opponents in specific hiding places and with specified file system
