@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
 using System.Text.Json;
@@ -18,8 +19,14 @@ namespace HideAndSeek
         [SetUp]
         public void SetUp()
         {
-            // Set SavedGame to null
             savedGame = null;
+            House.FileSystem = new FileSystem(); // Set static House file system to new file system
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            House.FileSystem = new FileSystem(); // Set static House file system to new file system
         }
 
         // Tests all properties' getters

@@ -25,7 +25,14 @@ namespace HideAndSeek
         [SetUp]
         public void SetUp()
         {
+            House.FileSystem = new FileSystem(); // Set static House file system to new file system
             house = MyTestHouse.GetNewTestHouse();
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            House.FileSystem = new FileSystem(); // Set static House file system to new file system
         }
 
         /// <summary>

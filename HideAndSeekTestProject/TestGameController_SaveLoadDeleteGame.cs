@@ -22,6 +22,12 @@ namespace HideAndSeek
             House.FileSystem = new FileSystem(); // Set static House file system to new file system
         }
 
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            House.FileSystem = new FileSystem(); // Set static House file system to new file system
+        }
+
         [Test]
         [Category("GameController Save Load Delete Failure")]
         public void Test_GameController_ParseInput_ToSaveLoadOrDeleteGame_AndCheckErrorMessage_ForInvalidFileName(
