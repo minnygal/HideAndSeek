@@ -13,7 +13,7 @@ namespace HideAndSeek
     /// GameController tests for ParseInput LoadGame with nonexistent or corrupt House file
     /// </summary>
     [TestFixture]
-    public class TestGameController_HouseFailure
+    public class TestGameController_LoadGame_HouseFailure
     {
         private GameController gameController;
         private string message; // Message returned by GameController's ParseInput method
@@ -69,8 +69,8 @@ namespace HideAndSeek
             Assert.That(message, Is.EqualTo("Cannot load game because house layout file NonexistentHouse does not exist"));
         }
 
-        [TestCaseSource(typeof(TestGameController_HouseFailure_TestCaseData),
-            nameof(TestGameController_HouseFailure_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileFormatIsInvalid))]
+        [TestCaseSource(typeof(TestGameController_LoadGame_HouseFailure_TestCaseData),
+            nameof(TestGameController_LoadGame_HouseFailure_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileFormatIsInvalid))]
         [Category("GameController Load House Failure")]
         public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileFormatIsInvalid(string exceptionMessageEnding, string fileText)
         {
@@ -86,8 +86,8 @@ namespace HideAndSeek
                                             exceptionMessageEnding));
         }
 
-        [TestCaseSource(typeof(TestGameController_HouseFailure_TestCaseData),
-            nameof(TestGameController_HouseFailure_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileDataHasWhitespaceValue))]
+        [TestCaseSource(typeof(TestGameController_LoadGame_HouseFailure_TestCaseData),
+            nameof(TestGameController_LoadGame_HouseFailure_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileDataHasWhitespaceValue))]
         [Category("GameController Load House Failure")]
         public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileDataHasWhitespaceValue(string exceptionMessageEnding, string fileText)
         {
@@ -103,8 +103,8 @@ namespace HideAndSeek
                                             exceptionMessageEnding));
         }
 
-        [TestCaseSource(typeof(TestGameController_HouseFailure_TestCaseData),
-            nameof(TestGameController_HouseFailure_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidDirection))]
+        [TestCaseSource(typeof(TestGameController_LoadGame_HouseFailure_TestCaseData),
+            nameof(TestGameController_LoadGame_HouseFailure_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidDirection))]
         [Category("GameController Load House Failure")]
         public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidDirection(string fileText)
         {
@@ -119,8 +119,8 @@ namespace HideAndSeek
                                                 "Cannot process because data in house layout file CorruptHouse is corrupt - The JSON value could not be converted to HideAndSeek.Direction."));
         }
 
-        [TestCaseSource(typeof(TestGameController_HouseFailure_TestCaseData),
-            nameof(TestGameController_HouseFailure_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidValue))]
+        [TestCaseSource(typeof(TestGameController_LoadGame_HouseFailure_TestCaseData),
+            nameof(TestGameController_LoadGame_HouseFailure_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidValue))]
         [Category("GameController Load House Failure")]
         public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidValue(string errorMessageEnding, string fileText)
         {

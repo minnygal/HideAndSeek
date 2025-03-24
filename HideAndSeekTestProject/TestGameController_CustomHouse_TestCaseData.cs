@@ -11,7 +11,7 @@ namespace HideAndSeek
     /// <summary>
     /// TestCaseData for GameController tests for testing layout of non-default House 
     /// set using GameController constructor or RestartGame method 
-    public static class TestGameController_HouseSuccess_TestCaseData
+    public static class TestGameController_CustomHouse_TestCaseData
     {
         private static readonly string textInHouseFile =
             "{" +

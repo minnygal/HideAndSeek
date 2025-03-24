@@ -13,7 +13,7 @@ namespace HideAndSeek
     /// set using GameController constructor or RestartGame method 
     /// </summary>
     [TestFixture]
-    public class TestGameController_HouseSuccess
+    public class TestGameController_CustomHouse
     {
         [TearDown]
         public void TearDown()
@@ -21,7 +21,7 @@ namespace HideAndSeek
             House.FileSystem = new FileSystem(); // Set House file system to new clean file system
         }
 
-        [TestCaseSource(typeof(TestGameController_HouseSuccess_TestCaseData), nameof(TestGameController_HouseSuccess_TestCaseData.TestCases_For_Test_GameController_CustomHouse_NameAndFileNameProperties))]
+        [TestCaseSource(typeof(TestGameController_CustomHouse_TestCaseData), nameof(TestGameController_CustomHouse_TestCaseData.TestCases_For_Test_GameController_CustomHouse_NameAndFileNameProperties))]
         public void Test_GameController_CustomHouse_NameAndFileNameProperties(GameController gameController)
         {
             Assert.Multiple(() =>
@@ -31,7 +31,7 @@ namespace HideAndSeek
             });
         }
 
-        [TestCaseSource(typeof(TestGameController_HouseSuccess_TestCaseData), nameof(TestGameController_HouseSuccess_TestCaseData.TestCases_For_Test_GameController_CustomHouse_LocationNames_AndExits))]
+        [TestCaseSource(typeof(TestGameController_CustomHouse_TestCaseData), nameof(TestGameController_CustomHouse_TestCaseData.TestCases_For_Test_GameController_CustomHouse_LocationNames_AndExits))]
         public void Test_GameController_CustomHouse_LocationNames_AndExits(GameController gameController)
         {
             // Initialize variables to Location objects by names
@@ -168,7 +168,7 @@ namespace HideAndSeek
             });
         }
 
-        [TestCaseSource(typeof(TestGameController_HouseSuccess_TestCaseData), nameof(TestGameController_HouseSuccess_TestCaseData.TestCases_For_Test_GameController_CustomHouse_LocationsWithHidingPlaces_Names_And_HidingPlaces))]
+        [TestCaseSource(typeof(TestGameController_CustomHouse_TestCaseData), nameof(TestGameController_CustomHouse_TestCaseData.TestCases_For_Test_GameController_CustomHouse_LocationsWithHidingPlaces_Names_And_HidingPlaces))]
 
         public void Test_GameController_CustomHouse_LocationsWithHidingPlaces_Names_And_HidingPlaces(GameController gameController)
         {
