@@ -5,6 +5,7 @@ namespace HideAndSeek
 {
     /// <summary>
     /// GameController tests for moving and checking for opponents via ParseInput method
+    /// in default house
     /// Also tests for value of Prompt property as navigate through House
     /// Automatically tests parameterless GameController constructor
     /// Not including save/load/delete game tests (contained in separate file)
@@ -104,7 +105,7 @@ namespace HideAndSeek
         /// -I changed the method name to be consistent with the conventions I'm using in this test project.
         /// -I put all the assertions in the body of a multiple assert so all assertions will be run.
         /// -I changed the assertions to use the constraint model to stay up-to-date.
-        /// -I used a custom method, House.HideAllOpponents, to hide Opponents.
+        /// -I used a custom method to hide Opponents.
         /// -I added/edited some comments for easier reading.
         /// -I added messages to the assertions to make them easier to debug.
         /// </summary>
