@@ -190,7 +190,8 @@ namespace HideAndSeek
         /// Rehide all Opponents in specified hiding places
         /// </summary>
         /// <param name="hidingPlaces">Places to hide Opponents</param>
-        private void RehideAllOpponents(IEnumerable<LocationWithHidingPlace> hidingPlaces)
+        /// <returns>GameController after Opponents rehidden</returns>
+        private GameController RehideAllOpponents(IEnumerable<LocationWithHidingPlace> hidingPlaces)
         {
             // Clear hiding places
             House.ClearHidingPlaces();
@@ -207,6 +208,8 @@ namespace HideAndSeek
 
             // Set Opponents and hiding locations dictionary to dictionary with new hiding locations
             OpponentsAndHidingLocations = opponentsAndNewHidingLocations;
+
+            return this;
         }
 
         /// <summary>
@@ -214,7 +217,8 @@ namespace HideAndSeek
         /// Should only be called from GameController and tests
         /// </summary>
         /// <param name="hidingPlaces">Names of hiding places for Opponents</param>
-        public void RehideAllOpponents(IEnumerable<string> hidingPlaces)
+        /// <returns>GameController after Opponents rehidden</returns>
+        public GameController RehideAllOpponents(IEnumerable<string> hidingPlaces)
         {
             // If the number of hiding places is not equal to the number of Opponents
             if(hidingPlaces.Count() != OpponentsAndHidingLocations.Count())
@@ -229,13 +233,14 @@ namespace HideAndSeek
                 hidingPlacesAsObjects.Add(House.GetLocationWithHidingPlaceByName(hidingPlace));
             }
 
-            RehideAllOpponents(hidingPlacesAsObjects);
+            return RehideAllOpponents(hidingPlacesAsObjects);
         }
 
         /// <summary>
         /// Rehide all Opponents in random hiding places
         /// </summary>
-        private void RehideAllOpponents()
+        /// <returns>GameController after Opponents rehidden</returns>
+        private GameController RehideAllOpponents()
         {
             // Initialize list for locations with hiding locations
             List<LocationWithHidingPlace> hidingLocations = new List<LocationWithHidingPlace>();
@@ -247,7 +252,7 @@ namespace HideAndSeek
             }
 
             // Hide Opponents in hiding places
-            RehideAllOpponents(hidingLocations);
+            return RehideAllOpponents(hidingLocations);
         }
 
         /// <summary>
