@@ -165,12 +165,12 @@ namespace HideAndSeek
             {
                 // Set custom House using GameController constructor
                 yield return new TestCaseData(GetGameController_WithCustomHouseSetViaConstructor())
-                    .SetName("TestCases_For_Test_GameController_CustomHouse_LocationNames_AndExits - constructor")
+                    .SetName("Test_GameController_CustomHouse_LocationNames_AndExits - constructor")
                     .SetCategory("GameController CustomHouse Constructor");
                 
                 // Set custom House using GameController RestartGame method
                 yield return new TestCaseData(GetGameController_WithCustomHouseSetViaRestartGame())
-                    .SetName("TestCases_For_Test_GameController_CustomHouse_LocationNames_AndExits - RestartGame")
+                    .SetName("Test_GameController_CustomHouse_LocationNames_AndExits - RestartGame")
                     .SetCategory("GameController CustomHouse RestartGame");
             }
         }
@@ -181,29 +181,29 @@ namespace HideAndSeek
             {
                 // Set custom House using GameController constructor
                 yield return new TestCaseData(GetGameController_WithCustomHouseSetViaConstructor())
-                    .SetName("TestCases_For_Test_GameController_CustomHouse_LocationsWithHidingPlaces_Names_And_HidingPlaces - constructor")
+                    .SetName("Test_GameController_CustomHouse_LocationsWithHidingPlaces_Names_And_HidingPlaces - constructor")
                     .SetCategory("GameController CustomHouse Constructor");
 
                 // Set custom House using GameController RestartGame method
                 yield return new TestCaseData(GetGameController_WithCustomHouseSetViaRestartGame())
-                    .SetName("TestCases_For_Test_GameController_CustomHouse_LocationsWithHidingPlaces_Names_And_HidingPlaces - RestartGame")
+                    .SetName("Test_GameController_CustomHouse_LocationsWithHidingPlaces_Names_And_HidingPlaces - RestartGame")
                     .SetCategory("GameController CustomHouse RestartGame");
             }
         }
 
-        public static IEnumerable TestCases_For_Test_GameController_CustomHouse_NameAndFileNameProperties
+        public static IEnumerable TestCases_For_Test_GameController_CustomHouse_ParseInput_ForFullGame_WithOpponentsHiding_AndCheckMessageAndProperties
         {
             get
             {
                 // Set custom House using GameController constructor
                 yield return new TestCaseData(GetGameController_WithCustomHouseSetViaConstructor())
-                    .SetName("TestCases_For_Test_GameController_CustomHouse_NameAndFileNameProperties - constructor")
-                    .SetCategory("GameController CustomHouse Constructor");
+                    .SetName("Test_GameController_CustomHouse_ParseInput_ForFullGame_WithOpponentsHiding_AndCheckMessageAndProperties - constructor")
+                    .SetCategory("GameController ParseInput Move Check Message Prompt Status MoveNumber GameOver Success");
 
                 // Set custom House using GameController RestartGame method
                 yield return new TestCaseData(GetGameController_WithCustomHouseSetViaRestartGame())
-                    .SetName("TestCases_For_Test_GameController_CustomHouse_NameAndFileNameProperties - RestartGame")
-                    .SetCategory("GameController CustomHouse RestartGame");
+                    .SetName("Test_GameController_CustomHouse_ParseInput_ForFullGame_WithOpponentsHiding_AndCheckMessageAndProperties - RestartGame")
+                    .SetCategory("GameController ParseInput Move Check Message Prompt Status MoveNumber GameOver Success");
             }
         }
     }
