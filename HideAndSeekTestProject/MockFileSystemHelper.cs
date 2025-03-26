@@ -14,19 +14,32 @@ namespace HideAndSeek
     public static class MockFileSystemHelper
     {
         /// <summary>
+        /// Helper method to create and return a mocked file system
+        /// set up to return the specified text
+        /// when File.ReadAllText called with specified file name
+        /// </summary>
+        /// <param name="fileName">Name of file</param>
+        /// <param name="textInFile">Text to return when File.ReadAllText called</param>
+        /// <returns>File system object</returns>
+        public static IFileSystem GetMockedFileSystem_ToReadAllText(string fileName, string textInFile)
+        {
+            return GetMockOfFileSystem_ToReadAllText(fileName, textInFile).Object;
+        }
+
+        /// <summary>
         /// Helper method to create and return a mock file system
         /// set up to return the specified text
         /// when File.ReadAllText called with specified file name
         /// </summary>
         /// <param name="fileName">Name of file</param>
         /// <param name="textInFile">Text to return when File.ReadAllText called</param>
-        /// <returns></returns>
-        public static IFileSystem CreateMockFileSystem_ToReadAllText(string fileName, string textInFile)
+        /// <returns>Mock object of file system</returns>
+        public static Mock<IFileSystem> GetMockOfFileSystem_ToReadAllText(string fileName, string textInFile)
         {
             Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>(); // Create mock file system
             fileSystemMock.Setup((s) => s.File.Exists(fileName)).Returns(true); // Mock that file exists
             fileSystemMock.Setup((s) => s.File.ReadAllText(fileName)).Returns(textInFile); // Mock text read from file
-            return fileSystemMock.Object; // Return file system
+            return fileSystemMock; // Return mock file system
         }
     }
 }

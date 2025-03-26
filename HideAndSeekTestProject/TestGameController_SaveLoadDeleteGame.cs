@@ -70,10 +70,11 @@ namespace HideAndSeek
 
         // Tests default House, and tests custom House set via constructor and via ReloadGame
         [TestCaseSource(typeof(TestGameController_SaveLoadDeleteGame_TestCaseData), nameof(TestGameController_SaveLoadDeleteGame_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile))]
-        public void Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile(string houseFileName, string houseFileText, Func<IFileSystem, GameController> startNewGame, string expectedTextInSavedGameFile)
+        public void Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile(string houseFileName, string houseFileText, Func<IFileSystem, Mock<IFileSystem>, GameController> startNewGame, string expectedTextInSavedGameFile)
         {
             // Set House file system
-            House.FileSystem = MockFileSystemHelper.CreateMockFileSystem_ToReadAllText(houseFileName, houseFileText);
+            Mock<IFileSystem> mockHouseFileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText(houseFileName, houseFileText);
+            House.FileSystem = mockHouseFileSystem.Object;
 
             // Create variable to store text written to SavedGame file
             string? actualTextInSavedGameFile = null;
@@ -86,7 +87,7 @@ namespace HideAndSeek
                     });
 
             // Start and attempt to save game
-            gameController = startNewGame(mockFileSystem.Object);
+            gameController = startNewGame(mockFileSystem.Object, mockHouseFileSystem); // Mock House file system is used in test cases calling RestartGame
             gameController.ParseInput("save my_saved_game");
 
             // Assert that actual text in file is equal to expected text in file
@@ -444,7 +445,7 @@ namespace HideAndSeek
         private string ParseInputToLoadGameSuccessfully(string savedGamedFileText)
         {
             // Set mock file system for House property
-            House.FileSystem = MockFileSystemHelper.CreateMockFileSystem_ToReadAllText("DefaultHouse.json", MyTestHouse.SerializedTestHouse);
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.json", MyTestHouse.SerializedTestHouse);
 
             // Set up mock for file system for GameController
             mockFileSystem.Setup(manager => manager.File.Exists("my_saved_game.json")).Returns(true); // Mock that file exists

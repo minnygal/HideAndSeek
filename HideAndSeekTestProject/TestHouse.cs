@@ -327,7 +327,7 @@ namespace HideAndSeek
         {
             // ARRANGE
             // Assign mock file system to House property
-            House.FileSystem = MockFileSystemHelper.CreateMockFileSystem_ToReadAllText("TestHouse.json", MyTestHouse.SerializedTestHouse);
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("TestHouse.json", MyTestHouse.SerializedTestHouse);
 
             // ACT
             // Call method to create House
@@ -434,7 +434,7 @@ namespace HideAndSeek
                 "}";
 
             // Assign mock file system to House property
-            House.FileSystem = MockFileSystemHelper.CreateMockFileSystem_ToReadAllText("TestHouse.json", textInHouseFile);
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("TestHouse.json", textInHouseFile);
 
             // ACT
             // Call method to create House
@@ -473,7 +473,7 @@ namespace HideAndSeek
         public void Test_House_CreateHouse_AndCheckErrorMessage_ForJsonException_WhenFileFormatIsInvalid(string exceptionMessageEnding, string fileText)
         {
             // Assign mock file system to House property
-            House.FileSystem = MockFileSystemHelper.CreateMockFileSystem_ToReadAllText("MyCorruptFile.json", fileText);
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("MyCorruptFile.json", fileText);
 
             Assert.Multiple(() =>
             {
@@ -493,7 +493,7 @@ namespace HideAndSeek
         public void Test_House_CreateHouse_AndCheckErrorMessage_ForJsonException_WhenFileDataHasInvalidDirection(string fileText)
         {
             // Assign mock file system to House property
-            House.FileSystem = MockFileSystemHelper.CreateMockFileSystem_ToReadAllText("MyCorruptFile.json", fileText);
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("MyCorruptFile.json", fileText);
 
             Assert.Multiple(() =>
             {
@@ -513,7 +513,7 @@ namespace HideAndSeek
         public void Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasWhitespaceValue(string exceptionMessageEnding, string fileText)
         {
             // Assign mock file system to House property
-            House.FileSystem = MockFileSystemHelper.CreateMockFileSystem_ToReadAllText("MyInvalidDataFile.json", fileText);
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("MyInvalidDataFile.json", fileText);
 
             Assert.Multiple(() =>
             {
@@ -533,7 +533,7 @@ namespace HideAndSeek
         public void Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue(string exceptionMessageEnding, string fileText)
         {
             // Assign mock file system to House property
-            House.FileSystem = MockFileSystemHelper.CreateMockFileSystem_ToReadAllText("MyInvalidDataFile.json", fileText);
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("MyInvalidDataFile.json", fileText);
 
             Assert.Multiple(() =>
             {

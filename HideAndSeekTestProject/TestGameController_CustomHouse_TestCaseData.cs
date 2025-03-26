@@ -146,7 +146,7 @@ namespace HideAndSeek
 
         private static GameController GetGameController_WithCustomHouseSetViaConstructor()
         {
-            House.FileSystem = MockFileSystemHelper.CreateMockFileSystem_ToReadAllText("TestHouse.json", textInHouseFile); // Set House file system to mock
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("TestHouse.json", textInHouseFile); // Set House file system to mock
             return new GameController("TestHouse"); // Return new GameController with custom House
         }
         
@@ -154,7 +154,7 @@ namespace HideAndSeek
         {
             House.FileSystem = new FileSystem(); // Set House file system to default
             GameController gameController = new GameController(); // Create new GameController with default House
-            House.FileSystem = MockFileSystemHelper.CreateMockFileSystem_ToReadAllText("TestHouse.json", textInHouseFile); // Set House file system to mock
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("TestHouse.json", textInHouseFile); // Set House file system to mock
             gameController.RestartGame("TestHouse"); // Restart game with custom House
             return gameController;
         }
