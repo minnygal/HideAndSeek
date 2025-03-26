@@ -159,6 +159,22 @@ namespace HideAndSeek
             return gameController;
         }
 
+        public static IEnumerable TestCases_For_Test_GameController_CustomHouse_NameAndFileNameProperties
+        {
+            get
+            {
+                // Set custom House using GameController constructor
+                yield return new TestCaseData(GetGameController_WithCustomHouseSetViaConstructor())
+                    .SetName("Test_GameController_CustomHouse_NameAndFileNameProperties - constructor")
+                    .SetCategory("GameController CustomHouse Constructor");
+
+                // Set custom House using GameController RestartGame method
+                yield return new TestCaseData(GetGameController_WithCustomHouseSetViaRestartGame())
+                    .SetName("Test_GameController_CustomHouse_NameAndFileNameProperties - RestartGame")
+                    .SetCategory("GameController CustomHouse RestartGame");
+            }
+        }
+
         public static IEnumerable TestCases_For_Test_GameController_CustomHouse_LocationNames_AndExits
         {
             get
