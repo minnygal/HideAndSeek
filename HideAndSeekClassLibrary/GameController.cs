@@ -167,10 +167,12 @@ namespace HideAndSeek
         /// Restart game from beginning (StartingPoint) in House from specified file
         /// </summary>
         /// <param name="houseFileName">Name of House layout file</param>
-        public void RestartGame(string houseFileName)
+        /// <returns>This GameController</returns>
+        public GameController RestartGame(string houseFileName)
         {
             House = House.CreateHouse(houseFileName);
             RestartGame();
+            return this;
         }
 
         /// <summary>
