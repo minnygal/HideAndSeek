@@ -341,18 +341,65 @@ namespace HideAndSeek
             }
         }
 
-        // Test case data for TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckProperties
-        public static IEnumerable TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckProperties
+        // Test case data for Test_GameController_ParseInput_ToLoadGame_WithNoFoundOpponents
+        public static IEnumerable TestCases_For_Test_GameController_ParseInput_ToLoadGame_WithNoFoundOpponents
         {
             get
             {
-                // No Opponents found
-                yield return new TestCaseData("Entry", 1, new List<string>(), MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents)
-                    .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckProperties - no opponents found");
+                // Default House
+                yield return new TestCaseData(
+                        "{" +
+                            "\"HouseFileName\":\"DefaultHouse\"" + "," +
+                            "\"PlayerLocation\":\"Entry\"" + "," +
+                            "\"MoveNumber\":1" + "," +
+                            MyTestSavedGame.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
+                            "\"FoundOpponents\":[]" +
+                        "}",
+                        "my house", 
+                        "DefaultHouse", 
+                        serializedDefaultHouse,
+                        "Entry",
+                        MyTestHouse.TestHouseExpectedProperties_Locations_Names,
+                        MyTestHouse.TestHouseExpectedProperties_LocationsWithoutHidingPlaces_Names,
+                        MyTestHouse.TestHouseExpectedProperties_LocationsWithHidingPlaces_Names,
+                        "Entry", 
+                        1,
+                        new List<string>() { "Joe", "Bob", "Ana", "Owen", "Jimmy" },
+                        new List<string>() { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry" })
+                    .SetName("Test_GameController_ParseInput_ToLoadGame_WithNoFoundOpponents - default House")
+                    .SetCategory("GameController Load Success");
                 
-                // 3 Opponents found
-                yield return new TestCaseData("Bathroom", 7, new List<string>() { "Joe", "Owen", "Ana" }, MyTestSavedGame.SerializedTestSavedGame_3FoundOpponents)
-                    .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckProperties - 3 opponents found");
+                // Custom test House
+                yield return new TestCaseData(
+                        "{" +
+                            "\"HouseFileName\":\"TestHouse\"" + "," +
+                            "\"PlayerLocation\":\"Landing\"" + "," +
+                            "\"MoveNumber\":1" + "," +
+                            "\"OpponentsAndHidingLocations\":" +
+                            "{" +
+                                "\"Joe\":\"Closet\"," +
+                                "\"Bob\":\"Yard\"," +
+                                "\"Ana\":\"Cellar\"," +
+                                "\"Owen\":\"Attic\"," +
+                                "\"Jimmy\":\"Yard\"" +
+                            "}" + "," +
+                            "\"FoundOpponents\":[]" +
+                        "}",
+                        "test house",
+                        "TestHouse",
+                        serializedCustomTestHouse,
+                        "Landing",
+                        new List<string>() { "Landing", "Hallway", "Bedroom", "Closet", "Sensory Room", "Kitchen", "Cellar",
+                                             "Pantry", "Yard", "Bathroom", "Living Room", "Office", "Attic" },
+                        new List<string>() { "Landing", "Hallway" },
+                        new List<string>() { "Bedroom", "Closet", "Sensory Room", "Kitchen", "Cellar", 
+                                             "Pantry", "Yard", "Bathroom", "Living Room", "Office", "Attic"},
+                        "Landing",
+                        1,
+                        new List<string>() { "Joe", "Bob", "Ana", "Owen", "Jimmy" },
+                        new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" })
+                    .SetName("Test_GameController_ParseInput_ToLoadGame_WithNoFoundOpponents - custom House")
+                    .SetCategory("GameController Load CustomHouse Success");
             }
         }
 
