@@ -341,8 +341,8 @@ namespace HideAndSeek
             }
         }
 
-        // Test case data for Test_GameController_ParseInput_ToLoadGame_AndCheckProperties
-        public static IEnumerable Test_GameController_ParseInput_ToLoadGame_AndCheckProperties
+        // Test case data for TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckProperties
+        public static IEnumerable TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckProperties
         {
             get
             {
