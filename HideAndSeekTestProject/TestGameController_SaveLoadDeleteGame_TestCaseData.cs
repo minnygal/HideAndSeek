@@ -9,14 +9,214 @@ namespace HideAndSeek
     /// </summary>
     public static class TestGameController_SaveLoadDeleteGame_TestCaseData
     {
-        private static readonly string serializedDefaultHouse =
-            "{" +
-                "\"Name\":\"my house\"" + "," +
-                "\"HouseFileName\":\"DefaultHouse\"" + "," +
-                MyTestHouse.SerializedHouse_PlayerStartingPoint + "," +
-                MyTestHouse.SerializedHouse_LocationsWithoutHidingPlaces + "," +
-                MyTestHouse.SerializedTestHouse_LocationsWithHidingPlaces +
-            "}";
+        /// <summary>
+        /// Text representing default House for tests serialized
+        /// </summary>
+        public static string DefaultHouse_Serialized
+        {
+            get
+            {
+                return
+                    "{" +
+                        "\"Name\":\"my house\"" + "," +
+                        "\"HouseFileName\":\"DefaultHouse\"" + "," +
+                        "\"PlayerStartingPoint\":\"Entry\"" + "," +
+                        "\"LocationsWithoutHidingPlaces\":" +
+                        "[" +
+                            "{" +
+                                "\"Name\":\"Hallway\"," +
+                                "\"ExitsForSerialization\":" +
+                                "{" +
+                                    "\"West\":\"Entry\"," +
+                                    "\"Northwest\":\"Kitchen\"," +
+                                    "\"North\":\"Bathroom\"," +
+                                    "\"South\":\"Living Room\"," +
+                                    "\"Up\":\"Landing\"" +
+                                "}" +
+                            "}," +
+                            "{" +
+                                "\"Name\":\"Landing\"," +
+                                "\"ExitsForSerialization\":" +
+                                "{" +
+                                    "\"Down\":\"Hallway\"," +
+                                    "\"Up\":\"Attic\"," +
+                                    "\"Southeast\":\"Kids Room\"," +
+                                    "\"Northwest\":\"Master Bedroom\"," +
+                                    "\"Southwest\":\"Nursery\"," +
+                                    "\"South\":\"Pantry\"," +
+                                    "\"West\":\"Second Bathroom\"" +
+                                "}" +
+                            "}," +
+                            "{" +
+                                "\"Name\":\"Entry\"," +
+                                "\"ExitsForSerialization\":" +
+                                "{" +
+                                    "\"Out\":\"Garage\"," +
+                                    "\"East\":\"Hallway\"" +
+                                "}" +
+                            "}" +
+                        "]" + "," +
+                        "\"LocationsWithHidingPlaces\":" +
+                        "[" +
+                            "{" +
+                                "\"HidingPlace\":\"in a trunk\"," +
+                                "\"Name\":\"Attic\"," +
+                                "\"ExitsForSerialization\":" +
+                                "{" +
+                                    "\"Down\":\"Landing\"" +
+                                "}" +
+                            "}," +
+                            "{\"HidingPlace\":\"behind the door\"," +
+                                "\"Name\":\"Bathroom\"," +
+                                "\"ExitsForSerialization\":" +
+                                "{" +
+                                    "\"South\":\"Hallway\"" +
+                                "}" +
+                            "}," +
+                            "{" +
+                                "\"HidingPlace\":\"in the bunk beds\"," +
+                                "\"Name\":\"Kids Room\"," +
+                                "\"ExitsForSerialization\":" +
+                                    "{" +
+                                        "\"Northwest\":\"Landing\"" +
+                                    "}" +
+                                "}," +
+                            "{" +
+                                "\"HidingPlace\":\"under the bed\"," +
+                                "\"Name\":\"Master Bedroom\"," +
+                                "\"ExitsForSerialization\":" +
+                                "{" +
+                                    "\"Southeast\":\"Landing\"," +
+                                    "\"East\":\"Master Bath\"" +
+                                "}" +
+                            "}," +
+                            "{" +
+                                "\"HidingPlace\":\"behind the changing table\"," +
+                                "\"Name\":\"Nursery\"," +
+                                "\"ExitsForSerialization\":" +
+                                "{" +
+                                    "\"Northeast\":\"Landing\"" +
+                                "}" +
+                            "}," +
+                            "{" +
+                                "\"HidingPlace\":\"inside a cabinet\"," +
+                                "\"Name\":\"Pantry\"," +
+                                "\"ExitsForSerialization\":" +
+                                "{" +
+                                    "\"North\":\"Landing\"" +
+                                "}" +
+                            "}," +
+                            "{" +
+                                "\"HidingPlace\":\"in the shower\"," +
+                                "\"Name\":\"Second Bathroom\"," +
+                                "\"ExitsForSerialization\":" +
+                                "{" +
+                                    "\"East\":\"Landing\"" +
+                                "}" +
+                            "}," +
+                            "{" +
+                                "\"HidingPlace\":\"next to the stove\"," +
+                                "\"Name\":\"Kitchen\"," +
+                                "\"ExitsForSerialization\":" +
+                                "{" +
+                                    "\"Southeast\":\"Hallway\"" +
+                                "}" +
+                            "}," +
+                            "{" +
+                                "\"HidingPlace\":\"in the tub\"," +
+                                "\"Name\":\"Master Bath\"," +
+                                "\"ExitsForSerialization\":" +
+                                "{" +
+                                    "\"West\":\"Master Bedroom\"" +
+                                "}" +
+                            "}," +
+                            "{" +
+                                "\"HidingPlace\":\"behind the car\"," +
+                                "\"Name\":\"Garage\"," +
+                                "\"ExitsForSerialization\":" +
+                                "{" +
+                                    "\"In\":\"Entry\"" +
+                                "}" +
+                            "}," +
+                            "{" +
+                                "\"HidingPlace\":\"behind the sofa\"," +
+                                "\"Name\":\"Living Room\"," +
+                                "\"ExitsForSerialization\":" +
+                                "{" +
+                                    "\"North\":\"Hallway\"" +
+                                "}" +
+                            "}" +
+                        "]" +
+                    "}";
+            }
+        }
+         
+        /// <summary>
+        /// Enumerable of Location names in Locations property in default House for tests
+        /// </summary>
+        public static IEnumerable<string> DefaultHouse_Locations
+        {
+            get
+            {
+                return new List<string>()
+                    {
+                        "Attic",
+                        "Hallway",
+                        "Bathroom",
+                        "Kids Room",
+                        "Master Bedroom",
+                        "Nursery",
+                        "Pantry",
+                        "Second Bathroom",
+                        "Kitchen",
+                        "Master Bath",
+                        "Garage",
+                        "Landing",
+                        "Living Room",
+                        "Entry"
+                    };
+            }
+        }
+
+        /// <summary>
+        /// Enumerable of Location names in LocationsWithoutHidingPlaces property in default House for tests
+        /// </summary>
+        public static IEnumerable<string> DefaultHouse_LocationsWithoutHidingPlaces
+        {
+            get
+            {
+                return new List<string>()
+                        {
+                            "Hallway",
+                            "Landing",
+                            "Entry"
+                        };
+            }
+        }
+
+        /// <summary>
+        /// Enumerable of Location names in LocationsWithHidingPlaces property in default House for tests
+        /// </summary>
+        public static IEnumerable<string> DefaultHouse_LocationsWithHidingPlaces
+        {
+            get
+            {
+                return new List<string>()
+                    {
+                        "Attic",
+                        "Bathroom",
+                        "Kids Room",
+                        "Master Bedroom",
+                        "Nursery",
+                        "Pantry",
+                        "Second Bathroom",
+                        "Kitchen",
+                        "Master Bath",
+                        "Garage",
+                        "Living Room",
+                    };
+            }
+        }
 
         private static readonly string serializedCustomTestHouse =
             "{" +
@@ -157,7 +357,7 @@ namespace HideAndSeek
                 // Default House, no Opponents found
                 yield return new TestCaseData(
                         "DefaultHouse.json",
-                        serializedDefaultHouse,
+                        DefaultHouse_Serialized,
                         (IFileSystem fileSystem, Mock<IFileSystem> mockHouseFileSystem) =>
                         {
                             // Create GameController with specified file system, hide all Opponents in specified locations, and return GameController
@@ -170,7 +370,7 @@ namespace HideAndSeek
                 // Default House, 3 Opponents found
                 yield return new TestCaseData(
                         "DefaultHouse.json",
-                        serializedDefaultHouse,
+                        DefaultHouse_Serialized,
                         (IFileSystem fileSystem, Mock<IFileSystem> mockHouseFileSystem) => 
                         {
                             // Create GameController with specified file system and hide all Opponents in specified locations
@@ -227,7 +427,7 @@ namespace HideAndSeek
                         {
                             // Add DefaultHouse file to House file system mock and set House file system
                             mockHouseFileSystem.Setup((manager) => manager.File.Exists("DefaultHouse.json")).Returns(true);
-                            mockHouseFileSystem.Setup((manager) => manager.File.ReadAllText("DefaultHouse.json")).Returns(serializedDefaultHouse);
+                            mockHouseFileSystem.Setup((manager) => manager.File.ReadAllText("DefaultHouse.json")).Returns(DefaultHouse_Serialized);
                             House.FileSystem = mockHouseFileSystem.Object;
 
                             // Return GameController with restarted game and rehidden Opponents
@@ -259,7 +459,7 @@ namespace HideAndSeek
                         {
                             // Add DefaultHouse file to House file system mock and set House file system
                             mockHouseFileSystem.Setup((manager) => manager.File.Exists("DefaultHouse.json")).Returns(true);
-                            mockHouseFileSystem.Setup((manager) => manager.File.ReadAllText("DefaultHouse.json")).Returns(serializedDefaultHouse);
+                            mockHouseFileSystem.Setup((manager) => manager.File.ReadAllText("DefaultHouse.json")).Returns(DefaultHouse_Serialized);
                             House.FileSystem = mockHouseFileSystem.Object;
 
                             // Initialize to GameController with restarted game and rehidden Opponents
@@ -357,11 +557,11 @@ namespace HideAndSeek
                         "}",
                         "my house", 
                         "DefaultHouse", 
-                        serializedDefaultHouse,
+                        DefaultHouse_Serialized,
                         "Entry",
-                        MyTestHouse.TestHouseExpectedProperties_Locations_Names,
-                        MyTestHouse.TestHouseExpectedProperties_LocationsWithoutHidingPlaces_Names,
-                        MyTestHouse.TestHouseExpectedProperties_LocationsWithHidingPlaces_Names,
+                        DefaultHouse_Locations,
+                        DefaultHouse_LocationsWithoutHidingPlaces,
+                        DefaultHouse_LocationsWithHidingPlaces,
                         "Entry", 
                         1,
                         new List<string>() { "Joe", "Bob", "Ana", "Owen", "Jimmy" },

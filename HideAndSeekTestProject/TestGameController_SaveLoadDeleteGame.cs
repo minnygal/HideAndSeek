@@ -205,12 +205,12 @@ namespace HideAndSeek
                 Assert.That(message, Is.EqualTo("Game successfully loaded from my_saved_game"), "ParseInput return message");
 
                 // Assert that House properties are as expected
-                Assert.That(gameController.House.Name, Is.EqualTo("test house"), "House name");
-                Assert.That(gameController.House.HouseFileName, Is.EqualTo("TestHouse"), "House file name");
+                Assert.That(gameController.House.Name, Is.EqualTo("my house"), "House name");
+                Assert.That(gameController.House.HouseFileName, Is.EqualTo("DefaultHouse"), "House file name");
                 Assert.That(gameController.House.PlayerStartingPoint, Is.EqualTo("Entry"), "House starting point");
-                Assert.That(gameController.House.Locations.Select((l) => l.Name), Is.EquivalentTo(MyTestHouse.TestHouseExpectedProperties_Locations_Names), "House all locations names");
-                Assert.That(gameController.House.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(MyTestHouse.TestHouseExpectedProperties_LocationsWithoutHidingPlaces_Names), "House locations without hiding places names");
-                Assert.That(gameController.House.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(MyTestHouse.TestHouseExpectedProperties_LocationsWithHidingPlaces_Names), "House locations with hiding places names");
+                Assert.That(gameController.House.Locations.Select((l) => l.Name), Is.EquivalentTo(TestGameController_SaveLoadDeleteGame_TestCaseData.DefaultHouse_Locations), "House all locations names");
+                Assert.That(gameController.House.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestGameController_SaveLoadDeleteGame_TestCaseData.DefaultHouse_LocationsWithoutHidingPlaces), "House locations without hiding places names");
+                Assert.That(gameController.House.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestGameController_SaveLoadDeleteGame_TestCaseData.DefaultHouse_LocationsWithHidingPlaces), "House locations with hiding places names");
 
                 // Assert that GameController properties are as expected
                 Assert.That(gameController.CurrentLocation.Name, Is.EqualTo("Bathroom"), "player location");
@@ -267,12 +267,12 @@ namespace HideAndSeek
                 Assert.That(message, Is.EqualTo("Game successfully loaded from my_saved_game"), "ParseInput return message");
 
                 // Assert that House properties are as expected
-                Assert.That(gameController.House.Name, Is.EqualTo("test house"), "House name");
-                Assert.That(gameController.House.HouseFileName, Is.EqualTo("TestHouse"), "House file name");
+                Assert.That(gameController.House.Name, Is.EqualTo("my house"), "House name");
+                Assert.That(gameController.House.HouseFileName, Is.EqualTo("DefaultHouse"), "House file name");
                 Assert.That(gameController.House.PlayerStartingPoint, Is.EqualTo("Entry"), "House starting point");
-                Assert.That(gameController.House.Locations.Select((l) => l.Name), Is.EquivalentTo(MyTestHouse.TestHouseExpectedProperties_Locations_Names), "House all locations names");
-                Assert.That(gameController.House.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(MyTestHouse.TestHouseExpectedProperties_LocationsWithoutHidingPlaces_Names), "House locations without hiding places names");
-                Assert.That(gameController.House.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(MyTestHouse.TestHouseExpectedProperties_LocationsWithHidingPlaces_Names), "House locations with hiding places names");
+                Assert.That(gameController.House.Locations.Select((l) => l.Name), Is.EquivalentTo(TestGameController_SaveLoadDeleteGame_TestCaseData.DefaultHouse_Locations), "House all locations names");
+                Assert.That(gameController.House.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestGameController_SaveLoadDeleteGame_TestCaseData.DefaultHouse_LocationsWithoutHidingPlaces), "House locations without hiding places names");
+                Assert.That(gameController.House.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestGameController_SaveLoadDeleteGame_TestCaseData.DefaultHouse_LocationsWithHidingPlaces), "House locations with hiding places names");
 
                 // Assert that GameController properties are as expected
                 Assert.That(gameController.CurrentLocation.Name, Is.EqualTo("Pantry"), "player location");
@@ -329,12 +329,12 @@ namespace HideAndSeek
                 Assert.That(message, Is.EqualTo("Game successfully loaded from my_saved_game"), "ParseInput return message");
 
                 // Assert that House properties are as expected
-                Assert.That(gameController.House.Name, Is.EqualTo("test house"), "House name");
-                Assert.That(gameController.House.HouseFileName, Is.EqualTo("TestHouse"), "House file name");
+                Assert.That(gameController.House.Name, Is.EqualTo("my house"), "House name");
+                Assert.That(gameController.House.HouseFileName, Is.EqualTo("DefaultHouse"), "House file name");
                 Assert.That(gameController.House.PlayerStartingPoint, Is.EqualTo("Entry"), "House starting point");
-                Assert.That(gameController.House.Locations.Select((l) => l.Name), Is.EquivalentTo(MyTestHouse.TestHouseExpectedProperties_Locations_Names), "House all locations names");
-                Assert.That(gameController.House.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(MyTestHouse.TestHouseExpectedProperties_LocationsWithoutHidingPlaces_Names), "House locations without hiding places names");
-                Assert.That(gameController.House.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(MyTestHouse.TestHouseExpectedProperties_LocationsWithHidingPlaces_Names), "House locations with hiding places names");
+                Assert.That(gameController.House.Locations.Select((l) => l.Name), Is.EquivalentTo(TestGameController_SaveLoadDeleteGame_TestCaseData.DefaultHouse_Locations), "House all locations names");
+                Assert.That(gameController.House.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestGameController_SaveLoadDeleteGame_TestCaseData.DefaultHouse_LocationsWithoutHidingPlaces), "House locations without hiding places names");
+                Assert.That(gameController.House.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestGameController_SaveLoadDeleteGame_TestCaseData.DefaultHouse_LocationsWithHidingPlaces), "House locations with hiding places names");
 
                 // Assert that GameController properties are as expected
                 Assert.That(gameController.CurrentLocation.Name, Is.EqualTo("Bathroom"), "player location");
@@ -383,12 +383,12 @@ namespace HideAndSeek
                 Assert.That(message, Is.EqualTo("Game successfully loaded from my_saved_game"), "ParseInput return message");
 
                 // Assert that House properties are as expected
-                Assert.That(gameController.House.Name, Is.EqualTo("test house"), "House name");
-                Assert.That(gameController.House.HouseFileName, Is.EqualTo("TestHouse"), "House file name");
+                Assert.That(gameController.House.Name, Is.EqualTo("my house"), "House name");
+                Assert.That(gameController.House.HouseFileName, Is.EqualTo("DefaultHouse"), "House file name");
                 Assert.That(gameController.House.PlayerStartingPoint, Is.EqualTo("Entry"), "House starting point");
-                Assert.That(gameController.House.Locations.Select((l) => l.Name), Is.EquivalentTo(MyTestHouse.TestHouseExpectedProperties_Locations_Names), "House all locations names");
-                Assert.That(gameController.House.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(MyTestHouse.TestHouseExpectedProperties_LocationsWithoutHidingPlaces_Names), "House locations without hiding places names");
-                Assert.That(gameController.House.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(MyTestHouse.TestHouseExpectedProperties_LocationsWithHidingPlaces_Names), "House locations with hiding places names");
+                Assert.That(gameController.House.Locations.Select((l) => l.Name), Is.EquivalentTo(TestGameController_SaveLoadDeleteGame_TestCaseData.DefaultHouse_Locations), "House all locations names");
+                Assert.That(gameController.House.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestGameController_SaveLoadDeleteGame_TestCaseData.DefaultHouse_LocationsWithoutHidingPlaces), "House locations without hiding places names");
+                Assert.That(gameController.House.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestGameController_SaveLoadDeleteGame_TestCaseData.DefaultHouse_LocationsWithHidingPlaces), "House locations with hiding places names");
 
                 // Assert that GameController properties are as expected
                 Assert.That(gameController.CurrentLocation.Name, Is.EqualTo("Pantry"), "player location");
@@ -493,7 +493,7 @@ namespace HideAndSeek
         private string ParseInputToLoadGameSuccessfully(string savedGamedFileText)
         {
             // Set mock file system for House property
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.json", MyTestHouse.SerializedTestHouse);
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.json", TestGameController_SaveLoadDeleteGame_TestCaseData.DefaultHouse_Serialized);
 
             // Set up mock for file system for GameController
             mockFileSystem.Setup(manager => manager.File.Exists("my_saved_game.json")).Returns(true); // Mock that file exists

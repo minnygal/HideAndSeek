@@ -55,7 +55,7 @@ namespace HideAndSeek
             // Set up mock for House file system
             Mock<IFileSystem> houseMockFileSystem = new Mock<IFileSystem>(); // Create new mock file system for House
             houseMockFileSystem.Setup((manager) => manager.File.Exists("DefaultHouse.json")).Returns(true); // Mock that default House file exists
-            houseMockFileSystem.Setup((manager) => manager.File.ReadAllText("DefaultHouse.json")).Returns(MyTestHouse.SerializedTestHouse); // Mock text in default House file
+            houseMockFileSystem.Setup((manager) => manager.File.ReadAllText("DefaultHouse.json")).Returns(TestGameController_LoadGame_HouseFailure_TestCaseData.DefaultHouse_Serialized); // Mock text in default House file
             houseMockFileSystem.Setup((manager) => manager.File.Exists("NonexistentHouse.json")).Returns(false); // Mock that nonexistent House file does not exist
             House.FileSystem = houseMockFileSystem.Object; // Set House file system to mock file system
 
@@ -153,7 +153,7 @@ namespace HideAndSeek
             // Set up mock for House file system
             Mock<IFileSystem> houseMockFileSystem = new Mock<IFileSystem>(); // Create new mock file system for House
             houseMockFileSystem.Setup((manager) => manager.File.Exists("DefaultHouse.json")).Returns(true); // Mock that default House file exists
-            houseMockFileSystem.Setup((manager) => manager.File.ReadAllText("DefaultHouse.json")).Returns(MyTestHouse.SerializedTestHouse); // Mock text in default House file
+            houseMockFileSystem.Setup((manager) => manager.File.ReadAllText("DefaultHouse.json")).Returns(TestGameController_LoadGame_HouseFailure_TestCaseData.DefaultHouse_Serialized); // Mock text in default House file
             houseMockFileSystem.Setup((manager) => manager.File.Exists("CorruptHouse.json")).Returns(true); // Mock that corrupt House file does exist
             houseMockFileSystem.Setup((manager) => manager.File.ReadAllText("CorruptHouse.json")).Returns(fileText); // Mock text in corrupt House file
             House.FileSystem = houseMockFileSystem.Object; // Set House file system to mock file system

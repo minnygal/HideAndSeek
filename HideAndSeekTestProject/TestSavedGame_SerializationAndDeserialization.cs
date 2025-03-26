@@ -53,12 +53,12 @@ namespace HideAndSeek
         public void Test_SavedGame_Deserialize_NoFoundOpponents()
         {
             // Set mock file system to House property
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("TestHouse.json", MyTestHouse.SerializedTestHouse);
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.json", TestSavedGame_Deserialization_TestCaseData.DefaultHouse_Serialized);
 
             // Initialize variable to serialized SavedGame
             string savedGameFileText =
                 "{" +
-                    "\"HouseFileName\":\"TestHouse\"" + "," +
+                    "\"HouseFileName\":\"DefaultHouse\"" + "," +
                     MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
                     MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_MoveNumber + "," +
                     MyTestSavedGame.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
@@ -72,7 +72,7 @@ namespace HideAndSeek
             Assert.Multiple(() =>
             {
                 // Assert that SavedGame properties are as expected
-                Assert.That(savedGame.HouseFileName, Is.EqualTo("TestHouse"), "house file name");
+                Assert.That(savedGame.HouseFileName, Is.EqualTo("DefaultHouse"), "house file name");
                 Assert.That(savedGame.PlayerLocation, Is.EqualTo("Entry"), "player location");
                 Assert.That(savedGame.MoveNumber, Is.EqualTo(1), "move number");
                 Assert.That(savedGame.OpponentsAndHidingLocations.Select((kvp) => kvp.Key),
@@ -82,8 +82,8 @@ namespace HideAndSeek
                 Assert.That(savedGame.FoundOpponents, Is.Empty, "no found opponents");
 
                 // Assert that House properties are as expected
-                Assert.That(savedGame.House.Name, Is.EqualTo("test house"));
-                Assert.That(savedGame.House.HouseFileName, Is.EqualTo("TestHouse"));
+                Assert.That(savedGame.House.Name, Is.EqualTo("my house"));
+                Assert.That(savedGame.House.HouseFileName, Is.EqualTo("DefaultHouse"));
                 Assert.That(savedGame.House.PlayerStartingPoint, Is.EqualTo("Entry"), "House player starting point");
             });
         }
@@ -94,12 +94,12 @@ namespace HideAndSeek
         public void Test_SavedGame_Deserialize_3FoundOpponents()
         {
             // Set mock file system to House property
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("TestHouse.json", MyTestHouse.SerializedTestHouse);
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.json", TestSavedGame_Deserialization_TestCaseData.DefaultHouse_Serialized);
 
             // Initialize variable to serialized SavedGame
             string savedGameFileText =
                 "{" +
-                    "\"HouseFileName\":\"TestHouse\"" + "," +
+                    "\"HouseFileName\":\"DefaultHouse\"" + "," +
                     MyTestSavedGame.SerializedTestSavedGame_3FoundOpponents_PlayerLocation + "," +
                     MyTestSavedGame.SerializedTestSavedGame_3FoundOpponents_MoveNumber + "," +
                     MyTestSavedGame.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
@@ -113,7 +113,7 @@ namespace HideAndSeek
             Assert.Multiple(() =>
             {
                 // Assert that SavedGame properties are as expected
-                Assert.That(savedGame.HouseFileName, Is.EqualTo("TestHouse"), "house file name");
+                Assert.That(savedGame.HouseFileName, Is.EqualTo("DefaultHouse"), "house file name");
                 Assert.That(savedGame.PlayerLocation, Is.EqualTo("Bathroom"), "player location");
                 Assert.That(savedGame.MoveNumber, Is.EqualTo(7), "move number");
                 Assert.That(savedGame.OpponentsAndHidingLocations.Select((kvp) => kvp.Key),
@@ -124,8 +124,8 @@ namespace HideAndSeek
                 Assert.That(savedGame.FoundOpponents, Is.EquivalentTo(MyTestSavedGame.FoundOpponents_3FoundOpponents), "names of found opponents");
 
                 // Assert that House properties are as expected
-                Assert.That(savedGame.House.Name, Is.EqualTo("test house"));
-                Assert.That(savedGame.House.HouseFileName, Is.EqualTo("TestHouse"));
+                Assert.That(savedGame.House.Name, Is.EqualTo("my house"));
+                Assert.That(savedGame.House.HouseFileName, Is.EqualTo("DefaultHouse"));
                 Assert.That(savedGame.House.PlayerStartingPoint, Is.EqualTo("Entry"), "House player starting point");
             });
         }
@@ -177,7 +177,7 @@ namespace HideAndSeek
         [Category("SavedGame Deserialize Failure")]
         public void Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenPropertyIsMissing(string expectedErrorMessage, string textInFile)
         {
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.json", MyTestHouse.SerializedTestHouse);
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.json", TestSavedGame_Deserialization_TestCaseData.DefaultHouse_Serialized);
 
             Assert.Multiple(() =>
             {
@@ -196,7 +196,7 @@ namespace HideAndSeek
         [Category("SavedGame Deserialize Failure")]
         public void Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue(string expectedErrorMessage, string textInFile)
         {
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.json", MyTestHouse.SerializedTestHouse);
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.json", TestSavedGame_Deserialization_TestCaseData.DefaultHouse_Serialized);
 
             Assert.Multiple(() =>
             {
