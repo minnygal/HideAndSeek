@@ -141,7 +141,7 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo("invalid CurrentLocation"));
+                Assert.That(exception.Message, Is.EqualTo("invalid PlayerLocation"));
             });
         }
 

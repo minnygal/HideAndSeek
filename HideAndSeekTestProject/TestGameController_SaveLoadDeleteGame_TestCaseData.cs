@@ -440,8 +440,8 @@ namespace HideAndSeek
                         "}")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - invalid HouseFileName");
 
-                // Invalid current location
-                yield return new TestCaseData("invalid CurrentLocation",
+                // Invalid player location
+                yield return new TestCaseData("invalid PlayerLocation",
                         "{" +
                             MyTestSavedGame.SerializedTestSavedGame_HouseFileName + "," +
                             "\"PlayerLocation\":\"Tree\"," +
@@ -449,7 +449,7 @@ namespace HideAndSeek
                             MyTestSavedGame.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
                             MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_FoundOpponents +
                         "}")
-                    .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - invalid CurrentLocation");
+                    .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - invalid PlayerLocation");
 
                 // Invalid (negative) move number
                 yield return new TestCaseData("invalid MoveNumber",

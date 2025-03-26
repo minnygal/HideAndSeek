@@ -96,8 +96,8 @@ namespace HideAndSeek
                         "}")
                     .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue - invalid HouseFileName");
 
-                // Invalid current location
-                yield return new TestCaseData("invalid CurrentLocation",
+                // Invalid player location
+                yield return new TestCaseData("invalid PlayerLocation",
                         "{" +
                             MyTestSavedGame.SerializedTestSavedGame_HouseFileName + "," +
                             "\"PlayerLocation\":\"Tree\"," +
