@@ -132,7 +132,53 @@ namespace HideAndSeek
             // Assert that success message is correct
             Assert.That(message, Is.EqualTo(expected));
         }
-        
+
+        [Test]
+        [Category("GameController Load Success")]
+        public void Test_GameController_ParseInput_ToLoadGame_WithNoFoundOpponents()
+        {
+            // Initialize variable to serialized SavedGame
+            string savedGameFileText =
+                "{" +
+                    "\"HouseFileName\":\"DefaultHouse\"" + "," +
+                    "\"PlayerLocation\":\"Entry\"" + "," +
+                    "\"MoveNumber\":1" + "," +
+                    MyTestSavedGame.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
+                    "\"FoundOpponents\":[]" +
+                "}";
+
+            // Have game controller parse file name with load command
+            message = ParseInputToLoadGameSuccessfully(savedGameFileText);
+
+            // Assert that message is as expected and game state has been restored successfully
+            Assert.Multiple(() =>
+            {
+                // Assert that ParseInput return message is as expected
+                Assert.That(message, Is.EqualTo("Game successfully loaded from my_saved_game"), "ParseInput return message");
+
+                // Assert that House properties are as expected
+                Assert.That(gameController.House.Name, Is.EqualTo("test house"), "House name");
+                Assert.That(gameController.House.HouseFileName, Is.EqualTo("TestHouse"), "House file name");
+                Assert.That(gameController.House.PlayerStartingPoint, Is.EqualTo("Entry"), "House starting point");
+                Assert.That(gameController.House.Locations.Select((l) => l.Name), Is.EquivalentTo(MyTestHouse.TestHouseExpectedProperties_Locations_Names), "House all locations names");
+                Assert.That(gameController.House.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(MyTestHouse.TestHouseExpectedProperties_LocationsWithoutHidingPlaces_Names), "House locations without hiding places names");
+                Assert.That(gameController.House.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(MyTestHouse.TestHouseExpectedProperties_LocationsWithHidingPlaces_Names), "House locations with hiding places names");
+
+                // Assert that GameController properties are as expected
+                Assert.That(gameController.CurrentLocation.Name, Is.EqualTo("Entry"), "player location");
+                Assert.That(gameController.MoveNumber, Is.EqualTo(1), "move number");
+                Assert.That(gameController.OpponentsAndHidingLocations.Select((x) => x.Key.Name), Is.EquivalentTo(new List<string>() { "Joe", "Bob", "Ana", "Owen", "Jimmy" }), "all opponents");
+                Assert.That(gameController.OpponentsAndHidingLocations.Select((x) => x.Value.Name), Is.EquivalentTo(new List<string>() { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry" }), "opponents' hiding places");
+                Assert.That(gameController.FoundOpponents, Is.Empty, "no found opponents");
+
+                // Assert that locations with hiding places that should not have hidden Opponents do not have any hidden Opponents
+                gameController.House.LocationsWithHidingPlaces.Where((l) => l.Name != "Kitchen" && l.Name != "Pantry" && l.Name != "Bathroom").ToList().ForEach((l) =>
+                {
+                    Assert.That(l.CheckHidingPlace, Is.Empty, $"no Opponents hiding in the {l.Name}");
+                });
+            });
+        }
+
         [Test]
         [Category("GameController Load Success")]
         public void Test_GameController_ParseInput_ToLoadGame_With1FoundOpponent()
