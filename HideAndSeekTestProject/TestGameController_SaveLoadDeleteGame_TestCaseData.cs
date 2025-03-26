@@ -9,111 +9,61 @@ namespace HideAndSeek
     /// </summary>
     public static class TestGameController_SaveLoadDeleteGame_TestCaseData
     {
-        /// <summary>
-        /// Helper method to start new game with Opponents in specific hiding places and with specified file system
-        /// (Solution for TestCaseData not accepting overloaded methods)
-        /// </summary>
-        /// <param name="fileSystem">File system for GameController to use</param>
-        /// <returns>New GameController object set up for game and using specified file system</returns>
-        private static GameController StartNewGameWithSpecificHidingInfo_MockFileSystem(IFileSystem fileSystem)
-        {
-            // Create GameController with specified file system (opponents hidden in random locations with hiding spots)
-            GameController gameController = new GameController(fileSystem);
-            
-            // Return set up GameController
-            return StartNewGameWithSpecificHidingInfo(gameController);
-        }
-
-        /// <summary>
-        /// Helper method to start new game with Opponents in specific hiding places and with default GameController file system
-        /// (Solution for TestCaseData not accepting overloaded methods)
-        /// </summary>
-        /// <returns>New GameController object set up for game and using default file system</returns>
-        private static GameController StartNewGameWithSpecificHidingInfo_DefaultFileSystem()
-        {
-            // Create GameController with default GameController file system (opponents hidden in random locations with hiding spots)
-            GameController gameController = new GameController();
-
-            // Return set up GameController
-            return StartNewGameWithSpecificHidingInfo(gameController);
-        }
-
-        /// <summary>
-        /// Helper method to reset game with Opponents in specific hiding places
-        /// </summary>
-        /// <param name="gameController">GameController to set up for game</param>
-        /// <returns>GameController set up for game</returns>
-        private static GameController StartNewGameWithSpecificHidingInfo(GameController gameController)
-        {
-            // Hide all opponents in specified locations
-            gameController.RehideAllOpponents(MyTestSavedGame.OpponentsAndHidingPlaces.Values);
-
-            // Return set up GameController
-            return gameController;
-        }
-
-        /// <summary>
-        /// Helper method to start and find 3 opponents in new game with predetermined hiding places and specified file system
-        /// (Solution for TestCaseData not accepting overloaded methods)
-        /// </summary>
-        /// <param name="fileSystem">File system for GameController</param>
-        /// <returns>GameController after 3 opponents have been found</returns>
-        private static GameController StartNewGameAndFind3Opponents_MockFileSystem(IFileSystem fileSystem)
-        {
-            // Create game controller with opponents hiding in specific places
-            GameController gameController = StartNewGameWithSpecificHidingInfo_MockFileSystem(fileSystem);
-
-            // Find 3 opponents and return game controller
-            return Find3Opponents(gameController);
-        }
-
-        /// <summary>
-        /// Helper method to start and find 3 opponents in new game with predetermined hiding places and default file system
-        /// (Solution for TestCaseData not accepting overloaded methods)
-        /// </summary>
-        /// <returns>GameController after 3 opponents have been found</returns>
-        private static GameController StartNewGameAndFind3Opponents_DefaultFileSystem()
-        {
-            // Create game controller with opponents hiding in specific places
-            GameController gameController = StartNewGameWithSpecificHidingInfo_DefaultFileSystem();
-
-            // Find 3 opponents and return game controller
-            return Find3Opponents(gameController);
-        }
-
-        /// <summary>
-        /// Helper method to find 3 opponents (hidden in predetermined places with a StartNewGame method)
-        /// </summary>
-        /// <param name="gameController">GameController with opponents hidden in specific places</param>
-        /// <returns>GameController after 3 opponents have been found</returns>
-        private static GameController Find3Opponents(GameController gameController)
-        {
-            // Go to Kitchen and check to find 2 opponents
-            gameController.ParseInput("East");
-            gameController.ParseInput("Northwest");
-            gameController.ParseInput("check");
-
-            // Go to Bathroom and check to find 1 opponent
-            gameController.ParseInput("Southeast");
-            gameController.ParseInput("North");
-            gameController.ParseInput("check");
-
-            // Return game controller
-            return gameController;
-        }
-
         // Test case data for Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile test
         public static IEnumerable TestCases_For_Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile
         {
             get
             {
-                // No Opponents found
-                yield return new TestCaseData(StartNewGameWithSpecificHidingInfo_MockFileSystem, MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents)
-                    .SetName("Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile - no opponents found");
+                // Default House, no Opponents found
+                yield return new TestCaseData(
+                        "DefaultHouse.json",
+                        "{" +
+                            "\"Name\":\"my house\"" + "," +
+                            "\"HouseFileName\":\"DefaultHouse\"" + "," +
+                            MyTestHouse.SerializedHouse_PlayerStartingPoint + "," +
+                            MyTestHouse.SerializedHouse_LocationsWithoutHidingPlaces + "," +
+                            MyTestHouse.SerializedTestHouse_LocationsWithHidingPlaces +
+                        "}",
+                        (IFileSystem fileSystem) =>
+                        {
+                            // Create GameController with specified file system, hide all Opponents in specified locations, and return GameController
+                            return new GameController(fileSystem).RehideAllOpponents(MyTestSavedGame.OpponentsAndHidingPlaces.Values);
+                        }, 
+                        MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents)
+                    .SetName("Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile - default House - no opponents found")
+                    .SetCategory("GameController Save Success");
 
-                // 3 Opponents found
-                yield return new TestCaseData(StartNewGameAndFind3Opponents_MockFileSystem, MyTestSavedGame.SerializedTestSavedGame_3FoundOpponents)
-                    .SetName("Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile - 3 opponents found");
+                // Default House, 3 Opponents found
+                yield return new TestCaseData(
+                        "DefaultHouse.json",
+                        "{" +
+                            "\"Name\":\"my house\"" + "," +
+                            "\"HouseFileName\":\"DefaultHouse\"" + "," +
+                            MyTestHouse.SerializedHouse_PlayerStartingPoint + "," +
+                            MyTestHouse.SerializedHouse_LocationsWithoutHidingPlaces + "," +
+                            MyTestHouse.SerializedTestHouse_LocationsWithHidingPlaces +
+                        "}",
+                        (IFileSystem fileSystem) => 
+                        {
+                            // Create GameController with specified file system and hide all Opponents in specified locations
+                            GameController gameController = new GameController(fileSystem).RehideAllOpponents(MyTestSavedGame.OpponentsAndHidingPlaces.Values);
+
+                            // Go to Kitchen and check to find 2 Opponents
+                            gameController.ParseInput("East");
+                            gameController.ParseInput("Northwest");
+                            gameController.ParseInput("check");
+
+                            // Go to Bathroom and check to find 1 Opponent
+                            gameController.ParseInput("Southeast");
+                            gameController.ParseInput("North");
+                            gameController.ParseInput("check");
+
+                            // Return GameController after 3 Opponents found
+                            return gameController;
+                        },
+                        MyTestSavedGame.SerializedTestSavedGame_3FoundOpponents)
+                    .SetName("Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile - default House - 3 opponents found")
+                    .SetCategory("GameController Save Success");
             }
         }
 

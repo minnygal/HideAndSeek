@@ -68,18 +68,21 @@ namespace HideAndSeek
             Assert.That(message, Is.EqualTo(expected));
         }
 
+        // Tests default House, and tests custom House set via constructor and via ReloadGame
         [TestCaseSource(typeof(TestGameController_SaveLoadDeleteGame_TestCaseData), nameof(TestGameController_SaveLoadDeleteGame_TestCaseData.TestCases_For_Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile))]
-        [Category("GameController Save Success")]
-        public void Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile(Func<IFileSystem, GameController> startNewGame, string expectedTextInFile)
+        public void Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile(string houseFileName, string houseFileText, Func<IFileSystem, GameController> startNewGame, string expectedTextInSavedGameFile)
         {
-            // Create variable to store text written to file
-            string? actualTextInFile = null;
+            // Set House file system
+            House.FileSystem = MockFileSystemHelper.CreateMockFileSystem_ToReadAllText(houseFileName, houseFileText);
 
-            // Set up mock for file system
+            // Create variable to store text written to SavedGame file
+            string? actualTextInSavedGameFile = null;
+
+            // Set up mock for GameController file system
             mockFileSystem.Setup(system => system.File.WriteAllText("my_saved_game.json", It.IsAny<string>()))
                     .Callback((string path, string text) =>
                     {
-                        actualTextInFile = text; // Store text written to file in variable
+                        actualTextInSavedGameFile = text; // Store text written to file in variable
                     });
 
             // Start and attempt to save game
@@ -87,7 +90,7 @@ namespace HideAndSeek
             gameController.ParseInput("save my_saved_game");
 
             // Assert that actual text in file is equal to expected text in file
-            Assert.That(actualTextInFile, Is.EqualTo(expectedTextInFile));
+            Assert.That(actualTextInSavedGameFile, Is.EqualTo(expectedTextInSavedGameFile));
         }
 
         [Test]
