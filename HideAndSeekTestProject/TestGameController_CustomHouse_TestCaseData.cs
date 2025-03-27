@@ -14,6 +14,7 @@ namespace HideAndSeek
     public static class TestGameController_CustomHouse_TestCaseData
     {
         private static readonly string textInHouseFile =
+        #region test House file text
             "{" +
                 "\"Name\":\"test house\"" + "," +
                 "\"HouseFileName\":\"TestHouse\"" + "," +
@@ -143,6 +144,7 @@ namespace HideAndSeek
                     "}" +
                 "]" +
             "}";
+        #endregion
 
         private static GameController GetGameController_WithCustomHouseSetViaConstructor()
         {

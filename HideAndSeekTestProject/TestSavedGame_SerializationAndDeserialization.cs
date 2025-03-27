@@ -34,8 +34,12 @@ namespace HideAndSeek
         [Category("SavedGame Serialize Success")]
         public void Test_SavedGame_Serialize_NoFoundOpponents()
         {
-            string serializedGame = JsonSerializer.Serialize(MyTestSavedGame.GetNewTestSavedGame_NoFoundOpponents());
-            Assert.That(serializedGame, Is.EqualTo(MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents));
+            SavedGame savedGame = new SavedGame(TestSavedGame_SerializationAndDeserialization_TestCaseData.GetDefaultHouse(), 
+                                                "DefaultHouse", "Entry", 1, 
+                                                TestSavedGame_SerializationAndDeserialization_TestCaseData.SavedGame_OpponentsAndHidingPlaces, 
+                                                new List<string>());
+            string serializedGame = JsonSerializer.Serialize(savedGame);
+            Assert.That(serializedGame, Is.EqualTo(TestSavedGame_SerializationAndDeserialization_TestCaseData.SavedGame_Serialized_NoFoundOpponents));
         }
 
         // Tests all properties' getters
@@ -43,8 +47,20 @@ namespace HideAndSeek
         [Category("SavedGame Serialize Success")]
         public void Test_SavedGame_Serialize_3FoundOpponents()
         {
-            string serializedGame = JsonSerializer.Serialize(MyTestSavedGame.GetNewTestSavedGame_3FoundOpponents());
-            Assert.That(serializedGame, Is.EqualTo(MyTestSavedGame.SerializedTestSavedGame_3FoundOpponents));
+            string expectedSavedGameText =
+                "{" +
+                    TestSavedGame_SerializationAndDeserialization_TestCaseData.SavedGame_Serialized_HouseFileName + "," +
+                    "\"PlayerLocation\":\"Bathroom\"" + "," +
+                    "\"MoveNumber\":7" + "," +
+                    TestSavedGame_SerializationAndDeserialization_TestCaseData.SavedGame_Serialized_OpponentsAndHidingLocations + "," +
+                    "\"FoundOpponents\":[\"Joe\",\"Owen\",\"Ana\"]" +
+                "}";
+            SavedGame savedGame = new SavedGame(TestSavedGame_SerializationAndDeserialization_TestCaseData.GetDefaultHouse(), 
+                                                "DefaultHouse", "Bathroom", 7, 
+                                                TestSavedGame_SerializationAndDeserialization_TestCaseData.SavedGame_OpponentsAndHidingPlaces,
+                                                new List<string>() { "Joe", "Owen", "Ana" });
+            string serializedGame = JsonSerializer.Serialize(savedGame);
+            Assert.That(serializedGame, Is.EqualTo(expectedSavedGameText));
         }
 
         // Tests all properties' setters and House getter
@@ -53,16 +69,16 @@ namespace HideAndSeek
         public void Test_SavedGame_Deserialize_NoFoundOpponents()
         {
             // Set mock file system to House property
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.json", TestSavedGame_Deserialization_TestCaseData.DefaultHouse_Serialized);
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.json", TestSavedGame_SerializationAndDeserialization_TestCaseData.DefaultHouse_Serialized);
 
             // Initialize variable to serialized SavedGame
             string savedGameFileText =
                 "{" +
-                    "\"HouseFileName\":\"DefaultHouse\"" + "," +
-                    MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
-                    MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_MoveNumber + "," +
-                    MyTestSavedGame.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
-                    MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_FoundOpponents +
+                    TestSavedGame_SerializationAndDeserialization_TestCaseData.SavedGame_Serialized_HouseFileName + "," +
+                    TestSavedGame_SerializationAndDeserialization_TestCaseData.SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                    TestSavedGame_SerializationAndDeserialization_TestCaseData.SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
+                    TestSavedGame_SerializationAndDeserialization_TestCaseData.SavedGame_Serialized_OpponentsAndHidingLocations + "," +
+                    TestSavedGame_SerializationAndDeserialization_TestCaseData.SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                 "}";
 
             // Attempt to deserialize text from file into SavedGame object
@@ -76,9 +92,9 @@ namespace HideAndSeek
                 Assert.That(savedGame.PlayerLocation, Is.EqualTo("Entry"), "player location");
                 Assert.That(savedGame.MoveNumber, Is.EqualTo(1), "move number");
                 Assert.That(savedGame.OpponentsAndHidingLocations.Select((kvp) => kvp.Key),
-                    Is.EquivalentTo(MyTestSavedGame.OpponentsAndHidingPlaces.Select((kvp) => kvp.Key)), "names of opponents in opponents and hiding locations dictionary");
+                    Is.EquivalentTo(TestSavedGame_SerializationAndDeserialization_TestCaseData.SavedGame_OpponentsAndHidingPlaces.Select((kvp) => kvp.Key)), "names of opponents in opponents and hiding locations dictionary");
                 Assert.That(savedGame.OpponentsAndHidingLocations.Select((kvp) => kvp.Value),
-                    Is.EquivalentTo(MyTestSavedGame.OpponentsAndHidingPlaces.Select((kvp) => kvp.Value)), "names of hiding locations in opponents and hiding locations dictionary");
+                    Is.EquivalentTo(TestSavedGame_SerializationAndDeserialization_TestCaseData.SavedGame_OpponentsAndHidingPlaces.Select((kvp) => kvp.Value)), "names of hiding locations in opponents and hiding locations dictionary");
                 Assert.That(savedGame.FoundOpponents, Is.Empty, "no found opponents");
 
                 // Assert that House properties are as expected
@@ -94,16 +110,16 @@ namespace HideAndSeek
         public void Test_SavedGame_Deserialize_3FoundOpponents()
         {
             // Set mock file system to House property
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.json", TestSavedGame_Deserialization_TestCaseData.DefaultHouse_Serialized);
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.json", TestSavedGame_SerializationAndDeserialization_TestCaseData.DefaultHouse_Serialized);
 
             // Initialize variable to serialized SavedGame
             string savedGameFileText =
                 "{" +
-                    "\"HouseFileName\":\"DefaultHouse\"" + "," +
-                    MyTestSavedGame.SerializedTestSavedGame_3FoundOpponents_PlayerLocation + "," +
-                    MyTestSavedGame.SerializedTestSavedGame_3FoundOpponents_MoveNumber + "," +
-                    MyTestSavedGame.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
-                    MyTestSavedGame.SerializedTestSavedGame_3FoundOpponents_FoundOpponents +
+                    TestSavedGame_SerializationAndDeserialization_TestCaseData.SavedGame_Serialized_HouseFileName + "," +
+                    "\"PlayerLocation\":\"Bathroom\"" + "," +
+                    "\"MoveNumber\":7" + "," +
+                    TestSavedGame_SerializationAndDeserialization_TestCaseData.SavedGame_Serialized_OpponentsAndHidingLocations + "," +
+                    "\"FoundOpponents\":[\"Joe\",\"Owen\",\"Ana\"]" +
                 "}";
 
             // Attempt to deserialize text from file into SavedGame object
@@ -117,11 +133,11 @@ namespace HideAndSeek
                 Assert.That(savedGame.PlayerLocation, Is.EqualTo("Bathroom"), "player location");
                 Assert.That(savedGame.MoveNumber, Is.EqualTo(7), "move number");
                 Assert.That(savedGame.OpponentsAndHidingLocations.Select((kvp) => kvp.Key),
-                    Is.EquivalentTo(MyTestSavedGame.OpponentsAndHidingPlaces.Select((kvp) => kvp.Key)), "names of opponents in opponents and hiding locations dictionary");
+                    Is.EquivalentTo(TestSavedGame_SerializationAndDeserialization_TestCaseData.SavedGame_OpponentsAndHidingPlaces.Select((kvp) => kvp.Key)), "names of opponents in opponents and hiding locations dictionary");
                 Assert.That(savedGame.OpponentsAndHidingLocations.Select((kvp) => kvp.Value),
-                    Is.EquivalentTo(MyTestSavedGame.OpponentsAndHidingPlaces.Select((kvp) => kvp.Value)), "names of hiding locations in opponents and hiding locations dictionary");
+                    Is.EquivalentTo(TestSavedGame_SerializationAndDeserialization_TestCaseData.SavedGame_OpponentsAndHidingPlaces.Select((kvp) => kvp.Value)), "names of hiding locations in opponents and hiding locations dictionary");
                 Assert.That(savedGame.FoundOpponents.Count(), Is.EqualTo(3), "3 found opponents");
-                Assert.That(savedGame.FoundOpponents, Is.EquivalentTo(MyTestSavedGame.FoundOpponents_3FoundOpponents), "names of found opponents");
+                Assert.That(savedGame.FoundOpponents, Is.EquivalentTo(new List<string>() { "Joe", "Owen", "Ana" }), "names of found opponents");
 
                 // Assert that House properties are as expected
                 Assert.That(savedGame.House.Name, Is.EqualTo("my house"));
@@ -137,10 +153,10 @@ namespace HideAndSeek
         {
             string textInFile =
                 "{" +
-                    MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
-                    MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_MoveNumber + "," +
-                    MyTestSavedGame.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
-                    MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_FoundOpponents +
+                    TestSavedGame_SerializationAndDeserialization_TestCaseData.SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                    TestSavedGame_SerializationAndDeserialization_TestCaseData.SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
+                    TestSavedGame_SerializationAndDeserialization_TestCaseData.SavedGame_Serialized_OpponentsAndHidingLocations + "," +
+                    TestSavedGame_SerializationAndDeserialization_TestCaseData.SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                 "}";
 
             Assert.Multiple(() =>
@@ -156,7 +172,7 @@ namespace HideAndSeek
             });
         }
 
-        [TestCaseSource(typeof(TestSavedGame_Deserialization_TestCaseData), nameof(TestSavedGame_Deserialization_TestCaseData.TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenNoJsonTokens))]
+        [TestCaseSource(typeof(TestSavedGame_SerializationAndDeserialization_TestCaseData), nameof(TestSavedGame_SerializationAndDeserialization_TestCaseData.TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenNoJsonTokens))]
         [Category("SavedGame Deserialize Failure")]
         public void Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenNoJsonTokens(string expectedErrorMessage, string textInFile)
         {
@@ -173,11 +189,11 @@ namespace HideAndSeek
             });
         }
 
-        [TestCaseSource(typeof(TestSavedGame_Deserialization_TestCaseData), nameof(TestSavedGame_Deserialization_TestCaseData.TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenPropertyIsMissing))]
+        [TestCaseSource(typeof(TestSavedGame_SerializationAndDeserialization_TestCaseData), nameof(TestSavedGame_SerializationAndDeserialization_TestCaseData.TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenPropertyIsMissing))]
         [Category("SavedGame Deserialize Failure")]
         public void Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenPropertyIsMissing(string expectedErrorMessage, string textInFile)
         {
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.json", TestSavedGame_Deserialization_TestCaseData.DefaultHouse_Serialized);
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.json", TestSavedGame_SerializationAndDeserialization_TestCaseData.DefaultHouse_Serialized);
 
             Assert.Multiple(() =>
             {
@@ -192,11 +208,11 @@ namespace HideAndSeek
             });
         }
 
-        [TestCaseSource(typeof(TestSavedGame_Deserialization_TestCaseData), nameof(TestSavedGame_Deserialization_TestCaseData.TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue))]
+        [TestCaseSource(typeof(TestSavedGame_SerializationAndDeserialization_TestCaseData), nameof(TestSavedGame_SerializationAndDeserialization_TestCaseData.TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue))]
         [Category("SavedGame Deserialize Failure")]
         public void Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue(string expectedErrorMessage, string textInFile)
         {
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.json", TestSavedGame_Deserialization_TestCaseData.DefaultHouse_Serialized);
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.json", TestSavedGame_SerializationAndDeserialization_TestCaseData.DefaultHouse_Serialized);
 
             Assert.Multiple(() =>
             {
@@ -211,7 +227,7 @@ namespace HideAndSeek
             });
         }
 
-        [TestCaseSource(typeof(TestSavedGame_Deserialization_TestCaseData), nameof(TestSavedGame_Deserialization_TestCaseData.TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenHouseFileFormatIsInvalid))]
+        [TestCaseSource(typeof(TestSavedGame_SerializationAndDeserialization_TestCaseData), nameof(TestSavedGame_SerializationAndDeserialization_TestCaseData.TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenHouseFileFormatIsInvalid))]
         [Category("SavedGame Deserialize House Failure")]
         public void Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenHouseFileFormatIsInvalid(string exceptionMessageEnding, string houseFileText)
         {
@@ -223,7 +239,7 @@ namespace HideAndSeek
                 // Assert that deserializing a SavedGame with a reference to a House with an invalid file format throws an exception
                 var exception = Assert.Throws<JsonException>(() =>
                 {
-                    JsonSerializer.Deserialize<SavedGame>(MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents);
+                    JsonSerializer.Deserialize<SavedGame>(TestSavedGame_SerializationAndDeserialization_TestCaseData.SavedGame_Serialized_NoFoundOpponents);
                 });
 
                 // Assert that exception message is as expected
@@ -231,7 +247,7 @@ namespace HideAndSeek
             });
         }
 
-        [TestCaseSource(typeof(TestSavedGame_Deserialization_TestCaseData), nameof(TestSavedGame_Deserialization_TestCaseData.TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenHouseFileDataInvalidValue))]
+        [TestCaseSource(typeof(TestSavedGame_SerializationAndDeserialization_TestCaseData), nameof(TestSavedGame_SerializationAndDeserialization_TestCaseData.TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenHouseFileDataInvalidValue))]
         [Category("SavedGame Deserialize House Failure")]
         public void Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenHouseFileDataInvalidValue(string exceptionMessageEnding, string houseFileText)
         {
@@ -243,7 +259,7 @@ namespace HideAndSeek
                 // Assert that deserializing a SavedGame with a reference to a House with invalid file data of whitespace value throws an exception
                 var exception = Assert.Throws<InvalidDataException>(() =>
                 {
-                    JsonSerializer.Deserialize<SavedGame>(MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents);
+                    JsonSerializer.Deserialize<SavedGame>(TestSavedGame_SerializationAndDeserialization_TestCaseData.SavedGame_Serialized_NoFoundOpponents);
                 });
                 
                 // Assert that exception message is as expected
@@ -251,7 +267,7 @@ namespace HideAndSeek
             });
         }
 
-        [TestCaseSource(typeof(TestSavedGame_Deserialization_TestCaseData), nameof(TestSavedGame_Deserialization_TestCaseData.TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenHouseFileDataHasInvalidDirection))]
+        [TestCaseSource(typeof(TestSavedGame_SerializationAndDeserialization_TestCaseData), nameof(TestSavedGame_SerializationAndDeserialization_TestCaseData.TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenHouseFileDataHasInvalidDirection))]
         [Category("SavedGame Deserialize House Failure")]
         public void Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenHouseFileDataHasInvalidDirection(string houseFileText)
         {
@@ -263,7 +279,7 @@ namespace HideAndSeek
                 // Assert that deserializing a SavedGame with a reference to a House with an invalid Direction throws an exception
                 var exception = Assert.Throws<JsonException>(() =>
                 {
-                    JsonSerializer.Deserialize<SavedGame>(MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents);
+                    JsonSerializer.Deserialize<SavedGame>(TestSavedGame_SerializationAndDeserialization_TestCaseData.SavedGame_Serialized_NoFoundOpponents);
                 });
 
                 // Assert that exception message is as expected

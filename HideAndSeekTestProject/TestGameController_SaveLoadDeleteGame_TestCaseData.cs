@@ -10,6 +10,105 @@ namespace HideAndSeek
     public static class TestGameController_SaveLoadDeleteGame_TestCaseData
     {
         /// <summary>
+        /// Dictionary of Opponents and associated LocationWithHidingPlace names
+        /// for SavedGame for tests
+        /// </summary>
+        public static Dictionary<string, string> SavedGame_OpponentsAndHidingPlaces
+        {
+            get
+            {
+                Dictionary<string, string> opponentsAndHidingPlaces = new Dictionary<string, string>();
+                opponentsAndHidingPlaces.Add("Joe", "Kitchen");
+                opponentsAndHidingPlaces.Add("Bob", "Pantry");
+                opponentsAndHidingPlaces.Add("Ana", "Bathroom");
+                opponentsAndHidingPlaces.Add("Owen", "Kitchen");
+                opponentsAndHidingPlaces.Add("Jimmy", "Pantry");
+                return opponentsAndHidingPlaces;
+            }
+        }
+
+        /// <summary>
+        /// Text for serialized test SavedGame with no found opponents
+        /// </summary>
+        public static string SavedGame_Serialized_NoFoundOpponents
+        {
+            get
+            {
+                return
+                    "{" +
+                        SavedGame_Serialized_HouseFileName + "," +
+                        SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                        SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
+                        SavedGame_Serialized_OpponentsAndHidingLocations + "," +
+                        SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
+                    "}";
+            }
+        }
+
+        /// <summary>
+        /// Text for serialized HouseFileName property of SavedGame for tests
+        /// </summary>
+        public static string SavedGame_Serialized_HouseFileName
+        {
+            get
+            {
+                return "\"HouseFileName\":\"DefaultHouse\"";
+            }
+        }
+
+        /// <summary>
+        /// Text for serialized PlayerLocation property for test SavedGame with no found opponents
+        /// </summary>
+        public static string SavedGame_Serialized_PlayerLocation_NoOpponentsGame
+        {
+            get
+            {
+                return "\"PlayerLocation\":\"Entry\"";
+            }
+        }
+
+        /// <summary>
+        /// Text for serialized MoveNumber property for test SavedGame with no found opponents
+        /// </summary>
+        public static string SavedGame_Serialized_MoveNumber_NoFoundOpponents
+        {
+            get
+            {
+                return "\"MoveNumber\":1";
+            }
+        }
+
+        /// <summary>
+        /// Text for serialized OpponentsAndHidingLocations property for test SavedGame
+        /// </summary>
+        public static string SavedGame_Serialized_OpponentsAndHidingLocations
+        {
+            get
+            {
+                return
+                    "\"OpponentsAndHidingLocations\":" +
+                    "{" +
+                        "\"Joe\":\"Kitchen\"," +
+                        "\"Bob\":\"Pantry\"," +
+                        "\"Ana\":\"Bathroom\"," +
+                        "\"Owen\":\"Kitchen\"," +
+                        "\"Jimmy\":\"Pantry\"" +
+                    "}";
+            }
+        }
+
+        /// <summary>
+        /// Text for serialized FoundOpponents property for test SavedGame with no found opponents
+        /// </summary>
+        public static string SavedGame_Serialized_FoundOpponents_NoFoundOpponents
+        {
+            get
+            {
+                return "\"FoundOpponents\":[]";
+            }
+        }
+
+        /// <summary>
         /// Text representing default House for tests serialized
         /// </summary>
         public static string DefaultHouse_Serialized
@@ -219,6 +318,7 @@ namespace HideAndSeek
         }
 
         private static readonly string serializedCustomTestHouse =
+            #region serialized test House
             "{" +
                 "\"Name\":\"test house\"" + "," +
                 "\"HouseFileName\":\"TestHouse\"" + "," +
@@ -348,6 +448,7 @@ namespace HideAndSeek
                     "}" +
                 "]" +
             "}";
+        #endregion
 
         // Test case data for Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile test
         public static IEnumerable TestCases_For_Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile
@@ -361,9 +462,9 @@ namespace HideAndSeek
                         (IFileSystem fileSystem, Mock<IFileSystem> mockHouseFileSystem) =>
                         {
                             // Create GameController with specified file system, hide all Opponents in specified locations, and return GameController
-                            return new GameController(fileSystem).RehideAllOpponents(MyTestSavedGame.OpponentsAndHidingPlaces.Values);
+                            return new GameController(fileSystem).RehideAllOpponents(SavedGame_OpponentsAndHidingPlaces.Values);
                         }, 
-                        MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents)
+                        SavedGame_Serialized_NoFoundOpponents)
                     .SetName("Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile - default House - no opponents found")
                     .SetCategory("GameController Save Success");
 
@@ -374,7 +475,7 @@ namespace HideAndSeek
                         (IFileSystem fileSystem, Mock<IFileSystem> mockHouseFileSystem) => 
                         {
                             // Create GameController with specified file system and hide all Opponents in specified locations
-                            GameController gameController = new GameController(fileSystem).RehideAllOpponents(MyTestSavedGame.OpponentsAndHidingPlaces.Values);
+                            GameController gameController = new GameController(fileSystem).RehideAllOpponents(SavedGame_OpponentsAndHidingPlaces.Values);
 
                             // Go to Kitchen and check to find 2 Opponents
                             gameController.ParseInput("East");
@@ -389,7 +490,13 @@ namespace HideAndSeek
                             // Return GameController after 3 Opponents found
                             return gameController;
                         },
-                        MyTestSavedGame.SerializedTestSavedGame_3FoundOpponents)
+                        "{" +
+                        SavedGame_Serialized_HouseFileName + "," +
+                        "\"PlayerLocation\":\"Bathroom\"" + "," +
+                        "\"MoveNumber\":7" + "," +
+                        SavedGame_Serialized_OpponentsAndHidingLocations + "," +
+                        "\"FoundOpponents\":[\"Joe\",\"Owen\",\"Ana\"]" +
+                        "}")
                     .SetName("Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile - default House - 3 opponents found")
                     .SetCategory("GameController Save Success");
                 
@@ -552,7 +659,7 @@ namespace HideAndSeek
                             "\"HouseFileName\":\"DefaultHouse\"" + "," +
                             "\"PlayerLocation\":\"Entry\"" + "," +
                             "\"MoveNumber\":1" + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
+                            SavedGame_Serialized_OpponentsAndHidingLocations + "," +
                             "\"FoundOpponents\":[]" +
                         "}",
                         "my house", 
@@ -628,50 +735,50 @@ namespace HideAndSeek
                 // Missing house file name
                 yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: HouseFileName",
                         "{" +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_MoveNumber + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_FoundOpponents +
+                            SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                            SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
+                            SavedGame_Serialized_OpponentsAndHidingLocations + "," +
+                            SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - missing house file name");
                 
                 // Missing player location
                 yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: PlayerLocation",
                         "{" +
-                            MyTestSavedGame.SerializedTestSavedGame_HouseFileName + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_MoveNumber + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_FoundOpponents +
+                            SavedGame_Serialized_HouseFileName + "," +
+                            SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
+                            SavedGame_Serialized_OpponentsAndHidingLocations + "," +
+                            SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - missing player location");
 
                 // Missing move number
                 yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: MoveNumber",
                         "{" +
-                            MyTestSavedGame.SerializedTestSavedGame_HouseFileName + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_FoundOpponents +
+                            SavedGame_Serialized_HouseFileName + "," +
+                            SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                            SavedGame_Serialized_OpponentsAndHidingLocations + "," +
+                            SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - missing move number");
 
                 // Missing opponents and hiding locations
                 yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: OpponentsAndHidingLocations",
                         "{" +
-                            MyTestSavedGame.SerializedTestSavedGame_HouseFileName + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_MoveNumber + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_FoundOpponents +
+                            SavedGame_Serialized_HouseFileName + "," +
+                            SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                            SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
+                            SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - missing opponents and hiding locations");
 
                 // Missing found opponents
                 yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: FoundOpponents",
                         "{" +
-                            MyTestSavedGame.SerializedTestSavedGame_HouseFileName + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_MoveNumber + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_OpponentsAndHidingLocations +
+                            SavedGame_Serialized_HouseFileName + "," +
+                            SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                            SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
+                            SavedGame_Serialized_OpponentsAndHidingLocations +
                         "}")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - missing found opponents");
 
@@ -680,52 +787,52 @@ namespace HideAndSeek
                 yield return new TestCaseData("Cannot perform action because file name \"a8}{{ /@uaou12 \" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)",
                         "{" +
                             "\"HouseFileName\":\"a8}{{ /@uaou12 \"" + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_MoveNumber + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_FoundOpponents +
+                            SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                            SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
+                            SavedGame_Serialized_OpponentsAndHidingLocations + "," +
+                            SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - invalid HouseFileName");
 
                 // Invalid player location
                 yield return new TestCaseData("invalid PlayerLocation",
                         "{" +
-                            MyTestSavedGame.SerializedTestSavedGame_HouseFileName + "," +
+                            SavedGame_Serialized_HouseFileName + "," +
                             "\"PlayerLocation\":\"Tree\"," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_MoveNumber + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_FoundOpponents +
+                            SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
+                            SavedGame_Serialized_OpponentsAndHidingLocations + "," +
+                            SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - invalid PlayerLocation");
 
                 // Invalid (negative) move number
                 yield return new TestCaseData("invalid MoveNumber",
                         "{" +
-                            MyTestSavedGame.SerializedTestSavedGame_HouseFileName + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
+                            SavedGame_Serialized_HouseFileName + "," +
+                            SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
                             "\"MoveNumber\":-1" + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_FoundOpponents +
+                            SavedGame_Serialized_OpponentsAndHidingLocations + "," +
+                            SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - invalid MoveNumber");
 
                 // No opponents
                 yield return new TestCaseData("no opponents",
                         "{" +
-                            MyTestSavedGame.SerializedTestSavedGame_HouseFileName + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_MoveNumber + "," +
+                            SavedGame_Serialized_HouseFileName + "," +
+                            SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                            SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
                             "\"OpponentsAndHidingLocations\":{}" + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_FoundOpponents +
+                            SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - no opponents");
 
                 // Invalid hiding place for Joe (not yet found) because location does not exist
                 yield return new TestCaseData("invalid hiding location for opponent",
                         "{" +
-                            MyTestSavedGame.SerializedTestSavedGame_HouseFileName + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_MoveNumber + "," +
+                            SavedGame_Serialized_HouseFileName + "," +
+                            SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                            SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
                             "\"OpponentsAndHidingLocations\":" +
                             "{" +
                                 "\"Joe\":\"Tree\"," +
@@ -734,16 +841,16 @@ namespace HideAndSeek
                                 "\"Owen\":\"Kitchen\"," +
                                 "\"Jimmy\":\"Pantry\"" +
                             "}" + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_FoundOpponents +
+                            SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - invalid hiding place for opponent - Location does not exist");
 
                 // Invalid hiding place for Joe (not yet found) because hiding location is not of type LocationWithHidingPlace
                 yield return new TestCaseData("invalid hiding location for opponent",
                         "{" +
-                            MyTestSavedGame.SerializedTestSavedGame_HouseFileName + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_MoveNumber + "," +
+                            SavedGame_Serialized_HouseFileName + "," +
+                            SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                            SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
                             "\"OpponentsAndHidingLocations\":" +
                             "{" +
                                 "\"Joe\":\"Hallway\"," +
@@ -752,17 +859,17 @@ namespace HideAndSeek
                                 "\"Owen\":\"Kitchen\"," +
                                 "\"Jimmy\":\"Pantry\"" +
                             "}" + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_FoundOpponents +
+                            SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")            
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - invalid hiding place for opponent - not LocationWithHidingPlace");
 
                 // Found opponent is not in all opponents list
                 yield return new TestCaseData("found opponent is not an opponent",
                         "{" +
-                            MyTestSavedGame.SerializedTestSavedGame_HouseFileName + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_MoveNumber + "," +
-                            MyTestSavedGame.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
+                            SavedGame_Serialized_HouseFileName + "," +
+                            SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                            SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
+                            SavedGame_Serialized_OpponentsAndHidingLocations + "," +
                             "\"FoundOpponents\":[\"Steve\"]" +
                         "}")
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - found opponent Steve is not opponent");

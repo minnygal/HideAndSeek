@@ -191,7 +191,7 @@ namespace HideAndSeek
                     "\"HouseFileName\":\"DefaultHouse\"" + "," +
                     "\"PlayerLocation\":\"Bathroom\"" + "," +
                     "\"MoveNumber\":4" + "," +
-                    MyTestSavedGame.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
+                    TestGameController_SaveLoadDeleteGame_TestCaseData.SavedGame_Serialized_OpponentsAndHidingLocations + "," +
                     "\"FoundOpponents\":[\"Ana\"]" +
                 "}";
 
@@ -253,7 +253,7 @@ namespace HideAndSeek
                     "\"HouseFileName\":\"DefaultHouse\"" + "," +
                     "\"PlayerLocation\":\"Pantry\"" + "," +
                     "\"MoveNumber\":5" + "," +
-                    MyTestSavedGame.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
+                    TestGameController_SaveLoadDeleteGame_TestCaseData.SavedGame_Serialized_OpponentsAndHidingLocations + "," +
                     "\"FoundOpponents\":[\"Bob\",\"Jimmy\"]" +
                 "}";
 
@@ -312,11 +312,11 @@ namespace HideAndSeek
             // Initialize variable to serialized SavedGame
             string savedGameFileText =
                 "{" +
-                    "\"HouseFileName\":\"DefaultHouse\"" + "," +
-                    MyTestSavedGame.SerializedTestSavedGame_3FoundOpponents_PlayerLocation + "," +
-                    MyTestSavedGame.SerializedTestSavedGame_3FoundOpponents_MoveNumber + "," +
-                    MyTestSavedGame.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
-                    MyTestSavedGame.SerializedTestSavedGame_3FoundOpponents_FoundOpponents +
+                    TestGameController_SaveLoadDeleteGame_TestCaseData.SavedGame_Serialized_HouseFileName + "," +
+                    "\"PlayerLocation\":\"Bathroom\"" + "," +
+                    "\"MoveNumber\":7" + "," +
+                    TestGameController_SaveLoadDeleteGame_TestCaseData.SavedGame_Serialized_OpponentsAndHidingLocations + "," +
+                    "\"FoundOpponents\":[\"Joe\",\"Owen\",\"Ana\"]" +
                 "}";
 
             // Have game controller parse file name with load command
@@ -369,7 +369,7 @@ namespace HideAndSeek
                     "\"HouseFileName\":\"DefaultHouse\"" + "," +
                     "\"PlayerLocation\":\"Pantry\"" + "," +
                     "\"MoveNumber\":10" + "," +
-                    MyTestSavedGame.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
+                    TestGameController_SaveLoadDeleteGame_TestCaseData.SavedGame_Serialized_OpponentsAndHidingLocations + "," +
                     "\"FoundOpponents\":[\"Joe\",\"Owen\",\"Bob\",\"Jimmy\"]" +
                 "}";
 

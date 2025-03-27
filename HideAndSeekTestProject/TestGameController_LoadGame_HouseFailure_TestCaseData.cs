@@ -13,6 +13,58 @@ namespace HideAndSeek
     public static class TestGameController_LoadGame_HouseFailure_TestCaseData
     {
         /// <summary>
+        /// Text for serialized PlayerLocation property for test SavedGame with no found opponents
+        /// </summary>
+        public static string SavedGame_Serialized_PlayerLocation_NoOpponentsGame
+        {
+            get
+            {
+                return "\"PlayerLocation\":\"Entry\"";
+            }
+        }
+
+        /// <summary>
+        /// Text for serialized MoveNumber property for test SavedGame with no found opponents
+        /// </summary>
+        public static string SavedGame_Serialized_MoveNumber_NoFoundOpponents
+        {
+            get
+            {
+                return "\"MoveNumber\":1";
+            }
+        }
+
+        /// <summary>
+        /// Text for serialized OpponentsAndHidingLocations property for test SavedGame
+        /// </summary>
+        public static string SavedGame_Serialized_OpponentsAndHidingLocations
+        {
+            get
+            {
+                return
+                    "\"OpponentsAndHidingLocations\":" +
+                    "{" +
+                        "\"Joe\":\"Kitchen\"," +
+                        "\"Bob\":\"Pantry\"," +
+                        "\"Ana\":\"Bathroom\"," +
+                        "\"Owen\":\"Kitchen\"," +
+                        "\"Jimmy\":\"Pantry\"" +
+                    "}";
+            }
+        }
+
+        /// <summary>
+        /// Text for serialized FoundOpponents property for test SavedGame with no found opponents
+        /// </summary>
+        public static string SavedGame_Serialized_FoundOpponents_NoFoundOpponents
+        {
+            get
+            {
+                return "\"FoundOpponents\":[]";
+            }
+        }
+
+        /// <summary>
         /// Text representing default House for tests serialized
         /// </summary>
         public static string DefaultHouse_Serialized

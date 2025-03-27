@@ -11,6 +11,24 @@ namespace HideAndSeek
 {
     public static class TestGameController_Basic_TestCaseData
     {
+        /// <summary>
+        /// Dictionary of Opponents and associated LocationWithHidingPlace names
+        /// for SavedGame for tests
+        /// </summary>
+        public static Dictionary<string, string> SavedGame_OpponentsAndHidingPlaces
+        {
+            get
+            {
+                Dictionary<string, string> opponentsAndHidingPlaces = new Dictionary<string, string>();
+                opponentsAndHidingPlaces.Add("Joe", "Kitchen");
+                opponentsAndHidingPlaces.Add("Bob", "Pantry");
+                opponentsAndHidingPlaces.Add("Ana", "Bathroom");
+                opponentsAndHidingPlaces.Add("Owen", "Kitchen");
+                opponentsAndHidingPlaces.Add("Jimmy", "Pantry");
+                return opponentsAndHidingPlaces;
+            }
+        }
+
         public static IEnumerable TestCases_For_Test_GameController_CheckErrorMessage_ForInvalidHouseFileName
         {
             get

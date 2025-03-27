@@ -42,10 +42,10 @@ namespace HideAndSeek
             string textInFile =
             "{" +
                 "\"HouseFileName\":\"NonexistentHouse\"" + "," +
-                MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
-                MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_MoveNumber + "," +
-                MyTestSavedGame.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
-                MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_FoundOpponents +
+                TestGameController_LoadGame_HouseFailure_TestCaseData.SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                TestGameController_LoadGame_HouseFailure_TestCaseData.SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
+                TestGameController_LoadGame_HouseFailure_TestCaseData.SavedGame_Serialized_OpponentsAndHidingLocations + "," +
+                TestGameController_LoadGame_HouseFailure_TestCaseData.SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
             "}";
 
             // Set up mock for GameController file system
@@ -140,10 +140,10 @@ namespace HideAndSeek
             string textInFile =
             "{" +
                 "\"HouseFileName\":\"CorruptHouse\"" + "," +
-                MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_PlayerLocation + "," +
-                MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_MoveNumber + "," +
-                MyTestSavedGame.SerializedTestSavedGame_OpponentsAndHidingLocations + "," +
-                MyTestSavedGame.SerializedTestSavedGame_NoFoundOpponents_FoundOpponents +
+                TestGameController_LoadGame_HouseFailure_TestCaseData.SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                TestGameController_LoadGame_HouseFailure_TestCaseData.SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
+                TestGameController_LoadGame_HouseFailure_TestCaseData.SavedGame_Serialized_OpponentsAndHidingLocations + "," +
+                TestGameController_LoadGame_HouseFailure_TestCaseData.SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
             "}";
 
             // Set up mock for GameController file system
