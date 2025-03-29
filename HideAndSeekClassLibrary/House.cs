@@ -60,11 +60,6 @@ namespace HideAndSeek
 
     public class House {
         /// <summary>
-        /// File name for default House layout (not including .json extension)
-        /// </summary>
-        public static string DefaultHouseFileName { get { return "DefaultHouse"; } }
-
-        /// <summary>
         /// File system to use when creating a new House from a House file
         /// (should only be changed for testing purposes)
         /// </summary>
