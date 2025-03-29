@@ -192,8 +192,15 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="hidingPlaces">Places to hide Opponents</param>
         /// <returns>GameController after Opponents rehidden</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Exception thrown if the number of hiding places is not equal to the number of Opponents</exception>
         private GameController RehideAllOpponents(IEnumerable<LocationWithHidingPlace> hidingPlaces)
         {
+            // If the number of hiding places is not equal to the number of Opponents
+            if (hidingPlaces.Count() != OpponentsAndHidingLocations.Count())
+            {
+                throw new ArgumentOutOfRangeException("hidingPlaces", "The number of hiding places must equal the number of opponents."); // Throw exception
+            }
+
             // Clear hiding places
             House.ClearHidingPlaces();
 
@@ -221,12 +228,6 @@ namespace HideAndSeek
         /// <returns>GameController after Opponents rehidden</returns>
         public GameController RehideAllOpponents(IEnumerable<string> hidingPlaces)
         {
-            // If the number of hiding places is not equal to the number of Opponents
-            if(hidingPlaces.Count() != OpponentsAndHidingLocations.Count())
-            {
-                throw new ArgumentOutOfRangeException("hidingPlaces", "The number of hiding places must equal the number of opponents."); // Throw exception
-            }
-
             // Initialize variable for LocationWithHidingPlace objects to empty list
             List<LocationWithHidingPlace> hidingPlacesAsObjects = new List<LocationWithHidingPlace>();
 
