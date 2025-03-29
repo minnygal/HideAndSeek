@@ -6,9 +6,8 @@ using System.Xml.Linq;
 namespace HideAndSeek
 {
     /// <summary>
-    /// GameController tests for RehideAllOpponents method,
-    /// Opponents' hiding locations when Opponents rehidden or game restarted,
-    /// constructor and RestartGame with invalid file name or name of nonexistent file
+    /// GameController tests for constructor and RestartGame with invalid file name or name of nonexistent file,
+    /// RehideAllOpponents method, and checking Opponents' hiding locations when Opponents rehidden or game restarted
     /// </summary>
     [TestFixture]
     public class TestGameController_Basic
@@ -18,8 +17,9 @@ namespace HideAndSeek
         [SetUp]
         public void SetUp()
         {
-            House.FileSystem = new FileSystem(); // Set static House file system to new file system
-            gameController = new GameController();
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
+                                "DefaultHouse.json", TestGameController_Basic_TestCaseData.DefaultHouse_Serialized); // Set static House file system to mock file system
+            gameController = new GameController("DefaultHouse"); // Create new GameController
         }
 
         [OneTimeTearDown]
@@ -104,7 +104,7 @@ namespace HideAndSeek
         {
             Assert.Multiple(() =>
             {
-                // Assert that hiding an Opponent in a location with an invalid name raises an exception
+                // Assert that calling method with an enumerable with an incorrect number of hiding places raises an exception
                 var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
                 {
                     gameController.RehideAllOpponents(hidingPlaces);
