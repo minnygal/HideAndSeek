@@ -13,6 +13,7 @@ namespace HideAndSeek
     /// set using GameController constructor or RestartGame method 
     public static class TestGameController_CustomHouse_TestCaseData
     {
+        // Text representing serialized custom House for test
         private static readonly string textInHouseFile =
         #region test House file text
             "{" +
@@ -146,12 +147,22 @@ namespace HideAndSeek
             "}";
         #endregion
 
+        /// <summary>
+        /// Helper method to get GameController with House property 
+        /// set to custom House via GameController constructor
+        /// </summary>
+        /// <returns>GameController with custom House</returns>
         private static GameController GetGameController_WithCustomHouseSetViaConstructor()
         {
             House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("TestHouse.json", textInHouseFile); // Set House file system to mock
             return new GameController("TestHouse"); // Return new GameController with custom House
         }
         
+        /// <summary>
+        /// Helper method to get GameController with House property
+        /// set to custom House via RestartGame method
+        /// </summary>
+        /// <returns>GameController with custom House</returns>
         private static GameController GetGameController_WithCustomHouseSetViaRestartGame()
         {
             House.FileSystem = new FileSystem(); // Set House file system to default
