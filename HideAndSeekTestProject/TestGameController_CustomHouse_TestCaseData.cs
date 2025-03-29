@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Moq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.IO.Abstractions;
@@ -307,12 +308,15 @@ namespace HideAndSeek
         /// <returns>GameController with custom House</returns>
         private static GameController GetGameController_WithCustomHouseSetViaRestartGame()
         {
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
-                                "DefaultHouse.json", TestGameController_CustomHouse_TestCaseData.DefaultHouse_Serialized); // Set static House file system to mock file system with default House file
-            GameController gameController = new GameController("DefaultHouse"); // Create new GameController with default House
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("TestHouse.json", textInHouseFile); // Set House file system to mock
-            gameController.RestartGame("TestHouse"); // Restart game with custom House
-            return gameController;
+            // Set up House file system
+            Mock<IFileSystem> houseMockFileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText(
+                                                    "DefaultHouse.json", TestGameController_CustomHouse_TestCaseData.DefaultHouse_Serialized); // Create mock file system to return default House file text
+            MockFileSystemHelper.SetMockOfFileSystem_ToReadAllText(houseMockFileSystem, "TestHouse.json", textInHouseFile); // Set up mock file system to return test House file text
+            House.FileSystem = houseMockFileSystem.Object; // Set static House file system to mock file system 
+            
+            // Return GameController after RestartGame called
+            return new GameController("DefaultHouse") // Create new GameController with default House
+                       .RestartGame("TestHouse"); // Restart game with custom House
         }
 
         public static IEnumerable TestCases_For_Test_GameController_CustomHouse_NameAndFileNameProperties

@@ -132,8 +132,7 @@ namespace HideAndSeek
             // Set up mock for House file system
             Mock<IFileSystem> houseMockFileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText(
                 "DefaultHouse.json", TestGameController_LoadGame_HouseFailure_TestCaseData.DefaultHouse_Serialized); // Create mock that returns text for default House file
-            houseMockFileSystem.Setup((manager) => manager.File.Exists("CorruptHouse.json")).Returns(true); // Mock that corrupt House file does exist
-            houseMockFileSystem.Setup((manager) => manager.File.ReadAllText("CorruptHouse.json")).Returns(houseFileText); // Mock text in corrupt House file
+            houseMockFileSystem = MockFileSystemHelper.SetMockOfFileSystem_ToReadAllText(houseMockFileSystem, "CorruptHouse.json", houseFileText); // Set up mock to return corrupt House file text
             House.FileSystem = houseMockFileSystem.Object; // Set House file system to mock file system
 
             // ParseInput to load SavedGame and return message
