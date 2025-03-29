@@ -11,7 +11,7 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// Class to control a game and allow external interaction with and direction of game
+    /// Class to control a game of hide and seek and allow external interaction with and direction of game
     /// 
     /// CREDIT: adapted from Stellman and Greene's code
     /// </summary>
@@ -25,36 +25,36 @@ namespace HideAndSeek
      * **/
 
     /** NOTES
-     * -Only 1 game can be going on at a time because the House is static.
+     * -There MUST be a valid DefaultHouse.json file for the constructor to be called
+     *  without a House file name because the default value is DefaultHouse.
      * -You can start a new game w/o having to create a new GameController instance.
      * -Command keywords cannot have spaces.
      * -Current command keywords are: move, check, save, load, and delete
-     * -In ParseInput, file name is extracted from user input 
+     * -In ParseInput, file name is extracted from user input
      *  starting after the space following the save, load, or delete keyword.
      * **/
 
     /** CHANGES
      * -I added a restart method so the game can be restarted without creating a new GameController.
      * -I added methods to rehide all opponents.
-     * -I created a variable to store a House object (initialized in constructor).
-     * -I added a private location variable so I could define a setter for CurrentLocation.
-     * -I created a setter method for Currentlocation so it could automatically update the status.
-     * -I made the list of opponentsFound opponents public for easier game saving/restoration.
-     * -I added a file system class variable for testing purposes.
+     * -I made the list of found opponents public for easier game saving/restoration.
+     * -I added a file system class variable for testing purposes 
+     *  and allowed it to be passed to and set in constructor.
      * -I used my own approach in ParseInput but accomplished the same results.
      * -I renamed methods to SaveGame and LoadGame for easier comprehension.
      * -I prevented overwriting a saved game file in the SaveGame method.
-     * -I had the SavedGame class create itself in SaveGame method 
-     *  by passing in GameController for separation of concerns.
      * -I wrapped JSON deserialization in a try/catch block in the LoadGame method
      *  to return custom feedback/update messages if certain problems occur.
-     * -I moved the code for loading a game from an acceptable JSON file to another method
+     * -I moved the code for loading a saved game from an acceptable JSON file to another method
      *  to separate it from the code for evaluating whether JSON file is acceptable.
      * -I created a private variable to store the full file name in SaveGame and LoadGame.
      * -I set GameController properties appropriately based on my class design in LoadGame method.
      * -I changed some feedback/update messages for easier reading.
      * -I renamed a variable in Move method for easier comprehension.
-     * -I added a method to delete a game.
+     * -I added a method and command to delete a game.
+     * -I created a property to store a House object.
+     * -I made the constructor create a House object and assign it to the House property.
+     * -I made the constructor accept a House file name passed in but also provided a default value.
      * -I added/edited comments for easier reading.
      * **/
 
@@ -129,7 +129,7 @@ namespace HideAndSeek
         public Dictionary<Opponent, LocationWithHidingPlace> OpponentsAndHidingLocations { get; private set; } = new Dictionary<Opponent, LocationWithHidingPlace>();
             
         /// <summary>
-        /// List of opponents the player has opponentsFound so far
+        /// List of opponents the player has found so far
         /// </summary>
         public List<Opponent> FoundOpponents { get; private set; } = new List<Opponent>();
 
@@ -164,7 +164,7 @@ namespace HideAndSeek
         }
 
         /// <summary>
-        /// Restart game from beginning (StartingPoint) in House from specified file
+        /// Restart game from beginning in House from specified file
         /// </summary>
         /// <param name="houseFileName">Name of House layout file</param>
         /// <returns>This GameController</returns>
@@ -178,14 +178,13 @@ namespace HideAndSeek
         /// <summary>
         /// Restart game from beginning (StartingPoint)
         /// </summary>
-        public void RestartGame()
+        /// <returns>This GameController</returns>
+        public GameController RestartGame()
         {
-            // Hide opponents in random places
-            RehideAllOpponents();
-
-            // Reset properties
+            RehideAllOpponents(); // Hide opponents in random places
             MoveNumber = 1; // Reset move number
             CurrentLocation = House.StartingPoint; // Reset current location
+            return this;
         }
 
         /// <summary>
@@ -204,8 +203,8 @@ namespace HideAndSeek
             // Hide Opponents in hiding locations and add hiding locations to dictionary
             for (int i = 0; i < OpponentsAndHidingLocations.Count(); i++)
             {
-                hidingPlaces.ElementAt(i).HideOpponent(OpponentsAndHidingLocations.ElementAt(i).Key);
-                opponentsAndNewHidingLocations.Add(OpponentsAndHidingLocations.ElementAt(i).Key, hidingPlaces.ElementAt(i));
+                hidingPlaces.ElementAt(i).HideOpponent(OpponentsAndHidingLocations.ElementAt(i).Key); // Hide Opponent in hiding location
+                opponentsAndNewHidingLocations.Add(OpponentsAndHidingLocations.ElementAt(i).Key, hidingPlaces.ElementAt(i)); // Add hiding location to dictionary
             }
 
             // Set Opponents and hiding locations dictionary to dictionary with new hiding locations
@@ -228,13 +227,16 @@ namespace HideAndSeek
                 throw new ArgumentOutOfRangeException("hidingPlaces", "The number of hiding places must equal the number of opponents."); // Throw exception
             }
 
+            // Initialize variable for LocationWithHidingPlace objects to empty list
             List<LocationWithHidingPlace> hidingPlacesAsObjects = new List<LocationWithHidingPlace>();
 
+            // Get each LocationWithHidingPlace object and add it to list
             foreach(string hidingPlace in hidingPlaces)
             {
                 hidingPlacesAsObjects.Add(House.GetLocationWithHidingPlaceByName(hidingPlace));
             }
 
+            // Rehide all Opponents in LocationWithHidingPlaces
             return RehideAllOpponents(hidingPlacesAsObjects);
         }
 
