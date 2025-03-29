@@ -10,7 +10,7 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// GameController tests for ParseInput LoadGame with nonexistent or corrupt House file
+    /// GameController tests for ParseInput to load game with nonexistent or corrupt House file
     /// </summary>
     [TestFixture]
     public class TestGameController_LoadGame_HouseFailure
@@ -49,18 +49,16 @@ namespace HideAndSeek
             "}";
 
             // Set up mock for GameController file system
-            mockFileSystem.Setup(manager => manager.File.Exists("my_saved_game.json")).Returns(true); // Mock that file exists
-            mockFileSystem.Setup(manager => manager.File.ReadAllText("my_saved_game.json")).Returns(textInFile); // Mock what file returns
+            mockFileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText("my_saved_game.json", textInFile);
 
             // Set up mock for House file system
-            Mock<IFileSystem> houseMockFileSystem = new Mock<IFileSystem>(); // Create new mock file system for House
-            houseMockFileSystem.Setup((manager) => manager.File.Exists("DefaultHouse.json")).Returns(true); // Mock that default House file exists
-            houseMockFileSystem.Setup((manager) => manager.File.ReadAllText("DefaultHouse.json")).Returns(TestGameController_LoadGame_HouseFailure_TestCaseData.DefaultHouse_Serialized); // Mock text in default House file
+            Mock<IFileSystem> houseMockFileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText(
+                "DefaultHouse.json", TestGameController_LoadGame_HouseFailure_TestCaseData.DefaultHouse_Serialized); // Mock default House file
             houseMockFileSystem.Setup((manager) => manager.File.Exists("NonexistentHouse.json")).Returns(false); // Mock that nonexistent House file does not exist
             House.FileSystem = houseMockFileSystem.Object; // Set House file system to mock file system
 
-            // Create new game controller (Random not mocked, so truly random hiding places generated)
-            gameController = new GameController(mockFileSystem.Object);
+            // Create new game controller
+            gameController = new GameController(mockFileSystem.Object, "DefaultHouse");
 
             // Have game controller parse file name with load command
             message = gameController.ParseInput("load my_saved_game");
