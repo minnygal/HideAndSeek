@@ -29,6 +29,15 @@ namespace HideAndSeek
 
     /** CHANGES
      * -I renamed Entry to StartingPoint since the starting point may not always be the entry.
+     * -I added a method to get a LocationWithHidingPlace by name.
+     * -I renamed a method to GetRandomExit to follow project method naming convention.
+     * -I used ElementAt instead of Skip in GetRandomExit.
+     * -I added a method to get a random hiding place using logic from 
+     *  Andrew Stellman and Jennifer Greene's HideAndSeek project's Opponent class's Hide method.
+     * -I added methods to hide all opponents to ensure hiding places are cleared before
+     *  opponents are rehidden.
+     * -I selected LocationWithHidingPlace objects in foreach header instead of using if statement in body
+     *  in ClearHidingPlaces method.
      * -I made the class non-static so GameController can have an instance of House.
      * -I added a static method to create a House object from a file.
      * -I added a static public property for the file system used in CreateHouse for testing purposes.
@@ -46,15 +55,6 @@ namespace HideAndSeek
      * -I added a method to tell whether a Location exists to make restoring a saved game easier.
      * -I added a method to tell whether a LocationWithHidingPlace exists to make restoring a saved game easier.
      * -I used a shorter code approach in GetLocationByName.
-     * -I added a method to get a LocationWithHidingPlace by name.
-     * -I renamed a method to GetRandomExit to follow project method naming convention.
-     * -I used ElementAt instead of Skip in GetRandomExit.
-     * -I added a method to get a random hiding place using logic from 
-     *  Andrew Stellman and Jennifer Greene's HideAndSeek project's Opponent class's Hide method.
-     * -I added methods to hide all opponents to ensure hiding places are cleared before
-     *  opponents are rehidden.
-     * -I selected LocationWithHidingPlace objects in foreach header instead of using if statement in body
-     *  in ClearHidingPlaces method.
      * -I added/edited comments for easier reading.
      * **/
 
@@ -83,9 +83,9 @@ namespace HideAndSeek
             string fullFileName = FileSystem.GetFullFileNameForJson(fileName);
 
             // If file does not exist
-            if (!(FileSystem.File.Exists(fullFileName)))
+            if ( !(FileSystem.File.Exists(fullFileName)) )
             {
-                throw new FileNotFoundException($"Cannot load game because house layout file {fileName} does not exist"); // Return error message
+                throw new FileNotFoundException($"Cannot load game because house layout file {fileName} does not exist"); // Throw exception
             }
 
             // Get text from House file
@@ -114,7 +114,8 @@ namespace HideAndSeek
                 throw e;
             }
 
-            return house; // Return House
+            // Return House object
+            return house; 
         }
 
         private string _name;
@@ -137,7 +138,7 @@ namespace HideAndSeek
                     throw new InvalidDataException($"Cannot perform action because house name \"{value}\" is invalid (is empty or contains only whitespace)"); // Throw exception
                 }
 
-                // Set name variable
+                // Set backing field
                 _name = value;
             }
         }
@@ -145,7 +146,7 @@ namespace HideAndSeek
         private string _houseFileName;
 
         /// <summary>
-        /// Name of file from which House is loaded (w/o JSON extension)
+        /// Name of file from which House is loaded (not including JSON extension)
         /// </summary>
         [JsonRequired]
         public required string HouseFileName
@@ -162,7 +163,7 @@ namespace HideAndSeek
                     throw new InvalidDataException($"Cannot perform action because house file name \"{value}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"); // Throw exception
                 }
 
-                // Set name variable
+                // Set backing field
                 _houseFileName = value;
             }
         }
@@ -187,7 +188,7 @@ namespace HideAndSeek
                     throw new InvalidDataException($"Cannot perform action because player starting point location name \"{value}\" is invalid (is empty or contains only whitespace)"); // Throw exception
                 }
 
-                // Set player starting point variable
+                // Set backing field
                 _playerStartingPoint = value;
             }
         }
@@ -207,12 +208,12 @@ namespace HideAndSeek
             set
             {
                 // If Location does not exist in House
-                if (!(DoesLocationExist(value.Name)))
+                if ( !(DoesLocationExist(value.Name)) )
                 {
                     throw new InvalidDataException($"Cannot perform action because player starting point location \"{value}\" is not a location in the house"); // Throw exception
                 }
 
-                // Set variable and property
+                // Set backing field and property for JSON serialization
                 _startingPoint = value; // Set starting point private variable
                 PlayerStartingPoint = StartingPoint.Name; // Set player starting point property (for JSON serialization)
             }
@@ -227,7 +228,7 @@ namespace HideAndSeek
         private IEnumerable<LocationWithHidingPlace> _locationsWithHidingPlaces;
 
         /// <summary>
-        /// /List of all LocationWithHidingPlace objects in House
+        /// List of all LocationWithHidingPlace objects in House
         /// </summary>
         [JsonRequired]
         public IEnumerable<LocationWithHidingPlace> LocationsWithHidingPlaces
@@ -244,7 +245,7 @@ namespace HideAndSeek
                     throw new InvalidDataException("Cannot perform action because locations with hiding places list is empty"); // Throw exception
                 }
 
-                // Set locations with hiding places
+                // Set backing field
                 _locationsWithHidingPlaces = value;
             }
         }
@@ -269,7 +270,7 @@ namespace HideAndSeek
                     throw new InvalidDataException("Cannot perform action because locations list is empty"); // Throw exception
                 }
 
-                // Set locations
+                // Set backing field
                 _locations = value;
             }
         }
@@ -281,7 +282,7 @@ namespace HideAndSeek
         public Random Random { get; set; } = new Random();
 
         /// <summary>
-        /// Parameterless constructor for JSON deserializer
+        /// Parameterless constructor for JSON deserialization
         /// </summary>
         public House() { }
 
@@ -294,13 +295,18 @@ namespace HideAndSeek
         /// <param name="locationsWithoutHidingPlaces">Enumerable of Location objects (without hiding places)</param>
         /// <param name="locationsWithHidingPlaces">Enumerable of LocationWithHidingPlace objects</param>
         [SetsRequiredMembers]
-        public House(string name, string houseFileName, string playerStartingPoint, IEnumerable<Location> locationsWithoutHidingPlaces, IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces)
+        public House(string name, string houseFileName, string playerStartingPoint, 
+                     IEnumerable<Location> locationsWithoutHidingPlaces, 
+                     IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces)
         {
+            // Set all properties except Locations and StartingPoint
             Name = name;
             HouseFileName = houseFileName;
             PlayerStartingPoint = playerStartingPoint;
             LocationsWithoutHidingPlaces = locationsWithoutHidingPlaces;
             LocationsWithHidingPlaces = locationsWithHidingPlaces;
+
+            // Set Locations and StartingPoint properties
             SetLocationsAndStartingPoint();
         }
 
@@ -328,7 +334,7 @@ namespace HideAndSeek
 
         /// <summary>
         /// Set up House after deserialization
-        /// Sets Locations, StartingPoint, and Exits property for each Location in House
+        /// (set Locations, StartingPoint, and Exits property for each Location in House)
         /// </summary>
         /// <exception cref="InvalidDataException">Exception thrown if exit Location does not exist</exception>
         private void SetUpHouseAfterDeserialization()
@@ -345,7 +351,7 @@ namespace HideAndSeek
                 // For each exit
                 foreach (KeyValuePair<Direction, string> exit in location.ExitsForSerialization)
                 {
-                    // Get exit Location
+                    // Get exit Location object
                     Location exitLocation = GetLocationByName(exit.Value);
                     
                     // If exit Location does not exist
@@ -366,7 +372,8 @@ namespace HideAndSeek
         }
 
         /// <summary>
-        /// Return text for serialized House
+        /// Serialize House and get text
+        /// (preps each Location in House appropriately)
         /// </summary>
         /// <returns>Text for serialized House</returns>
         public string Serialize()
@@ -433,14 +440,14 @@ namespace HideAndSeek
         }
 
         /// <summary>
-        /// Clear all LocationWithHidingPlaces of Opponents.
+        /// Clear all LocationWithHidingPlace objects of Opponents
         /// </summary>
         public void ClearHidingPlaces()
         {
             // For each LocationWithHidingPlace
             foreach(LocationWithHidingPlace location in LocationsWithHidingPlaces)
             {
-                location.CheckHidingPlace(); // Check hiding place which clears hiding place as well
+                location.CheckHidingPlace(); // Check hiding place which clears hiding place
             }
         }
 

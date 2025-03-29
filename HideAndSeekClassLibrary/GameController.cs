@@ -42,6 +42,7 @@ namespace HideAndSeek
      *  and allowed it to be passed to and set in constructor.
      * -I used my own approach in ParseInput but accomplished the same results.
      * -I renamed methods to SaveGame and LoadGame for easier comprehension.
+     * -I made SaveGame not overwrite a pre-existing file.
      * -I prevented overwriting a saved game file in the SaveGame method.
      * -I wrapped JSON deserialization in a try/catch block in the LoadGame method
      *  to return custom feedback/update messages if certain problems occur.
@@ -400,7 +401,9 @@ namespace HideAndSeek
             }
 
             // Initialize SavedGame object to store game state data
-            SavedGame savedGame = new SavedGame(House, House.HouseFileName, CurrentLocation.ToString(), MoveNumber, opponentsAndHidingPlacesAsStrings, FoundOpponents.Select((o) => o.Name));
+            SavedGame savedGame = new SavedGame(House, House.HouseFileName, CurrentLocation.ToString(), 
+                                                MoveNumber, opponentsAndHidingPlacesAsStrings, 
+                                                FoundOpponents.Select((o) => o.Name));
             
             // Save game as JSON to file and return success message
             string savedGameAsJSON = JsonSerializer.Serialize(savedGame); // Convert game's state data to JSON
@@ -502,7 +505,8 @@ namespace HideAndSeek
             House.ClearHidingPlaces();
 
             // Initialize to dictionary of unfound Opponents who should still be hidden and their hiding locations
-            IDictionary<Opponent, LocationWithHidingPlace> unfoundOpponentsAndHidingLocations = OpponentsAndHidingLocations.Where((kvp) => !(FoundOpponents.Contains(kvp.Key))).ToDictionary();
+            IDictionary<Opponent, LocationWithHidingPlace> unfoundOpponentsAndHidingLocations = 
+                        OpponentsAndHidingLocations.Where((kvp) => !(FoundOpponents.Contains(kvp.Key))).ToDictionary();
 
             // Hide each unfound Opponent in their hiding location
             foreach(KeyValuePair<Opponent, LocationWithHidingPlace> kvp in unfoundOpponentsAndHidingLocations)
