@@ -137,7 +137,7 @@ namespace HideAndSeek
                 // If location does not exist, throw exception
                 if (!(House.DoesLocationExist(value)))
                 {
-                    throw new InvalidDataException("invalid CurrentLocation");
+                    throw new InvalidDataException("invalid PlayerLocation");
                 }
 
                 // Set player location

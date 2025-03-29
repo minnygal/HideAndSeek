@@ -141,19 +141,16 @@ namespace HideAndSeek
         /// <summary>
         /// Constructor to start game with default file system
         /// </summary>
-        public GameController() : this(new FileSystem()) {}
+        public GameController(string houseFileName = "DefaultHouse") : this(new FileSystem(), houseFileName) {}
 
         /// <summary>
         /// Constructor to start game with specific file system (called directly for testing)
         /// </summary>
         /// <param name="fileSystem">File system</param>
-        public GameController(IFileSystem fileSystem)
+        public GameController(IFileSystem fileSystem, string houseFileName = "DefaultHouse")
         {
             // Set file system
             _fileSystem = fileSystem;
-
-            // Create new House
-            House = House.CreateHouse(House.DefaultHouseFileName);
 
             // Create Opponents and store them in dictionary as keys
             OpponentsAndHidingLocations.Add(new Opponent("Joe"), null);
@@ -162,8 +159,20 @@ namespace HideAndSeek
             OpponentsAndHidingLocations.Add(new Opponent("Owen"), null);
             OpponentsAndHidingLocations.Add(new Opponent("Jimmy"), null);
 
-            // Start game
+            // Start game with specified House file
+            RestartGame(houseFileName);
+        }
+
+        /// <summary>
+        /// Restart game from beginning (StartingPoint) in House from specified file
+        /// </summary>
+        /// <param name="houseFileName">Name of House layout file</param>
+        /// <returns>This GameController</returns>
+        public GameController RestartGame(string houseFileName)
+        {
+            House = House.CreateHouse(houseFileName);
             RestartGame();
+            return this;
         }
 
         /// <summary>
@@ -183,7 +192,8 @@ namespace HideAndSeek
         /// Rehide all Opponents in specified hiding places
         /// </summary>
         /// <param name="hidingPlaces">Places to hide Opponents</param>
-        private void RehideAllOpponents(IEnumerable<LocationWithHidingPlace> hidingPlaces)
+        /// <returns>GameController after Opponents rehidden</returns>
+        private GameController RehideAllOpponents(IEnumerable<LocationWithHidingPlace> hidingPlaces)
         {
             // Clear hiding places
             House.ClearHidingPlaces();
@@ -200,6 +210,8 @@ namespace HideAndSeek
 
             // Set Opponents and hiding locations dictionary to dictionary with new hiding locations
             OpponentsAndHidingLocations = opponentsAndNewHidingLocations;
+
+            return this;
         }
 
         /// <summary>
@@ -207,8 +219,15 @@ namespace HideAndSeek
         /// Should only be called from GameController and tests
         /// </summary>
         /// <param name="hidingPlaces">Names of hiding places for Opponents</param>
-        public void RehideAllOpponents(IEnumerable<string> hidingPlaces)
+        /// <returns>GameController after Opponents rehidden</returns>
+        public GameController RehideAllOpponents(IEnumerable<string> hidingPlaces)
         {
+            // If the number of hiding places is not equal to the number of Opponents
+            if(hidingPlaces.Count() != OpponentsAndHidingLocations.Count())
+            {
+                throw new ArgumentOutOfRangeException("hidingPlaces", "The number of hiding places must equal the number of opponents."); // Throw exception
+            }
+
             List<LocationWithHidingPlace> hidingPlacesAsObjects = new List<LocationWithHidingPlace>();
 
             foreach(string hidingPlace in hidingPlaces)
@@ -216,13 +235,14 @@ namespace HideAndSeek
                 hidingPlacesAsObjects.Add(House.GetLocationWithHidingPlaceByName(hidingPlace));
             }
 
-            RehideAllOpponents(hidingPlacesAsObjects);
+            return RehideAllOpponents(hidingPlacesAsObjects);
         }
 
         /// <summary>
         /// Rehide all Opponents in random hiding places
         /// </summary>
-        private void RehideAllOpponents()
+        /// <returns>GameController after Opponents rehidden</returns>
+        private GameController RehideAllOpponents()
         {
             // Initialize list for locations with hiding locations
             List<LocationWithHidingPlace> hidingLocations = new List<LocationWithHidingPlace>();
@@ -234,7 +254,7 @@ namespace HideAndSeek
             }
 
             // Hide Opponents in hiding places
-            RehideAllOpponents(hidingLocations);
+            return RehideAllOpponents(hidingLocations);
         }
 
         /// <summary>
