@@ -17,12 +17,6 @@ namespace HideAndSeek
     [TestFixture]
     public class TestGameController_CustomHouse
     {
-        [SetUp]
-        public void SetUp()
-        {
-            House.FileSystem = new FileSystem(); // Set House file system to new clean file system
-        }
-
         [TearDown]
         public void TearDown()
         {
