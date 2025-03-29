@@ -117,7 +117,7 @@ namespace HideAndSeek
             return house; // Return House
         }
 
-        private string _name = "my house";
+        private string _name;
 
         /// <summary>
         /// Name of House
@@ -142,7 +142,7 @@ namespace HideAndSeek
             }
         }
 
-        private string _houseFileName = "DefaultHouse";
+        private string _houseFileName;
 
         /// <summary>
         /// Name of file from which House is loaded (w/o JSON extension)
