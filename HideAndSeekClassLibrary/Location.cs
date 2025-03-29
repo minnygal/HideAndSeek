@@ -5,7 +5,7 @@ using System.Text.Json.Serialization;
 namespace HideAndSeek
 {
     /// <summary>
-    /// Class to represent a location in the House
+    /// Class to represent a location in a House
     /// 
     /// CREDIT: adapted from Stellman and Greene's code
     /// </summary>
@@ -36,6 +36,8 @@ namespace HideAndSeek
      * -I used Direction changing in AddExit (just my approach).
      * -I converted lambdas to regular method bodies for easier modification.
      * -I added a property and method for JSON serialization of exits.
+     * -I added a method to prepare the object for JSON serialization.
+     * -I added a method to serialize the object and return the text.
      * -I added a method to set Exits property (called from House after JSON deserialization).
      * -I added comments for easier reading.
      * **/
@@ -93,14 +95,13 @@ namespace HideAndSeek
                     }
                 }
 
-                // If location names in Dictionary are valid
+                // Set Dictionary backing field
                 _exitsForSerialization = value;
             }
         }
 
         /// <summary>
-        /// Prepare object for serialization
-        /// by setting ExitsForSerialization property
+        /// Prepare object for serialization by setting ExitsForSerialization property
         /// </summary>
         private void PrepForSerialization()
         {
@@ -169,7 +170,7 @@ namespace HideAndSeek
         public override string ToString() => Name;
 
         /// <summary>
-        /// Return an enumerable of descriptions of the exits, sorted by direction
+        /// Get an enumerable of descriptions of the exits, sorted by direction
         /// </summary>
         public IEnumerable<string> ExitList()
         {
