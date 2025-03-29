@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// Class to represent an Opponent who can be hidden in a Location in the House for the user to find
+    /// Class to represent an Opponent who can be hidden in a Location in a House for the user to find
     /// 
     /// CREDIT: adapted from Stellman and Greene's cod
     /// </summary>

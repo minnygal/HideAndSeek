@@ -31,9 +31,9 @@ namespace HideAndSeek
      * -I added data validation in each setter method.
      * -I added a parameterless constructor for JSON deserialization.
      * -I added a House property (used for property data validation)
-     * -I added a HouseFileName property and a _houseFileName variable.
-     * -I added a method to set _houseFileName variable
-     *  without using HouseFileName setter (which calls House.CreateHouse)
+     * -I added a HouseFileName property and a backing field.
+     * -I added a method to set the HouseFileName property's backing field
+     *  without using the property's setter (which calls House.CreateHouse)
      * -I added a parameterized constructor for setting properties upon initialization.
      * -I added comments for easier reading.
      **/
@@ -44,7 +44,7 @@ namespace HideAndSeek
 
         /// <summary>
         /// House object associated with game (used for property validation)
-        /// Can only use setter when backing field has not been set
+        /// Can only use setter when backing field has not already been set
         /// (security measure since other properties' setters rely on this property for data validation)
         /// </summary>
         [JsonIgnore]
@@ -89,13 +89,13 @@ namespace HideAndSeek
                 throw new InvalidDataException($"House file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"); // Throw exception
             }
 
-            // Set House file name private variable, bypassing the HouseFileName property setter which calls House's CreateHouse method
+            // Set House file name backing field, bypassing the HouseFileName property setter which calls House's CreateHouse method
             _houseFileName = fileName;
         }
 
         /// <summary>
         /// Name of file storing House object for layout (w/o JSON extension)
-        /// Can only use setter when backing field has not been set
+        /// Can only use setter when backing field has not already been set
         /// (security measure since other properties' setters rely on House, which this sets, for data validation)
         /// Should only be used by JSON deserializer and tests
         /// CAUTION: setter calls House's CreateHouse method
@@ -115,8 +115,8 @@ namespace HideAndSeek
                     throw new InvalidOperationException("HouseFileName property already has a value"); // Throw exception
                 }
 
-                // Set property and create House
-                _houseFileName = value; // Set house file name
+                // Set backing field and create House
+                _houseFileName = value; // Set backing field
                 House = House.CreateHouse(HouseFileName); // Create House (must have this line for JSON deserializer because setters use House for data validation)
             }
         }
@@ -134,13 +134,13 @@ namespace HideAndSeek
             }
             set
             {
-                // If location does not exist, throw exception
-                if (!(House.DoesLocationExist(value)))
+                // If location does not exist
+                if ( !(House.DoesLocationExist(value)) )
                 {
-                    throw new InvalidDataException("invalid PlayerLocation");
+                    throw new InvalidDataException("invalid PlayerLocation"); // Throw exception
                 }
 
-                // Set player location
+                // Set backing field
                 _playerLocation = value;
             }
         }
@@ -159,13 +159,13 @@ namespace HideAndSeek
             }
             set
             {
-                // If move number is invalid, throw exception
+                // If move number is invalid
                 if (value < 1)
                 {
-                    throw new InvalidDataException("invalid MoveNumber");
+                    throw new InvalidDataException("invalid MoveNumber"); // Throw exception
                 }
 
-                // Set move number
+                // Set backing field
                 _moveNumber = value;
             }
         }
@@ -185,10 +185,10 @@ namespace HideAndSeek
             }
             set
             {
-                // If no opponents, throw exception
+                // If no items
                 if (value.Count == 0)
                 {
-                    throw new InvalidDataException("no opponents");
+                    throw new InvalidDataException("no opponents"); // Throw exception
                 }
 
                 // If any of the LocationWithHidingPlaces do not exist, throw exception
@@ -200,7 +200,7 @@ namespace HideAndSeek
                     }
                 }
 
-                // Set dictionary of all opponents and their locations
+                // Set backing field
                 _opponentsAndHidingLocations = value;
             }
         }
@@ -219,7 +219,7 @@ namespace HideAndSeek
             }
             set
             {
-                // If any found opponents do not exist in OpponentsAndHidingLocations dictionary, throw exception
+                // If any found opponents do not exist in OpponentsAndHidingLocations dictionary keys, throw exception
                 foreach (string foundOpponent in value)
                 {
                     if (!(OpponentsAndHidingLocations.Keys.Contains(foundOpponent)))
@@ -228,7 +228,7 @@ namespace HideAndSeek
                     }
                 }
 
-                // Set collection of found opponents
+                // Set backing field
                 _foundOpponents = value;
             }
         }
@@ -250,7 +250,7 @@ namespace HideAndSeek
         [SetsRequiredMembers]
         public SavedGame(House house, string houseFileName, string playerLocation, int moveNumber, Dictionary<string, string> opponentsAndHidingLocations, IEnumerable<string> foundOpponents)
         {
-            this.House = house;
+            House = house;
             SetHouseFileName_WithoutCreatingHouse(houseFileName); // Set backing field rather than property to get around CreateHouse call in property setter
             PlayerLocation = playerLocation;
             MoveNumber = moveNumber;

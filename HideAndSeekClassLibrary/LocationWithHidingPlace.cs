@@ -12,7 +12,7 @@ using System.Xml.Linq;
 namespace HideAndSeek
 {
     /// <summary>
-    /// Class to represent a location with a hiding place where an Opponent can hide in the House
+    /// Class to represent a location with a hiding place where an Opponent can hide in a House
     /// 
     /// CREDIT: adapted from Stellman and Greene's code
     /// </summary>
@@ -26,8 +26,6 @@ namespace HideAndSeek
      **/
 
     /** CHANGES
-     * -I added a method for JSON serialization.
-     * -I added a constructor for JSON deserialization.
      * -I added data validation for the HidingPlace property.
      * -I renamed the parameters in the constructor for easier comprehension.
      * -I renamed the private list to opponentsHiding for easier comprehension.
@@ -37,6 +35,8 @@ namespace HideAndSeek
      * -I changed the return type for CheckHidingPlace.
      * -I made a local variable in CheckHidingPlace a specific type.
      * -I renamed a local variable in CheckHidingPlace for easier comprehension.
+     * -I added a method for JSON serialization.
+     * -I added a constructor for JSON deserialization.
      * -I added/edited comments for easier reading.
      * **/
 
@@ -74,7 +74,7 @@ namespace HideAndSeek
                     throw new InvalidDataException($"Cannot perform action because hiding place \"{value}\" is invalid (is empty or contains only whitespace)"); // Throw exception
                 }
 
-                // Set name variable
+                // Set backing field
                 _hidingPlace = value;
             }
         }
