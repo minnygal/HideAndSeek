@@ -19,7 +19,8 @@ namespace HideAndSeek
             gameController = null;
             message = null;
             mockFileSystem = new Mock<IFileSystem>(); // Set mock file system variable to new file system
-            House.FileSystem = new FileSystem(); // Set static House file system to new file system
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
+                               "DefaultHouse.json", TestGameController_SaveLoadDeleteGame_TestCaseData.DefaultHouse_Serialized); // Set mock file system for House property to return default House file text
         }
 
         [OneTimeTearDown]
@@ -34,9 +35,10 @@ namespace HideAndSeek
             [Values("save", "load", "delete")] string commandKeyword,
             [Values(" ", " my saved game", " my\\saved\\game", " my/saved/game", " my/saved\\ game")] string restOfCommand)
         {
-            gameController = new GameController();
+            gameController = new GameController("DefaultHouse");
             message = gameController.ParseInput(commandKeyword + restOfCommand);
-            Assert.That(message, Is.EqualTo($"Cannot perform action because file name \"{restOfCommand.Substring(1)}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+            Assert.That(message, Is.EqualTo($"Cannot perform action because file name \"{restOfCommand.Substring(1)}\" " +
+                                            $"is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
         }
 
         [TestCase("save")]
@@ -45,7 +47,7 @@ namespace HideAndSeek
         [Category("GameController Save Load Delete Failure")]
         public void Test_GameController_ParseInput_ToSaveLoadOrDeleteGame_AndCheckErrorMessage_ForNoFileName(string commandWord)
         {
-            gameController = new GameController();
+            gameController = new GameController("DefaultHouse");
             message = gameController.ParseInput(commandWord);
             Assert.That(message, Is.EqualTo("Cannot perform action because no file name was entered"));
         }
@@ -102,7 +104,7 @@ namespace HideAndSeek
             mockFileSystem.Setup(system => system.File.Exists("fileName.json")).Returns(true); // Mock that file already exists
 
             // Set up game cotroller
-            gameController = new GameController(mockFileSystem.Object);
+            gameController = new GameController(mockFileSystem.Object, "DefaultHouse");
 
             // Attempt to save game
             message = gameController.ParseInput($"save fileName");
@@ -116,15 +118,13 @@ namespace HideAndSeek
         [Category("GameController Load Success")]
         public void Test_GameController_ParseInput_ToLoadGame_AndCheckSuccessMessage(string fileName, string expected)
         {
-            // Initialize variable to text stored in mock file
-            string textInFile = "{\"HouseFileName\":\"DefaultHouse\",\"PlayerLocation\":\"Entry\",\"MoveNumber\":1,\"OpponentsAndHidingLocations\":{\"Joe\":\"Kitchen\",\"Bob\":\"Pantry\",\"Ana\":\"Bathroom\",\"Owen\":\"Kitchen\",\"Jimmy\":\"Pantry\"},\"FoundOpponents\":[]}";
-
             // Set up mock for file system
             mockFileSystem.Setup(manager => manager.File.Exists($"{fileName}.json")).Returns(true); // Mock that file exists
-            mockFileSystem.Setup(manager => manager.File.ReadAllText($"{fileName}.json")).Returns(textInFile); // Mock what file returns
+            mockFileSystem.Setup(manager => manager.File.ReadAllText($"{fileName}.json")).Returns(
+                                 TestGameController_SaveLoadDeleteGame_TestCaseData.SavedGame_Serialized_NoFoundOpponents); // Mock what file returns
 
-            // Create new game controller (Random not mocked, so truly random hiding places generated)
-            gameController = new GameController(mockFileSystem.Object);
+            // Create new GameController
+            gameController = new GameController(mockFileSystem.Object, "DefaultHouse");
 
             // Have game controller parse file name with load command
             message = gameController.ParseInput($"load {fileName}");
@@ -143,10 +143,9 @@ namespace HideAndSeek
             House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText($"{houseFileName}.json", houseFileText);
 
             // Set up mock for file system for GameController
-            mockFileSystem.Setup(manager => manager.File.Exists("my_saved_game.json")).Returns(true); // Mock that file exists
-            mockFileSystem.Setup(manager => manager.File.ReadAllText("my_saved_game.json")).Returns(savedGameFileText); // Mock what file returns
+            mockFileSystem = MockFileSystemHelper.SetMockOfFileSystem_ToReadAllText(mockFileSystem, "my_saved_game.json", savedGameFileText);
 
-            // Create new game controller with specified House layout (Random not mocked, so truly random hiding places generated)
+            // Create new GameController with specified House layout
             gameController = new GameController(mockFileSystem.Object, houseFileName);
 
             // Have game controller parse file name with load command and store message
@@ -420,8 +419,8 @@ namespace HideAndSeek
             // Set up mock for file system
             mockFileSystem.Setup(manager => manager.File.Exists("my_saved_game.json")).Returns(false); // Mock that file does not exist
 
-            // Create new game controller (Random not mocked, so truly random hiding places generated)
-            gameController = new GameController(mockFileSystem.Object);
+            // Create new game controller
+            gameController = new GameController(mockFileSystem.Object, "DefaultHouse");
 
             // Have game controller parse file name with load command
             message = gameController.ParseInput("load my_saved_game");
@@ -435,11 +434,10 @@ namespace HideAndSeek
         public void Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData(string endOfErrorMessage, string textInFile)
         {
             // Set up mock for file system
-            mockFileSystem.Setup(manager => manager.File.Exists("my_corrupt_game.json")).Returns(true); // Mock that file exists
-            mockFileSystem.Setup(manager => manager.File.ReadAllText("my_corrupt_game.json")).Returns(textInFile); // Mock what file returns
+            mockFileSystem = MockFileSystemHelper.SetMockOfFileSystem_ToReadAllText(mockFileSystem, "my_corrupt_game.json", textInFile);
 
-            // Create new game controller (Random not mocked, so truly random hiding places generated)
-            gameController = new GameController(mockFileSystem.Object);
+            // Create new game controller
+            gameController = new GameController(mockFileSystem.Object, "DefaultHouse");
 
             // Have game controller parse file name with load command
             message = gameController.ParseInput("load my_corrupt_game");
@@ -456,7 +454,7 @@ namespace HideAndSeek
             mockFileSystem.Setup(manager => manager.File.Exists("my_saved_game.json")).Returns(true); // Mock that file exists
 
             // Create new game controller
-            gameController = new GameController(mockFileSystem.Object);
+            gameController = new GameController(mockFileSystem.Object, "DefaultHouse");
 
             // Have game controller parse file name with delete command
             message = gameController.ParseInput("delete my_saved_game");
@@ -488,19 +486,15 @@ namespace HideAndSeek
         /// <summary>
         /// Helper method to call GameController ParseInput to load game with specific SavedGame file text
         /// </summary>
-        /// <param name="savedGamedFileText">Text in SavedGame file</param>
+        /// <param name="savedGameFileText">Text in SavedGame file</param>
         /// <returns>Message returned by GameController ParseInput</returns>
-        private string ParseInputToLoadGameSuccessfully(string savedGamedFileText)
+        private string ParseInputToLoadGameSuccessfully(string savedGameFileText)
         {
-            // Set mock file system for House property
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.json", TestGameController_SaveLoadDeleteGame_TestCaseData.DefaultHouse_Serialized);
-
             // Set up mock for file system for GameController
-            mockFileSystem.Setup(manager => manager.File.Exists("my_saved_game.json")).Returns(true); // Mock that file exists
-            mockFileSystem.Setup(manager => manager.File.ReadAllText("my_saved_game.json")).Returns(savedGamedFileText); // Mock what file returns
-
-            // Create new game controller (Random not mocked, so truly random hiding places generated)
-            gameController = new GameController(mockFileSystem.Object);
+            mockFileSystem = MockFileSystemHelper.SetMockOfFileSystem_ToReadAllText(mockFileSystem, "my_saved_game.json", savedGameFileText);
+            
+            // Create new GameController
+            gameController = new GameController(mockFileSystem.Object, "DefaultHouse");
 
             // Have game controller parse file name with load command and return message
             return gameController.ParseInput($"load my_saved_game");
