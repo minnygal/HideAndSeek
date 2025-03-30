@@ -317,6 +317,9 @@ namespace HideAndSeek
             }
         }
 
+        /// <summary>
+        /// Text representing serialized custom House for tests
+        /// </summary>
         private static readonly string serializedCustomTestHouse =
             #region serialized test House
             "{" +
@@ -450,7 +453,6 @@ namespace HideAndSeek
             "}";
         #endregion
 
-        // Test case data for Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile test
         public static IEnumerable TestCases_For_Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile
         {
             get
@@ -462,7 +464,8 @@ namespace HideAndSeek
                         (IFileSystem fileSystem, Mock<IFileSystem> mockHouseFileSystem) =>
                         {
                             // Create GameController with specified file system, hide all Opponents in specified locations, and return GameController
-                            return new GameController(fileSystem).RehideAllOpponents(SavedGame_OpponentsAndHidingPlaces.Values);
+                            return new GameController(fileSystem, "DefaultHouse")
+                                       .RehideAllOpponents(SavedGame_OpponentsAndHidingPlaces.Values);
                         }, 
                         SavedGame_Serialized_NoFoundOpponents)
                     .SetName("Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile - default House - no opponents found")
@@ -475,7 +478,8 @@ namespace HideAndSeek
                         (IFileSystem fileSystem, Mock<IFileSystem> mockHouseFileSystem) => 
                         {
                             // Create GameController with specified file system and hide all Opponents in specified locations
-                            GameController gameController = new GameController(fileSystem).RehideAllOpponents(SavedGame_OpponentsAndHidingPlaces.Values);
+                            GameController gameController = new GameController(fileSystem, "DefaultHouse")
+                                                                .RehideAllOpponents(SavedGame_OpponentsAndHidingPlaces.Values);
 
                             // Go to Kitchen and check to find 2 Opponents
                             gameController.ParseInput("East");
@@ -491,11 +495,11 @@ namespace HideAndSeek
                             return gameController;
                         },
                         "{" +
-                        SavedGame_Serialized_HouseFileName + "," +
-                        "\"PlayerLocation\":\"Bathroom\"" + "," +
-                        "\"MoveNumber\":7" + "," +
-                        SavedGame_Serialized_OpponentsAndHidingLocations + "," +
-                        "\"FoundOpponents\":[\"Joe\",\"Owen\",\"Ana\"]" +
+                            SavedGame_Serialized_HouseFileName + "," +
+                            "\"PlayerLocation\":\"Bathroom\"" + "," +
+                            "\"MoveNumber\":7" + "," +
+                            SavedGame_Serialized_OpponentsAndHidingLocations + "," +
+                            "\"FoundOpponents\":[\"Joe\",\"Owen\",\"Ana\"]" +
                         "}")
                     .SetName("Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile - default House - 3 opponents found")
                     .SetCategory("GameController Save Success");
@@ -507,7 +511,7 @@ namespace HideAndSeek
                         (IFileSystem fileSystem, Mock<IFileSystem> mockHouseFileSystem) =>
                         {
                             return new GameController(fileSystem, "TestHouse") // Create GameController with specified file system and specific House
-                                   .RehideAllOpponents(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" }); // and hide all Opponents in specified locations
+                                       .RehideAllOpponents(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" }); // and hide all Opponents in specified locations
                         },
                         "{" +
                             "\"HouseFileName\":\"TestHouse\"" + "," +
@@ -533,14 +537,14 @@ namespace HideAndSeek
                         (IFileSystem gameControllerFileSystem, Mock<IFileSystem> mockHouseFileSystem) =>
                         {
                             // Add DefaultHouse file to House file system mock and set House file system
-                            mockHouseFileSystem.Setup((manager) => manager.File.Exists("DefaultHouse.json")).Returns(true);
-                            mockHouseFileSystem.Setup((manager) => manager.File.ReadAllText("DefaultHouse.json")).Returns(DefaultHouse_Serialized);
+                            mockHouseFileSystem = MockFileSystemHelper.SetMockOfFileSystem_ToReadAllText(
+                                                  mockHouseFileSystem, "DefaultHouse.json", DefaultHouse_Serialized);
                             House.FileSystem = mockHouseFileSystem.Object;
 
                             // Return GameController with restarted game and rehidden Opponents
-                            return new GameController(gameControllerFileSystem) // Create GameController with specified file system
-                                   .RestartGame("TestHouse") // and restart game with specific House
-                                   .RehideAllOpponents(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" }); // and hide all Opponents in specified locations
+                            return new GameController(gameControllerFileSystem, "DefaultHouse") // Create GameController with specified file system
+                                       .RestartGame("TestHouse") // and restart game with specific House
+                                       .RehideAllOpponents(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" }); // and hide all Opponents in specified locations
                         },
                         "{" +
                             "\"HouseFileName\":\"TestHouse\"" + "," +
@@ -559,18 +563,19 @@ namespace HideAndSeek
                     .SetName("Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile - custom House - ReloadGame - no opponents found")
                     .SetCategory("GameController Save Success CustomHouse ReloadGame");
 
-                 yield return new TestCaseData(
+                // Custom House with constructor, 3 Opponents found
+                yield return new TestCaseData(
                         "TestHouse.json",
                         serializedCustomTestHouse,
                         (IFileSystem gameControllerFileSystem, Mock<IFileSystem> mockHouseFileSystem) =>
                         {
                             // Add DefaultHouse file to House file system mock and set House file system
-                            mockHouseFileSystem.Setup((manager) => manager.File.Exists("DefaultHouse.json")).Returns(true);
-                            mockHouseFileSystem.Setup((manager) => manager.File.ReadAllText("DefaultHouse.json")).Returns(DefaultHouse_Serialized);
+                            mockHouseFileSystem = MockFileSystemHelper.SetMockOfFileSystem_ToReadAllText(
+                                                  mockHouseFileSystem, "DefaultHouse.json", DefaultHouse_Serialized);
                             House.FileSystem = mockHouseFileSystem.Object;
 
                             // Initialize to GameController with restarted game and rehidden Opponents
-                            GameController gameController = new GameController(gameControllerFileSystem) // Create GameController with specified file system
+                            GameController gameController = new GameController(gameControllerFileSystem, "DefaultHouse") // Create GameController with specified file system and default House
                                    .RestartGame("TestHouse") // and restart game with specific House
                                    .RehideAllOpponents(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" }); // and hide all Opponents in specified locations
 
@@ -613,7 +618,7 @@ namespace HideAndSeek
                         {
                             // Initialize GameController
                             GameController gameController = new GameController(fileSystem, "TestHouse") // Create GameController with specified file system and specific House
-                                   .RehideAllOpponents(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" }); // and hide all Opponents in specified locations
+                                                                .RehideAllOpponents(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" }); // and hide all Opponents in specified locations
 
                             // Go to Cellar and find 1 Opponent there
                             gameController.ParseInput("North");
@@ -648,7 +653,6 @@ namespace HideAndSeek
             }
         }
 
-        // Test case data for Test_GameController_ParseInput_ToLoadGame_WithNoFoundOpponents
         public static IEnumerable TestCases_For_Test_GameController_ParseInput_ToLoadGame_WithNoFoundOpponents
         {
             get
@@ -710,7 +714,6 @@ namespace HideAndSeek
             }
         }
 
-        // Test case data for Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData
         public static IEnumerable TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData
         {
             get
@@ -732,7 +735,7 @@ namespace HideAndSeek
                     .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - just characters in file");
 
                 // MISSING KEY/VALUE SET
-                // Missing house file name
+                // Missing House file name
                 yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: HouseFileName",
                         "{" +
                             SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
