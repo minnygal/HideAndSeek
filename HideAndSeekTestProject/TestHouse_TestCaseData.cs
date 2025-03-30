@@ -536,7 +536,7 @@ namespace HideAndSeek
         {
             get
             {
-                // Invalid Name - whitespace
+                // Invalid Name (whitespace)
                 yield return new TestCaseData("Cannot perform action because house name \" \" is invalid (is empty or contains only whitespace)",
                         "{" +
                            "\"Name\":\" \"" + "," +
@@ -547,7 +547,7 @@ namespace HideAndSeek
                        "}")
                    .SetName("Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasWhitespaceValue - invalid Name - whitespace");
 
-                // Invalid HouseFileName - whitespace
+                // Invalid HouseFileName (whitespace)
                 yield return new TestCaseData("Cannot perform action because house file name \" \" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
@@ -558,7 +558,7 @@ namespace HideAndSeek
                        "}")
                    .SetName("Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasWhitespaceValue - invalid HouseFileName - whitespace");
 
-                // Invalid PlayerStartingPoint - whitespace
+                // Invalid PlayerStartingPoint (whitespace)
                 yield return new TestCaseData("Cannot perform action because player starting point location name \" \" is invalid (is empty or contains only whitespace)",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
