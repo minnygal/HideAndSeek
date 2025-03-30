@@ -1,4 +1,5 @@
 ﻿using HideAndSeek;
+using System.IO.Abstractions;
 using System.Collections.Generic;
 
 namespace HideAndSeek
@@ -7,17 +8,166 @@ namespace HideAndSeek
     /// GameController tests for moving and checking for opponents via ParseInput method
     /// in default house
     /// Also tests for value of Prompt property as navigate through House
-    /// Automatically tests parameterless GameController constructor
+    /// Automatically tests parameterized GameController constructor
     /// Not including save/load/delete game tests (contained in separate file)
     /// </summary>
     public class TestGameController_ParseInput
     {
         GameController gameController;
 
+        [OneTimeSetUp]
+        public void OneTimeSetUp()
+        {
+            // Set variable to text representing serialized default House for test
+            string textInHouseFile =
+                #region default House file text
+                "{" +
+                    "\"Name\":\"my house\"" + "," +
+                    "\"HouseFileName\":\"DefaultHouse\"" + "," +
+                    "\"PlayerStartingPoint\":\"Entry\"" + "," +
+                    "\"LocationsWithoutHidingPlaces\":" +
+                    "[" +
+                        "{" +
+                            "\"Name\":\"Hallway\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"West\":\"Entry\"," +
+                                "\"Northwest\":\"Kitchen\"," +
+                                "\"North\":\"Bathroom\"," +
+                                "\"South\":\"Living Room\"," +
+                                "\"Up\":\"Landing\"" +
+                            "}" +
+                        "}," +
+                        "{" +
+                            "\"Name\":\"Landing\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"Down\":\"Hallway\"," +
+                                "\"Up\":\"Attic\"," +
+                                "\"Southeast\":\"Kids Room\"," +
+                                "\"Northwest\":\"Master Bedroom\"," +
+                                "\"Southwest\":\"Nursery\"," +
+                                "\"South\":\"Pantry\"," +
+                                "\"West\":\"Second Bathroom\"" +
+                            "}" +
+                        "}," +
+                        "{" +
+                            "\"Name\":\"Entry\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"Out\":\"Garage\"," +
+                                "\"East\":\"Hallway\"" +
+                            "}" +
+                        "}" +
+                    "]" + "," +
+                    "\"LocationsWithHidingPlaces\":" +
+                    "[" +
+                        "{" +
+                            "\"HidingPlace\":\"in a trunk\"," +
+                            "\"Name\":\"Attic\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"Down\":\"Landing\"" +
+                            "}" +
+                        "}," +
+                        "{\"HidingPlace\":\"behind the door\"," +
+                            "\"Name\":\"Bathroom\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"South\":\"Hallway\"" +
+                            "}" +
+                        "}," +
+                        "{" +
+                            "\"HidingPlace\":\"in the bunk beds\"," +
+                            "\"Name\":\"Kids Room\"," +
+                            "\"ExitsForSerialization\":" +
+                                "{" +
+                                    "\"Northwest\":\"Landing\"" +
+                                "}" +
+                            "}," +
+                        "{" +
+                            "\"HidingPlace\":\"under the bed\"," +
+                            "\"Name\":\"Master Bedroom\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"Southeast\":\"Landing\"," +
+                                "\"East\":\"Master Bath\"" +
+                            "}" +
+                        "}," +
+                        "{" +
+                            "\"HidingPlace\":\"behind the changing table\"," +
+                            "\"Name\":\"Nursery\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"Northeast\":\"Landing\"" +
+                            "}" +
+                        "}," +
+                        "{" +
+                            "\"HidingPlace\":\"inside a cabinet\"," +
+                            "\"Name\":\"Pantry\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"North\":\"Landing\"" +
+                            "}" +
+                        "}," +
+                        "{" +
+                            "\"HidingPlace\":\"in the shower\"," +
+                            "\"Name\":\"Second Bathroom\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"East\":\"Landing\"" +
+                            "}" +
+                        "}," +
+                        "{" +
+                            "\"HidingPlace\":\"next to the stove\"," +
+                            "\"Name\":\"Kitchen\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"Southeast\":\"Hallway\"" +
+                            "}" +
+                        "}," +
+                        "{" +
+                            "\"HidingPlace\":\"in the tub\"," +
+                            "\"Name\":\"Master Bath\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"West\":\"Master Bedroom\"" +
+                            "}" +
+                        "}," +
+                        "{" +
+                            "\"HidingPlace\":\"behind the car\"," +
+                            "\"Name\":\"Garage\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"In\":\"Entry\"" +
+                            "}" +
+                        "}," +
+                        "{" +
+                            "\"HidingPlace\":\"behind the sofa\"," +
+                            "\"Name\":\"Living Room\"," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"North\":\"Hallway\"" +
+                            "}" +
+                        "}" +
+                    "]" +
+                "}";
+            #endregion
+
+            // Set static House file system to mock file system (not changed in any tests)
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.json", textInHouseFile);
+        }
+
         [SetUp]
         public void SetUp()
         {
-            gameController = new GameController();
+            gameController = new GameController("DefaultHouse"); // Create new GameController with default House layout
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            House.FileSystem = new FileSystem(); // Set static House file system to new file system
         }
 
         [Test]
@@ -26,7 +176,7 @@ namespace HideAndSeek
         {
             Assert.Multiple(() =>
             {
-                // Move East from StartingPoint to Hallway.
+                // Move East from Entry to Hallway.
                 Assert.That(gameController.ParseInput("East"), Is.EqualTo("Moving East"), "parsing \"East\" from Entry returns appropriate text");
                 Assert.That(gameController.Status, Is.EqualTo("You are in the Hallway. You see the following exits:" +
                     Environment.NewLine + " - the Landing is Up" +
@@ -113,14 +263,8 @@ namespace HideAndSeek
         [Category("GameController ParseInput Move Check Message Prompt Status MoveNumber GameOver Success")]
         public void Test_GameController_ParseInput_ForFullGame_WithOpponentsHiding_AndCheckMessageAndProperties()
         {
-            // Create enumerable of places for opponents to hide
-            IEnumerable<string> hidingPlaces = new List<string>()
-            {
-                "Garage", "Kitchen", "Attic", "Attic", "Kitchen"
-            };
-
             // Hide Opponents is specific hiding places
-            gameController.RehideAllOpponents(hidingPlaces);
+            gameController.RehideAllOpponents(new List<string>() { "Garage", "Kitchen", "Attic", "Attic", "Kitchen" });
 
             Assert.Multiple(() =>
             {
@@ -145,9 +289,7 @@ namespace HideAndSeek
                     Environment.NewLine + " - the Entry is In" +
                     Environment.NewLine + "Someone could hide behind the car" +
                     Environment.NewLine + "You have found 1 of 5 opponents: Joe"), "check status after finding opponent in Garage");
-
                 Assert.That(gameController.Prompt, Is.EqualTo("4: Which direction do you want to go (or type 'check'): "), "check prompt after finding opponent in Garage");
-
                 Assert.That(gameController.MoveNumber, Is.EqualTo(4), "check game move number");
 
                 // Move to the Bathroom, where nobody is hiding
@@ -163,23 +305,20 @@ namespace HideAndSeek
                 gameController.ParseInput("South");
                 gameController.ParseInput("Northwest");
 
-                // Check the Kitchen to make sure nobody is hiding there
+                // Check the Kitchen to make sure nobody is hiding there and check message and properties
                 Assert.That(gameController.ParseInput("check"), Is.EqualTo("You found 2 opponents hiding next to the stove"), "check string returned when check in Kitchen");
-
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Kitchen. You see the following exits:" +
                     Environment.NewLine + " - the Hallway is to the Southeast" +
                     Environment.NewLine + "Someone could hide next to the stove" +
                     Environment.NewLine + "You have found 3 of 5 opponents: Joe, Bob, Jimmy"), "check status after finding opponents in Kitchen");
-
                 Assert.That(gameController.Prompt, Is.EqualTo("11: Which direction do you want to go (or type 'check'): "), "check prompt after finding opponents in Kitchen");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(11), "check game move number");
                 Assert.That(gameController.GameOver, Is.False, "check game not over after finding opponents in Kitchen");
 
-                // Head up to the Landing
+                // Head up to the Landing and check move number
                 gameController.ParseInput("Southeast");
                 gameController.ParseInput("Up");
-
                 Assert.That(gameController.MoveNumber, Is.EqualTo(13), "check game move number");
 
                 // Move to the Pantry
@@ -189,22 +328,19 @@ namespace HideAndSeek
                 Assert.That(gameController.ParseInput("check"), Is.EqualTo("Nobody was hiding inside a cabinet"), "check string returned when check in Pantry");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(15), "check game move number");
 
-                // Move to the Attic
+                // Move to the Attic and check move number
                 gameController.ParseInput("North");
                 gameController.ParseInput("Up");
-
                 Assert.That(gameController.MoveNumber, Is.EqualTo(17), "check game move number");
 
-                // Check the Attic to find the last two opponents, make sure the game is over
+                // Check the Attic to find the last two opponents, check message and properties, make sure the game is over
                 Assert.That(gameController.ParseInput("check"), Is.EqualTo("You found 2 opponents hiding in a trunk"), "check string returned when check in Attic");
-
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Attic. You see the following exits:" +
                     Environment.NewLine + " - the Landing is Down" +
                     Environment.NewLine + "Someone could hide in a trunk" +
                     Environment.NewLine +
                     "You have found 5 of 5 opponents: Joe, Bob, Jimmy, Ana, Owen"), "check game status after find opponents in Attic");
-
                 Assert.That(gameController.Prompt, Is.EqualTo("18: Which direction do you want to go (or type 'check'): "), "check game prompt after find opponents in Attic");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(18), "check game move number");
                 Assert.That(gameController.GameOver, Is.True, "check game over after all opponents found");
