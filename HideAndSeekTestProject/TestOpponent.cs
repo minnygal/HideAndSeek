@@ -7,11 +7,19 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// Opponent tests for setting name
+    /// Opponent tests for setting Name property
     /// </summary>
     [TestFixture]
     public class TestOpponent
     {
+        [SetUp]
+        [TearDown]
+        public void SetUpAndTearDown()
+        {
+            Opponent.ResetDefaultNumbersForOpponentNames(); // Reset static default numbers for Opponent names
+        }
+
+
         [Test]
         [Category("Opponent Constructor Name Success")]
         public void Test_Opponent_Constructor_Parameterized_SetsToNamePassedIn()
@@ -24,9 +32,6 @@ namespace HideAndSeek
         [Category("Opponent Constructor Name Success")]
         public void Test_Opponent_Constructor_Unparameterized_SetsToDefaultName()
         {
-            // Reset default numbers for Opponent names
-            Opponent.ResetDefaultNumbersForOpponentNames();
-
             // Create two new Opponents
             Opponent opponent1 = new Opponent();
             Opponent opponent2 = new Opponent();
@@ -53,7 +58,8 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because opponent name \"{name}\" is invalid (is empty or contains only whitespace)"));
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because opponent name \"{name}\" is invalid " +
+                                                           "(is empty or contains only whitespace)"));
             });
         }
     }

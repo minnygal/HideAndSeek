@@ -194,7 +194,7 @@ namespace HideAndSeek
         [Category("Location ExitList Success")]
         public void Test_Location_ExitList_ForNotCenterLocations()
         {
-            // Expected exit lists for non-center locations
+            // Expected exit lists for not-center locations
             IEnumerable<string> expectedClosetExitList = new List<string>() { "the living room is Out" };
             IEnumerable<string> expectedAtticExitList = new List<string>() { "the living room is Down" };
             IEnumerable<string> expectedStudyExitList = new List<string>() { "the living room is to the Northwest" };
@@ -366,18 +366,19 @@ namespace HideAndSeek
         {
             Assert.Multiple(() =>
             {
-                // Assert that setting the Name to an invalid name throws exception
+                // Assert that setting the Name to an invalid name raises exception
                 var exception = Assert.Throws<InvalidDataException>(() =>
                 {
                     center.Name = name;
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because location name \"{name}\" is invalid (is empty or contains only whitespace)"));
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because location name \"{name}\" is invalid " +
+                                                           "(is empty or contains only whitespace)"));
             });
         }
 
-        // Test for successful set ExitsForSerialization is in deserialization test
+        // The test for successful set ExitsForSerialization is in deserialization test
         [TestCase("")]
         [TestCase(" ")]
         [Category("Location ExitsForSerialization Failure")]
@@ -390,14 +391,15 @@ namespace HideAndSeek
 
             Assert.Multiple(() =>
             {
-                // Assert that setting the ExitsForSerialization property to a dictionary with an invalid location name throws an exception
+                // Assert that setting the ExitsForSerialization property to a dictionary with an invalid location name raises an exception
                 var exception = Assert.Throws<InvalidDataException>(() =>
                 {
                     center.ExitsForSerialization = exits;
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because location name \"{locationName}\" for exit in direction \"North\" is invalid (is empty or contains only whitespace"));
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because location name \"{locationName}\" " +
+                                                           "for exit in direction \"North\" is invalid (is empty or contains only whitespace"));
             });
         }
 
@@ -423,14 +425,15 @@ namespace HideAndSeek
         {
             Assert.Multiple(() =>
             {
-                // Assert that setting exits dictionary to empty dictionary throws exception
+                // Assert that setting exits dictionary to empty dictionary raises exception
                 var exception = Assert.Throws<InvalidDataException>(() =>
                 {
                     center.SetExitsDictionary(new Dictionary<Direction, Location>());
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo("Cannot perform action because location \"living room\" must be assigned at least one exit"));
+                Assert.That(exception.Message, Is.EqualTo("Cannot perform action because location \"living room\" " +
+                                                          "must be assigned at least one exit"));
             });
         }
 
@@ -441,19 +444,22 @@ namespace HideAndSeek
             // Set expected serialized Location text
             string expectedSerializedLocation =
                 "{\"Name\":\"living room\"," +
-                "\"ExitsForSerialization\":{" +
-                    "\"North\":\"kitchen\"," +
-                    "\"Northeast\":\"pantry\"," +
-                    "\"East\":\"game room\"," +
-                    "\"Southeast\":\"study\"," +
-                    "\"South\":\"office\"," +
-                    "\"Southwest\":\"sensory room\"," +
-                    "\"West\":\"bedroom\"," +
-                    "\"Northwest\":\"storage room\"," +
-                    "\"In\":\"closet\"," +
-                    "\"Out\":\"yard\"," +
-                    "\"Up\":\"attic\"," +
-                    "\"Down\":\"basement\"}}";
+                "\"ExitsForSerialization\":" +
+                    "{" +
+                        "\"North\":\"kitchen\"," +
+                        "\"Northeast\":\"pantry\"," +
+                        "\"East\":\"game room\"," +
+                        "\"Southeast\":\"study\"," +
+                        "\"South\":\"office\"," +
+                        "\"Southwest\":\"sensory room\"," +
+                        "\"West\":\"bedroom\"," +
+                        "\"Northwest\":\"storage room\"," +
+                        "\"In\":\"closet\"," +
+                        "\"Out\":\"yard\"," +
+                        "\"Up\":\"attic\"," +
+                        "\"Down\":\"basement\"" +
+                    "}" +
+                "}";
 
             // Serialize Location
             string serializedLocation = center.Serialize();
@@ -485,19 +491,22 @@ namespace HideAndSeek
             // Text representing serialized location
             string serializedLocation = 
                 "{\"Name\":\"living room\"," +
-                "\"ExitsForSerialization\":{" +
-                    "\"North\":\"kitchen\"," +
-                    "\"Northeast\":\"pantry\"," +
-                    "\"East\":\"game room\"," +
-                    "\"Southeast\":\"study\"," +
-                    "\"South\":\"office\"," +
-                    "\"Southwest\":\"sensory room\"," +
-                    "\"West\":\"bedroom\"," +
-                    "\"Northwest\":\"storage room\"," +
-                    "\"In\":\"closet\"," +
-                    "\"Out\":\"yard\"," +
-                    "\"Up\":\"attic\"," +
-                    "\"Down\":\"basement\"}}";
+                "\"ExitsForSerialization\":" +
+                    "{" +
+                        "\"North\":\"kitchen\"," +
+                        "\"Northeast\":\"pantry\"," +
+                        "\"East\":\"game room\"," +
+                        "\"Southeast\":\"study\"," +
+                        "\"South\":\"office\"," +
+                        "\"Southwest\":\"sensory room\"," +
+                        "\"West\":\"bedroom\"," +
+                        "\"Northwest\":\"storage room\"," +
+                        "\"In\":\"closet\"," +
+                        "\"Out\":\"yard\"," +
+                        "\"Up\":\"attic\"," +
+                        "\"Down\":\"basement\"" +
+                    "}" +
+                "}";
 
             // Deserialize Location
             Location deserializedLocation = JsonSerializer.Deserialize<Location>(serializedLocation);
@@ -522,19 +531,23 @@ namespace HideAndSeek
             // Text representing serialized Location
             string serializedLocation = 
                 "{\"Name\":\"" + name + "\"," +
-                "\"ExitsForSerialization\":{" +
-                    "\"North\":\"kitchen\"}}";
+                "\"ExitsForSerialization\":" +
+                    "{" +
+                        "\"North\":\"kitchen\"" +
+                    "}" +
+                "}";
 
             Assert.Multiple(() =>
             {
-                // Assert that deserializing throws exception
+                // Assert that deserializing raises exception
                 var exception = Assert.Throws<InvalidDataException>(() =>
                 {
                     JsonSerializer.Deserialize<Location>(serializedLocation);
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because location name \"{name}\" is invalid (is empty or contains only whitespace)"));
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because location name \"{name}\" " +
+                                                          $"is invalid (is empty or contains only whitespace)"));
             });
         }
 
@@ -543,26 +556,26 @@ namespace HideAndSeek
         [Category("Location Deserialization Failure")]
         public void Test_Location_Deserialization_AndCheckErrorMessage_ForInvalidExitLocationName(string name)
         {
-            // Set expected ExitsForSerialization property value
-            IDictionary<Direction, string> expectedExitsForSerialization = new Dictionary<Direction, string>();
-            expectedExitsForSerialization.Add(Direction.North, "kitchen");
-
             // Text representing serialized Location
             string serializedLocation =
                 "{\"Name\":\"living room\"," +
-                "\"ExitsForSerialization\":{" +
-                    "\"North\":\"" + name + "\"}}";
+                "\"ExitsForSerialization\":" +
+                    "{" +
+                        "\"North\":\"" + name + "\"" +
+                    "}" +
+                "}";
 
             Assert.Multiple(() =>
             {
-                // Assert that deserializing throws exception
+                // Assert that deserializing raises exception
                 var exception = Assert.Throws<InvalidDataException>(() =>
                 {
                     JsonSerializer.Deserialize<Location>(serializedLocation);
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because location name \"{name}\" for exit in direction \"North\" is invalid (is empty or contains only whitespace"));
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because location name \"{name}\" " +
+                                                           "for exit in direction \"North\" is invalid (is empty or contains only whitespace"));
             });
         }
     }

@@ -30,7 +30,7 @@ namespace HideAndSeek
 
         [Test]
         [Category("LocationWithHidingPlace HideOpponent CheckHidingPlace Success")]
-        public void Test_LocationWithHidingPlace_HideOpponents_And_CheckHidingPlace()
+        public void Test_LocationWithHidingPlace_HideOpponent_And_CheckHidingPlace()
         {
             // Create a new LocationWithHidingPlace
             var hidingLocation = new LocationWithHidingPlace("Room", "under the bed");
@@ -90,7 +90,8 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because hiding place \"{description}\" is invalid (is empty or contains only whitespace)"));
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because hiding place \"{description}\" is invalid " +
+                                                           "(is empty or contains only whitespace)"));
             });
         }
 
@@ -102,19 +103,22 @@ namespace HideAndSeek
             string expectedSerializedLocation =
                 "{\"HidingPlace\":\"behind the piano\"," +
                 "\"Name\":\"living room\"," +
-                "\"ExitsForSerialization\":{" +
-                    "\"North\":\"kitchen\"," +
-                    "\"Northeast\":\"pantry\"," +
-                    "\"East\":\"game room\"," +
-                    "\"Southeast\":\"study\"," +
-                    "\"South\":\"office\"," +
-                    "\"Southwest\":\"sensory room\"," +
-                    "\"West\":\"bedroom\"," +
-                    "\"Northwest\":\"storage room\"," +
-                    "\"In\":\"closet\"," +
-                    "\"Out\":\"yard\"," +
-                    "\"Up\":\"attic\"," +
-                    "\"Down\":\"basement\"}}";
+                "\"ExitsForSerialization\":" +
+                    "{" +
+                        "\"North\":\"kitchen\"," +
+                        "\"Northeast\":\"pantry\"," +
+                        "\"East\":\"game room\"," +
+                        "\"Southeast\":\"study\"," +
+                        "\"South\":\"office\"," +
+                        "\"Southwest\":\"sensory room\"," +
+                        "\"West\":\"bedroom\"," +
+                        "\"Northwest\":\"storage room\"," +
+                        "\"In\":\"closet\"," +
+                        "\"Out\":\"yard\"," +
+                        "\"Up\":\"attic\"," +
+                        "\"Down\":\"basement\"" +
+                    "}" +
+                "}";
 
             // Serialize Location
             string serializedLocation = GetLocationForSerializationTests().Serialize();
@@ -147,19 +151,22 @@ namespace HideAndSeek
             string serializedLocation =
                 "{\"HidingPlace\":\"behind the piano\"," +
                 "\"Name\":\"living room\"," +
-                "\"ExitsForSerialization\":{" +
-                    "\"North\":\"kitchen\"," +
-                    "\"Northeast\":\"pantry\"," +
-                    "\"East\":\"game room\"," +
-                    "\"Southeast\":\"study\"," +
-                    "\"South\":\"office\"," +
-                    "\"Southwest\":\"sensory room\"," +
-                    "\"West\":\"bedroom\"," +
-                    "\"Northwest\":\"storage room\"," +
-                    "\"In\":\"closet\"," +
-                    "\"Out\":\"yard\"," +
-                    "\"Up\":\"attic\"," +
-                    "\"Down\":\"basement\"}}";
+                "\"ExitsForSerialization\":" +
+                    "{" +
+                        "\"North\":\"kitchen\"," +
+                        "\"Northeast\":\"pantry\"," +
+                        "\"East\":\"game room\"," +
+                        "\"Southeast\":\"study\"," +
+                        "\"South\":\"office\"," +
+                        "\"Southwest\":\"sensory room\"," +
+                        "\"West\":\"bedroom\"," +
+                        "\"Northwest\":\"storage room\"," +
+                        "\"In\":\"closet\"," +
+                        "\"Out\":\"yard\"," +
+                        "\"Up\":\"attic\"," +
+                        "\"Down\":\"basement\"" +
+                    "}" +
+                "}";
 
             // Deserialize LocationWithHidingPlace
             LocationWithHidingPlace deserializedLocation = JsonSerializer.Deserialize<LocationWithHidingPlace>(serializedLocation);
@@ -173,6 +180,7 @@ namespace HideAndSeek
             });
         }
 
+        // Tests HidingLocation data validation
         [TestCase("")]
         [TestCase(" ")]
         [Category("LocationWithHidingPlace Deserialize Failure")]
@@ -186,26 +194,30 @@ namespace HideAndSeek
             string serializedLocation =
                 "{\"HidingPlace\":\"" + hidingPlace + "\"," +
                 "\"Name\":\"living room\"," +
-                "\"ExitsForSerialization\":{" +
-                    "\"North\":\"kitchen\"}}";
+                "\"ExitsForSerialization\":" +
+                    "{" +
+                        "\"North\":\"kitchen\"" +
+                    "}" +
+                "}";
 
             Assert.Multiple(() =>
             {
-                // Assert that deserializing throws exception
+                // Assert that deserializing raises exception
                 var exception = Assert.Throws<InvalidDataException>(() =>
                 {
                     JsonSerializer.Deserialize<LocationWithHidingPlace>(serializedLocation);
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because hiding place \"{hidingPlace}\" is invalid (is empty or contains only whitespace)"));
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because hiding place \"{hidingPlace}\" is invalid " +
+                                                           "(is empty or contains only whitespace)"));
             });
         }
 
         /// <summary>
-        /// Helper method to get LocationWithHidingPlace for serialization tests
+        /// Helper method to get LocationWithHidingPlace for serialization test
         /// </summary>
-        /// <returns>LocationWithHidingPlace for serialization tests</returns>
+        /// <returns>LocationWithHidingPlace for serialization test</returns>
         private LocationWithHidingPlace GetLocationForSerializationTests()
         {
             // Initialize variables to new Locations/LocationWithHidingPlaces
