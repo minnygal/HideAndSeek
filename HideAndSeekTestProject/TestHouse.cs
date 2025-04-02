@@ -696,9 +696,264 @@ namespace HideAndSeek
 
         [Test]
         [Category("House Serialize Success")]
-        public void Test_House_SerializeMethod()
+        public void Test_House_SerializeMethod_DefaultHouse()
         {
             Assert.That(house.Serialize(), Is.EqualTo(TestHouse_TestCaseData.DefaultHouse_Serialized));
+        }
+
+        [Test]
+        [Category("House Serialize Success")]
+        public void Test_House_SerializeMethod_CustomHouse_WithLocationsWithoutHidingPlaces()
+        {
+            // ARRANGE
+            // Initialize variable to expected serialized House text
+            string expectedSerializedHouse =
+                #region expected serialized House
+                "{" +
+                    "\"Name\":\"dream house\"" + "," + 
+                    "\"HouseFileName\":\"DreamHouse\"" + "," + 
+                    "\"PlayerStartingPoint\":\"Kitchen\"" + "," + 
+                    "\"LocationsWithoutHidingPlaces\":" +
+                    "[" +
+                        "{" +
+                            "\"Name\":\"Kitchen\"" + "," + 
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"North\":\"Bedroom\"" + "," + 
+                                "\"East\":\"Pantry\"" + "," + 
+                                "\"West\":\"Office\"" +
+                            "}" +
+                        "}" + "," +
+                        "{" +
+                            "\"Name\":\"Exercise Room\"" + "," + 
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"South\":\"Bedroom\"" +
+                            "}" +
+                        "}" +
+                    "]" + "," + 
+                    "\"LocationsWithHidingPlaces\":" +
+                    "[" +
+                        "{" +
+                            "\"HidingPlace\":\"under the bed\"" + "," + 
+                            "\"Name\":\"Bedroom\"" + "," + 
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"South\":\"Kitchen\"" + "," + 
+                                "\"North\":\"Exercise Room\"" + "," + 
+                                "\"East\":\"Closet\"" + "," + 
+                                "\"West\":\"Bathroom\"" +
+                            "}" +
+                        "}" + "," + 
+                        "{" +
+                            "\"HidingPlace\":\"in a box\"" + "," + 
+                            "\"Name\":\"Pantry\"" + "," + 
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"West\":\"Kitchen\"" +
+                            "}" +
+                        "}" + "," + 
+                        "{" +
+                            "\"HidingPlace\":\"under the desk\"" + "," + 
+                            "\"Name\":\"Office\"" + "," + 
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"East\":\"Kitchen\"" + "," + 
+                                "\"Northeast\":\"Bathroom\"" +
+                            "}" +
+                        "}" + "," + 
+                        "{" +
+                            "\"HidingPlace\":\"between the coats\"" + "," + 
+                            "\"Name\":\"Closet\"" + "," + 
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"West\":\"Bedroom\"" +
+                            "}" +
+                        "}" + "," + 
+                        "{" +
+                            "\"HidingPlace\":\"in the tub\"" + "," + 
+                            "\"Name\":\"Bathroom\"" + "," + 
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"East\":\"Bedroom\"" + "," + 
+                                "\"West\":\"Sensory Room\"" + "," + 
+                                "\"Southwest\":\"Office\"" +
+                            "}" +
+                        "}" + "," + 
+                        "{" +
+                            "\"HidingPlace\":\"under the bean bags\"" + "," + 
+                            "\"Name\":\"Sensory Room\"" + "," + 
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"East\":\"Bathroom\"" +
+                            "}" +
+                        "}" +
+                    "]" +
+                "}";
+            #endregion
+
+            #region create House
+            // Create starting point (Kitchen) and connect to new locations: Bedroom, Pantry, Office
+            Location kitchen = new Location("Kitchen");
+            LocationWithHidingPlace bedroom = kitchen.AddExit(Direction.North, "Bedroom", "under the bed");
+            LocationWithHidingPlace pantry = kitchen.AddExit(Direction.East, "Pantry", "in a box");
+            LocationWithHidingPlace office = kitchen.AddExit(Direction.West, "Office", "under the desk");
+
+            // Connect Bedroom to new locations: Exercise Room, Closet, Bathroom
+            Location exerciseRoom = bedroom.AddExit(Direction.North, "Exercise Room");
+            LocationWithHidingPlace closet = bedroom.AddExit(Direction.East, "Closet", "between the coats");
+            LocationWithHidingPlace bathroom = bedroom.AddExit(Direction.West, "Bathroom", "in the tub");
+
+            // Connect Office to new location: Sensory Room
+            LocationWithHidingPlace sensoryRoom = bathroom.AddExit(Direction.West, "Sensory Room", "under the bean bags");
+
+            // Connect Office to Bathroom
+            office.AddExit(Direction.Northeast, bathroom);
+
+            // Create enumerable of Location objects
+            IEnumerable<Location> locationsWithoutHidingPlaces = new List<Location>() { kitchen, exerciseRoom };
+
+            // Create enumerable of LocationWithHidingPlace objects
+            IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces = new List<LocationWithHidingPlace>()
+            {
+                bedroom, pantry, office, closet, bathroom, sensoryRoom
+            };
+
+            // Create House
+            house = new House("dream house", "DreamHouse", "Kitchen", locationsWithoutHidingPlaces, locationsWithHidingPlaces);
+            #endregion
+
+            // ACT
+            string serializedHouse = house.Serialize();
+
+            // Assert that serialized House text is as expected
+            Assert.That(serializedHouse, Is.EqualTo(expectedSerializedHouse));
+        }
+
+        [Test]
+        [Category("House Serialize Success")]
+        public void Test_House_SerializeMethod_CustomHouse_WithoutLocationsWithoutHidingPlaces()
+        {
+            // ARRANGE
+            // Initialize variable to expected serialized House text
+            string expectedSerializedHouse =
+            #region expected serialized House
+                "{" +
+                    "\"Name\":\"dream house\"" + "," +
+                    "\"HouseFileName\":\"DreamHouse\"" + "," +
+                    "\"PlayerStartingPoint\":\"Kitchen\"" + "," +
+                    "\"LocationsWithoutHidingPlaces\":[]" + "," +
+                    "\"LocationsWithHidingPlaces\":" +
+                    "[" +
+                        "{" +
+                            "\"HidingPlace\":\"in a cupboard\"" + "," +
+                            "\"Name\":\"Kitchen\"" + "," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"North\":\"Bedroom\"" + "," +
+                                "\"East\":\"Pantry\"" + "," +
+                                "\"West\":\"Office\"" +
+                            "}" +
+                        "}" + "," +
+                        "{" +
+                            "\"HidingPlace\":\"under the bed\"" + "," +
+                            "\"Name\":\"Bedroom\"" + "," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"South\":\"Kitchen\"" + "," +
+                                "\"North\":\"Exercise Room\"" + "," +
+                                "\"East\":\"Closet\"" + "," +
+                                "\"West\":\"Bathroom\"" +
+                            "}" +
+                        "}" + "," +
+                        "{" +
+                            "\"HidingPlace\":\"in a box\"" + "," +
+                            "\"Name\":\"Pantry\"" + "," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"West\":\"Kitchen\"" +
+                            "}" +
+                        "}" + "," +
+                        "{" +
+                            "\"HidingPlace\":\"under the desk\"" + "," +
+                            "\"Name\":\"Office\"" + "," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"East\":\"Kitchen\"" + "," +
+                                "\"Northeast\":\"Bathroom\"" +
+                            "}" +
+                        "}" + "," +
+                        "{" +
+                            "\"HidingPlace\":\"behind the balls\"" + "," +
+                            "\"Name\":\"Exercise Room\"" + "," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"South\":\"Bedroom\"" +
+                            "}" +
+                        "}" + "," +
+                        "{" +
+                            "\"HidingPlace\":\"between the coats\"" + "," +
+                            "\"Name\":\"Closet\"" + "," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"West\":\"Bedroom\"" +
+                            "}" +
+                        "}" + "," +
+                        "{" +
+                            "\"HidingPlace\":\"in the tub\"" + "," +
+                            "\"Name\":\"Bathroom\"" + "," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"East\":\"Bedroom\"" + "," +
+                                "\"West\":\"Sensory Room\"" + "," +
+                                "\"Southwest\":\"Office\"" +
+                            "}" +
+                        "}" + "," +
+                        "{" +
+                            "\"HidingPlace\":\"under the bean bags\"" + "," +
+                            "\"Name\":\"Sensory Room\"" + "," +
+                            "\"ExitsForSerialization\":" +
+                            "{" +
+                                "\"East\":\"Bathroom\"" +
+                            "}" +
+                        "}" +
+                    "]" +
+                "}";
+            #endregion
+
+            #region create House
+            // Create starting point (Kitchen) and connect to new locations: Bedroom, Pantry, Office
+            LocationWithHidingPlace kitchen = new LocationWithHidingPlace("Kitchen", "in a cupboard");
+            LocationWithHidingPlace bedroom = kitchen.AddExit(Direction.North, "Bedroom", "under the bed");
+            LocationWithHidingPlace pantry = kitchen.AddExit(Direction.East, "Pantry", "in a box");
+            LocationWithHidingPlace office = kitchen.AddExit(Direction.West, "Office", "under the desk");
+
+            // Connect Bedroom to new locations: Exercise Room, Closet, Bathroom
+            LocationWithHidingPlace exerciseRoom = bedroom.AddExit(Direction.North, "Exercise Room", "behind the balls");
+            LocationWithHidingPlace closet = bedroom.AddExit(Direction.East, "Closet", "between the coats");
+            LocationWithHidingPlace bathroom = bedroom.AddExit(Direction.West, "Bathroom", "in the tub");
+
+            // Connect Office to new location: Sensory Room
+            LocationWithHidingPlace sensoryRoom = bathroom.AddExit(Direction.West, "Sensory Room", "under the bean bags");
+
+            // Connect Office to Bathroom
+            office.AddExit(Direction.Northeast, bathroom);
+
+            // Create enumerable of LocationWithHidingPlace objects
+            IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces = new List<LocationWithHidingPlace>()
+            {
+                kitchen, bedroom, pantry, office, exerciseRoom, closet, bathroom, sensoryRoom
+            };
+
+            // Create House
+            house = new House("dream house", "DreamHouse", "Kitchen", new List<Location>(), locationsWithHidingPlaces);
+            #endregion
+
+            // ACT
+            string serializedHouse = house.Serialize();
+
+            // Assert that serialized House text is as expected
+            Assert.That(serializedHouse, Is.EqualTo(expectedSerializedHouse));
         }
     }
 }
