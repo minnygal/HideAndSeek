@@ -14,8 +14,7 @@ namespace HideAndSeek
     public static class TestSavedGame_SerializationAndDeserialization_TestCaseData
     {
         /// <summary>
-        /// Dictionary of Opponents and associated LocationWithHidingPlace names
-        /// for SavedGame for tests
+        /// Dictionary of Opponents and associated LocationWithHidingPlace names for SavedGame for tests
         /// </summary>
         public static Dictionary<string, string> SavedGame_OpponentsAndHidingPlaces
         {
@@ -41,7 +40,7 @@ namespace HideAndSeek
                 return
                     "{" +
                         SavedGame_Serialized_HouseFileName + "," +
-                        SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                        SavedGame_Serialized_PlayerLocation_NoFoundOpponents + "," +
                         SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
                         SavedGame_Serialized_OpponentsAndHidingLocations + "," +
                         SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
@@ -50,7 +49,7 @@ namespace HideAndSeek
         }
 
         /// <summary>
-        /// Text for serialized HouseFileName property of SavedGame for tests
+        /// Text for serialized HouseFileName property of test SavedGame
         /// </summary>
         public static string SavedGame_Serialized_HouseFileName
         {
@@ -61,9 +60,9 @@ namespace HideAndSeek
         }
 
         /// <summary>
-        /// Text for serialized PlayerLocation property for test SavedGame with no found opponents
+        /// Text for serialized PlayerLocation property of test SavedGame with no found opponents
         /// </summary>
-        public static string SavedGame_Serialized_PlayerLocation_NoOpponentsGame
+        public static string SavedGame_Serialized_PlayerLocation_NoFoundOpponents
         {
             get
             {
@@ -72,7 +71,7 @@ namespace HideAndSeek
         }
 
         /// <summary>
-        /// Text for serialized MoveNumber property for test SavedGame with no found opponents
+        /// Text for serialized MoveNumber property of test SavedGame with no found opponents
         /// </summary>
         public static string SavedGame_Serialized_MoveNumber_NoFoundOpponents
         {
@@ -83,7 +82,7 @@ namespace HideAndSeek
         }
 
         /// <summary>
-        /// Text for serialized OpponentsAndHidingLocations property for test SavedGame
+        /// Text for serialized OpponentsAndHidingLocations property of test SavedGame
         /// </summary>
         public static string SavedGame_Serialized_OpponentsAndHidingLocations
         {
@@ -102,7 +101,7 @@ namespace HideAndSeek
         }
 
         /// <summary>
-        /// Text for serialized FoundOpponents property for test SavedGame with no found opponents
+        /// Text for serialized FoundOpponents property of test SavedGame with no found opponents
         /// </summary>
         public static string SavedGame_Serialized_FoundOpponents_NoFoundOpponents
         {
@@ -492,12 +491,16 @@ namespace HideAndSeek
             get
             {
                 // No data in file
-                yield return new TestCaseData("The input does not contain any JSON tokens. Expected the input to start with a valid JSON token, when isFinalBlock is true. Path: $ | LineNumber: 0 | BytePositionInLine: 0.",
+                yield return new TestCaseData("The input does not contain any JSON tokens. " +
+                                              "Expected the input to start with a valid JSON token, when isFinalBlock is true. " +
+                                              "Path: $ | LineNumber: 0 | BytePositionInLine: 0.",
                         "")
                     .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenNoJsonTokens - no data in file");
 
                 // Only whitespace in file
-                yield return new TestCaseData("The input does not contain any JSON tokens. Expected the input to start with a valid JSON token, when isFinalBlock is true. Path: $ | LineNumber: 0 | BytePositionInLine: 2.",
+                yield return new TestCaseData("The input does not contain any JSON tokens. " +
+                                              "Expected the input to start with a valid JSON token, when isFinalBlock is true. " +
+                                              "Path: $ | LineNumber: 0 | BytePositionInLine: 2.",
                         "  ")
                     .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenNoJsonTokens - only whitespace in file");
 
@@ -513,7 +516,8 @@ namespace HideAndSeek
             get
             {
                 // Missing player location
-                yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: PlayerLocation",
+                yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, " +
+                                              "including the following: PlayerLocation",
                         "{" +
                             SavedGame_Serialized_HouseFileName + "," +
                             SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
@@ -523,30 +527,33 @@ namespace HideAndSeek
                     .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenPropertyIsMissing - missing player location");
 
                 // Missing move number
-                yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: MoveNumber",
+                yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, " +
+                                              "including the following: MoveNumber",
                         "{" +
                             SavedGame_Serialized_HouseFileName + "," +
-                            SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                            SavedGame_Serialized_PlayerLocation_NoFoundOpponents + "," +
                             SavedGame_Serialized_OpponentsAndHidingLocations + "," +
                             SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")
                     .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenPropertyIsMissing - missing move number");
 
                 // Missing opponents and hiding locations
-                yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: OpponentsAndHidingLocations",
+                yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, " +
+                                              "including the following: OpponentsAndHidingLocations",
                         "{" +
                             SavedGame_Serialized_HouseFileName + "," +
-                            SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                            SavedGame_Serialized_PlayerLocation_NoFoundOpponents + "," +
                             SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
                             SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")
                     .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenPropertyIsMissing - missing opponents and hiding locations");
 
                 // Missing found opponents
-                yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: FoundOpponents",
+                yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, " +
+                                              "including the following: FoundOpponents",
                         "{" +
                             SavedGame_Serialized_HouseFileName + "," +
-                            SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                            SavedGame_Serialized_PlayerLocation_NoFoundOpponents + "," +
                             SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
                             SavedGame_Serialized_OpponentsAndHidingLocations +
                         "}")
@@ -560,10 +567,11 @@ namespace HideAndSeek
             get
             {
                 // Invalid House file name
-                yield return new TestCaseData("Cannot perform action because file name \"a8}{{ /@uaou12 \" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)",
+                yield return new TestCaseData("Cannot perform action because file name \"a8}{{ /@uaou12 \" is invalid " +
+                                              "(is empty or contains illegal characters, e.g. \\, /, or whitespace)",
                         "{" +
                             "\"HouseFileName\":\"a8}{{ /@uaou12 \"" + "," +
-                            SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                            SavedGame_Serialized_PlayerLocation_NoFoundOpponents + "," +
                             SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
                             SavedGame_Serialized_OpponentsAndHidingLocations + "," +
                             SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
@@ -579,13 +587,13 @@ namespace HideAndSeek
                             SavedGame_Serialized_OpponentsAndHidingLocations + "," +
                             SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")
-                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue - invalid CurrentLocation");
+                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue - invalid PlayerLocation");
 
                 // Invalid (negative) move number
                 yield return new TestCaseData("invalid MoveNumber",
                         "{" +
                             SavedGame_Serialized_HouseFileName + "," +
-                            SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                            SavedGame_Serialized_PlayerLocation_NoFoundOpponents + "," +
                             "\"MoveNumber\":-1" + "," +
                             SavedGame_Serialized_OpponentsAndHidingLocations + "," +
                             SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
@@ -596,7 +604,7 @@ namespace HideAndSeek
                 yield return new TestCaseData("no opponents",
                         "{" +
                             SavedGame_Serialized_HouseFileName + "," +
-                            SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                            SavedGame_Serialized_PlayerLocation_NoFoundOpponents + "," +
                             SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
                             "\"OpponentsAndHidingLocations\":{}" + "," +
                             SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
@@ -607,7 +615,7 @@ namespace HideAndSeek
                 yield return new TestCaseData("invalid hiding location for opponent",
                         "{" +
                             SavedGame_Serialized_HouseFileName + "," +
-                            SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                            SavedGame_Serialized_PlayerLocation_NoFoundOpponents + "," +
                             SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
                             "\"OpponentsAndHidingLocations\":" +
                             "{" +
@@ -625,7 +633,7 @@ namespace HideAndSeek
                 yield return new TestCaseData("invalid hiding location for opponent",
                         "{" +
                             SavedGame_Serialized_HouseFileName + "," +
-                            SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                            SavedGame_Serialized_PlayerLocation_NoFoundOpponents + "," +
                             SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
                             "\"OpponentsAndHidingLocations\":" +
                             "{" +
@@ -643,7 +651,7 @@ namespace HideAndSeek
                 yield return new TestCaseData("found opponent is not an opponent",
                         "{" +
                             SavedGame_Serialized_HouseFileName + "," +
-                            SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                            SavedGame_Serialized_PlayerLocation_NoFoundOpponents + "," +
                             SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
                             SavedGame_Serialized_OpponentsAndHidingLocations + "," +
                             "\"FoundOpponents\":[\"Steve\"]" +
@@ -678,7 +686,8 @@ namespace HideAndSeek
 
                 // MISSING PROPERTIES
                 // File missing Name
-                yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.House' was missing required properties, including the following: Name",
+                yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.House' was missing required properties, " +
+                                              "including the following: Name",
                         "{" +
                             DefaultHouse_Serialized_HouseFileName + "," +
                             DefaultHouse_Serialized_PlayerStartingPoint + "," +
@@ -688,7 +697,8 @@ namespace HideAndSeek
                     .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenHouseFileFormatIsInvalid - no Name");
 
                 // File missing HouseFileName
-                yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.House' was missing required properties, including the following: HouseFileName",
+                yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.House' was missing required properties, " +
+                                              "including the following: HouseFileName",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
                            DefaultHouse_Serialized_PlayerStartingPoint + "," +
@@ -698,7 +708,8 @@ namespace HideAndSeek
                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenHouseFileFormatIsInvalid - no HouseFileName");
 
                 // File missing PlayerStartingPoint
-                yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.House' was missing required properties, including the following: PlayerStartingPoint",
+                yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.House' was missing required properties, " +
+                                              "including the following: PlayerStartingPoint",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
                            DefaultHouse_Serialized_HouseFileName + "," +
@@ -708,7 +719,8 @@ namespace HideAndSeek
                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenHouseFileFormatIsInvalid - no PlayerStartingPoint");
 
                 // File missing LocationsWithoutHidingPlaces
-                yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.House' was missing required properties, including the following: LocationsWithoutHidingPlaces",
+                yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.House' was missing required properties, " +
+                                              "including the following: LocationsWithoutHidingPlaces",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
                            DefaultHouse_Serialized_HouseFileName + "," +
@@ -718,7 +730,8 @@ namespace HideAndSeek
                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenHouseFileFormatIsInvalid - no LocationsWithoutHidingPlaces");
 
                 // File missing LocationsWithHidingPlaces
-                yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.House' was missing required properties, including the following: LocationsWithHidingPlaces",
+                yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.House' was missing required properties, " +
+                                              "including the following: LocationsWithHidingPlaces",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
                            DefaultHouse_Serialized_HouseFileName + "," +
@@ -735,7 +748,8 @@ namespace HideAndSeek
             {
                 // INVALID VALUE OF WHITESPACE
                 // Invalid Name - whitespace
-                yield return new TestCaseData("Cannot perform action because house name \" \" is invalid (is empty or contains only whitespace)",
+                yield return new TestCaseData("Cannot perform action because house name \" \" is invalid " +
+                                              "(is empty or contains only whitespace)",
                         "{" +
                            "\"Name\":\" \"" + "," +
                            DefaultHouse_Serialized_HouseFileName + "," +
@@ -746,7 +760,8 @@ namespace HideAndSeek
                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenHouseFileDataInvalidValue - invalid Name - whitespace");
 
                 // Invalid HouseFileName - whitespace
-                yield return new TestCaseData("Cannot perform action because house file name \" \" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)",
+                yield return new TestCaseData("Cannot perform action because house file name \" \" is invalid " +
+                                              "(is empty or contains illegal characters, e.g. \\, /, or whitespace)",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
                            "\"HouseFileName\":\" \"" + "," +
@@ -757,7 +772,8 @@ namespace HideAndSeek
                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenHouseFileDataInvalidValue - invalid HouseFileName - whitespace");
 
                 // Invalid PlayerStartingPoint - whitespace
-                yield return new TestCaseData("Cannot perform action because player starting point location name \" \" is invalid (is empty or contains only whitespace)",
+                yield return new TestCaseData("Cannot perform action because player starting point location name \" \" is invalid " +
+                                              "(is empty or contains only whitespace)",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
                            DefaultHouse_Serialized_HouseFileName + "," +
@@ -768,7 +784,8 @@ namespace HideAndSeek
                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenHouseFileDataInvalidValue - invalid PlayerStartingPoint - whitespace");
 
                 // Invalid LocationsWithoutHidingPlaces - Location name is invalid (whitespace)
-                yield return new TestCaseData("Cannot perform action because location name \" \" is invalid (is empty or contains only whitespace)",
+                yield return new TestCaseData("Cannot perform action because location name \" \" is invalid " +
+                                              "(is empty or contains only whitespace)",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
                            DefaultHouse_Serialized_HouseFileName + "," +
@@ -792,7 +809,8 @@ namespace HideAndSeek
                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenHouseFileDataInvalidValue - LocationsWithoutHidingPlaces - invalid Location Name - whitespace");
 
                 // Invalid LocationsWithHidingPlaces - LocationWithHidingPlace name in invalid (whitespace)
-                yield return new TestCaseData("Cannot perform action because location name \" \" is invalid (is empty or contains only whitespace)",
+                yield return new TestCaseData("Cannot perform action because location name \" \" is invalid " +
+                                              "(is empty or contains only whitespace)",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
                            DefaultHouse_Serialized_HouseFileName + "," +
@@ -813,7 +831,8 @@ namespace HideAndSeek
                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenHouseFileDataInvalidValue - LocationsWithHidingPlaces - invalid Location Name - whitespace");
 
                 // Invalid LocationsWithHidingPlaces - LocationWithHidingPlace description is invalid (whitespace)
-                yield return new TestCaseData("Cannot perform action because hiding place \" \" is invalid (is empty or contains only whitespace)",
+                yield return new TestCaseData("Cannot perform action because hiding place \" \" is invalid " +
+                                              "(is empty or contains only whitespace)",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
                            DefaultHouse_Serialized_HouseFileName + "," +
@@ -835,7 +854,8 @@ namespace HideAndSeek
 
                 // OTHER INVALID VALUES
                 // Invalid PlayerStartingPoint - not a Location
-                yield return new TestCaseData("Cannot perform action because player starting point location \"Dungeon\" is not a location in the house",
+                yield return new TestCaseData("Cannot perform action because player starting point location \"Dungeon\" " +
+                                              "is not a location in the house",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
                            DefaultHouse_Serialized_HouseFileName + "," +
@@ -935,7 +955,8 @@ namespace HideAndSeek
                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenHouseFileDataInvalidValue - invalid LocationsWithHidingPlaces - no exits");
 
                 // Invalid LocationsWithoutHidingPlaces - Location has nonexistent exit
-                yield return new TestCaseData("Cannot perform action because \"Hallway\" exit location \"Dungeon\" in direction \"Down\" does not exist",
+                yield return new TestCaseData("Cannot perform action because \"Hallway\" exit location \"Dungeon\" " +
+                                              "in direction \"Down\" does not exist",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
                            DefaultHouse_Serialized_HouseFileName + "," +
@@ -981,7 +1002,8 @@ namespace HideAndSeek
                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenHouseFileDataInvalidValue - invalid LocationsWithoutHidingPlaces - nonexistent exit");
 
                 // Invalid LocationsWithHidingPlaces - LocationWithHidingPlace has nonexistent exit
-                yield return new TestCaseData("Cannot perform action because \"Bathroom\" exit location \"Dungeon\" in direction \"Down\" does not exist",
+                yield return new TestCaseData("Cannot perform action because \"Bathroom\" exit location \"Dungeon\" " +
+                                              "in direction \"Down\" does not exist",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
                            DefaultHouse_Serialized_HouseFileName + "," +
