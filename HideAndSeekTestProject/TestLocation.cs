@@ -9,7 +9,7 @@ using System.Xml.Linq;
 namespace HideAndSeek
 {
     /// <summary>
-    /// Location tests for testing properties and GetExit, ExitList, AddExit, and SetExitsDictionary methods
+    /// Location tests for properties and methods GetExit, ExitList, AddExit, and SetExitsDictionary
     /// </summary>
     [TestFixture]
     public class TestLocation

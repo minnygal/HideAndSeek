@@ -9,7 +9,7 @@ using Moq;
 namespace HideAndSeek
 {
     /// <summary>
-    /// Helper methods for tests
+    /// Helper methods for tests requiring mock IFileSystem
     /// </summary>
     public static class MockFileSystemHelper
     {

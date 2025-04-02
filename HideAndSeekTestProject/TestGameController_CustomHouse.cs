@@ -10,9 +10,9 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// Class to test layout of GameController non-default House
+    /// GameController tests for layout of non-default House
     /// set using GameController constructor or RestartGame method,
-    /// and test playing full game in custom House
+    /// and playing full game in custom House
     /// </summary>
     [TestFixture]
     public class TestGameController_CustomHouse

@@ -5,11 +5,10 @@ using System.Collections.Generic;
 namespace HideAndSeek
 {
     /// <summary>
-    /// GameController tests for moving and checking for opponents via ParseInput method
-    /// in default house
-    /// Also tests for value of Prompt property as navigate through House
-    /// Automatically tests parameterized GameController constructor
-    /// Not including save/load/delete game tests (contained in separate file)
+    /// GameController tests for moving and checking for opponents via ParseInput method in default House,
+    /// and value of Prompt property as navigate through House.
+    /// Automatically tests parameterized GameController constructor.
+    /// Does not include save/load/delete game tests (contained in separate file).
     /// </summary>
     public class TestGameController_ParseInput
     {

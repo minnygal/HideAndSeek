@@ -7,7 +7,7 @@ using System.Text.Json;
 namespace HideAndSeek
 {
     /// <summary>
-    /// LocationWithHidingPlace tests for testing properties and methods HideOpponent, CheckHidingPlace, and Serialize
+    /// LocationWithHidingPlace tests for properties and methods HideOpponent, CheckHidingPlace, and Serialize
     /// </summary>
     [TestFixture]
     public class TestLocationWithHidingPlace

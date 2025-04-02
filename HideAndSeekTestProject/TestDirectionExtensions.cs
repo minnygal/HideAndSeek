@@ -8,7 +8,7 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// Class to test DirectionExtensions methods to get opposite direction and get direction description
+    /// DirectionExtensions tests for methods to get opposite direction and direction description
     /// </summary>
     [TestFixture]
     public class TestDirectionExtensions

@@ -12,9 +12,9 @@ using Newtonsoft.Json.Linq;
 namespace HideAndSeek
 {
     /// <summary>
-    /// House tests for testing House layout and functions 
+    /// House tests for layout and functions 
     /// (get Location or LocationWithHidingPlace by name, get random exit, get random LocationWithHidingPlace, 
-    /// clear LocationWithHidingPlaces, find out whether Location or LocationWithHidingPlace exists,
+    /// clear LocationWithHidingPlace, find out whether Location or LocationWithHidingPlace exists,
     /// [de]serialization, property setters, etc.)
     /// </summary>
     [TestFixture]

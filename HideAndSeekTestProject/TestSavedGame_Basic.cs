@@ -8,7 +8,7 @@ using System.Text.Json;
 namespace HideAndSeek
 {
     /// <summary>
-    /// SavedGame tests to test SavedGame constructors and SavedGame public properties
+    /// SavedGame tests for constructors and public properties
     /// </summary>
     [TestFixture]
     public class TestSavedGame_Basic

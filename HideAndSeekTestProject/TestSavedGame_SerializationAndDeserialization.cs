@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// SavedGame tests to test serialization and deserialization
+    /// SavedGame tests for test serialization and deserialization
     /// </summary>
     [TestFixture]
     public class TestSavedGame_SerializationAndDeserialization
