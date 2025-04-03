@@ -92,7 +92,7 @@ Follow the prompts and options given.  To enter a command, type the command and 
 ### Select house layout
 At the beginning of a new game, you will see a prompt to type a house layout name or just press enter.  To use the default house layout, don't type anything and press the Enter key on your keyboard.
 
-If you want to use a specific house layout, type the name of the file (without the file extension) and press the Enter key on your keyboard.  For example, to use the built-in FriendHouse layout:
+If you want to use a specific house layout (contained in the application folder), type the name of the file (without the .json file extension) and press the Enter key on your keyboard.  For example, to use the built-in FriendHouse layout:
 ```
 Type a house layout file name or just press Enter to use the default house layout: FriendHouse
 ```
