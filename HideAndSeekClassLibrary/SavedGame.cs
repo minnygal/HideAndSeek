@@ -25,26 +25,82 @@ namespace HideAndSeek
      * **/
 
     /** CHANGES
-     * -I marked each property as required to ensure it is set.
+     * -I marked each property as required to ensure it is set (except House).
      * -I created a private variable for each public property.
      * -I created a body for each property's getter and setter methods.
      * -I added data validation in each setter method.
      * -I added a parameterless constructor for JSON deserialization.
-     * -I added a House property and a _houseFileName variable.
-     * -I added a parameterized constructor for 
-     *  easily setting properties upon initialization.
+     * -I added a House property (used for property data validation)
+     * -I added a HouseFileName property and a backing field.
+     * -I added a method to set the HouseFileName property's backing field
+     *  without using the property's setter (which calls House.CreateHouse)
+     * -I added a parameterized constructor for setting properties upon initialization.
      * -I added comments for easier reading.
      **/
 
     public class SavedGame
     {
-        private House house = House.CreateHouse(House.DefaultHouseFileName); // Set associated House to House with default layout (used for location-related data validation)
+        private House _house;
 
-        private string _houseFileName = House.DefaultHouseFileName; // Set house file name to default house file name
+        /// <summary>
+        /// House object associated with game (used for property validation)
+        /// Can only use setter when backing field has not already been set
+        /// (security measure since other properties' setters rely on this property for data validation)
+        /// </summary>
+        [JsonIgnore]
+        public House House
+        {
+            get
+            {
+                // If backing field has not been set
+                if(_house == null)
+                {
+                    throw new NullReferenceException("House has not been set"); // Throw exception
+                }
+
+                // Return House
+                return _house;
+            }
+            set
+            {
+                // If backing field already has a value
+                if(_house != null)
+                {
+                    throw new InvalidOperationException("House property already has a value"); // Throw exception
+                }
+
+                // Set backing field to value
+                _house = value;
+            }
+        }
+
+        private string _houseFileName;
+
+        /// <summary>
+        /// Set the House file name backing field, bypassing the HouseFileName property setter which calls House's CreateHouse method
+        /// </summary>
+        /// <param name="fileName">Name of file to set</param>
+        /// <exception cref="InvalidDataException">Exception thrown if file name is invalid</exception>
+        private void SetHouseFileName_WithoutCreatingHouse(string fileName)
+        {
+            // If House file name is invalid
+            if (!(new FileSystem().IsValidName(fileName)))
+            {
+                throw new InvalidDataException($"House file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"); // Throw exception
+            }
+
+            // Set House file name backing field, bypassing the HouseFileName property setter which calls House's CreateHouse method
+            _houseFileName = fileName;
+        }
 
         /// <summary>
         /// Name of file storing House object for layout (w/o JSON extension)
+        /// Can only use setter when backing field has not already been set
+        /// (security measure since other properties' setters rely on House, which this sets, for data validation)
+        /// Should only be used by JSON deserializer and tests
+        /// CAUTION: setter calls House's CreateHouse method
         /// </summary>
+        [JsonRequired]
         public required string HouseFileName
         {
             get
@@ -53,30 +109,38 @@ namespace HideAndSeek
             }
             set
             {
-                _houseFileName = value; // Set House file name
-                house = House.CreateHouse(_houseFileName); // Create House from file and assign to variable
+                // If backing field already has a value
+                if (_houseFileName != null)
+                {
+                    throw new InvalidOperationException("HouseFileName property already has a value"); // Throw exception
+                }
+
+                // Set backing field and create House
+                _houseFileName = value; // Set backing field
+                House = House.CreateHouse(HouseFileName); // Create House (must have this line for JSON deserializer because setters use House for data validation)
             }
         }
 
-        private string _playerLocation = "";
+        private string _playerLocation;
 
         /// <summary>
         /// Player's current location
         /// </summary>
-        public required string PlayerLocation { 
-            get 
+        [JsonRequired]
+        public required string PlayerLocation {
+            get
             {
                 return _playerLocation;
-            } 
+            }
             set
             {
-                // If location does not exist, throw exception
-                if( !(house.DoesLocationExist(value)) )
+                // If location does not exist
+                if ( !(House.DoesLocationExist(value)) )
                 {
-                    throw new InvalidDataException("Cannot process because data is corrupt - invalid CurrentLocation");
+                    throw new InvalidDataException("invalid PlayerLocation"); // Throw exception
                 }
 
-                // Set player location
+                // Set backing field
                 _playerLocation = value;
             }
         }
@@ -86,6 +150,7 @@ namespace HideAndSeek
         /// <summary>
         /// Current move number
         /// </summary>
+        [JsonRequired]
         public required int MoveNumber
         {
             get
@@ -94,13 +159,13 @@ namespace HideAndSeek
             }
             set
             {
-                // If move number is invalid, throw exception
-                if(value < 1)
+                // If move number is invalid
+                if (value < 1)
                 {
-                    throw new InvalidDataException("Cannot process because data is corrupt - invalid MoveNumber");
+                    throw new InvalidDataException("invalid MoveNumber"); // Throw exception
                 }
 
-                // Set move number
+                // Set backing field
                 _moveNumber = value;
             }
         }
@@ -111,30 +176,31 @@ namespace HideAndSeek
         /// Opponents and their locations with hiding place
         /// (opponent name as key, location with hiding place name as value)
         /// </summary>
-        public required Dictionary<string, string> OpponentsAndHidingLocations 
-        { 
+        [JsonRequired]
+        public required Dictionary<string, string> OpponentsAndHidingLocations
+        {
             get
             {
                 return _opponentsAndHidingLocations;
             }
             set
             {
-                // If no opponents, throw exception
-                if ( value.Count == 0 )
+                // If no items
+                if (value.Count == 0)
                 {
-                    throw new InvalidDataException("Cannot process because data is corrupt - no opponents");
+                    throw new InvalidDataException("no opponents"); // Throw exception
                 }
 
                 // If any of the LocationWithHidingPlaces do not exist, throw exception
                 foreach (KeyValuePair<string, string> opponentInfo in value)
                 {
-                    if( !(house.DoesLocationWithHidingPlaceExist(opponentInfo.Value)) )
+                    if (!(House.DoesLocationWithHidingPlaceExist(opponentInfo.Value)))
                     {
-                        throw new InvalidDataException("Cannot process because data is corrupt - invalid hiding location for opponent");
+                        throw new InvalidDataException("invalid hiding location for opponent");
                     }
                 }
 
-                // Set dictionary of all opponents and their locations
+                // Set backing field
                 _opponentsAndHidingLocations = value;
             }
         }
@@ -144,6 +210,7 @@ namespace HideAndSeek
         /// <summary>
         /// All found opponents' names
         /// </summary>
+        [JsonRequired]
         public required IEnumerable<string> FoundOpponents
         {
             get
@@ -152,16 +219,16 @@ namespace HideAndSeek
             }
             set
             {
-                // If any found opponents do not exist in OpponentsAndHidingLocations dictionary, throw exception
+                // If any found opponents do not exist in OpponentsAndHidingLocations dictionary keys, throw exception
                 foreach (string foundOpponent in value)
                 {
-                    if ( !(OpponentsAndHidingLocations.Keys.Contains(foundOpponent)) )
+                    if (!(OpponentsAndHidingLocations.Keys.Contains(foundOpponent)))
                     {
-                        throw new InvalidDataException("Cannot process because data is corrupt - found opponent is not an opponent");
+                        throw new InvalidDataException("found opponent is not an opponent");
                     }
                 }
 
-                // Set collection of found opponents
+                // Set backing field
                 _foundOpponents = value;
             }
         }
@@ -172,24 +239,22 @@ namespace HideAndSeek
         public SavedGame() { }
 
         /// <summary>
-        /// Constructor for setting properties
+        /// Constructor for setting properties (does not load House from file or validate that file exists)
         /// </summary>
         /// <param name="house">House object being used</param>
+        /// <param name="houseFileName">Name of House file</param>
         /// <param name="playerLocation">Current location of player</param>
         /// <param name="moveNumber">Current move number</param>
         /// <param name="opponentsAndHidingLocations">Opponents and their hiding locations</param>
         /// <param name="foundOpponents">Opponents who have been found</param>
         [SetsRequiredMembers]
-        public SavedGame(House house, string playerLocation, int moveNumber, Dictionary<string, string> opponentsAndHidingLocations, IEnumerable<string> foundOpponents)
+        public SavedGame(House house, string houseFileName, string playerLocation, int moveNumber, Dictionary<string, string> opponentsAndHidingLocations, IEnumerable<string> foundOpponents)
         {
-            this.house = house;
-            HouseFileName = house.HouseFileName;
+            House = house;
+            SetHouseFileName_WithoutCreatingHouse(houseFileName); // Set backing field rather than property to get around CreateHouse call in property setter
             PlayerLocation = playerLocation;
             MoveNumber = moveNumber;
-            MoveNumber = moveNumber;
             OpponentsAndHidingLocations = opponentsAndHidingLocations;
-            OpponentsAndHidingLocations = opponentsAndHidingLocations;
-            FoundOpponents = foundOpponents;
             FoundOpponents = foundOpponents;
         }
     }

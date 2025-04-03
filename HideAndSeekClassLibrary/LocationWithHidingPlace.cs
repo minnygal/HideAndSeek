@@ -1,13 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq;
 using System.Text;
+using System.Text.Json;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
+using System.Xml.Linq;
 
 namespace HideAndSeek
 {
     /// <summary>
-    /// Class to represent a location with a hiding place where an Opponent can hide in the House
+    /// Class to represent a location with a hiding place where an Opponent can hide in a House
     /// 
     /// CREDIT: adapted from Stellman and Greene's code
     /// </summary>
@@ -21,6 +26,7 @@ namespace HideAndSeek
      **/
 
     /** CHANGES
+     * -I added data validation for the HidingPlace property.
      * -I renamed the parameters in the constructor for easier comprehension.
      * -I renamed the private list to opponentsHiding for easier comprehension.
      * -I renamed the Hide method to HideOpponent so it's easier to 
@@ -29,15 +35,49 @@ namespace HideAndSeek
      * -I changed the return type for CheckHidingPlace.
      * -I made a local variable in CheckHidingPlace a specific type.
      * -I renamed a local variable in CheckHidingPlace for easier comprehension.
+     * -I added a method for JSON serialization.
+     * -I added a constructor for JSON deserialization.
      * -I added/edited comments for easier reading.
      * **/
 
     public class LocationWithHidingPlace : Location
     {
         /// <summary>
+        /// Serialize object and return as string
+        /// Calls private PrepForSerialization method
+        /// which must be called prior to object serialization.
+        /// </summary>
+        /// <returns>Serialized object as string</returns>
+        public override string Serialize()
+        {
+            base.Serialize(); // Prepare object for serialization but ignore object serialized as Location
+            return JsonSerializer.Serialize(this); // Serialize this object as a LocationWithHidingPlace
+        }
+
+        private string _hidingPlace;
+
+        /// <summary>
         /// Name of hiding place
         /// </summary>
-        public string HidingPlace { get; private set; }
+        [JsonRequired]
+        public required string HidingPlace
+        {
+            get
+            {
+                return _hidingPlace;
+            }
+            set
+            {
+                // If invalid name is entered
+                if (string.IsNullOrWhiteSpace(value))
+                {
+                    throw new InvalidDataException($"Cannot perform action because hiding place \"{value}\" is invalid (is empty or contains only whitespace)"); // Throw exception
+                }
+
+                // Set backing field
+                _hidingPlace = value;
+            }
+        }
 
         /// <summary>
         /// Opponents hidden in this hiding place
@@ -45,10 +85,16 @@ namespace HideAndSeek
         private List<Opponent> opponentsHiding = new List<Opponent>();
 
         /// <summary>
-        /// Constructor
+        /// Constructor for JSON deserialization
+        /// </summary>
+        public LocationWithHidingPlace() : base() { }
+
+        /// <summary>
+        /// Constructor to set name and description
         /// </summary>
         /// <param name="locationName">Name of location hiding place is in</param>
-        /// <param name="hidingPlaceDescription">Name of hiding place</param>
+        /// <param name="hidingPlaceDescription">Description of hiding place</param>
+        [SetsRequiredMembers]
         public LocationWithHidingPlace(string locationName, string hidingPlaceDescription) : base(locationName)
         {
             HidingPlace = hidingPlaceDescription;

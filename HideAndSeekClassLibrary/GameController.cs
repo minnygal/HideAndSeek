@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.Win32.SafeHandles;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.IO.Abstractions;
@@ -10,7 +11,7 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// Class to control a game and allow external interaction with and direction of game
+    /// Class to control a game of hide and seek and allow external interaction with and direction of game
     /// 
     /// CREDIT: adapted from Stellman and Greene's code
     /// </summary>
@@ -24,36 +25,37 @@ namespace HideAndSeek
      * **/
 
     /** NOTES
-     * -Only 1 game can be going on at a time because the House is static.
+     * -There MUST be a valid DefaultHouse.json file for the constructor to be called
+     *  without a House file name because the default value is DefaultHouse.
      * -You can start a new game w/o having to create a new GameController instance.
      * -Command keywords cannot have spaces.
      * -Current command keywords are: move, check, save, load, and delete
-     * -In ParseInput, file name is extracted from user input 
+     * -In ParseInput, file name is extracted from user input
      *  starting after the space following the save, load, or delete keyword.
      * **/
 
     /** CHANGES
      * -I added a restart method so the game can be restarted without creating a new GameController.
      * -I added methods to rehide all opponents.
-     * -I created a variable to store a House object (initialized in constructor).
-     * -I added a private location variable so I could define a setter for CurrentLocation.
-     * -I created a setter method for Currentlocation so it could automatically update the status.
-     * -I made the list of opponentsFound opponents public for easier game saving/restoration.
-     * -I added a file system class variable for testing purposes.
+     * -I made the list of found opponents public for easier game saving/restoration.
+     * -I added a file system class variable for testing purposes 
+     *  and allowed it to be passed to and set in constructor.
      * -I used my own approach in ParseInput but accomplished the same results.
      * -I renamed methods to SaveGame and LoadGame for easier comprehension.
+     * -I made SaveGame not overwrite a pre-existing file.
      * -I prevented overwriting a saved game file in the SaveGame method.
-     * -I had the SavedGame class create itself in SaveGame method 
-     *  by passing in GameController for separation of concerns.
      * -I wrapped JSON deserialization in a try/catch block in the LoadGame method
      *  to return custom feedback/update messages if certain problems occur.
-     * -I moved the code for loading a game from an acceptable JSON file to another method
+     * -I moved the code for loading a saved game from an acceptable JSON file to another method
      *  to separate it from the code for evaluating whether JSON file is acceptable.
      * -I created a private variable to store the full file name in SaveGame and LoadGame.
      * -I set GameController properties appropriately based on my class design in LoadGame method.
      * -I changed some feedback/update messages for easier reading.
      * -I renamed a variable in Move method for easier comprehension.
-     * -I added a method to delete a game.
+     * -I added a method and command to delete a game.
+     * -I created a property to store a House object.
+     * -I made the constructor create a House object and assign it to the House property.
+     * -I made the constructor accept a House file name passed in but also provided a default value.
      * -I added/edited comments for easier reading.
      * **/
 
@@ -128,7 +130,7 @@ namespace HideAndSeek
         public Dictionary<Opponent, LocationWithHidingPlace> OpponentsAndHidingLocations { get; private set; } = new Dictionary<Opponent, LocationWithHidingPlace>();
             
         /// <summary>
-        /// List of opponents the player has opponentsFound so far
+        /// List of opponents the player has found so far
         /// </summary>
         public List<Opponent> FoundOpponents { get; private set; } = new List<Opponent>();
 
@@ -140,19 +142,16 @@ namespace HideAndSeek
         /// <summary>
         /// Constructor to start game with default file system
         /// </summary>
-        public GameController() : this(new FileSystem()) {}
+        public GameController(string houseFileName = "DefaultHouse") : this(new FileSystem(), houseFileName) {}
 
         /// <summary>
         /// Constructor to start game with specific file system (called directly for testing)
         /// </summary>
         /// <param name="fileSystem">File system</param>
-        public GameController(IFileSystem fileSystem)
+        public GameController(IFileSystem fileSystem, string houseFileName = "DefaultHouse")
         {
             // Set file system
             _fileSystem = fileSystem;
-
-            // Create new House
-            House = House.CreateHouse(House.DefaultHouseFileName);
 
             // Create Opponents and store them in dictionary as keys
             OpponentsAndHidingLocations.Add(new Opponent("Joe"), null);
@@ -161,30 +160,48 @@ namespace HideAndSeek
             OpponentsAndHidingLocations.Add(new Opponent("Owen"), null);
             OpponentsAndHidingLocations.Add(new Opponent("Jimmy"), null);
 
-            // Start game
-            RestartGame();
+            // Start game with specified House file
+            RestartGame(houseFileName);
         }
 
         /// <summary>
-        /// Restart game from beginning (Entry)
+        /// Restart game from beginning in House from specified file
         /// </summary>
-        public void RestartGame()
+        /// <param name="houseFileName">Name of House layout file</param>
+        /// <returns>This GameController</returns>
+        public GameController RestartGame(string houseFileName)
         {
-            // Hide opponents in random places
-            RehideAllOpponents();
+            House = House.CreateHouse(houseFileName);
+            RestartGame();
+            return this;
+        }
 
-            // Reset properties
+        /// <summary>
+        /// Restart game from beginning (StartingPoint)
+        /// </summary>
+        /// <returns>This GameController</returns>
+        public GameController RestartGame()
+        {
+            RehideAllOpponents(); // Hide opponents in random places
             MoveNumber = 1; // Reset move number
-            CurrentLocation = House.Entry; // Reset current location
+            CurrentLocation = House.StartingPoint; // Reset current location
+            return this;
         }
 
         /// <summary>
         /// Rehide all Opponents in specified hiding places
-        /// Should only be called from GameController and tests
         /// </summary>
         /// <param name="hidingPlaces">Places to hide Opponents</param>
-        public void RehideAllOpponents(IEnumerable<LocationWithHidingPlace> hidingPlaces)
+        /// <returns>GameController after Opponents rehidden</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Exception thrown if the number of hiding places is not equal to the number of Opponents</exception>
+        private GameController RehideAllOpponents(IEnumerable<LocationWithHidingPlace> hidingPlaces)
         {
+            // If the number of hiding places is not equal to the number of Opponents
+            if (hidingPlaces.Count() != OpponentsAndHidingLocations.Count())
+            {
+                throw new ArgumentOutOfRangeException("hidingPlaces", "The number of hiding places must equal the number of opponents."); // Throw exception
+            }
+
             // Clear hiding places
             House.ClearHidingPlaces();
 
@@ -194,18 +211,42 @@ namespace HideAndSeek
             // Hide Opponents in hiding locations and add hiding locations to dictionary
             for (int i = 0; i < OpponentsAndHidingLocations.Count(); i++)
             {
-                hidingPlaces.ElementAt(i).HideOpponent(OpponentsAndHidingLocations.ElementAt(i).Key);
-                opponentsAndNewHidingLocations.Add(OpponentsAndHidingLocations.ElementAt(i).Key, hidingPlaces.ElementAt(i));
+                hidingPlaces.ElementAt(i).HideOpponent(OpponentsAndHidingLocations.ElementAt(i).Key); // Hide Opponent in hiding location
+                opponentsAndNewHidingLocations.Add(OpponentsAndHidingLocations.ElementAt(i).Key, hidingPlaces.ElementAt(i)); // Add hiding location to dictionary
             }
 
             // Set Opponents and hiding locations dictionary to dictionary with new hiding locations
             OpponentsAndHidingLocations = opponentsAndNewHidingLocations;
+
+            return this;
+        }
+
+        /// <summary>
+        /// Rehide all Opponents in specified hiding places
+        /// Should only be called from GameController and tests
+        /// </summary>
+        /// <param name="hidingPlaces">Names of hiding places for Opponents</param>
+        /// <returns>GameController after Opponents rehidden</returns>
+        public GameController RehideAllOpponents(IEnumerable<string> hidingPlaces)
+        {
+            // Initialize variable for LocationWithHidingPlace objects to empty list
+            List<LocationWithHidingPlace> hidingPlacesAsObjects = new List<LocationWithHidingPlace>();
+
+            // Get each LocationWithHidingPlace object and add it to list
+            foreach(string hidingPlace in hidingPlaces)
+            {
+                hidingPlacesAsObjects.Add(House.GetLocationWithHidingPlaceByName(hidingPlace));
+            }
+
+            // Rehide all Opponents in LocationWithHidingPlaces
+            return RehideAllOpponents(hidingPlacesAsObjects);
         }
 
         /// <summary>
         /// Rehide all Opponents in random hiding places
         /// </summary>
-        private void RehideAllOpponents()
+        /// <returns>GameController after Opponents rehidden</returns>
+        private GameController RehideAllOpponents()
         {
             // Initialize list for locations with hiding locations
             List<LocationWithHidingPlace> hidingLocations = new List<LocationWithHidingPlace>();
@@ -217,7 +258,7 @@ namespace HideAndSeek
             }
 
             // Hide Opponents in hiding places
-            RehideAllOpponents(hidingLocations);
+            return RehideAllOpponents(hidingLocations);
         }
 
         /// <summary>
@@ -264,7 +305,7 @@ namespace HideAndSeek
                     string fileName = input.Substring(indexOfSpace + 1);
 
                     // If file name is valid
-                    if (_fileSystem.IsValidName(fileName))
+                    if(_fileSystem.IsValidName(fileName))
                     {
                         // If input requests save game
                         if (lowercaseCommand == "save")
@@ -280,10 +321,15 @@ namespace HideAndSeek
                             return DeleteGame(fileName); // Delete game and return message
                         }
                     }
+                    else // If the file name is invalid
+                    {
+                        return $"Cannot perform action because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"; // Return failure message
+                    }
+                } 
+                else // If input does not include a space
+                {
+                    return "Cannot perform action because no file name was entered"; // Return failure message
                 }
-
-                // If any of the requirements for file name input are not met, return failure message
-                return "Cannot perform action because file name is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)";
             }
             else if ( !(Enum.TryParse(originalCommand, out Direction direction)) ) // If input cannot be parsed to Direction enum value
             {
@@ -355,10 +401,10 @@ namespace HideAndSeek
             }
 
             // Initialize SavedGame object to store game state data
-            SavedGame savedGame = new SavedGame(
-                House, CurrentLocation.ToString(), MoveNumber, 
-                opponentsAndHidingPlacesAsStrings, FoundOpponents.Select((x) => x.ToString()));
-
+            SavedGame savedGame = new SavedGame(House, House.HouseFileName, CurrentLocation.ToString(), 
+                                                MoveNumber, opponentsAndHidingPlacesAsStrings, 
+                                                FoundOpponents.Select((o) => o.Name));
+            
             // Save game as JSON to file and return success message
             string savedGameAsJSON = JsonSerializer.Serialize(savedGame); // Convert game's state data to JSON
             _fileSystem.File.WriteAllText(fullFileName, savedGameAsJSON); // Save game's state data in file
@@ -392,16 +438,29 @@ namespace HideAndSeek
             {
                 savedGame = JsonSerializer.Deserialize<SavedGame>(fileText);
             } 
-            catch(InvalidDataException e) // If data for specific field (evauluated in property setter) is invalid
+            catch(NullReferenceException e)
             {
-                return e.Message; // Return exception's message as error message
+                // If SavedGame House has not been set
+                if(e.Message == "House has not been set")
+                {
+                    // Return custom message
+                    return $"Cannot process because data is corrupt - JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: HouseFileName";
+                }
+                else // if other NullReferenceException
+                {
+                    throw; // Bubble up exception
+                }
+            }
+            catch(FileNotFoundException e) // If House file not found
+            {
+                return e.Message; // Return error message
             }
             catch(Exception e)
             {
-                // If problem due to JSON or an invalid error
-                if(e is JsonException || e is InvalidOperationException)
+                // If problem due to invalid property value, JSON format issue, or an invalid operation
+                if(e is InvalidDataException || e is JsonException || e is InvalidOperationException)
                 {
-                    return "Cannot process because data is corrupt"; // Return error message
+                    return $"Cannot process because data is corrupt - {e.Message}"; // Return error message
                 }
                 else // If any other exception
                 {
@@ -440,6 +499,19 @@ namespace HideAndSeek
             foreach(String opponent in savedGame.FoundOpponents) // For each found Opponent
             {
                 FoundOpponents.Add(OpponentsAndHidingLocations.Keys.First((x) => x.Name == opponent)); // Add Opponent object with matching name to FoundOpponents list
+            }
+
+            // Clear hiding places in the House
+            House.ClearHidingPlaces();
+
+            // Initialize to dictionary of unfound Opponents who should still be hidden and their hiding locations
+            IDictionary<Opponent, LocationWithHidingPlace> unfoundOpponentsAndHidingLocations = 
+                        OpponentsAndHidingLocations.Where((kvp) => !(FoundOpponents.Contains(kvp.Key))).ToDictionary();
+
+            // Hide each unfound Opponent in their hiding location
+            foreach(KeyValuePair<Opponent, LocationWithHidingPlace> kvp in unfoundOpponentsAndHidingLocations)
+            {
+                kvp.Value.HideOpponent(kvp.Key);
             }
         }
 
