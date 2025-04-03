@@ -3,6 +3,7 @@
 
 ## Table of Contents
 - [Description](#description)
+- [What's new](#whats-new)
 - [Installation](#installation)
   - [How to install](#install)
   - [Requirements](#requirements)
@@ -11,6 +12,7 @@
   - [Run executable from command line](#run-exe-cl)
   - [Run app using the dotnet command from command line](#run-dll-cl)
 - [App usage](#usage)
+  - [Select house layout](#usage-select-house)
   - [Move in specific direction](#usage-move)
   - [Check for hiding opponents](#usage-check)
   - [Save game](#usage-save)
@@ -28,6 +30,12 @@
 ## Description
 
 The Hide and Seek Game Console app allows a user (playing the role of the seeker) to navigate through rooms in a virtual house to find hiding opponents.  To win the game, the user must find all the opponents.  The goal is to win the game in the fewest number of moves possible.
+
+
+
+<a name="whats-new"></a>
+## What's new
+- The user can play the game in houses with different layouts.
 
 
 
@@ -78,6 +86,27 @@ dotnet HideAndSeekConsole.dll
 Follow the prompts and options given.  To enter a command, type the command and then press the Enter key on your keyboard.
 
 *Remember that the "save" and "delete" commands create/delete actual files stored on your machine.  So, whenever you run the app, the files saved/deleted during previous app usages will remain saved/deleted.
+
+
+<a name="usage-select-house"></a>
+### Select house layout
+At the beginning of a new game, you will see a prompt to type a house layout name or just press enter.  To use the default house layout, don't type anything and press the Enter key on your keyboard.
+
+If you want to use a specific house layout, type the name of the file (without the file extension) and press the Enter key on your keyboard.  For example, to use the built-in FriendHouse layout:
+```
+Type a house layout file name or just press Enter to use the default house layout: FriendHouse
+```
+
+If the house layout was loaded successfully, you will see a greeting and a game play prompt such as:
+```
+Welcome to your friend's house!
+You are in the Landing. You see the following exits:
+ - the Hallway is to the North
+You have not found any opponents
+1: Which direction do you want to go:
+```
+
+If there is a problem loading the house layout, you will see an error message and be asked to type a house layout name or just press enter.
 
 
 <a name="usage-move"></a>
@@ -172,7 +201,9 @@ If the game was not successfully loaded because it doesn't exist, you'll see som
 Cannot load game because file MyGameName does not exist
 ```
 
-If the game was not loaded successfully, try again with the name of an existing saved game or keep playing the current game - no harm done.
+If the game was not successfully loaded because the saved game file or the house layout file was corrupt, you'll see a different error message describing the problem.
+
+If the game was not loaded successfully, try again with the name of an existing, non-corrupt saved game or keep playing the current game - no harm done.
  
 
 <a name="usage-delete"></a>
@@ -208,41 +239,36 @@ Please message me via the [contact form here](https://minnystuff.com/contact/) w
 <a name="roadmap"></a>
 ## Roadmap
 
-### Next up (Version 1.1)
-- Make the House class non-static and use composition (GameController "has a" House object).  Update tests to use House mocks.
+### Version 3.0 - direction shorthands and teleportation
+- Allow the user to move in a direction by only entering one or two characters rather than a whole word (e.g. S instead of South, SE instead of Southeast).
+- Allow the user to "teleport" to a randomly selected location in the house.
 
 
-### Version 2.0 - location tracking, saved game list, direction shorthands
-- Allow the user to move in a direction by only entering one or two characters rather than a whole word.
+### Version 4.0 - customize opponents
+- Allow the user to specify how many opponents they want.
+- Allow the user to set the names of the opponents.
+
+
+### Version 5.0 - location tracking, saved game list
 - Add a feature for tracking the places the user has already checked during the current game.  The user can request this list at any point during the game.  (Should viewing the list count as a move?)  The list will be saved/restored when a game is saved/restored.
 - Add a feature for tracking the names of currently saved games.  The user can request to view the names of currently saved games at any time.
 
 
-### Version 3.0 - different house layouts
-- Create different house layouts as House objects.  Serialize the House objects and store them in files.
-- Allow the user to select an existing House layout at the start of a new game.
-- When a game is saved, make sure the name of the house layout being used is saved in the SavedGame object and file.
-- When a saved game is loaded, make sure the proper house layout is loaded.
-- Create a library of house layout files for anyone to download and use.  (Note difficulty levels.)
-- Create a library of saved game files for anyone to download and play.  (Note difficulty levels.)
+### Version 6.0 - custom house layouts
+- In a separate project, allow the user to create custom House layouts for personal game play and to share with other players.
 
 
-### Version 4.0 - custom house layouts
-- Allow the user to create custom House layouts for personal game play and to share with other players.
+### Version 7.0 - custom saved games
+- In a separate project, allow the user to create custom saved games (specifying House layout, number of opponents, and where opponents are hiding) to share with other players.
 
 
-### Version 5.0 - custom saved games
-- Allow the user to create custom saved games (specifying House layout and where opponents are hiding) to share with other players.
-
-
-### Version 6.0 - multiplayer
+### Version 8.0 - multiplayer
 - Create a multiplayer version of the game using multiple GameControllers simultaneously so multiple people seek in the same house for the same opponents.  Players take turns moving.  The player who finds the most opponents wins (each opponent can only be found by 1 player).
 
 
 ### More ideas
-- Allow the player to "teleport" (be transported to a random location in the House).
-- Allow the user to specify how many opponents they want.
-- Allow the user to set the names of the opponents.
+- Create a library of house layout files for anyone to download and use.  (Note difficulty levels.)
+- Create a library of saved game files for anyone to download and play.  (Note difficulty levels.)
 - Add a timer.
 - Add surprises and bonuses (e.g. time bonuses) to find.
 - Allow the user to get a hint.
