@@ -182,6 +182,7 @@ namespace HideAndSeek
         /// <returns>This GameController</returns>
         public GameController RestartGame()
         {
+            FoundOpponents = new List<Opponent>(); // Reset FoundOpponents list
             RehideAllOpponents(); // Hide opponents in random places
             MoveNumber = 1; // Reset move number
             CurrentLocation = House.StartingPoint; // Reset current location
