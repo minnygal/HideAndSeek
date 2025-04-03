@@ -4,6 +4,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -224,6 +225,69 @@ namespace HideAndSeek
                     })
                     .SetName("Test_GameController_CheckErrorMessage_ForHouseFileDoesNotExist - RestartGame")
                     .SetCategory("GameController RestartGame Failure");
+            }
+        }
+
+        /// <summary>
+        /// Helper method to find all Opponents 
+        /// for Test_GameController_RestartGame with initial game completed
+        /// </summary>
+        /// <param name="gameController">GameController at start of game</param>
+        /// <returns>GameController after all Opponents found</returns>
+        private static GameController FindAllOpponents(GameController gameController)
+        {
+            gameController.ParseInput("East"); // Move to Hallway
+            gameController.ParseInput("Northwest"); // Move to Kitchen
+            gameController.ParseInput("Check"); // Check Kitchen and find Bob and Owen
+            gameController.ParseInput("Southeast"); // Move to Hallway
+            gameController.ParseInput("North"); // Move to Bathroom
+            gameController.ParseInput("Check"); // Check Bathroom and find Ana
+            gameController.ParseInput("South"); // Move to Hallway
+            gameController.ParseInput("Up"); // Move to Landing
+            gameController.ParseInput("South"); // Move to Pantry
+            gameController.ParseInput("Check"); // Check Pantry and find Bob and Jimmy
+            return gameController;
+        }
+
+        public static IEnumerable TestCases_For_Test_GameController_RestartGame
+        {
+            get
+            {
+                // Initial game not completed before parameterless RestartGame called
+                yield return new TestCaseData(
+                    (GameController gameController, Random randomNumberGenerator) =>
+                    {
+                        return gameController.RestartGame(); // Restart game and return GameController
+                    })
+                    .SetName("Test_GameController_RestartGame - parameterless - initial game not completed");
+
+                // Initial game not completed before parameterized RestartGame called
+                yield return new TestCaseData(
+                    (GameController gameController, Random randomNumberGenerator) =>
+                    {
+                        gameController.RestartGame("DefaultHouse"); // Restart game with specific House layout
+                        gameController.House.Random = randomNumberGenerator; // Set House random number generator
+                        return gameController.RestartGame(); // Restart game and return GameController
+                    })
+                    .SetName("Test_GameController_RestartGame - both - initial game not completed");
+
+                // Initial game completed before parameterless RestartGame called
+                yield return new TestCaseData(
+                    (GameController gameController, Random randomNumberGenerator) =>
+                    {
+                        return FindAllOpponents(gameController).RestartGame(); // Find all Opponents, restart game and return GameController
+                    })
+                    .SetName("Test_GameController_RestartGame - parameterless - initial game completed");
+
+                // Initial game completed before parameterized RestartGame called
+                yield return new TestCaseData(
+                    (GameController gameController, Random randomNumberGenerator) =>
+                    {
+                        gameController.RestartGame("DefaultHouse"); // Restart game with specific House layout
+                        gameController.House.Random = randomNumberGenerator; // Set House random number generator
+                        return FindAllOpponents(gameController).RestartGame(); // Find all Opponents, restart game and return GameController
+                    })
+                    .SetName("Test_GameController_RestartGame - both - initial game completed");
             }
         }
     }

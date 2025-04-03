@@ -6,7 +6,7 @@ using System.Xml.Linq;
 namespace HideAndSeek
 {
     /// <summary>
-    /// GameController tests for constructor and RestartGame with invalid file name or name of nonexistent file,
+    /// GameController tests for constructor with invalid file name or name of nonexistent file, RestartGame method,
     /// RehideAllOpponents method, and checking Opponents' hiding locations when Opponents rehidden or game restarted
     /// </summary>
     [TestFixture]
@@ -28,10 +28,9 @@ namespace HideAndSeek
             House.FileSystem = new FileSystem(); // Set static House file system to new file system
         }
 
-        // Tests parameterless RestartGame method
-        [Test]
+        [TestCaseSource(typeof(TestGameController_Basic_TestCaseData), nameof(TestGameController_Basic_TestCaseData.TestCases_For_Test_GameController_RestartGame))]
         [Category("GameController RestartGame HidingLocations Success")]
-        public void Test_GameController_RestartGame_AndCheckHidingLocations()
+        public void Test_GameController_RestartGame(Func<GameController, Random, GameController> GetGameController)
         {
             // Create mock random values list for hiding opponents
             int[] mockRandomValuesList = [
@@ -42,20 +41,23 @@ namespace HideAndSeek
                 0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent 5 in Pantry
             ];
 
+            // Create mock random number generator
+            Random mockRandomNumberGenerator = new MockRandomWithValueList(mockRandomValuesList);
+
             // Set House random number generator to mock random
-            gameController.House.Random = new MockRandomWithValueList(mockRandomValuesList);
+            gameController.House.Random = mockRandomNumberGenerator;
 
-            // Restart game to rehide Opponents with new MockRandom
-            gameController.RestartGame();
+            // Set GameController
+            gameController = GetGameController(gameController, mockRandomNumberGenerator);
 
-            // Assert that hiding places (values) in OpponentsAndHidingLocations dictionary are set correctly
+            // Assert that properties are as expected
             Assert.Multiple(() =>
             {
-                Assert.That(gameController.OpponentsAndHidingLocations.ElementAt(0).Value.ToString, Is.EqualTo("Kitchen"), "Opponent 1 hiding in Kitchen");
-                Assert.That(gameController.OpponentsAndHidingLocations.ElementAt(1).Value.ToString, Is.EqualTo("Pantry"), "Opponent 2 hiding in Pantry");
-                Assert.That(gameController.OpponentsAndHidingLocations.ElementAt(2).Value.ToString, Is.EqualTo("Bathroom"), "Opponent 3 hiding in Bathroom");
-                Assert.That(gameController.OpponentsAndHidingLocations.ElementAt(3).Value.ToString, Is.EqualTo("Kitchen"), "Opponent 4 hiding in Kitchen");
-                Assert.That(gameController.OpponentsAndHidingLocations.ElementAt(4).Value.ToString, Is.EqualTo("Pantry"), "Opponent 5 hiding in Pantry");
+                Assert.That(gameController.OpponentsAndHidingLocations.Values.Select((l) => l.Name), Is.EquivalentTo(new List<string>() { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry" }), "opponent hiding places");
+                Assert.That(gameController.FoundOpponents, Is.Empty, "no found opponents");
+                Assert.That(gameController.MoveNumber, Is.EqualTo(1), "move number");
+                Assert.That(gameController.CurrentLocation.Name, Is.EqualTo("Entry"), "current location");
+                Assert.That(gameController.GameOver, Is.False, "game not over");
             });
         }
 
