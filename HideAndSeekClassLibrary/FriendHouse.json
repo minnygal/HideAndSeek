@@ -1,0 +1,116 @@
+﻿{ 
+  "Name":"your friend's house",
+  "HouseFileName":"FriendHouse",
+  "PlayerStartingPoint":"Landing",
+  "LocationsWithoutHidingPlaces": [
+    { 
+      "Name":"Landing",
+      "ExitsForSerialization": { 
+        "North":"Hallway"
+      } 
+    },
+    { 
+      "Name":"Hallway",
+      "ExitsForSerialization": { 
+        "North":"Bedroom",
+        "Northeast":"Sensory Room",
+        "East":"Kitchen",
+        "Southeast":"Pantry",
+        "South":"Landing",
+        "Southwest":"Bathroom",
+        "West":"Living Room",
+        "Northwest":"Office",
+        "Up":"Attic"
+      } 
+    } 
+  ],
+  "LocationsWithHidingPlaces": [
+    { 
+      "HidingPlace":"under the bed",
+      "Name":"Bedroom",
+      "ExitsForSerialization": { 
+        "North":"Closet",
+        "East":"Sensory Room"
+      } 
+    },
+    {
+      "HidingPlace":"between the coats",
+      "Name": "Closet",
+      "ExitsForSerialization": {
+        "South": "Bedroom"
+      }
+    },
+    { 
+      "HidingPlace":"under the beanbags",
+      "Name":"Sensory Room",
+      "ExitsForSerialization": { 
+        "Southwest":"Hallway",
+        "West":"Bedroom"
+      } 
+    },
+    { 
+      "HidingPlace":"beside the stove",
+      "Name":"Kitchen",
+      "ExitsForSerialization": { 
+        "West":"Hallway",
+        "South":"Pantry",
+        "Down":"Cellar",
+        "Out":"Yard"
+      } 
+    },
+    { 
+      "HidingPlace":"behind the canned goods",
+      "Name":"Cellar",
+      "ExitsForSerialization": { 
+        "Up":"Kitchen"
+      } 
+    },
+    {
+      "HidingPlace": "behind the food",
+      "Name": "Pantry",
+      "ExitsForSerialization": {
+        "North": "Kitchen",
+        "Northwest": "Hallway"
+      }
+    }, 
+    { 
+      "HidingPlace":"behind a bush",
+      "Name":"Yard",
+      "ExitsForSerialization": { 
+        "In":"Kitchen"
+      } 
+    },
+    { 
+      "HidingPlace":"in the tub",
+      "Name":"Bathroom",
+      "ExitsForSerialization": { 
+        "North":"Living Room",
+        "Northeast":"Hallway"
+      } 
+    },
+    { 
+      "HidingPlace":"behind the sofa",
+      "Name":"Living Room",
+      "ExitsForSerialization": { 
+        "North":"Office",
+        "East":"Hallway",
+        "South":"Bathroom"
+      } 
+    },
+    { 
+      "HidingPlace":"under the desk",
+      "Name":"Office",
+      "ExitsForSerialization": { 
+        "Southeast":"Hallway",
+        "South":"Living Room"
+      } 
+    },
+    { 
+      "HidingPlace":"behind a trunk",
+      "Name":"Attic",
+      "ExitsForSerialization": { 
+        "Down":"Hallway"
+      } 
+    } 
+  ]
+}
