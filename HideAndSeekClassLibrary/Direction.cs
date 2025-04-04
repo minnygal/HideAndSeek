@@ -32,6 +32,7 @@
 
     /// <summary>
     /// Extension class for Direction enum to describe a direction or get the opposite direction
+    /// Also includes static method to convert a string to a direction
     /// 
     /// CREDIT: adapted from Stellman and Greene's code
     /// </summary>
@@ -85,6 +86,51 @@
             {
                 return $"to the {direction}"; // Return extra words with direction
             }
+        }
+
+        /// <summary>
+        /// Text values (all lowercase) for Directions
+        /// (key is text value written out or shorthand, value is associated Direction)
+        /// </summary>
+        public static readonly IDictionary<string, Direction> TextsForDirections = new Dictionary<string, Direction>()
+        {
+            { "north", Direction.North },
+            { "n", Direction.North },
+            { "south", Direction.South },
+            { "s", Direction.South },
+            { "east", Direction.East },
+            { "e", Direction.East },
+            { "west", Direction.West },
+            { "w", Direction.West },
+            { "northeast", Direction.Northeast },
+            { "ne", Direction.Northeast },
+            { "southwest", Direction.Southwest },
+            { "sw", Direction.Southwest },
+            { "southeast", Direction.Southeast },
+            { "se", Direction.Southeast },
+            { "northwest", Direction.Northwest },
+            { "nw", Direction.Northwest },
+            { "up", Direction.Up },
+            { "u", Direction.Up },
+            { "down", Direction.Down },
+            { "d", Direction.Down },
+            { "in", Direction.In },
+            { "i", Direction.In },
+            { "out", Direction.Out },
+            { "o", Direction.Out }
+        };
+
+        /// <summary>
+        /// Parse Direction from string (not case sensitive)
+        /// (checks for direction as text and shorthand for direction)
+        /// </summary>
+        /// <param name="directionText">Direction as text or shorthand for direction</param>
+        /// <returns>Direction if successfully parsed, 0 otherwise</returns>
+        public static Direction? Parse(string directionText)
+        {
+            directionText = directionText.Trim().ToLower(); // Trim direction text and convert to lowercase
+            TextsForDirections.TryGetValue(directionText, out Direction direction); // Set variable to associated Direction
+            return direction; // Return variable
         }
     }
 }

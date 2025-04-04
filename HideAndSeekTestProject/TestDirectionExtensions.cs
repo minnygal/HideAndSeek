@@ -54,5 +54,54 @@ namespace HideAndSeek
         {
             Assert.That(direction.DirectionDescription(), Is.EqualTo(expectedText));
         }
+
+        [TestCase("north", Direction.North)]
+        [TestCase("n", Direction.North)]
+        [TestCase("south", Direction.South)]
+        [TestCase("s", Direction.South)]
+        [TestCase("east", Direction.East)]
+        [TestCase("e", Direction.East)]
+        [TestCase("west", Direction.West)]
+        [TestCase("w", Direction.West)]
+        [TestCase("northeast", Direction.Northeast)]
+        [TestCase("ne", Direction.Northeast)]
+        [TestCase("southwest", Direction.Southwest)]
+        [TestCase("sw", Direction.Southwest)]
+        [TestCase("southeast", Direction.Southeast)]
+        [TestCase("se", Direction.Southeast)]
+        [TestCase("northwest", Direction.Northwest)]
+        [TestCase("nw", Direction.Northwest)]
+        [TestCase("up", Direction.Up)]
+        [TestCase("u", Direction.Up)]
+        [TestCase("down", Direction.Down)]
+        [TestCase("d", Direction.Down)]
+        [TestCase("in", Direction.In)]
+        [TestCase("i", Direction.In)]
+        [TestCase("out", Direction.Out)]
+        [TestCase("o", Direction.Out)]
+        public void Test_DirectionExtensions_Parse_Lowercase(string directionText, Direction direction)
+        {
+            Assert.That(DirectionExtensions.Parse(directionText), Is.EqualTo(direction));
+        }
+
+        [TestCase("N")]
+        [TestCase("North")]
+        [TestCase("nOrth")]
+        [TestCase("nOrTh")]
+        [TestCase("NORTH")]
+        public void Test_DirectionExtensions_Parse_MixedCase(string directionText)
+        {
+            Assert.That(DirectionExtensions.Parse(directionText), Is.EqualTo(Direction.North));
+        }
+
+        [TestCase("")]
+        [TestCase(" ")]
+        [TestCase("}{yaeu\\@!//")]
+        [TestCase("No")]
+        [TestCase("Northuperly")]
+        public void Test_DirectionExtensions_Parse_InvalidDirection_ReturnsNull(string directionText)
+        {
+            Assert.That( (int)DirectionExtensions.Parse(directionText), Is.EqualTo(0) );
+        }
     }
 }
