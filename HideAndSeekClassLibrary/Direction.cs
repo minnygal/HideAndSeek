@@ -121,16 +121,25 @@
         };
 
         /// <summary>
-        /// Parse Direction from string (not case sensitive)
+        /// Parse Direction from text (not case sensitive)
         /// (checks for direction as text and shorthand for direction)
         /// </summary>
         /// <param name="directionText">Direction as text or shorthand for direction</param>
-        /// <returns>Direction if successfully parsed, 0 otherwise</returns>
-        public static Direction? Parse(string directionText)
+        /// <param name="direction">Direction if successfully parsed, 0 otherwise</param>
+        /// <returns>True if Direction successfully parsed from text</returns>
+        public static bool TryParse(string directionText, out Direction direction)
         {
-            directionText = directionText.Trim().ToLower(); // Trim direction text and convert to lowercase
-            TextsForDirections.TryGetValue(directionText, out Direction direction); // Set variable to associated Direction
-            return direction; // Return variable
+            // Trim direction text and convert to lowercase
+            directionText = directionText.Trim().ToLower();
+
+            // Attempt to parse direction and set variable to whether parse is successful
+            bool successfulParse = TextsForDirections.TryGetValue(directionText, out Direction parsedDirection);
+            
+            // Set method out variable to Direction parsed
+            direction = parsedDirection;
+
+            // Return whether parse was successful
+            return successfulParse;
         }
     }
 }
