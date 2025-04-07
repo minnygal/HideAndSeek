@@ -35,6 +35,7 @@ namespace HideAndSeek
                               "in the fewest number of moves possible.");
             Console.WriteLine("-To MOVE, enter the direction in which you want to move.");
             Console.WriteLine("-To CHECK if any opponents are hiding in your current location, enter \"check\".");
+            Console.WriteLine("-To TELEPORT to a random location with hiding place, enter \"teleport\".");
             Console.WriteLine("-To SAVE your progress, enter \"save\" followed by a space and a name for your game.");
             Console.WriteLine("-To LOAD a saved game, enter \"load\" followed by a space and the name of your game.");
             Console.WriteLine("-To DELETE a saved game, enter \"delete\" followed by a space and the name of your game.");

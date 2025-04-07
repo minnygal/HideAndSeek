@@ -301,6 +301,30 @@ namespace HideAndSeek
             });
         }
 
+        [Test]
+        [Category("GameController ParseInput Teleport Message Prompt Status MoveNumber GameOver Success")]
+        public void Test_GameController_ParseInput_Teleport()
+        {
+            // Set House Random number generator to mock random
+            gameController.House.Random = new MockRandomWithValueList([0]);
+
+            Assert.Multiple(() =>
+            {
+                // Teleport and check return message
+                Assert.That(gameController.ParseInput("teleport"), Is.EqualTo("Teleporting to random location with hiding place: Attic"), "message");
+
+                // Check other game properties
+                Assert.That(gameController.CurrentLocation.Name, Is.EqualTo("Attic"), "current location");
+                Assert.That(gameController.Status, Is.EqualTo("You are in the Attic. You see the following exits:"
+                    + Environment.NewLine + " - the Landing is Down"
+                    + Environment.NewLine + "Someone could hide in a trunk"
+                    + Environment.NewLine + "You have not found any opponents"), "status");
+                Assert.That(gameController.MoveNumber, Is.EqualTo(2), "move number");
+                Assert.That(gameController.Prompt, Is.EqualTo("2: Which direction do you want to go (or type 'check'): "), "prompt");
+                Assert.That(gameController.GameOver, Is.False, "game not over");
+            });
+        }
+
         /// <summary>
         /// Using ParseInput method, mimic full game and check ParseInput return message and GameController's public properties:
         /// Prompt, Status, MoveNumber, GameOver
