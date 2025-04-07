@@ -53,6 +53,9 @@ namespace HideAndSeek
      * -I changed some feedback/update messages for easier reading.
      * -I renamed a variable in Move method for easier comprehension.
      * -I added a method and command to delete a game.
+     * -I allowed direction shorthands to be used in the ParseInput method with the move command.
+     * -I added a teleport command which can be passed to ParseInput 
+     *  to take the user to a random location with hiding place.
      * -I created a property to store a House object.
      * -I made the constructor create a House object and assign it to the House property.
      * -I made the constructor accept a House file name passed in but also provided a default value.
@@ -291,6 +294,11 @@ namespace HideAndSeek
                 MoveNumber++; // Increment move number
                 return CheckCurrentLocation(); // Check current location and return results
             }
+            else if (lowercaseCommand == "teleport")
+            {
+                MoveNumber++; // Increment move number
+                return Teleport(); // Teleport and return message
+            }
             else if ( // If input requests save, load, or delete game
                 lowercaseCommand == "save" || 
                 lowercaseCommand == "load" ||
@@ -332,7 +340,8 @@ namespace HideAndSeek
                     return "Cannot perform action because no file name was entered"; // Return failure message
                 }
             }
-            else if ( !(Enum.TryParse(originalCommand, out Direction direction)) ) // If input cannot be parsed to Direction enum value
+            // Try to parse input to Direction
+            else if ( !(DirectionExtensions.TryParse(originalCommand, out Direction direction)) ) // If input cannot be parsed to Direction
             {
                 return "That's not a valid direction"; // Return invalid direction message
             }
@@ -376,6 +385,16 @@ namespace HideAndSeek
             {
                 return $"There is no hiding place in the {CurrentLocation}";
             }
+        }
+
+        /// <summary>
+        /// Teleport to random location with hiding place
+        /// </summary>
+        /// <returns>Description</returns>
+        private string Teleport()
+        {
+            CurrentLocation = House.GetRandomLocationWithHidingPlace(); // Set player location to random location with hiding place
+            return $"Teleporting to random location with hiding place: {CurrentLocation}"; // Return description
         }
 
         /// <summary>

@@ -169,14 +169,71 @@ namespace HideAndSeek
             House.FileSystem = new FileSystem(); // Set static House file system to new file system
         }
 
+        [TestCase("north", "south", "east", "west", "northeast", "southwest", "southeast", "northwest", "up", "down", "in", "out")]
+        [TestCase("n", "s", "e", "w", "ne", "sw", "se", "nw", "u", "d", "i", "o")]
+        public void Test_GameController_ParseInput_Move_InLowercaseDirection_AndCheckMessage(
+            string north, string south, string east, string west, string northeast, string southwest, 
+            string southeast, string northwest, string up, string down, string inText, string outText)
+        {
+            Assert.Multiple(() =>
+            {
+                // Go Out to Garage
+                Assert.That(gameController.ParseInput(outText), Is.EqualTo("Moving Out"), "Out to Garage");
+
+                // Go In to Entry
+                Assert.That(gameController.ParseInput(inText), Is.EqualTo("Moving In"), "In to Entry");
+
+                // Go East to Hallway
+                Assert.That(gameController.ParseInput(east), Is.EqualTo("Moving East"), "East to Hallway");
+
+                // Go North to Bathroom
+                Assert.That(gameController.ParseInput(north), Is.EqualTo("Moving North"), "North to Bathroom");
+
+                // Go South to Hallway
+                Assert.That(gameController.ParseInput(south), Is.EqualTo("Moving South"), "South to Hallway");
+
+                // Go Northwest to Kitchen
+                Assert.That(gameController.ParseInput(northwest), Is.EqualTo("Moving Northwest"), "Northwest to Kitchen");
+
+                // Go Southeast to Hallway
+                Assert.That(gameController.ParseInput(southeast), Is.EqualTo("Moving Southeast"), "Southeast to Hallway");
+
+                // Go Up to Landing
+                Assert.That(gameController.ParseInput(up), Is.EqualTo("Moving Up"), "Up to Landing");
+
+                // Go Southwest to Nursery
+                Assert.That(gameController.ParseInput(southwest), Is.EqualTo("Moving Southwest"), "Southwest to Nursery");
+
+                // Go Northeast to Landing
+                Assert.That(gameController.ParseInput(northeast), Is.EqualTo("Moving Northeast"), "Northeast to Landing");
+
+                // Go Down to Hallway
+                Assert.That(gameController.ParseInput(down), Is.EqualTo("Moving Down"), "Down to Hallway");
+
+                // Go West to Entry
+                Assert.That(gameController.ParseInput(west), Is.EqualTo("Moving West"), "West to Entry");
+            });
+        }
+
+        [TestCase("E")]
+        [TestCase("East")]
+        [TestCase("eAst")]
+        [TestCase("eASt")]
+        [TestCase("EAST")]
+        [Category("GameController ParseInput Move Message Success")]
+        public void Test_GameController_ParseInput_Move_InMixedCaseDirection_AndCheckMessage(string directionText)
+        {
+            Assert.That(gameController.ParseInput(directionText), Is.EqualTo("Moving East"));
+        }
+
         [Test]
         [Category("GameController ParseInput Move Message Status Success")]
-        public void Test_GameController_ParseInput_Move_AndCheckMessageAndStatus()
+        public void Test_GameController_ParseInput_Move_InCapitalizedDirection_AndCheckMessageAndStatus()
         {
             Assert.Multiple(() =>
             {
                 // Move East from Entry to Hallway.
-                Assert.That(gameController.ParseInput("East"), Is.EqualTo("Moving East"), "parsing \"East\" from Entry returns appropriate text");
+                Assert.That(gameController.ParseInput("EAST"), Is.EqualTo("Moving East"), "parsing \"East\" from Entry returns appropriate text");
                 Assert.That(gameController.Status, Is.EqualTo("You are in the Hallway. You see the following exits:" +
                     Environment.NewLine + " - the Landing is Up" +
                     Environment.NewLine + " - the Bathroom is to the North" +
@@ -186,7 +243,7 @@ namespace HideAndSeek
                     Environment.NewLine + "You have not found any opponents"), "game status appropriately changed to text for Hallway");
 
                 // Move Up from Hallway to Landing.
-                Assert.That(gameController.ParseInput("Up"), Is.EqualTo("Moving Up"), "parsing \"Up\" from Hallway returns appropriate text");
+                Assert.That(gameController.ParseInput("UP"), Is.EqualTo("Moving Up"), "parsing \"Up\" from Hallway returns appropriate text");
                 Assert.That(gameController.Status, Is.EqualTo("You are in the Landing. You see the following exits:" +
                     Environment.NewLine + " - the Attic is Up" +
                     Environment.NewLine + " - the Kids Room is to the Southeast" +
@@ -198,7 +255,7 @@ namespace HideAndSeek
                     Environment.NewLine + "You have not found any opponents"), "game status appropriately changed to text for Landing");
 
                 // Move Northwest from Landing to Master Bedroom.
-                Assert.That(gameController.ParseInput("Northwest"), Is.EqualTo("Moving Northwest"), "parsing \"Northwest\" from Landing returns appropriate text");
+                Assert.That(gameController.ParseInput("NORTHWEST"), Is.EqualTo("Moving Northwest"), "parsing \"Northwest\" from Landing returns appropriate text");
                 Assert.That(gameController.Status, Is.EqualTo("You are in the Master Bedroom. You see the following exits:" +
                     Environment.NewLine + " - the Landing is to the Southeast" +
                     Environment.NewLine + " - the Master Bath is to the East" +
@@ -206,7 +263,7 @@ namespace HideAndSeek
                     Environment.NewLine + "You have not found any opponents"), "game status appropriately changed to text for Master Bedroom");
 
                 // Move East from Master Bedroom to Master Bath.
-                Assert.That(gameController.ParseInput("East"), Is.EqualTo("Moving East"), "parsing \"East\" from Master Bedroom returns appropriate text");
+                Assert.That(gameController.ParseInput("EAST"), Is.EqualTo("Moving East"), "parsing \"East\" from Master Bedroom returns appropriate text");
                 Assert.That(gameController.Status, Is.EqualTo("You are in the Master Bath. You see the following exits:" +
                     Environment.NewLine + " - the Master Bedroom is to the West" +
                     Environment.NewLine + "Someone could hide in the tub" +
@@ -214,15 +271,19 @@ namespace HideAndSeek
             });
         }
 
-        [Test]
+        [TestCase("")]
+        [TestCase(" ")]
+        [TestCase("}{yaeu\\@!//")]
+        [TestCase("No")]
+        [TestCase("Northuperly")]
         [Category("GameController ParseInput Move Message Status Failure")]
-        public void Test_GameController_ParseInput_Move_InInvalidDirection_AndCheckMessageAndStatus()
+        public void Test_GameController_ParseInput_Move_InInvalidDirection_AndCheckMessageAndStatus(string directionText)
         {
             string initialStatus = gameController.Status;
 
             Assert.Multiple(() =>
             {
-                Assert.That(gameController.ParseInput("X"), Is.EqualTo("That's not a valid direction"), "parsing \"X\" returns invalid direction error message");
+                Assert.That(gameController.ParseInput(directionText), Is.EqualTo("That's not a valid direction"), "parsing \"X\" returns invalid direction error message");
                 Assert.That(gameController.Status, Is.EqualTo(initialStatus), "game status does not change");
             });
         }
@@ -237,6 +298,30 @@ namespace HideAndSeek
             {
                 Assert.That(gameController.ParseInput("Up"), Is.EqualTo("There's no exit in that direction"), "parsing returns no exit in that direction error message");
                 Assert.That(gameController.Status, Is.EqualTo(initialStatus), "game status does not change");
+            });
+        }
+
+        [Test]
+        [Category("GameController ParseInput Teleport Message Prompt Status MoveNumber GameOver Success")]
+        public void Test_GameController_ParseInput_Teleport()
+        {
+            // Set House Random number generator to mock random
+            gameController.House.Random = new MockRandomWithValueList([0]);
+
+            Assert.Multiple(() =>
+            {
+                // Teleport and check return message
+                Assert.That(gameController.ParseInput("teleport"), Is.EqualTo("Teleporting to random location with hiding place: Attic"), "message");
+
+                // Check other game properties
+                Assert.That(gameController.CurrentLocation.Name, Is.EqualTo("Attic"), "current location");
+                Assert.That(gameController.Status, Is.EqualTo("You are in the Attic. You see the following exits:"
+                    + Environment.NewLine + " - the Landing is Down"
+                    + Environment.NewLine + "Someone could hide in a trunk"
+                    + Environment.NewLine + "You have not found any opponents"), "status");
+                Assert.That(gameController.MoveNumber, Is.EqualTo(2), "move number");
+                Assert.That(gameController.Prompt, Is.EqualTo("2: Which direction do you want to go (or type 'check'): "), "prompt");
+                Assert.That(gameController.GameOver, Is.False, "game not over");
             });
         }
 

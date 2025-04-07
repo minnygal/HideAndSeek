@@ -1,4 +1,4 @@
-# Hide And Seek Game Console App
+# Hide And Seek Game Console App Version 3.0.0
 
 
 ## Table of Contents
@@ -15,6 +15,7 @@
   - [Select house layout](#usage-select-house)
   - [Move in specific direction](#usage-move)
   - [Check for hiding opponents](#usage-check)
+  - [Teleport](#usage-teleport)
   - [Save game](#usage-save)
   - [Load game](#usage-load)
   - [Delete game](#usage-delete)
@@ -35,7 +36,8 @@ The Hide and Seek Game Console app allows a user (playing the role of the seeker
 
 <a name="whats-new"></a>
 ## What's new
-- The user can play the game in houses with different layouts.
+- The user can enter a direction shorthand to move in a specific direction.
+- The user can teleport to a random location with hiding place.
 
 
 
@@ -111,7 +113,7 @@ If there is a problem loading the house layout, you will see an error message an
 
 <a name="usage-move"></a>
 ### Move in specific direction
-Move in any of the directions listed in the exit list (right below the "You see the following exits:" text) by typing the direction and pressing the Enter key on your keyboard. (This counts as a move!)
+Move in any of the directions listed in the exit list (right below the "You see the following exits:" text) by typing the direction (or direction shorthand*) and pressing the Enter key on your keyboard. (This counts as a move!)
 
 For example, when you're in the Garage, you could type "In" and press the Enter key to move to the Entry.
 ```
@@ -121,6 +123,22 @@ Someone could hide behind the car
 You have not found any opponents
 2: Which direction do you want to go (or type 'check'): In
 ```
+
+*Direction shorthands:
+| Shorthand | Direction |
+| --------- | ------------ |
+|  ```U```  |      Up      |
+|  ```D```  |     Down     |
+|  ```I```  |      In      |
+|  ```O```  |     Out      |
+|  ```N```  |     North    |
+|  ```S```  |     South    |
+|  ```E```  |     East     |
+|  ```W```  |     West     |
+|  ```NE``` |   Northeast  |
+|  ```NW``` |   Northwest  |
+|  ```SE``` |   Southeast  |
+|  ```SW``` |   Southwest  |
 
 
 <a name="usage-check"></a>
@@ -150,6 +168,28 @@ You found 2 opponents hiding behind the car
 If you did not find anyone, you will see something like:
 ```
 Nobody was hiding behind the car
+```
+
+
+<a name="usage-teleport"></a>
+### Teleport
+Type "teleport" and press the Enter key on your keyboard to teleport to a random location with hiding place.  (You risk being teleported to the room in which you are currently. Teleporting counts as a move regardless!)
+
+In the example below, you're in the Garage, you typed "teleport" and press the Enter key, and you were be taken to the Pantry in 1 move.
+
+```
+You are in the Garage. You see the following exits:
+ - the Entry is In
+Someone could hide behind the car
+You have not found any opponents
+2: Which direction do you want to go (or type 'check'): teleport
+Teleporting to random location with hiding place: Pantry
+
+You are in the Pantry. You see the following exits:
+ - the Landing is to the North
+Someone could hide inside a cabinet
+You have not found any opponents
+3: Which direction do you want to go (or type 'check'):
 ```
 
 
@@ -238,11 +278,6 @@ Please message me via the [contact form here](https://minnystuff.com/contact/) w
 
 <a name="roadmap"></a>
 ## Roadmap
-
-### Version 3.0 - direction shorthands and teleportation
-- Allow the user to move in a direction by only entering one or two characters rather than a whole word (e.g. S instead of South, SE instead of Southeast).
-- Allow the user to "teleport" to a randomly selected location in the house.
-
 
 ### Version 4.0 - customize opponents
 - Allow the user to specify how many opponents they want.

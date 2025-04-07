@@ -32,19 +32,19 @@
 
     /// <summary>
     /// Extension class for Direction enum to describe a direction or get the opposite direction
+    /// Also includes static method to convert a string to a direction
     /// 
-    /// CREDIT: adapted from Stellman and Greene's code
+    /// CREDIT: Direction descriptions and description logic adapted from Stellman and Greene's code
     /// </summary>
 
     /** CREDIT
-     *  direction descriptions and directions description logic
+     *  direction descriptions and direction description logic
      *  adapted from HideAndSeek project's Location class's DescribeDirection method
      *  © 2023 Andrew Stellman and Jennifer Greene
      *         Published under the MIT License
      *         https://github.com/head-first-csharp/fourth-edition/blob/master/Code/Chapter_10/HideAndSeek_part_3/HideAndSeek/Direction.cs
      *         Link valid as of 02-25-2025
      * **/
-
     public static class DirectionExtensions
     {
         /// <summary>
@@ -85,6 +85,60 @@
             {
                 return $"to the {direction}"; // Return extra words with direction
             }
+        }
+
+        /// <summary>
+        /// Text values (all lowercase) for Directions
+        /// (key is text value written out or shorthand, value is associated Direction)
+        /// </summary>
+        public static readonly IDictionary<string, Direction> TextsForDirections = new Dictionary<string, Direction>()
+        {
+            { "north", Direction.North },
+            { "n", Direction.North },
+            { "south", Direction.South },
+            { "s", Direction.South },
+            { "east", Direction.East },
+            { "e", Direction.East },
+            { "west", Direction.West },
+            { "w", Direction.West },
+            { "northeast", Direction.Northeast },
+            { "ne", Direction.Northeast },
+            { "southwest", Direction.Southwest },
+            { "sw", Direction.Southwest },
+            { "southeast", Direction.Southeast },
+            { "se", Direction.Southeast },
+            { "northwest", Direction.Northwest },
+            { "nw", Direction.Northwest },
+            { "up", Direction.Up },
+            { "u", Direction.Up },
+            { "down", Direction.Down },
+            { "d", Direction.Down },
+            { "in", Direction.In },
+            { "i", Direction.In },
+            { "out", Direction.Out },
+            { "o", Direction.Out }
+        };
+
+        /// <summary>
+        /// Parse Direction from text (not case sensitive)
+        /// (checks for direction as text and shorthand for direction)
+        /// </summary>
+        /// <param name="directionText">Direction as text or shorthand for direction</param>
+        /// <param name="direction">Direction if successfully parsed, 0 otherwise</param>
+        /// <returns>True if Direction successfully parsed from text</returns>
+        public static bool TryParse(string directionText, out Direction direction)
+        {
+            // Trim direction text and convert to lowercase
+            directionText = directionText.Trim().ToLower();
+
+            // Attempt to parse direction and set variable to whether parse is successful
+            bool successfulParse = TextsForDirections.TryGetValue(directionText, out Direction parsedDirection);
+            
+            // Set method out variable to Direction parsed
+            direction = parsedDirection;
+
+            // Return whether parse was successful
+            return successfulParse;
         }
     }
 }
