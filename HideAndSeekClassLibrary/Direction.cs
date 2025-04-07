@@ -34,18 +34,17 @@
     /// Extension class for Direction enum to describe a direction or get the opposite direction
     /// Also includes static method to convert a string to a direction
     /// 
-    /// CREDIT: adapted from Stellman and Greene's code
+    /// CREDIT: Direction descriptions and description logic adapted from Stellman and Greene's code
     /// </summary>
 
     /** CREDIT
-     *  direction descriptions and directions description logic
+     *  direction descriptions and direction description logic
      *  adapted from HideAndSeek project's Location class's DescribeDirection method
      *  © 2023 Andrew Stellman and Jennifer Greene
      *         Published under the MIT License
      *         https://github.com/head-first-csharp/fourth-edition/blob/master/Code/Chapter_10/HideAndSeek_part_3/HideAndSeek/Direction.cs
      *         Link valid as of 02-25-2025
      * **/
-
     public static class DirectionExtensions
     {
         /// <summary>
