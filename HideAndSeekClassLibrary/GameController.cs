@@ -332,7 +332,7 @@ namespace HideAndSeek
                     return "Cannot perform action because no file name was entered"; // Return failure message
                 }
             }
-            else if ( !(Enum.TryParse(originalCommand, out Direction direction)) ) // If input cannot be parsed to Direction enum value
+            else if ( !(DirectionExtensions.TryParse(originalCommand, out Direction direction)) ) // If input cannot be parsed to Direction enum value
             {
                 return "That's not a valid direction"; // Return invalid direction message
             }
