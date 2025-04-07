@@ -79,7 +79,8 @@ namespace HideAndSeek
         [TestCase("i", Direction.In)]
         [TestCase("out", Direction.Out)]
         [TestCase("o", Direction.Out)]
-        public void Test_DirectionExtensions_Parse_Lowercase(string directionText, Direction expectedDirection)
+        [Category("DirectionExtensions TryParse Success")]
+        public void Test_DirectionExtensions_TryParse_Lowercase(string directionText, Direction expectedDirection)
         {
             bool parseSuccessful = DirectionExtensions.TryParse(directionText, out Direction actualDirection);
             Assert.Multiple(() =>
@@ -94,7 +95,8 @@ namespace HideAndSeek
         [TestCase("nOrth")]
         [TestCase("nOrTh")]
         [TestCase("NORTH")]
-        public void Test_DirectionExtensions_Parse_MixedCase(string directionText)
+        [Category("DirectionExtensions TryParse Success")]
+        public void Test_DirectionExtensions_TryParse_MixedCase(string directionText)
         {
             bool parseSuccessful = DirectionExtensions.TryParse(directionText, out Direction actualDirection);
             Assert.Multiple(() =>
@@ -109,6 +111,7 @@ namespace HideAndSeek
         [TestCase("}{yaeu\\@!//")]
         [TestCase("No")]
         [TestCase("Northuperly")]
+        [Category("DirectionExtensions TryParse Failure")]
         public void Test_DirectionExtensions_Parse_InvalidDirection(string directionText)
         {
             bool parseSuccessful = DirectionExtensions.TryParse(directionText, out Direction direction);
