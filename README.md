@@ -111,7 +111,7 @@ If there is a problem loading the house layout, you will see an error message an
 
 <a name="usage-move"></a>
 ### Move in specific direction
-Move in any of the directions listed in the exit list (right below the "You see the following exits:" text) by typing the direction and pressing the Enter key on your keyboard. (This counts as a move!)
+Move in any of the directions listed in the exit list (right below the "You see the following exits:" text) by typing the direction (or direction shorthand*) and pressing the Enter key on your keyboard. (This counts as a move!)
 
 For example, when you're in the Garage, you could type "In" and press the Enter key to move to the Entry.
 ```
@@ -121,6 +121,22 @@ Someone could hide behind the car
 You have not found any opponents
 2: Which direction do you want to go (or type 'check'): In
 ```
+
+*Direction shorthands:
+| Shorthand | Direction |
+| --------- | ------------ |
+|  ```U```  |      Up      |
+|  ```D```  |     Down     |
+|  ```I```  |      In      |
+|  ```O```  |     Out      |
+|  ```N```  |     North    |
+|  ```S```  |     South    |
+|  ```E```  |     East     |
+|  ```W```  |     West     |
+|  ```NE``` |   Northeast  |
+|  ```NW``` |   Northwest  |
+|  ```SE``` |   Southeast  |
+|  ```SW``` |   Southwest  |
 
 
 <a name="usage-check"></a>
