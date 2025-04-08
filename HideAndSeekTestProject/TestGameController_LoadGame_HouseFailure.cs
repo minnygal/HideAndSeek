@@ -17,21 +17,21 @@ namespace HideAndSeek
     {
         private GameController gameController;
         private string message; // Message returned by GameController's ParseInput method
-        private Mock<IFileSystem> mockFileSystem; // Mock file system to be passed to GameController upon creation
 
         [SetUp]
         public void Setup()
         {
             gameController = null;
             message = null;
-            mockFileSystem = new Mock<IFileSystem>(); // Set mock file system variable to new file system
             House.FileSystem = new FileSystem(); // Set static House file system to new file system
+            GameController.FileSystem = new FileSystem(); // Set static GameController file system to new file system
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
             House.FileSystem = new FileSystem(); // Set static House file system to new file system
+            GameController.FileSystem = new FileSystem(); // Set static GameController file system to new file system
         }
 
         [Test]
@@ -49,7 +49,7 @@ namespace HideAndSeek
             "}";
 
             // Set up mock for GameController file system
-            mockFileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText("my_saved_game.json", textInFile);
+            GameController.FileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText("my_saved_game.json", textInFile).Object;
 
             // Set up mock for House file system
             Mock<IFileSystem> houseMockFileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText(
@@ -58,7 +58,7 @@ namespace HideAndSeek
             House.FileSystem = houseMockFileSystem.Object; // Set House file system to mock file system
 
             // Create new game controller
-            gameController = new GameController(mockFileSystem.Object, "DefaultHouse");
+            gameController = new GameController("DefaultHouse");
 
             // Have game controller parse file name with load command
             message = gameController.ParseInput("load my_saved_game");
@@ -127,7 +127,7 @@ namespace HideAndSeek
             "}";
 
             // Set up mock for GameController file system
-            mockFileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText("my_saved_game.json", textInSavedGameFile);
+            GameController.FileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText("my_saved_game.json", textInSavedGameFile).Object;
             
             // Set up mock for House file system
             Mock<IFileSystem> houseMockFileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText(
@@ -136,7 +136,7 @@ namespace HideAndSeek
             House.FileSystem = houseMockFileSystem.Object; // Set House file system to mock file system
 
             // ParseInput to load SavedGame and return message
-            return new GameController(mockFileSystem.Object).ParseInput("load my_saved_game");
+            return new GameController("DefaultHouse").ParseInput("load my_saved_game");
         }
     }
 }

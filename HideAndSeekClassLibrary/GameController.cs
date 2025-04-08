@@ -64,7 +64,12 @@ namespace HideAndSeek
 
     public class GameController
     {
-        private IFileSystem _fileSystem; // File system to use (set in constructor)
+        /// <summary>
+        /// File system to use for GameController save/load/delete SavedGame files
+        /// (should only be changed for testing purposes)
+        /// </summary>
+        public static IFileSystem FileSystem { get; set; } = new FileSystem();
+
         /// <summary>
         /// The player's current location in the house
         /// </summary>
@@ -143,19 +148,11 @@ namespace HideAndSeek
         public bool GameOver => OpponentsAndHidingLocations.Count() == FoundOpponents.Count();
 
         /// <summary>
-        /// Constructor to start game with default file system
+        /// Constructor to start game
         /// </summary>
-        public GameController(string houseFileName = "DefaultHouse") : this(new FileSystem(), houseFileName) {}
-
-        /// <summary>
-        /// Constructor to start game with specific file system (called directly for testing)
-        /// </summary>
-        /// <param name="fileSystem">File system</param>
-        public GameController(IFileSystem fileSystem, string houseFileName = "DefaultHouse")
+        /// <param name="houseFileName">Name of file from which to load House (w/o .json extension)</param>
+        public GameController(string houseFileName = "DefaultHouse")
         {
-            // Set file system
-            _fileSystem = fileSystem;
-
             // Create Opponents and store them in dictionary as keys
             OpponentsAndHidingLocations.Add(new Opponent("Joe"), null);
             OpponentsAndHidingLocations.Add(new Opponent("Bob"), null);
@@ -314,7 +311,7 @@ namespace HideAndSeek
                     string fileName = input.Substring(indexOfSpace + 1);
 
                     // If file name is valid
-                    if(_fileSystem.IsValidName(fileName))
+                    if(FileSystem.IsValidName(fileName))
                     {
                         // If input requests save game
                         if (lowercaseCommand == "save")
@@ -405,10 +402,10 @@ namespace HideAndSeek
         private string SaveGame(string fileName)
         {
             // Get full file name including extension
-            string fullFileName = _fileSystem.GetFullFileNameForJson(fileName);
+            string fullFileName = FileSystem.GetFullFileNameForJson(fileName);
 
             // If file already exists
-            if (_fileSystem.File.Exists(fullFileName))
+            if (FileSystem.File.Exists(fullFileName))
             {
                 return $"Cannot perform action because a file named {fileName} already exists"; // Return error message
             }
@@ -427,7 +424,7 @@ namespace HideAndSeek
             
             // Save game as JSON to file and return success message
             string savedGameAsJSON = JsonSerializer.Serialize(savedGame); // Convert game's state data to JSON
-            _fileSystem.File.WriteAllText(fullFileName, savedGameAsJSON); // Save game's state data in file
+            FileSystem.File.WriteAllText(fullFileName, savedGameAsJSON); // Save game's state data in file
             return $"Game successfully saved in {fileName}"; // Return success message
         }
 
@@ -439,16 +436,16 @@ namespace HideAndSeek
         private string LoadGame(string fileName)
         {
             // Get full file name including extension
-            string fullFileName = _fileSystem.GetFullFileNameForJson(fileName);
+            string fullFileName = FileSystem.GetFullFileNameForJson(fileName);
 
             // If file does not exist
-            if( !(_fileSystem.File.Exists(fullFileName)) )
+            if( !(FileSystem.File.Exists(fullFileName)) )
             {
                 return $"Cannot load game because file {fileName} does not exist"; // Return error message
             }
 
             // Read text from file
-            string fileText = _fileSystem.File.ReadAllText(fullFileName);
+            string fileText = FileSystem.File.ReadAllText(fullFileName);
 
             // Declare variable to store SavedGame object
             SavedGame savedGame;
@@ -543,16 +540,16 @@ namespace HideAndSeek
         private string DeleteGame(string fileName)
         {
             // Get full file name including extension
-            string fullFileName = _fileSystem.GetFullFileNameForJson(fileName);
+            string fullFileName = FileSystem.GetFullFileNameForJson(fileName);
 
             // If file does not exist
-            if ( !(_fileSystem.File.Exists(fullFileName)) )
+            if ( !(FileSystem.File.Exists(fullFileName)) )
             {
                 return $"Could not delete game because file {fileName} does not exist"; // Return error message
             }
 
             // Delete file
-            _fileSystem.File.Delete(fullFileName);
+            FileSystem.File.Delete(fullFileName);
 
             // Return success message
             return $"Game file {fileName} has been successfully deleted";
