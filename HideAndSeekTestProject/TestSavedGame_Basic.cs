@@ -14,6 +14,14 @@ namespace HideAndSeek
     public class TestSavedGame_Basic
     {
         private SavedGame savedGame;
+        private Dictionary<string, string> opponentsAndHidingPlaces = new Dictionary<string, string>()
+        {
+            { "Joe", "Kitchen" },
+            { "Bob", "Pantry" },
+            { "Ana", "Bathroom" },
+            { "Owen", "Kitchen" },
+            {  "Jimmy", "Pantry" }
+        };
 
         [SetUp]
         public void SetUp()
@@ -30,8 +38,7 @@ namespace HideAndSeek
             House house = GetDefaultHouse();
 
             // Create SavedGame using parameterized constructor
-            savedGame = new SavedGame(house, "TestHouse", "Entry", 1, 
-                                      TestGameController_Basic_TestCaseData.SavedGame_OpponentsAndHidingPlaces, new List<string>());
+            savedGame = new SavedGame(house, "TestHouse", "Entry", 1, opponentsAndHidingPlaces, new List<string>());
 
             // Assert that SavedGame properties are as expected
             Assert.Multiple(() =>
@@ -40,7 +47,7 @@ namespace HideAndSeek
                 Assert.That(savedGame.HouseFileName, Is.EqualTo("TestHouse"), "House file name");
                 Assert.That(savedGame.PlayerLocation, Is.EqualTo("Entry"), "player location");
                 Assert.That(savedGame.MoveNumber, Is.EqualTo(1), "move number");
-                Assert.That(savedGame.OpponentsAndHidingLocations, Is.EquivalentTo(TestGameController_Basic_TestCaseData.SavedGame_OpponentsAndHidingPlaces), "opponents and hiding locations");
+                Assert.That(savedGame.OpponentsAndHidingLocations, Is.EquivalentTo(opponentsAndHidingPlaces), "opponents and hiding locations");
                 Assert.That(savedGame.FoundOpponents, Is.Empty, "no found opponents");
             });
         }
@@ -67,8 +74,7 @@ namespace HideAndSeek
                 // Assert that creating a SavedGame object with an invalid file name raises an exception
                 var exception = Assert.Throws<InvalidDataException>(() =>
                 {
-                    savedGame = new SavedGame(GetDefaultHouse(), fileName, "Entry", 1, 
-                                              TestGameController_Basic_TestCaseData.SavedGame_OpponentsAndHidingPlaces, new List<string>());
+                    savedGame = new SavedGame(GetDefaultHouse(), fileName, "Entry", 1, opponentsAndHidingPlaces, new List<string>());
                 });
 
                 // Assert that exception message is as expected
@@ -82,8 +88,7 @@ namespace HideAndSeek
         public void Test_SavedGame_Set_House_AndCheckErrorMessage_ForAlreadyHasValue()
         {
             // Create new SavedGame (giving House property's backing field a value)
-            savedGame = new SavedGame(GetDefaultHouse(), "DefaultHouse", "Entry", 1, 
-                                      TestGameController_Basic_TestCaseData.SavedGame_OpponentsAndHidingPlaces, new List<string>()); ;
+            savedGame = new SavedGame(GetDefaultHouse(), "DefaultHouse", "Entry", 1, opponentsAndHidingPlaces, new List<string>()); ;
 
             Assert.Multiple(() =>
             {
@@ -103,8 +108,7 @@ namespace HideAndSeek
         public void Test_SavedGame_Set_HouseFileName_AndCheckErrorMessage_ForAlreadyHasValue()
         {
             // Create new SavedGame (giving HouseFileName property's backing field a value)
-            savedGame = new SavedGame(GetDefaultHouse(), "DefaultHouse", "Entry", 1, 
-                                      TestGameController_Basic_TestCaseData.SavedGame_OpponentsAndHidingPlaces, new List<string>()); ;
+            savedGame = new SavedGame(GetDefaultHouse(), "DefaultHouse", "Entry", 1, opponentsAndHidingPlaces, new List<string>()); ;
 
             Assert.Multiple(() =>
             {
@@ -124,8 +128,7 @@ namespace HideAndSeek
         public void Test_SavedGame_Set_PlayerLocation()
         {
             // Create SavedGame object with initial valid player location
-            savedGame = new SavedGame(GetDefaultHouse(), "TestHouse", "Entry", 1, 
-                                      TestGameController_Basic_TestCaseData.SavedGame_OpponentsAndHidingPlaces, new List<string>());
+            savedGame = new SavedGame(GetDefaultHouse(), "TestHouse", "Entry", 1, opponentsAndHidingPlaces, new List<string>());
 
             Assert.Multiple(() =>
             {
@@ -148,8 +151,7 @@ namespace HideAndSeek
                 // Assert that creating a SavedGame object with invalid player location raises an exception
                 var exception = Assert.Throws<InvalidDataException>(() =>
                 {
-                    savedGame = new SavedGame(GetDefaultHouse(), "TestHouse", "Alaska", 1, 
-                                              TestGameController_Basic_TestCaseData.SavedGame_OpponentsAndHidingPlaces, new List<string>());
+                    savedGame = new SavedGame(GetDefaultHouse(), "TestHouse", "Alaska", 1, opponentsAndHidingPlaces, new List<string>());
                 });
 
                 // Assert that exception message is as expected
@@ -162,7 +164,7 @@ namespace HideAndSeek
         public void Test_SavedGame_Set_MoveNumber()
         {
             // Create SavedGame object with valid move number
-            savedGame = new SavedGame(GetDefaultHouse(), "TestHouse", "Entry", 1, TestGameController_Basic_TestCaseData.SavedGame_OpponentsAndHidingPlaces, new List<string>());
+            savedGame = new SavedGame(GetDefaultHouse(), "TestHouse", "Entry", 1, opponentsAndHidingPlaces, new List<string>());
 
             Assert.Multiple(() =>
             {
@@ -186,8 +188,7 @@ namespace HideAndSeek
                 // Assert that creating a SavedGame object with invalid move number raises an exception
                 var exception = Assert.Throws<InvalidDataException>(() =>
                 {
-                    savedGame = new SavedGame(GetDefaultHouse(), "TestHouse", "Entry", moveNumber, 
-                                              TestGameController_Basic_TestCaseData.SavedGame_OpponentsAndHidingPlaces, new List<string>());
+                    savedGame = new SavedGame(GetDefaultHouse(), "TestHouse", "Entry", moveNumber, opponentsAndHidingPlaces, new List<string>());
                 });
 
                 // Assert that exception message is as expected
@@ -308,8 +309,7 @@ namespace HideAndSeek
         public void Test_SavedGame_Set_FoundOpponents_ToEmptyList()
         {
             // Create SavedGame object with valid empty list for FoundOpponents
-            savedGame = new SavedGame(GetDefaultHouse(), "TestHouse", "Entry", 1, 
-                                      TestGameController_Basic_TestCaseData.SavedGame_OpponentsAndHidingPlaces, new List<string>());
+            savedGame = new SavedGame(GetDefaultHouse(), "TestHouse", "Entry", 1, opponentsAndHidingPlaces, new List<string>());
 
             Assert.Multiple(() =>
             {
