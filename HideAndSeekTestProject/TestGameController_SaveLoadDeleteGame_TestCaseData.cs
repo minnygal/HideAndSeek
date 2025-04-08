@@ -462,10 +462,10 @@ namespace HideAndSeek
                 yield return new TestCaseData(
                         "DefaultHouse.json",
                         DefaultHouse_Serialized,
-                        (IFileSystem fileSystem, Mock<IFileSystem> mockHouseFileSystem) =>
+                        (Mock<IFileSystem> mockHouseFileSystem) =>
                         {
                             // Create GameController with specified file system, hide all Opponents in specified locations, and return GameController
-                            return new GameController(fileSystem, "DefaultHouse")
+                            return new GameController("DefaultHouse")
                                        .RehideAllOpponents(SavedGame_OpponentsAndHidingPlaces.Values);
                         }, 
                         SavedGame_Serialized_NoFoundOpponents)
@@ -476,10 +476,10 @@ namespace HideAndSeek
                 yield return new TestCaseData(
                         "DefaultHouse.json",
                         DefaultHouse_Serialized,
-                        (IFileSystem fileSystem, Mock<IFileSystem> mockHouseFileSystem) => 
+                        (Mock<IFileSystem> mockHouseFileSystem) => 
                         {
                             // Create GameController with specified file system and hide all Opponents in specified locations
-                            GameController gameController = new GameController(fileSystem, "DefaultHouse")
+                            GameController gameController = new GameController("DefaultHouse")
                                                                 .RehideAllOpponents(SavedGame_OpponentsAndHidingPlaces.Values);
 
                             // Go to Kitchen and check to find 2 Opponents
@@ -509,9 +509,9 @@ namespace HideAndSeek
                 yield return new TestCaseData(
                         "TestHouse.json",
                         serializedCustomTestHouse,
-                        (IFileSystem fileSystem, Mock<IFileSystem> mockHouseFileSystem) =>
+                        (Mock<IFileSystem> mockHouseFileSystem) =>
                         {
-                            return new GameController(fileSystem, "TestHouse") // Create GameController with specified file system and specific House
+                            return new GameController("TestHouse") // Create GameController with specified file system and specific House
                                        .RehideAllOpponents(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" }); // and hide all Opponents in specified locations
                         },
                         "{" +
@@ -535,7 +535,7 @@ namespace HideAndSeek
                 yield return new TestCaseData(
                     "TestHouse.json",
                         serializedCustomTestHouse,
-                        (IFileSystem gameControllerFileSystem, Mock<IFileSystem> mockHouseFileSystem) =>
+                        (Mock<IFileSystem> mockHouseFileSystem) =>
                         {
                             // Add DefaultHouse file to House file system mock and set House file system
                             mockHouseFileSystem = MockFileSystemHelper.SetMockOfFileSystem_ToReadAllText(
@@ -543,7 +543,7 @@ namespace HideAndSeek
                             House.FileSystem = mockHouseFileSystem.Object;
 
                             // Return GameController with restarted game and rehidden Opponents
-                            return new GameController(gameControllerFileSystem, "DefaultHouse") // Create GameController with specified file system
+                            return new GameController("DefaultHouse") // Create GameController with specified file system
                                        .RestartGame("TestHouse") // and restart game with specific House
                                        .RehideAllOpponents(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" }); // and hide all Opponents in specified locations
                         },
@@ -568,7 +568,7 @@ namespace HideAndSeek
                 yield return new TestCaseData(
                         "TestHouse.json",
                         serializedCustomTestHouse,
-                        (IFileSystem gameControllerFileSystem, Mock<IFileSystem> mockHouseFileSystem) =>
+                        (Mock<IFileSystem> mockHouseFileSystem) =>
                         {
                             // Add DefaultHouse file to House file system mock and set House file system
                             mockHouseFileSystem = MockFileSystemHelper.SetMockOfFileSystem_ToReadAllText(
@@ -576,7 +576,7 @@ namespace HideAndSeek
                             House.FileSystem = mockHouseFileSystem.Object;
 
                             // Initialize to GameController with restarted game and rehidden Opponents
-                            GameController gameController = new GameController(gameControllerFileSystem, "DefaultHouse") // Create GameController with specified file system and default House
+                            GameController gameController = new GameController("DefaultHouse") // Create GameController with specified file system and default House
                                    .RestartGame("TestHouse") // and restart game with specific House
                                    .RehideAllOpponents(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" }); // and hide all Opponents in specified locations
 
@@ -615,10 +615,10 @@ namespace HideAndSeek
                 yield return new TestCaseData(
                         "TestHouse.json",
                         serializedCustomTestHouse,
-                        (IFileSystem fileSystem, Mock<IFileSystem> mockHouseFileSystem) =>
+                        (Mock<IFileSystem> mockHouseFileSystem) =>
                         {
                             // Initialize GameController
-                            GameController gameController = new GameController(fileSystem, "TestHouse") // Create GameController with specified file system and specific House
+                            GameController gameController = new GameController("TestHouse") // Create GameController with specified file system and specific House
                                                                 .RehideAllOpponents(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" }); // and hide all Opponents in specified locations
 
                             // Go to Cellar and find 1 Opponent there
