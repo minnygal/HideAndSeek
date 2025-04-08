@@ -23,7 +23,7 @@ namespace HideAndSeek
                            { "Bob", "Pantry" },
                            { "Ana", "Bathroom" },
                            { "Owen", "Kitchen" },
-                           {  "Jimmy", "Pantry" }
+                           { "Jimmy", "Pantry" }
                        };
             }
         }
