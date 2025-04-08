@@ -17,13 +17,14 @@ namespace HideAndSeek
         {
             get
             {
-                Dictionary<string, string> opponentsAndHidingPlaces = new Dictionary<string, string>();
-                opponentsAndHidingPlaces.Add("Joe", "Kitchen");
-                opponentsAndHidingPlaces.Add("Bob", "Pantry");
-                opponentsAndHidingPlaces.Add("Ana", "Bathroom");
-                opponentsAndHidingPlaces.Add("Owen", "Kitchen");
-                opponentsAndHidingPlaces.Add("Jimmy", "Pantry");
-                return opponentsAndHidingPlaces;
+                return new Dictionary<string, string>()
+                       {
+                           { "Joe", "Kitchen" },
+                           { "Bob", "Pantry" },
+                           { "Ana", "Bathroom" },
+                           { "Owen", "Kitchen" },
+                           {  "Jimmy", "Pantry" }
+                       };
             }
         }
 
