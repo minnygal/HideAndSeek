@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Newtonsoft.Json.Linq;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -116,6 +117,23 @@ namespace HideAndSeek
                 });
 
                 Assert.That(exception.Message, Is.EqualTo("Cannot create a new instance of GameController because no names for Opponents were passed in"));
+            });
+        }
+
+        [TestCase("")]
+        [TestCase(" ")]
+        [Category("GameController Constructor SpecifiedNamesOfOpponents OpponentsAndHidingPlaces Failure")]
+        public void Test_GameController_Constructor_WithInvalidOpponentName_AndCheckErrorMessage(string invalidName)
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that calling constructor with array with invalid name of Opponent raises an exception
+                var exception = Assert.Throws<InvalidDataException>(() => {
+                    new GameController(new string[] {invalidName}, "DefaultHouse");
+                });
+
+                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because opponent name \"{invalidName}\" is invalid " +
+                                                           "(is empty or contains only whitespace)"));
             });
         }
     }
