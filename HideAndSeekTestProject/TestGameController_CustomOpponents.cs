@@ -35,17 +35,9 @@ namespace HideAndSeek
         [TestCaseSource(typeof(TestGameController_CustomOpponents_TestCaseData), 
             nameof(TestGameController_CustomOpponents_TestCaseData.TestCases_For_Test_GameController_Constructor_WithSpecifiedNumberOfOpponents))]
         [Category("GameController Constructor SpecifiedNumberOfOpponents OpponentsAndHidingPlaces Success")]
-        public void Test_GameController_Constructor_WithSpecifiedNumberOfOpponents(int numberOfOpponents, string[] expectedNames, string[] expectedHidingPlaces)
+        public void Test_GameController_Constructor_WithSpecifiedNumberOfOpponents(
+            int numberOfOpponents, string[] expectedNames, string[] expectedHidingPlaces, int[] mockRandomValuesList)
         {
-            // Create mock random values list for hiding opponents
-            int[] mockRandomValuesList = [
-                1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent 1 in Kitchen
-                0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent 2 in Pantry
-                1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, // Hide opponent 3 in Bathroom
-                1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent 4 in Kitchen
-                0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent 5 in Pantry
-            ];
-
             // Set House random number generator to mock random
             House.Random = new MockRandomWithValueList(mockRandomValuesList);
 
