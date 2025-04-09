@@ -136,7 +136,7 @@ namespace HideAndSeek
         /// <summary>
         /// Opponents and their hiding places
         /// </summary>
-        public Dictionary<Opponent, LocationWithHidingPlace> OpponentsAndHidingLocations { get; private set; } = new Dictionary<Opponent, LocationWithHidingPlace>();
+        public Dictionary<Opponent, LocationWithHidingPlace> OpponentsAndHidingLocations { get; private set; }
             
         /// <summary>
         /// List of opponents the player has found so far
