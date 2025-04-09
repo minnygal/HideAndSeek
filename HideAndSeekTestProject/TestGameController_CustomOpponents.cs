@@ -105,6 +105,7 @@ namespace HideAndSeek
         }
 
         [Test]
+        [Category("GameController Constructor SpecifiedNamesOfOpponents OpponentsAndHidingPlaces Failure")]
         public void Test_GameController_Constructor_WithEmptyArrayOfNamesOfOpponents_AndCheckErrorMessage()
         {
             Assert.Multiple(() =>
