@@ -160,6 +160,7 @@ namespace HideAndSeek
         [SetUp]
         public void SetUp()
         {
+            House.Random = new Random(); // Set static House Random property to new Random number generator
             gameController = new GameController("DefaultHouse"); // Create new GameController with default House layout
         }
 
@@ -167,6 +168,7 @@ namespace HideAndSeek
         public void OneTimeTearDown()
         {
             House.FileSystem = new FileSystem(); // Set static House file system to new file system
+            House.Random = new Random(); // Set static House Random property to new Random number generator
         }
 
         [TestCase("north", "south", "east", "west", "northeast", "southwest", "southeast", "northwest", "up", "down", "in", "out")]
@@ -306,7 +308,7 @@ namespace HideAndSeek
         public void Test_GameController_ParseInput_Teleport()
         {
             // Set House Random number generator to mock random
-            gameController.House.Random = new MockRandomWithValueList([0]);
+            House.Random = new MockRandomWithValueList([0]);
 
             Assert.Multiple(() =>
             {

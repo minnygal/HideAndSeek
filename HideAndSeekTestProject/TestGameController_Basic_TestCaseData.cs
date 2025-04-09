@@ -237,7 +237,7 @@ namespace HideAndSeek
             {
                 // Initial game not completed before parameterless RestartGame called
                 yield return new TestCaseData(
-                    (GameController gameController, Random randomNumberGenerator) =>
+                    (GameController gameController) =>
                     {
                         return gameController.RestartGame(); // Restart game and return GameController
                     })
@@ -245,17 +245,16 @@ namespace HideAndSeek
 
                 // Initial game not completed before parameterized RestartGame called
                 yield return new TestCaseData(
-                    (GameController gameController, Random randomNumberGenerator) =>
+                    (GameController gameController) =>
                     {
                         gameController.RestartGame("DefaultHouse"); // Restart game with specific House layout
-                        gameController.House.Random = randomNumberGenerator; // Set House random number generator
                         return gameController.RestartGame(); // Restart game and return GameController
                     })
                     .SetName("Test_GameController_RestartGame - both - initial game not completed");
 
                 // Initial game completed before parameterless RestartGame called
                 yield return new TestCaseData(
-                    (GameController gameController, Random randomNumberGenerator) =>
+                    (GameController gameController) =>
                     {
                         return FindAllOpponents(gameController).RestartGame(); // Find all Opponents, restart game and return GameController
                     })
@@ -263,10 +262,9 @@ namespace HideAndSeek
 
                 // Initial game completed before parameterized RestartGame called
                 yield return new TestCaseData(
-                    (GameController gameController, Random randomNumberGenerator) =>
+                    (GameController gameController) =>
                     {
                         gameController.RestartGame("DefaultHouse"); // Restart game with specific House layout
-                        gameController.House.Random = randomNumberGenerator; // Set House random number generator
                         return FindAllOpponents(gameController).RestartGame(); // Find all Opponents, restart game and return GameController
                     })
                     .SetName("Test_GameController_RestartGame - both - initial game completed");
