@@ -19,6 +19,7 @@ namespace HideAndSeek
         {
             House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
                                 "DefaultHouse.json", TestGameController_Basic_TestCaseData.DefaultHouse_Serialized); // Set static House file system to mock file system
+            House.Random = new Random(); // Set static House Random property to new Random number generator
             gameController = new GameController("DefaultHouse"); // Create new GameController
         }
 
@@ -26,11 +27,12 @@ namespace HideAndSeek
         public void OneTimeTearDown()
         {
             House.FileSystem = new FileSystem(); // Set static House file system to new file system
+            House.Random = new Random(); // Set static House Random property to new Random number generator
         }
 
         [TestCaseSource(typeof(TestGameController_Basic_TestCaseData), nameof(TestGameController_Basic_TestCaseData.TestCases_For_Test_GameController_RestartGame))]
         [Category("GameController RestartGame HidingLocations Success")]
-        public void Test_GameController_RestartGame(Func<GameController, Random, GameController> GetGameController)
+        public void Test_GameController_RestartGame(Func<GameController, GameController> GetGameController)
         {
             // Create mock random values list for hiding opponents
             int[] mockRandomValuesList = [
@@ -45,10 +47,10 @@ namespace HideAndSeek
             Random mockRandomNumberGenerator = new MockRandomWithValueList(mockRandomValuesList);
 
             // Set House random number generator to mock random
-            gameController.House.Random = mockRandomNumberGenerator;
+            House.Random = mockRandomNumberGenerator;
 
             // Set GameController
-            gameController = GetGameController(gameController, mockRandomNumberGenerator);
+            gameController = GetGameController(gameController);
 
             // Assert that properties are as expected
             Assert.Multiple(() =>
