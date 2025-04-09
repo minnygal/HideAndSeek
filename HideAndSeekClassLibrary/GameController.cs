@@ -225,12 +225,11 @@ namespace HideAndSeek
         public GameController RestartGame(string houseFileName)
         {
             House = House.CreateHouse(houseFileName);
-            RestartGame();
-            return this;
+            return RestartGame();
         }
 
         /// <summary>
-        /// Restart game from beginning (StartingPoint)
+        /// Restart game from beginning without changing House layout
         /// </summary>
         /// <returns>This GameController</returns>
         public GameController RestartGame()

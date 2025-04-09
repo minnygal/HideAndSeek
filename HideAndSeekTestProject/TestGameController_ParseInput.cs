@@ -5,9 +5,9 @@ using System.Collections.Generic;
 namespace HideAndSeek
 {
     /// <summary>
-    /// GameController tests for moving and checking for opponents via ParseInput method in default House,
+    /// GameController tests for moving and checking for Opponents via ParseInput method in default House,
     /// and value of Prompt property as navigate through House.
-    /// Automatically tests parameterized GameController constructor.
+    /// Automatically tests GameController constructor with only DefaultHouse passed in.
     /// Does not include save/load/delete game tests (contained in separate file).
     /// </summary>
     public class TestGameController_ParseInput
@@ -330,6 +330,7 @@ namespace HideAndSeek
         /// <summary>
         /// Using ParseInput method, mimic full game and check ParseInput return message and GameController's public properties:
         /// Prompt, Status, MoveNumber, GameOver
+        /// Also tests Opponent names and hiding places set with constructor without Opponent details specified
         /// 
         /// CREDIT: adapted from HideAndSeek project's GameControllerTests class's TestParseCheck() test method
         ///         © 2023 Andrew Stellman and Jennifer Greene
