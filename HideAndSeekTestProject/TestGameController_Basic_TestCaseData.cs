@@ -211,23 +211,23 @@ namespace HideAndSeek
         }
 
         /// <summary>
-        /// Helper method to find all Opponents 
+        /// Helper method to find all Opponents (using Move/Check methods)
         /// for Test_GameController_RestartGame with initial game completed
         /// </summary>
         /// <param name="gameController">GameController at start of game</param>
         /// <returns>GameController after all Opponents found</returns>
         private static GameController FindAllOpponents(GameController gameController)
         {
-            gameController.ParseInput("East"); // Move to Hallway
-            gameController.ParseInput("Northwest"); // Move to Kitchen
-            gameController.ParseInput("Check"); // Check Kitchen and find Bob and Owen
-            gameController.ParseInput("Southeast"); // Move to Hallway
-            gameController.ParseInput("North"); // Move to Bathroom
-            gameController.ParseInput("Check"); // Check Bathroom and find Ana
-            gameController.ParseInput("South"); // Move to Hallway
-            gameController.ParseInput("Up"); // Move to Landing
-            gameController.ParseInput("South"); // Move to Pantry
-            gameController.ParseInput("Check"); // Check Pantry and find Bob and Jimmy
+            gameController.Move(Direction.East); // Move to Hallway
+            gameController.Move(Direction.Northwest); // Move to Kitchen
+            gameController.CheckCurrentLocation(); // Check Kitchen and find Bob and Owen
+            gameController.Move(Direction.Southeast); // Move to Hallway
+            gameController.Move(Direction.North); // Move to Bathroom
+            gameController.CheckCurrentLocation(); // Check Bathroom and find Ana
+            gameController.Move(Direction.South); // Move to Hallway
+            gameController.Move(Direction.Up); // Move to Landing
+            gameController.Move(Direction.South); // Move to Pantry
+            gameController.CheckCurrentLocation(); // Check Pantry and find Bob and Jimmy
             return gameController;
         }
 
