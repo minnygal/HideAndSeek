@@ -12,7 +12,8 @@ namespace HideAndSeek
     /// <summary>
     /// GameController tests for layout of non-default House
     /// set using GameController constructor or RestartGame method,
-    /// and playing full game in custom House
+    /// and playing full game in custom House 
+    /// (test using ParseInput, test using Move and Check)
     /// </summary>
     [TestFixture]
     public class TestGameController_CustomHouse
@@ -205,16 +206,22 @@ namespace HideAndSeek
         }
 
         /// <summary>
-        /// Using ParseInput method, mimic full game and check ParseInput return message and GameController's public properties:
+        /// Test full game after set up with GameController constructor OR set up with RestartGame method
+        /// Test full game with ParseInput method OR Move/Check methods
+        /// Mimic full game and check return message and GameController's public properties:
         /// Prompt, Status, MoveNumber, GameOver
         /// 
-        /// CREDIT: adapted from HideAndSeek project's GameControllerTests class's TestParseCheck() test method
+        /// CREDIT: adapted from HideAndSeek project's GameControllerTests class's TestParseCheck(gameController) test method
         ///         © 2023 Andrew Stellman and Jennifer Greene
         ///         Published under the MIT License
         ///         https://github.com/head-first-csharp/fourth-edition/blob/master/Code/Chapter_10/HideAndSeek_part_3/HideAndSeekTests/GameControllerTests.cs
         ///         Link valid as of 02-25-2025
         ///         
         /// CHANGES:
+        /// -I am setting up the GameController in two different ways 
+        ///  (once via constructor, once via RestartGame method)
+        /// -I am using defined functions to allow me to perform 
+        ///  one test with ParseInput method and one test using Move/Check methods.
         /// -I am using a different House layout.
         /// -I changed the method name to be consistent with the conventions I'm using in this test project.
         /// -I put all the assertions in the body of a multiple assert so all assertions will be run.
@@ -223,8 +230,9 @@ namespace HideAndSeek
         /// -I added/edited some comments for easier reading.
         /// -I added messages to the assertions to make them easier to debug.
         /// </summary>
-        [TestCaseSource(typeof(TestGameController_CustomHouse_TestCaseData), nameof(TestGameController_CustomHouse_TestCaseData.TestCases_For_Test_GameController_CustomHouse_ParseInput_ForFullGame_WithOpponentsHiding_AndCheckMessageAndProperties))]
-        public void Test_GameController_CustomHouse_ParseInput_ForFullGame_WithOpponentsHiding_AndCheckMessageAndProperties(GameController gameController)
+        [TestCaseSource(typeof(TestGameController_CustomHouse_TestCaseData), nameof(TestGameController_CustomHouse_TestCaseData.TestCases_For_Test_GameController_CustomHouse_FullGame_AndCheckMessageAndProperties))]
+        public void Test_GameController_CustomHouse_FullGame_AndCheckMessageAndProperties(
+            GameController gameController, Func<string, GameController, string> Move, Func<GameController, string> Check)
         {
             // Hide Opponents is specific hiding places
             gameController.RehideAllOpponents(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" });
@@ -241,11 +249,11 @@ namespace HideAndSeek
                 Assert.That(gameController.MoveNumber, Is.EqualTo(1), "check game move number");
 
                 // Attempt to check the starting point (Landing) for players
-                Assert.That(gameController.ParseInput("Check"), Is.EqualTo("There is no hiding place in the Landing"), "check string returned when check in StartingPoint");
+                Assert.That(Check(gameController), Is.EqualTo("There is no hiding place in the Landing"), "check string returned when check in StartingPoint");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(2), "check game move number");
 
                 // Move to the Hallway
-                gameController.ParseInput("North");
+                Assert.That(Move("North", gameController), Is.EqualTo("Moving North"), "check string returned when move North to Hallway");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(3), "check game move number");
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Hallway. You see the following exits:" +
@@ -262,12 +270,12 @@ namespace HideAndSeek
                 Assert.That(gameController.Prompt, Is.EqualTo("3: Which direction do you want to go: "), "check prompt after move North to Hallway");
 
                 // Attempt to check the Hallway for players
-                Assert.That(gameController.ParseInput("Check"), Is.EqualTo("There is no hiding place in the Hallway"), "check string returned when check in Hallway");
+                Assert.That(Check(gameController), Is.EqualTo("There is no hiding place in the Hallway"), "check string returned when check in Hallway");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(4), "check game move number");
                 Assert.That(gameController.Prompt, Is.EqualTo("4: Which direction do you want to go: "), "check prompt after move North to Hallway");
 
                 // Move to the Bathroom
-                gameController.ParseInput("Southwest");
+                Assert.That(Move("Southwest", gameController), Is.EqualTo("Moving Southwest"), "check string returned when move Southwest to Bathroom");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(5), "check game move number");
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Bathroom. You see the following exits:" +
@@ -278,12 +286,12 @@ namespace HideAndSeek
                 Assert.That(gameController.Prompt, Is.EqualTo("5: Which direction do you want to go (or type 'check'): "), "check prompt after move to Bathroom");
 
                 // Check the Bathroom for players - none there
-                Assert.That(gameController.ParseInput("Check"), Is.EqualTo("Nobody was hiding in the tub"), "check string returned when check in Bathroom");
+                Assert.That(Check(gameController), Is.EqualTo("Nobody was hiding in the tub"), "check string returned when check in Bathroom");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(6), "check game move number");
                 Assert.That(gameController.Prompt, Is.EqualTo("6: Which direction do you want to go (or type 'check'): "), "check prompt after check in Bathroom");
 
                 // Move to the Living Room
-                gameController.ParseInput("North");
+                Move("North", gameController);
                 Assert.That(gameController.MoveNumber, Is.EqualTo(7), "check game move number");
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Living Room. You see the following exits:" +
@@ -295,12 +303,12 @@ namespace HideAndSeek
                 Assert.That(gameController.Prompt, Is.EqualTo("7: Which direction do you want to go (or type 'check'): "), "check prompt after move to Living Room");
 
                 // Check the Living Room for players - none there
-                Assert.That(gameController.ParseInput("Check"), Is.EqualTo("Nobody was hiding behind the sofa"), "check string returned when check in Living Room");
+                Assert.That(Check(gameController), Is.EqualTo("Nobody was hiding behind the sofa"), "check string returned when check in Living Room");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(8), "check game move number");
                 Assert.That(gameController.Prompt, Is.EqualTo("8: Which direction do you want to go (or type 'check'): "), "check prompt after check in Living Room");
 
                 // Move to the Office
-                gameController.ParseInput("North");
+                Move("North", gameController);
                 Assert.That(gameController.MoveNumber, Is.EqualTo(9), "check game move number");
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Office. You see the following exits:" +
@@ -311,15 +319,15 @@ namespace HideAndSeek
                 Assert.That(gameController.Prompt, Is.EqualTo("9: Which direction do you want to go (or type 'check'): "), "check prompt after move to Office");
 
                 // Check the Office for players - none there
-                Assert.That(gameController.ParseInput("Check"), Is.EqualTo("Nobody was hiding under the desk"), "check string returned when check in Office");
+                Assert.That(Check(gameController), Is.EqualTo("Nobody was hiding under the desk"), "check string returned when check in Office");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(10), "check game move number");
 
                 // Move to the Hallway
-                gameController.ParseInput("Southeast");
+                Move("Southeast", gameController);
                 Assert.That(gameController.MoveNumber, Is.EqualTo(11), "check game move number");
 
                 // Move to the Bedroom
-                gameController.ParseInput("North");
+                Move("North", gameController);
                 Assert.That(gameController.MoveNumber, Is.EqualTo(12), "check game move number");
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Bedroom. You see the following exits:" +
@@ -330,11 +338,11 @@ namespace HideAndSeek
                 Assert.That(gameController.Prompt, Is.EqualTo("12: Which direction do you want to go (or type 'check'): "), "check prompt after move to Bedroom");
 
                 // Check the Bedroom for players - none there
-                Assert.That(gameController.ParseInput("Check"), Is.EqualTo("Nobody was hiding under the bed"), "check string returned when check in Bedroom");
+                Assert.That(Check(gameController), Is.EqualTo("Nobody was hiding under the bed"), "check string returned when check in Bedroom");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(13), "check game move number");
                 
                 // Move to the Closet
-                gameController.ParseInput("North");
+                Move("North", gameController);
                 Assert.That(gameController.MoveNumber, Is.EqualTo(14), "check game move number");
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Closet. You see the following exits:" +
@@ -344,7 +352,7 @@ namespace HideAndSeek
                 Assert.That(gameController.Prompt, Is.EqualTo("14: Which direction do you want to go (or type 'check'): "), "check prompt after move to Closet");
 
                 // Check the Closet for players - 1 (Joe) hiding there
-                Assert.That(gameController.ParseInput("Check"), Is.EqualTo("You found 1 opponent hiding between the coats"), "check string returned when check in Closet and find 1 opponent");
+                Assert.That(Check(gameController), Is.EqualTo("You found 1 opponent hiding between the coats"), "check string returned when check in Closet and find 1 opponent");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(15), "check game move number");
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Closet. You see the following exits:" +
@@ -354,11 +362,11 @@ namespace HideAndSeek
                 Assert.That(gameController.Prompt, Is.EqualTo("15: Which direction do you want to go (or type 'check'): "), "check prompt after check Closet");
 
                 // Move to the Bedroom
-                gameController.ParseInput("South");
+                Move("South", gameController);
                 Assert.That(gameController.MoveNumber, Is.EqualTo(16), "check game move number");
 
                 // Move to the Sensory Room
-                gameController.ParseInput("East");
+                Move("East", gameController);
                 Assert.That(gameController.MoveNumber, Is.EqualTo(17), "check game move number");
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Sensory Room. You see the following exits:" +
@@ -369,15 +377,15 @@ namespace HideAndSeek
                 Assert.That(gameController.Prompt, Is.EqualTo("17: Which direction do you want to go (or type 'check'): "), "check prompt after move to Sensory Room");
 
                 // Check the Sensory Room for players - none there
-                Assert.That(gameController.ParseInput("Check"), Is.EqualTo("Nobody was hiding under the beanbags"), "check string returned when check in Sensory Room");
+                Assert.That(Check(gameController), Is.EqualTo("Nobody was hiding under the beanbags"), "check string returned when check in Sensory Room");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(18), "check game move number");
 
                 // Move to the Hallway
-                gameController.ParseInput("Southwest");
+                Move("Southwest", gameController);
                 Assert.That(gameController.MoveNumber, Is.EqualTo(19), "check game move number");
 
                 // Move to the Kitchen
-                gameController.ParseInput("East");
+                Move("East", gameController);
                 Assert.That(gameController.MoveNumber, Is.EqualTo(20), "check game move number");
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Kitchen. You see the following exits:" +
@@ -390,11 +398,11 @@ namespace HideAndSeek
                 Assert.That(gameController.Prompt, Is.EqualTo("20: Which direction do you want to go (or type 'check'): "), "check prompt after move East to Kitchen");
 
                 // Check the Kitchen for players - none there
-                Assert.That(gameController.ParseInput("Check"), Is.EqualTo("Nobody was hiding beside the stove"), "check string returned when check in Kitchen");
+                Assert.That(Check(gameController), Is.EqualTo("Nobody was hiding beside the stove"), "check string returned when check in Kitchen");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(21), "check game move number");
 
                 // Move to the Yard
-                gameController.ParseInput("Out");
+                Move("Out", gameController);
                 Assert.That(gameController.MoveNumber, Is.EqualTo(22), "check game move number");
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Yard. You see the following exits:" +
@@ -404,7 +412,7 @@ namespace HideAndSeek
                 Assert.That(gameController.Prompt, Is.EqualTo("22: Which direction do you want to go (or type 'check'): "), "check prompt after move to Yard");
 
                 // Check the Yard for players - 2 (Bob and Jimmy) hiding there
-                Assert.That(gameController.ParseInput("Check"), Is.EqualTo("You found 2 opponents hiding behind a bush"), "check string returned when check in Yard and find 2 opponents");
+                Assert.That(Check(gameController), Is.EqualTo("You found 2 opponents hiding behind a bush"), "check string returned when check in Yard and find 2 opponents");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(23), "check game move number");
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Yard. You see the following exits:" +
@@ -414,11 +422,11 @@ namespace HideAndSeek
                 Assert.That(gameController.Prompt, Is.EqualTo("23: Which direction do you want to go (or type 'check'): "), "check prompt after check Yard");
 
                 // Move to the Kitchen
-                gameController.ParseInput("In");
+                Move("In", gameController);
                 Assert.That(gameController.MoveNumber, Is.EqualTo(24), "check game move number");
 
                 // Move to the Cellar
-                gameController.ParseInput("Down");
+                Move("Down", gameController);
                 Assert.That(gameController.MoveNumber, Is.EqualTo(25), "check game move number");
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Cellar. You see the following exits:" +
@@ -428,7 +436,7 @@ namespace HideAndSeek
                 Assert.That(gameController.Prompt, Is.EqualTo("25: Which direction do you want to go (or type 'check'): "), "check prompt after move to Cellar");
 
                 // Check the Cellar for players - 1 (Ana) hiding there
-                Assert.That(gameController.ParseInput("Check"), Is.EqualTo("You found 1 opponent hiding behind the canned goods"), "check string returned when check in Cellar and find 1 opponent");
+                Assert.That(Check(gameController), Is.EqualTo("You found 1 opponent hiding behind the canned goods"), "check string returned when check in Cellar and find 1 opponent");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(26), "check game move number");
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Cellar. You see the following exits:" +
@@ -438,15 +446,15 @@ namespace HideAndSeek
                 Assert.That(gameController.Prompt, Is.EqualTo("26: Which direction do you want to go (or type 'check'): "), "check prompt after check Cellar");
 
                 // Move to the Kitchen
-                gameController.ParseInput("Up");
+                Move("Up", gameController);
                 Assert.That(gameController.MoveNumber, Is.EqualTo(27), "check game move number");
 
                 // Move to the Hallway
-                gameController.ParseInput("West");
+                Move("West", gameController);
                 Assert.That(gameController.MoveNumber, Is.EqualTo(28), "check game move number");
 
                 // Move to the Attic
-                gameController.ParseInput("Up");
+                Move("Up", gameController);
                 Assert.That(gameController.MoveNumber, Is.EqualTo(29), "check game move number");
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Attic. You see the following exits:" +
@@ -456,7 +464,7 @@ namespace HideAndSeek
                 Assert.That(gameController.Prompt, Is.EqualTo("29: Which direction do you want to go (or type 'check'): "), "check prompt after move to Attic");
 
                 // Check the Attic for players - 1 (Owen) hiding there
-                Assert.That(gameController.ParseInput("Check"), Is.EqualTo("You found 1 opponent hiding behind a trunk"), "check string returned when check in Attic and find 1 opponent");
+                Assert.That(Check(gameController), Is.EqualTo("You found 1 opponent hiding behind a trunk"), "check string returned when check in Attic and find 1 opponent");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(30), "check game move number");
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Attic. You see the following exits:" +
