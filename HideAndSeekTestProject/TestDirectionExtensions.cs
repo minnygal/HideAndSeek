@@ -79,15 +79,10 @@ namespace HideAndSeek
         [TestCase("i", Direction.In)]
         [TestCase("out", Direction.Out)]
         [TestCase("o", Direction.Out)]
-        [Category("DirectionExtensions TryParse Success")]
-        public void Test_DirectionExtensions_TryParse_Lowercase(string directionText, Direction expectedDirection)
+        [Category("DirectionExtensions Parse Success")]
+        public void Test_DirectionExtensions_Parse_Lowercase(string directionText, Direction expectedDirection)
         {
-            bool parseSuccessful = DirectionExtensions.TryParse(directionText, out Direction actualDirection);
-            Assert.Multiple(() =>
-            {
-                Assert.That(parseSuccessful, Is.True, "value returned indicating whether parse was successful");
-                Assert.That(actualDirection, Is.EqualTo(expectedDirection), "Direction from out variable");
-            });
+            Assert.That(DirectionExtensions.Parse(directionText), Is.EqualTo(expectedDirection));
         }
 
         [TestCase("N")]
@@ -95,15 +90,10 @@ namespace HideAndSeek
         [TestCase("nOrth")]
         [TestCase("nOrTh")]
         [TestCase("NORTH")]
-        [Category("DirectionExtensions TryParse Success")]
-        public void Test_DirectionExtensions_TryParse_MixedCase(string directionText)
+        [Category("DirectionExtensions Parse Success")]
+        public void Test_DirectionExtensions_Parse_MixedCase(string directionText)
         {
-            bool parseSuccessful = DirectionExtensions.TryParse(directionText, out Direction actualDirection);
-            Assert.Multiple(() =>
-            {
-                Assert.That(parseSuccessful, Is.True, "value returned indicating whether parse was successful");
-                Assert.That(actualDirection, Is.EqualTo(Direction.North), "Direction from out variable");
-            });
+            Assert.That(DirectionExtensions.Parse(directionText), Is.EqualTo(Direction.North));
         }
 
         [TestCase("")]
@@ -111,14 +101,19 @@ namespace HideAndSeek
         [TestCase("}{yaeu\\@!//")]
         [TestCase("No")]
         [TestCase("Northuperly")]
-        [Category("DirectionExtensions TryParse Failure")]
-        public void Test_DirectionExtensions_Parse_InvalidDirection(string directionText)
+        [Category("DirectionExtensions Parse Failure")]
+        public void Test_DirectionExtensions_Parse_InvalidDirection_AndCatchErrorMessage(string directionText)
         {
-            bool parseSuccessful = DirectionExtensions.TryParse(directionText, out Direction direction);
             Assert.Multiple(() =>
             {
-                Assert.That(parseSuccessful, Is.False, "value returned indicating whether parse was successful");
-                Assert.That( (int)direction, Is.EqualTo(0), "value from out variable cast to int" );
+                // Assert that parsing an invalid direction raises an exception
+                var exception = Assert.Throws<ArgumentException>(() =>
+                {
+                    DirectionExtensions.Parse(directionText);
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo("That's not a valid direction"));
             });
         }
     }

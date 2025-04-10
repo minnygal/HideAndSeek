@@ -124,21 +124,21 @@
         /// (checks for direction as text and shorthand for direction)
         /// </summary>
         /// <param name="directionText">Direction as text or shorthand for direction</param>
-        /// <param name="direction">Direction if successfully parsed, 0 otherwise</param>
-        /// <returns>True if Direction successfully parsed from text</returns>
-        public static bool TryParse(string directionText, out Direction direction)
+        /// <returns>Direction parsed from text</returns>
+        /// <exception cref="ArgumentException">Exception thrown if direction invalid</exception>
+        public static Direction Parse(string directionText)
         {
             // Trim direction text and convert to lowercase
             directionText = directionText.Trim().ToLower();
 
-            // Attempt to parse direction and set variable to whether parse is successful
-            bool successfulParse = TextsForDirections.TryGetValue(directionText, out Direction parsedDirection);
-            
-            // Set method out variable to Direction parsed
-            direction = parsedDirection;
+            // Attempt to parse direction, if parse unsuccessful
+            if( !(TextsForDirections.TryGetValue(directionText, out Direction parsedDirection)) )
+            {
+                throw new ArgumentException("That's not a valid direction"); // Throw new exception with custom error message
+            }
 
             // Return whether parse was successful
-            return successfulParse;
+            return parsedDirection;
         }
     }
 }
