@@ -5,9 +5,9 @@ using System.Collections.Generic;
 namespace HideAndSeek
 {
     /// <summary>
-    /// GameController tests for moving and checking for opponents via ParseInput method in default House,
+    /// GameController tests for moving and checking for Opponents via ParseInput method in default House,
     /// and value of Prompt property as navigate through House.
-    /// Automatically tests parameterized GameController constructor.
+    /// Automatically tests GameController constructor with only DefaultHouse passed in.
     /// Does not include save/load/delete game tests (contained in separate file).
     /// </summary>
     public class TestGameController_ParseInput
@@ -160,6 +160,7 @@ namespace HideAndSeek
         [SetUp]
         public void SetUp()
         {
+            House.Random = new Random(); // Set static House Random property to new Random number generator
             gameController = new GameController("DefaultHouse"); // Create new GameController with default House layout
         }
 
@@ -167,6 +168,7 @@ namespace HideAndSeek
         public void OneTimeTearDown()
         {
             House.FileSystem = new FileSystem(); // Set static House file system to new file system
+            House.Random = new Random(); // Set static House Random property to new Random number generator
         }
 
         [TestCase("north", "south", "east", "west", "northeast", "southwest", "southeast", "northwest", "up", "down", "in", "out")]
@@ -306,7 +308,7 @@ namespace HideAndSeek
         public void Test_GameController_ParseInput_Teleport()
         {
             // Set House Random number generator to mock random
-            gameController.House.Random = new MockRandomWithValueList([0]);
+            House.Random = new MockRandomWithValueList([0]);
 
             Assert.Multiple(() =>
             {
@@ -328,6 +330,7 @@ namespace HideAndSeek
         /// <summary>
         /// Using ParseInput method, mimic full game and check ParseInput return message and GameController's public properties:
         /// Prompt, Status, MoveNumber, GameOver
+        /// Also tests Opponent names and hiding places set with constructor without Opponent details specified
         /// 
         /// CREDIT: adapted from HideAndSeek project's GameControllerTests class's TestParseCheck() test method
         ///         © 2023 Andrew Stellman and Jennifer Greene

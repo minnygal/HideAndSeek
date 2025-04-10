@@ -26,6 +26,7 @@ namespace HideAndSeek
         public void SetUp()
         {
             House.FileSystem = new FileSystem(); // Set static House file system to new file system
+            House.Random = new Random(); // Set static House Random property to new Random number generator
             house = TestHouse_TestCaseData.GetDefaultHouse();
         }
 
@@ -33,6 +34,7 @@ namespace HideAndSeek
         public void OneTimeTearDown()
         {
             House.FileSystem = new FileSystem(); // Set static House file system to new file system
+            House.Random = new Random(); // Set static House Random property to new Random number generator
         }
 
         /// <summary>
@@ -250,35 +252,35 @@ namespace HideAndSeek
             Assert.Multiple(() =>
             {
                 // Assert Landing's random exit at index 0 is Attic
-                house.Random = new MockRandom() { ValueToReturn = 0 };
+                House.Random = new MockRandom() { ValueToReturn = 0 };
                 Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Attic"), "Landing exit at index 0");
 
                 // Assert Landing's random exit at index 1 is Kids Room
-                house.Random = new MockRandom() { ValueToReturn = 1 };
+                House.Random = new MockRandom() { ValueToReturn = 1 };
                 Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Kids Room"), "Landing exit at index 1");
 
                 // Assert Landing's random exit at index 2 is Pantry
-                house.Random = new MockRandom() { ValueToReturn = 2 };
+                House.Random = new MockRandom() { ValueToReturn = 2 };
                 Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Pantry"), "Landing exit at index 2");
 
                 // Assert Landing's random exit at index 3 is Second Bathroom
-                house.Random = new MockRandom() { ValueToReturn = 3 };
+                House.Random = new MockRandom() { ValueToReturn = 3 };
                 Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Second Bathroom"), "Landing exit at index 3");
 
                 // Assert Landing's random exit at index 4 is Nursery
-                house.Random = new MockRandom() { ValueToReturn = 4 };
+                House.Random = new MockRandom() { ValueToReturn = 4 };
                 Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Nursery"), "Landing exit at index 4");
 
                 // Assert Landing's random exit at index 5 is Master Bedroom
-                house.Random = new MockRandom() { ValueToReturn = 5 };
+                House.Random = new MockRandom() { ValueToReturn = 5 };
                 Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Master Bedroom"), "Landing exit at index 5");
 
                 // Assert Landing's random exit at index 6 is Hallway
-                house.Random = new MockRandom() { ValueToReturn = 6 };
+                House.Random = new MockRandom() { ValueToReturn = 6 };
                 Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Hallway"), "Landing exit at index 6");
 
                 // Assert Kitchen's random exit at index 0 is Hallway
-                house.Random = new MockRandom() { ValueToReturn = 0 };
+                House.Random = new MockRandom() { ValueToReturn = 0 };
                 Assert.That(house.GetRandomExit(kitchen).Name, Is.EqualTo("Hallway"), "Kitchen exit at index 0");
             });
         }
@@ -289,7 +291,7 @@ namespace HideAndSeek
         [Category("House GetRandomLocationWithHidingPlace Success")]
         public void Test_House_GetRandomLocationWithHidingPlace(string hidingLocationName, params int[] mockRandomValueList)
         {
-            house.Random = new MockRandomWithValueList(mockRandomValueList); // Set House's Random number generator to mock
+            House.Random = new MockRandomWithValueList(mockRandomValueList); // Set House's Random number generator to mock
             Assert.That(house.GetRandomLocationWithHidingPlace().Name, Is.EqualTo(hidingLocationName)); // Assert that name of LocationWithHidingPlace returned is as expected
         }
 

@@ -279,7 +279,7 @@ namespace HideAndSeek
         /// <summary>
         /// Random number generator (used for returning random hiding place)
         /// </summary>
-        public Random Random { get; set; } = new Random();
+        public static Random Random { get; set; } = new Random();
 
         /// <summary>
         /// Parameterless constructor for JSON deserialization
