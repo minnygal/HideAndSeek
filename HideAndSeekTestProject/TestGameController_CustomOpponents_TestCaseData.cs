@@ -277,12 +277,14 @@ namespace HideAndSeek
         }
 
         /// <summary>
-        /// Helper method to find first Opponent Joe in Kitchen
+        /// Helper method to check Kitchen and find 1 Opponent
         /// </summary>
         /// <param name="gameController">Game controller to use</param>
+        /// <param name="nameOfOpponent">Name of Opponent to hidden in Kitchen</param>
         /// <param name="ofHowManyOpponentsStatusText">Text in status telling total number of Opponents</param>
         /// <returns>Game controller after first Opponent found</returns>
-        private static GameController CheckKitchenAndFind1Opponent_DefaultOpponentName(GameController gameController, string ofHowManyOpponentsStatusText)
+        private static GameController CheckKitchenAndFind1Opponent_DefaultOpponentName(
+            GameController gameController, string nameOfOpponent, string ofHowManyOpponentsStatusText)
         {
             Assert.Multiple(() =>
             {
@@ -296,7 +298,7 @@ namespace HideAndSeek
                     "You are in the Kitchen. You see the following exits:" +
                     Environment.NewLine + " - the Hallway is to the Southeast" +
                     Environment.NewLine + "Someone could hide next to the stove" +
-                    Environment.NewLine + $"You have found 1 {ofHowManyOpponentsStatusText}: Joe"), "status after check Kitchen");
+                    Environment.NewLine + $"You have found 1 {ofHowManyOpponentsStatusText}: {nameOfOpponent}"), "status after check Kitchen");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(7), "move number after check Kitchen");
             });
 
@@ -375,27 +377,30 @@ namespace HideAndSeek
             return gameController;
         }
 
-        public static IEnumerable TestCases_For_Test_GameController_ParseInput_ForFullGame_WithSpecifiedNumberOfOpponents_AndCheckMessageAndProperties
+        public static IEnumerable TestCases_For_Test_GameController_ParseInput_ForFullGame_WithCustomOpponents_AndCheckMessageAndProperties
         {
             get
             {
+                // Specified number of Opponents - 1
                 yield return new TestCaseData( // Joe in Kitchen
-                    1,
                     new int[] { 1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4 }, // Hide Opponent in Kitchen
-                    (GameController gameController) => CheckKitchenAndFind1Opponent_DefaultOpponentName(gameController, "of 1 opponent"))
-                .SetName("Test_GameController_ParseInput_ForFullGame_WithSpecifiedNumberOfOpponents_AndCheckMessageAndProperties - 1 opponent");
+                    () => new GameController(1, "DefaultHouse"),
+                    (GameController gameController) => CheckKitchenAndFind1Opponent_DefaultOpponentName(gameController, "Joe", "of 1 opponent"))
+                .SetName("Test_GameController_ParseInput_ForFullGame_WithCustomOpponents_AndCheckMessageAndProperties - specify number - 1 opponent")
+                .SetCategory("GameController ParseInput Move Check Message Prompt Status MoveNumber GameOver Constructor SpecifiedNumberOfOpponents OpponentsAndHidingPlaces Success");
 
+                // Specified number of Opponents - 2
                 yield return new TestCaseData( // Joe in Kitchen, Bob in Pantry
-                    2,
                     new int[] {
                         1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
                         0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2 // Hide opponent in Pantry
                     },
+                    () => new GameController(2, "DefaultHouse"),
                     (GameController gameController) => {
                         Assert.Multiple(() =>
                         {
                             // Find first Opponent Joe in Kitchen
-                            gameController = CheckKitchenAndFind1Opponent_DefaultOpponentName(gameController, "of 2 opponents");
+                            gameController = CheckKitchenAndFind1Opponent_DefaultOpponentName(gameController, "Joe", "of 2 opponents");
                             Assert.That(gameController.GameOver, Is.False, "game not over after find first opponent");
 
                             // Go to Hallway
@@ -428,10 +433,11 @@ namespace HideAndSeek
                         // Return game controller
                         return gameController;
                     })
-                .SetName("Test_GameController_ParseInput_ForFullGame_WithSpecifiedNumberOfOpponents_AndCheckMessageAndProperties - 2 opponents");
+                .SetName("Test_GameController_ParseInput_ForFullGame_WithCustomOpponents_AndCheckMessageAndProperties - specify number - 2 opponents")
+                .SetCategory("GameController ParseInput Move Check Message Prompt Status MoveNumber GameOver Constructor SpecifiedNumberOfOpponents OpponentsAndHidingPlaces Success");
                 
+                // Specified number of Opponents - 6
                 yield return new TestCaseData( // Joe, Owen, and Mary in Kitchen; Ana in Bathroom; Bob and Jimmy in Pantry
-                    6,
                     new int[] {
                         1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
                         0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
@@ -439,6 +445,7 @@ namespace HideAndSeek
                         1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
                         0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
                     },
+                    () => new GameController(6, "DefaultHouse"),
                     (GameController gameController) => {
                         Assert.Multiple(() =>
                         {
@@ -509,10 +516,11 @@ namespace HideAndSeek
                         // Return game controller
                         return gameController;
                     })
-                .SetName("Test_GameController_ParseInput_ForFullGame_WithSpecifiedNumberOfOpponents_AndCheckMessageAndProperties - 6 opponents");
+                .SetName("Test_GameController_ParseInput_ForFullGame_WithCustomOpponents_AndCheckMessageAndProperties - specify number - 6 opponents")
+                .SetCategory("GameController ParseInput Move Check Message Prompt Status MoveNumber GameOver Constructor SpecifiedNumberOfOpponents OpponentsAndHidingPlaces Success");
                 
+                // Specified number of Opponents - 9
                 yield return new TestCaseData( // Joe, Owen, Mary, and Andy in Kitchen; Ana and Tony in Bathroom; Bob, Jimmy, and Alice in Pantry
-                    9,
                     new int[] {
                         1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
                         0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
@@ -520,6 +528,7 @@ namespace HideAndSeek
                         1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
                         0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
                     },
+                    () => new GameController(9, "DefaultHouse"),
                     (GameController gameController) =>
                     {
                         Assert.Multiple(() =>
@@ -541,10 +550,11 @@ namespace HideAndSeek
                         // Return game controller
                         return gameController;
                     })
-                .SetName("Test_GameController_ParseInput_ForFullGame_WithSpecifiedNumberOfOpponents_AndCheckMessageAndProperties - 9 opponents");
+                .SetName("Test_GameController_ParseInput_ForFullGame_WithCustomOpponents_AndCheckMessageAndProperties - specify number - 9 opponents")
+                .SetCategory("GameController ParseInput Move Check Message Prompt Status MoveNumber GameOver Constructor SpecifiedNumberOfOpponents OpponentsAndHidingPlaces Success");
                 
+                // Specified number of Opponents - 10
                 yield return new TestCaseData( // Joe, Owen, Mary, and Andy in Kitchen; Ana and Tony in Bathroom; Bob, Jimmy, Alice, and Jill in Pantry
-                    10,
                     new int[] {
                         1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
                         0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
@@ -552,6 +562,7 @@ namespace HideAndSeek
                         1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
                         0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
                     },
+                    () => new GameController(10, "DefaultHouse"),
                     (GameController gameController) => {
                         Assert.Multiple(() =>
                         {
@@ -572,7 +583,8 @@ namespace HideAndSeek
                         // Return game controller
                         return gameController;
                     })
-                .SetName("Test_GameController_ParseInput_ForFullGame_WithSpecifiedNumberOfOpponents_AndCheckMessageAndProperties - 10 opponents");
+                .SetName("Test_GameController_ParseInput_ForFullGame_WithCustomOpponents_AndCheckMessageAndProperties - specify number - 10 opponents")
+                .SetCategory("GameController ParseInput Move Check Message Prompt Status MoveNumber GameOver Constructor SpecifiedNumberOfOpponents OpponentsAndHidingPlaces Success");
             }
         }
 

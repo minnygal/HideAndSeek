@@ -71,17 +71,17 @@ namespace HideAndSeek
         }
         
         [TestCaseSource(typeof(TestGameController_CustomOpponents_TestCaseData), 
-            nameof(TestGameController_CustomOpponents_TestCaseData.TestCases_For_Test_GameController_ParseInput_ForFullGame_WithSpecifiedNumberOfOpponents_AndCheckMessageAndProperties))]
-        [Category("GameController ParseInput Move Check Message Prompt Status MoveNumber GameOver Constructor SpecifiedNumberOfOpponents OpponentsAndHidingPlaces Success")]
-        public void Test_GameController_ParseInput_ForFullGame_WithSpecifiedNumberOfOpponents_AndCheckMessageAndProperties(
-            int numberOfOpponents, int[] mockRandomValuesList, // NOTE: don't hide any Opponents in Garage, test expects Garage empty
-            Func<GameController, GameController> PlayGame)
+            nameof(TestGameController_CustomOpponents_TestCaseData.TestCases_For_Test_GameController_ParseInput_ForFullGame_WithCustomOpponents_AndCheckMessageAndProperties))]
+        public void Test_GameController_ParseInput_ForFullGame_WithCustomOpponents_AndCheckMessageAndProperties(
+            int[] mockRandomValuesList, // NOTE: don't hide any Opponents in Garage, test expects Garage empty
+            Func<GameController> CreateGameController, // Return GameController set up with custom Opponents
+            Func<GameController, GameController> FinishGame) // Finish game after move 5 (in Hallway)
         {
             // Set House random number generator to mock random
             House.Random = new MockRandomWithValueList(mockRandomValuesList);
 
             // Create GameController
-            gameController = new GameController(numberOfOpponents, "DefaultHouse");
+            gameController = CreateGameController();
 
             // Play game and make assertions
             Assert.Multiple(() =>
@@ -123,7 +123,7 @@ namespace HideAndSeek
                 gameController.ParseInput("East"); // Go East to Hallway
 
                 // Play game to end, making assertions along the way
-                gameController = PlayGame(gameController);
+                gameController = FinishGame(gameController);
 
                 // Assert that game is over
                 Assert.That(gameController.GameOver, Is.True, "game over at end");
