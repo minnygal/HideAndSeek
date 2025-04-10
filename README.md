@@ -1,4 +1,4 @@
-# Hide And Seek Game Console App Version 3.0.0
+# Hide And Seek Game Console App Version 4.0.0
 
 
 ## Table of Contents
@@ -12,10 +12,11 @@
   - [Run executable from command line](#run-exe-cl)
   - [Run app using the dotnet command from command line](#run-dll-cl)
 - [App usage](#usage)
+  - [Enter number or names of opponents](#usage-opponents)
   - [Select house layout](#usage-select-house)
   - [Move in specific direction](#usage-move)
   - [Check for hiding opponents](#usage-check)
-  - [Teleport](#usage-teleport)
+  - [Teleport to a random location with hiding place](#usage-teleport)
   - [Save game](#usage-save)
   - [Load game](#usage-load)
   - [Delete game](#usage-delete)
@@ -36,8 +37,8 @@ The Hide and Seek Game Console app allows a user (playing the role of the seeker
 
 <a name="whats-new"></a>
 ## What's new
-- The user can enter a direction shorthand to move in a specific direction.
-- The user can teleport to a random location with hiding place.
+- The user can specify the number of opponents (1-10).
+- The user can specify the names of opponents (unlimited number of opponents).
 
 
 
@@ -52,7 +53,7 @@ The Hide and Seek Game Console app allows a user (playing the role of the seeker
 
 <a name="requirements"></a>
 ### Requirements
-Hide and Seek Game Console app is a framework-dependent deployment, so it can only run on a machine that has the .NET runtime installed.  It is a Console app, so the user must have access to a command line interface on the machine.
+Hide and Seek Game Console app is a framework-dependent deployment, so it can *only run on a machine that has the .NET runtime installed*.  It is a Console app, so the user must have access to a command line interface on the machine.
 
 
 <a name="run"></a>
@@ -85,16 +86,39 @@ dotnet HideAndSeekConsole.dll
 <a name="usage"></a>
 ## App usage
 
-Follow the prompts and options given.  To enter a command, type the command and then press the Enter key on your keyboard.
+**Follow the prompts and options given.  To enter a command, type the command and then press the Enter key on your keyboard.**
 
-*Remember that the "save" and "delete" commands create/delete actual files stored on your machine.  So, whenever you run the app, the files saved/deleted during previous app usages will remain saved/deleted.
+**Remember that the "save" and "delete" commands create/delete actual files stored on your machine.  So, whenever you run the app, the files saved/deleted during previous app usages will remain saved/deleted.*
+
+
+<a name="usage-opponents"></a>
+### Enter number or names of opponents
+At the beginning of a new game, you will be asked to enter the number of opponents you'd like or a list of names.  **To use the default number of opponents (5) and default names, don't type anything** and press the Enter key on your keyboard.
+
+**To specify the number of opponents and use default names, type a number (between 1 and 10)** and press the Enter key on your keyboard.
+
+For example:
+```
+How many opponents would you like?  Enter a number between 1 and 10, or a comma-separated list of names: 6
+```
+
+Or **specify names for the opponents by typing the names separated by commas** and pressing the Enter key on your keyboard.  You must type at least one name.  There is no limit to the number of names you may type.
+
+For example:
+```
+How many opponents would you like?  Enter a number between 1 and 10, or a comma-separated list of names: Jane
+```
+Or:
+```
+How many opponents would you like?  Enter a number between 1 and 10, or a comma-separated list of names: Jane, John, Jude, Jerry, Justin, Jackie
+```
 
 
 <a name="usage-select-house"></a>
 ### Select house layout
-At the beginning of a new game, you will see a prompt to type a house layout name or just press enter.  To use the default house layout, don't type anything and press the Enter key on your keyboard.
+At the beginning of a new game, after you enter the number or names of opponents, you will see a prompt to type a house layout name or just press enter.  **To use the default house layout, don't type anything** and press the Enter key on your keyboard.
 
-If you want to use a specific house layout (contained in the application folder), type the name of the file (without the .json file extension) and press the Enter key on your keyboard.  For example, to use the built-in FriendHouse layout:
+If you want **to use a specific house layout (contained in the application folder), type the name of the file** (without the .json file extension) and press the Enter key on your keyboard.  For example, to use the built-in FriendHouse layout:
 ```
 Type a house layout file name or just press Enter to use the default house layout: FriendHouse
 ```
@@ -113,9 +137,9 @@ If there is a problem loading the house layout, you will see an error message an
 
 <a name="usage-move"></a>
 ### Move in specific direction
-Move in any of the directions listed in the exit list (right below the "You see the following exits:" text) by typing the direction (or direction shorthand*) and pressing the Enter key on your keyboard. (This counts as a move!)
+**Move in any of the directions listed in the exit list** (right below the "You see the following exits:" text) **by typing the direction** (or direction shorthand*) and pressing the Enter key on your keyboard. (This counts as a move!)
 
-For example, when you're in the Garage, you could type "In" and press the Enter key to move to the Entry.
+For example, when you're in the Garage, you could type ```In``` and press the Enter key to move to the Entry.
 ```
 You are in the Garage. You see the following exits:
  - the Entry is In
@@ -124,7 +148,7 @@ You have not found any opponents
 2: Which direction do you want to go (or type 'check'): In
 ```
 
-*Direction shorthands:
+#### *Direction shorthands:
 | Shorthand | Direction |
 | --------- | ------------ |
 |  ```U```  |      Up      |
@@ -144,9 +168,9 @@ You have not found any opponents
 <a name="usage-check"></a>
 ### Check for hiding opponents
 
-Check to see if any opponents are hiding in your current location by typing "check" and pressing the Enter key on your keyboard.  Only do this when you're in a location with a hiding place (described below the exit list).  (This counts as a move!)
+**Check to see if any opponents are hiding in your current location by typing ```check```** and pressing the Enter key on your keyboard.  Only do this when you're in a location with a hiding place (described below the exit list).  (*This counts as a move!*)
 
-For example, when you're in the Garage, you could type "check" and press the Enter key to check if there's anyone hiding behind the car in the Garage.
+For example, when you're in the Garage, you could type ```check``` and press the Enter key to check if there's anyone hiding behind the car in the Garage.
 ```
 You are in the Garage. You see the following exits:
  - the Entry is In
@@ -172,10 +196,10 @@ Nobody was hiding behind the car
 
 
 <a name="usage-teleport"></a>
-### Teleport
-Type "teleport" and press the Enter key on your keyboard to teleport to a random location with hiding place.  (You risk being teleported to the room in which you are currently. Teleporting counts as a move regardless!)
+### Teleport to a random location with hiding place
+**To teleport to a random location with hiding place, type ```teleport```** and press the Enter key on your keyboard.  (*You risk being teleported to the room in which you are currently. Teleporting counts as a move regardless!*)
 
-In the example below, you're in the Garage, you typed "teleport" and press the Enter key, and you were be taken to the Pantry in 1 move.
+In the example below, you're in the Garage, you typed ```teleport``` and pressed the Enter key, and you were be taken to the Pantry in 1 move.
 
 ```
 You are in the Garage. You see the following exits:
@@ -195,7 +219,7 @@ You have not found any opponents
 
 <a name="usage-save"></a>
 ### Save game*
-You may save the game anytime before the game ends using the "save" command followed by a space and your desired game name. The game name must not include spaces, backslashes, or forward slashes.  Also, the game name must not be identical to the name of any already-existing saved game.  (This does not count as a move or affect the current game in any other way.)
+**You may save the game anytime before the game ends using the ```save``` command followed by a space and your desired game name.** *The game name must not include spaces, backslashes, or forward slashes.  Also, the game name must not be identical to the name of any already-existing saved game.*  (This does not count as a move or affect the current game in any other way.)
 
 For example, if you want to save the current game as MyGameName:
 
@@ -224,11 +248,16 @@ If the game was not saved successfully, try again with a valid file name not cur
 <a name="usage-load"></a>
 ### Load game*
 
-You may load a saved game anytime before the current game ends using the "load" command followed by a space and the name of the game to load.  (Careful because you will lose your progress in your current game after successfully running the load command!) 
+**You may load a saved game** when the app first opens or anytime before the current game ends **using the ```load``` command followed by a space and the name of the game to load.**  (*Careful because you will lose your progress in your current game after successfully running the load command!*) 
 
-For example, if you had previously saved a game called MyGameName, you could type the following and press the Enter key to load MyGameName:
+For example, if you are playing a game but would rather play a previously saved game called MyGameName instead:
 ```
 10: Which direction do you want to go (or type 'check'): load MyGameName
+```
+
+Or if you just opened the app and want to play a previously saved game called MyGameName:
+```
+How many opponents would you like?  Enter a number between 1 and 10, or a comma-separated list of names: load MyGameName
 ```
 
 If the game was loaded successfully, you'll see something like:
@@ -244,12 +273,12 @@ Cannot load game because file MyGameName does not exist
 If the game was not successfully loaded because the saved game file or the house layout file was corrupt, you'll see a different error message describing the problem.
 
 If the game was not loaded successfully, try again with the name of an existing, non-corrupt saved game or keep playing the current game - no harm done.
- 
+
 
 <a name="usage-delete"></a>
 ### Delete game*
 
-You may delete a saved game anytime before the current game ends using the "delete" command followed by a space and the name of the game to delete.  (Careful because this is a permanent, irreversible action!)  This does not count as a move or affect your current game in any other way.
+**You may delete a saved game** anytime before the current game ends **using the ```delete``` command followed by a space and the name of the game to delete.**  (*Careful because this is a permanent, irreversible action!*)  This does not count as a move or affect your current game in any way.
 
 For example, if you want to delete a game previously saved as MyGameName:
 ```
@@ -279,9 +308,8 @@ Please message me via the [contact form here](https://minnystuff.com/contact/) w
 <a name="roadmap"></a>
 ## Roadmap
 
-### Version 4.0 - customize opponents
-- Allow the user to specify how many opponents they want.
-- Allow the user to set the names of the opponents.
+### Version 4.1 - make GameController main methods public
+- Make GameController main methods public so the game doesn't have to be played solely via the ParseInput method.
 
 
 ### Version 5.0 - location tracking, saved game list
@@ -321,9 +349,9 @@ Please message me via the [contact form here](https://minnystuff.com/contact/) w
 Pull requests are welcome!  Please make sure to update tests in the HideAndSeekTestProject as appropriate.  Ensure adherence to best practices in all code submitted and remember to comment your code (and, of course, give credit where credit is due!).
 
 Please feel free to clone, fork, or download this repository to your heart's content.  This repository contains the following Visual Studio projects:
-- HideAndSeekConsoleApp (containing the code allowing the game to be run via the command line interface)
-- HideAndSeekClassLibrary (containing the code controlling the game functionality)
-- HideAndSeekTestProject (containing the code for testing the HideAndSeekClassLibrary; utilizes NUnit, Moq, TestableIO.System.IO.Abstractions.TestingHelpers, and TestableIO.System.IO.Abstractions.Wrappers)
+- **HideAndSeekConsoleApp** (containing the code allowing the game to be run via the command line interface)
+- **HideAndSeekClassLibrary** (containing the code controlling the game functionality)
+- **HideAndSeekTestProject** (containing the code for testing the HideAndSeekClassLibrary; utilizes NUnit, Moq, TestableIO.System.IO.Abstractions.TestingHelpers, and TestableIO.System.IO.Abstractions.Wrappers)
 
 
 
@@ -332,7 +360,7 @@ Please feel free to clone, fork, or download this repository to your heart's con
 Adapted from Stellman & Greene's [HideAndSeek](https://github.com/head-first-csharp/fourth-edition/tree/master/Code/Chapter_10/HideAndSeek_part_3)\
 © 2023 Andrew Stellman and Jennifer Greene\
 Published under the [MIT License](https://github.com/head-first-csharp/fourth-edition/blob/master/LICENSE)\
-Link valid as of 02-25-2025
+Link valid as of 04-10-2025
 
 
 

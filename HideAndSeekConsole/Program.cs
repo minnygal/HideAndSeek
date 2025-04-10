@@ -153,11 +153,11 @@ namespace HideAndSeek
             // Create new GameController
             GameController gameController = new GameController();
             string message = gameController.ParseInput(userInput); // Parse input to load game
+            Console.WriteLine(message); // Display message
 
             // If return message does not indicate success
             if (!(message.StartsWith("Game successfully loaded")))
             {
-                Console.WriteLine(message); // Display message
                 gameController = null; // Set game controller to null
             }
 
