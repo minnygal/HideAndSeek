@@ -69,6 +69,66 @@ namespace HideAndSeek
                                                           "because the number of Opponents specified is invalid (must be between 1 and 10)"));
             });
         }
+        
+        [TestCaseSource(typeof(TestGameController_CustomOpponents_TestCaseData), 
+            nameof(TestGameController_CustomOpponents_TestCaseData.TestCases_For_Test_GameController_ParseInput_ForFullGame_WithSpecifiedNumberOfOpponents_AndCheckMessageAndProperties))]
+        [Category("GameController ParseInput Move Check Message Prompt Status MoveNumber GameOver Constructor SpecifiedNumberOfOpponents OpponentsAndHidingPlaces Success")]
+        public void Test_GameController_ParseInput_ForFullGame_WithSpecifiedNumberOfOpponents_AndCheckMessageAndProperties(
+            int numberOfOpponents, int[] mockRandomValuesList, // NOTE: don't hide any Opponents in Garage, test expects Garage empty
+            Func<GameController, GameController> PlayGame)
+        {
+            // Set House random number generator to mock random
+            House.Random = new MockRandomWithValueList(mockRandomValuesList);
+
+            // Create GameController
+            gameController = new GameController(numberOfOpponents, "DefaultHouse");
+
+            // Play game and make assertions
+            Assert.Multiple(() =>
+            {
+                // Check properties when game started
+                Assert.That(gameController.GameOver, Is.False, "game not over at beginning");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Entry. You see the following exits:" +
+                    Environment.NewLine + " - the Hallway is to the East" +
+                    Environment.NewLine + " - the Garage is Out" +
+                    Environment.NewLine + "You have not found any opponents"), "status at beginning of game");
+                Assert.That(gameController.Prompt, Is.EqualTo("1: Which direction do you want to go: "), "prompt at beginning of game");
+                Assert.That(gameController.MoveNumber, Is.EqualTo(1), "move number at beginning of game");
+
+                // Go to Garage and check properties
+                Assert.That(gameController.ParseInput("Out"), Is.EqualTo("Moving Out"), "message when moving out to Garage"); // Go Out to Garage
+                Assert.That(gameController.GameOver, Is.False, "game not over when enter Garage");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Garage. You see the following exits:" +
+                    Environment.NewLine + " - the Entry is In" +
+                    Environment.NewLine + "Someone could hide behind the car" +
+                    Environment.NewLine + "You have not found any opponents"), "status when enter Garage");
+                Assert.That(gameController.Prompt, Is.EqualTo("2: Which direction do you want to go (or type 'check'): "), "prompt when enter Garage");
+                Assert.That(gameController.MoveNumber, Is.EqualTo(2), "move number when enter Garage");
+
+                // Check Garage and check properties
+                Assert.That(gameController.ParseInput("Check"), Is.EqualTo("Nobody was hiding behind the car"), "message when checking Garage"); // Check Garage, no Opponents found
+                Assert.That(gameController.GameOver, Is.False, "game not over after check Garage");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Garage. You see the following exits:" +
+                    Environment.NewLine + " - the Entry is In" +
+                    Environment.NewLine + "Someone could hide behind the car" +
+                    Environment.NewLine + "You have not found any opponents"), "status after check Garage");
+                Assert.That(gameController.Prompt, Is.EqualTo("3: Which direction do you want to go (or type 'check'): "), "prompt after check Garage");
+                Assert.That(gameController.MoveNumber, Is.EqualTo(3), "move number after check Garage");
+
+                // Move to Entry, then Hallway
+                gameController.ParseInput("In"); // Go In to Entry
+                gameController.ParseInput("East"); // Go East to Hallway
+
+                // Play game to end, making assertions along the way
+                gameController = PlayGame(gameController);
+
+                // Assert that game is over
+                Assert.That(gameController.GameOver, Is.True, "game over at end");
+            });
+        }
 
         [TestCaseSource(typeof(TestGameController_CustomOpponents_TestCaseData), 
             nameof(TestGameController_CustomOpponents_TestCaseData.TestCases_For_Test_GameController_Constructor_WithSpecifiedNamesOfOpponents))]
