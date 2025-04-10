@@ -316,11 +316,13 @@ namespace HideAndSeek
 
         /// <summary>
         /// Move to the Location in a Direction
+        /// (increments move number regardless of return value)
         /// </summary>
         /// <param name="direction">The Direction to move</param>
         /// <returns>True if the player can move in that Direction, false otherwise</returns>
         private bool Move(Direction direction)
         {
+            MoveNumber++; // Increment move number
             Location startLocation = CurrentLocation; // Set start location to current location
             CurrentLocation = CurrentLocation.GetExit(direction); // Set current location to exit returned
             return CurrentLocation != startLocation; // Return whether the current location has changed (whether move was successful)
@@ -337,15 +339,13 @@ namespace HideAndSeek
             string originalCommand = input.Split(" ").FirstOrDefault("");
             string lowercaseCommand = originalCommand.ToLower();
 
-            // If input requests the current location be checked for hiding opponents
-            if (lowercaseCommand == "check")
+            // Evaluate command and act accordingly
+            if (lowercaseCommand == "check") // If input requests the current location be checked for hiding opponents
             {
-                MoveNumber++; // Increment move number
                 return CheckCurrentLocation(); // Check current location and return results
             }
-            else if (lowercaseCommand == "teleport")
+            else if (lowercaseCommand == "teleport") // If input requests teleportation
             {
-                MoveNumber++; // Increment move number
                 return Teleport(); // Teleport and return message
             }
             else if ( // If input requests save, load, or delete game
@@ -356,14 +356,22 @@ namespace HideAndSeek
                 // Get index of first space in input (space after command and before name of file)
                 int indexOfSpace = input.IndexOf(' ');
 
-                // If input includes a space
-                if (indexOfSpace != -1)
+                // If input does not include a space
+                if (indexOfSpace == -1)
+                {
+                    return "Cannot perform action because no file name was entered"; // Return failure message
+                }
+                else // If input does include a space
                 {
                     // Extract file name
                     string fileName = input.Substring(indexOfSpace + 1);
 
-                    // If file name is valid
-                    if(FileSystem.IsValidName(fileName))
+                    // If file name is invalid
+                    if( !(FileSystem.IsValidName(fileName)) )
+                    {
+                        return $"Cannot perform action because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"; // Return failure message
+                    }
+                    else // If file name is valid
                     {
                         // If input requests save game
                         if (lowercaseCommand == "save")
@@ -379,14 +387,6 @@ namespace HideAndSeek
                             return DeleteGame(fileName); // Delete game and return message
                         }
                     }
-                    else // If the file name is invalid
-                    {
-                        return $"Cannot perform action because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"; // Return failure message
-                    }
-                } 
-                else // If input does not include a space
-                {
-                    return "Cannot perform action because no file name was entered"; // Return failure message
                 }
             }
             // Try to parse input to Direction
@@ -397,22 +397,24 @@ namespace HideAndSeek
             // Try to move in specified Direction
             else if ( !(Move(direction)) ) // If cannot move in specified Direction
             {
-                MoveNumber++; // Increment move number
                 return "There's no exit in that direction"; // Return no exit in that direction message
             }
             else // If successfully moved in specified Direction
             {
-                MoveNumber++; // Increment move number
                 return "Moving " + direction; // Return the direction you're moving
             }
         }
 
         /// <summary>
         /// Helper method to check current location for opponents
+        /// (increments move number)
         /// </summary>
         /// <returns>The results of checking the location</returns>
         private string CheckCurrentLocation()
         {
+            // Increment move number
+            MoveNumber++; 
+
             // If current location has a hiding place
             if (CurrentLocation.GetType() == typeof(LocationWithHidingPlace))
             {
@@ -438,10 +440,12 @@ namespace HideAndSeek
 
         /// <summary>
         /// Teleport to random location with hiding place
+        /// (increments move numbber)
         /// </summary>
         /// <returns>Description</returns>
         private string Teleport()
         {
+            MoveNumber++; // Increment move number
             CurrentLocation = House.GetRandomLocationWithHidingPlace(); // Set player location to random location with hiding place
             return $"Teleporting to random location with hiding place: {CurrentLocation}"; // Return description
         }
