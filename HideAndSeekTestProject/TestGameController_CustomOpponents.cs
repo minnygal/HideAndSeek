@@ -70,12 +70,21 @@ namespace HideAndSeek
             });
         }
         
+        /// <summary>
+        /// Test that GameController ParseInput for full game with custom Opponents 
+        /// (either number or names set in GameController constructor)
+        /// goes as expected, checking ParseInput return message and GameController properties
+        /// 
+        /// NOTE: Don't hide any Opponents in garage because test expects Garage to be empty
+        /// NOTE: FinishGame is called when player is in Hallway on move 5 (after checking empty Garage)
+        /// </summary>
+        /// <param name="mockRandomValuesList">Values for mock random for House Random (determines Opponents' hiding locations)</param>
+        /// <param name="CreateGameController">Function to return GameController set up with custom Opponents</param>
+        /// <param name="FinishGame">Function to return GameController after finish game, making assertions along the way</param>
         [TestCaseSource(typeof(TestGameController_CustomOpponents_TestCaseData), 
             nameof(TestGameController_CustomOpponents_TestCaseData.TestCases_For_Test_GameController_ParseInput_ForFullGame_WithCustomOpponents_AndCheckMessageAndProperties))]
         public void Test_GameController_ParseInput_ForFullGame_WithCustomOpponents_AndCheckMessageAndProperties(
-            int[] mockRandomValuesList, // NOTE: don't hide any Opponents in Garage, test expects Garage empty
-            Func<GameController> CreateGameController, // Return GameController set up with custom Opponents
-            Func<GameController, GameController> FinishGame) // Finish game after move 5 (in Hallway)
+            int[] mockRandomValuesList, Func<GameController> CreateGameController, Func<GameController, GameController> FinishGame)
         {
             // Set House random number generator to mock random
             House.Random = new MockRandomWithValueList(mockRandomValuesList);
