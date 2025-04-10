@@ -339,12 +339,12 @@ namespace HideAndSeek
             string originalCommand = input.Split(" ").FirstOrDefault("");
             string lowercaseCommand = originalCommand.ToLower();
 
-            // If input requests the current location be checked for hiding opponents
-            if (lowercaseCommand == "check")
+            // Evaluate command and act accordingly
+            if (lowercaseCommand == "check") // If input requests the current location be checked for hiding opponents
             {
                 return CheckCurrentLocation(); // Check current location and return results
             }
-            else if (lowercaseCommand == "teleport")
+            else if (lowercaseCommand == "teleport") // If input requests teleportation
             {
                 return Teleport(); // Teleport and return message
             }
@@ -356,14 +356,22 @@ namespace HideAndSeek
                 // Get index of first space in input (space after command and before name of file)
                 int indexOfSpace = input.IndexOf(' ');
 
-                // If input includes a space
-                if (indexOfSpace != -1)
+                // If input does not include a space
+                if (indexOfSpace == -1)
+                {
+                    return "Cannot perform action because no file name was entered"; // Return failure message
+                }
+                else // If input does include a space
                 {
                     // Extract file name
                     string fileName = input.Substring(indexOfSpace + 1);
 
-                    // If file name is valid
-                    if(FileSystem.IsValidName(fileName))
+                    // If file name is invalid
+                    if( !(FileSystem.IsValidName(fileName)) )
+                    {
+                        return $"Cannot perform action because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"; // Return failure message
+                    }
+                    else // If file name is valid
                     {
                         // If input requests save game
                         if (lowercaseCommand == "save")
@@ -379,14 +387,6 @@ namespace HideAndSeek
                             return DeleteGame(fileName); // Delete game and return message
                         }
                     }
-                    else // If the file name is invalid
-                    {
-                        return $"Cannot perform action because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"; // Return failure message
-                    }
-                } 
-                else // If input does not include a space
-                {
-                    return "Cannot perform action because no file name was entered"; // Return failure message
                 }
             }
             // Try to parse input to Direction
