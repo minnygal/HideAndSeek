@@ -277,14 +277,12 @@ namespace HideAndSeek
         }
 
         /// <summary>
-        /// Helper method to check Kitchen and find 1 Opponent
+        /// Helper method for FinishGame parameter of 
+        /// Test_GameController_ParseInput_ForFullGame_WithCustomOpponents_AndCheckMessageAndProperties - specify number - 1 opponent
         /// </summary>
-        /// <param name="gameController">Game controller to use</param>
-        /// <param name="nameOfOpponent">Name of Opponent to hidden in Kitchen</param>
-        /// <param name="ofHowManyOpponentsStatusText">Text in status telling total number of Opponents</param>
-        /// <returns>Game controller after first Opponent found</returns>
-        private static GameController CheckKitchenAndFind1Opponent_DefaultOpponentName(
-            GameController gameController, string nameOfOpponent, string ofHowManyOpponentsStatusText)
+        /// <param name="gameController">Game controller on move 5 in Hallway</param>
+        /// <returns>Game controller after game finished</returns>
+        private static GameController FinishGame_SpecifiedNumber_1Opponent(GameController gameController)
         {
             Assert.Multiple(() =>
             {
@@ -298,7 +296,7 @@ namespace HideAndSeek
                     "You are in the Kitchen. You see the following exits:" +
                     Environment.NewLine + " - the Hallway is to the Southeast" +
                     Environment.NewLine + "Someone could hide next to the stove" +
-                    Environment.NewLine + $"You have found 1 {ofHowManyOpponentsStatusText}: {nameOfOpponent}"), "status after check Kitchen");
+                    Environment.NewLine + "You have found 1 of 1 opponent: Joe"), "status after check Kitchen");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(7), "move number after check Kitchen");
             });
 
@@ -307,14 +305,145 @@ namespace HideAndSeek
         }
 
         /// <summary>
-        /// Helper method to check Kitchen and Bathroom to find first 6 Opponents with default names
-        /// and then go to Pantry (but don't check Pantry)
-        /// (Joe, Owen, Mary, and Andy in Kitchen; Ana and Tony in Bathroom)
+        /// Helper method for FinishGame parameter of 
+        /// Test_GameController_ParseInput_ForFullGame_WithCustomOpponents_AndCheckMessageAndProperties - specify number - 2 opponents
         /// </summary>
-        /// <param name="gameController">Game controller to use</param>
-        /// <param name="ofHowManyOpponentsStatusText">Text in status telling total number of Opponents</param>
-        /// <returns>Game controller after sixth Opponent found and moved to Pantry</returns>
-        private static GameController CheckKitchenAndBathroomAndFind6Opponents_DefaultOpponentNames(GameController gameController, string ofHowManyOpponentsStatusText)
+        /// <param name="gameController">Game controller on move 5 in Hallway</param>
+        /// <returns>Game controller after game finished</returns>
+        private static GameController FinishGame_SpecifiedNumber_2Opponents(GameController gameController)
+        {
+            Assert.Multiple(() =>
+            {
+                // Go to Kitchen
+                gameController.ParseInput("Northwest"); // Go Northwest to Kitchen
+                Assert.That(gameController.MoveNumber, Is.EqualTo(6), "move number when enter Kitchen");
+
+                // Check Kitchen and find Joe
+                Assert.That(gameController.ParseInput("Check"), Is.EqualTo("You found 1 opponent hiding next to the stove"), "message when checking Kitchen");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Kitchen. You see the following exits:" +
+                    Environment.NewLine + " - the Hallway is to the Southeast" +
+                    Environment.NewLine + "Someone could hide next to the stove" +
+                    Environment.NewLine + "You have found 1 of 2 opponents: Joe"), "status after check Kitchen");
+                Assert.That(gameController.MoveNumber, Is.EqualTo(7), "move number after check Kitchen");
+                Assert.That(gameController.GameOver, Is.False, "game not over after find first opponent");
+
+                // Go to Hallway
+                gameController.ParseInput("Southeast"); // Go Southeast to Hallway
+                Assert.That(gameController.MoveNumber, Is.EqualTo(8), "move number when enter Hallway from Kitchen");
+
+                // Go to Landing
+                gameController.ParseInput("Up"); // Go Up to Landing
+                Assert.That(gameController.MoveNumber, Is.EqualTo(9), "move number when enter Landing");
+
+                // Go to Pantry
+                gameController.ParseInput("South"); // Go South to Pantry
+                Assert.That(gameController.Status, Is.EqualTo(
+                        "You are in the Pantry. You see the following exits:" +
+                        Environment.NewLine + " - the Landing is to the North" +
+                        Environment.NewLine + "Someone could hide inside a cabinet" +
+                        Environment.NewLine + "You have found 1 of 2 opponents: Joe"), "status when enter Pantry");
+                Assert.That(gameController.MoveNumber, Is.EqualTo(10), "move number when enter Pantry");
+
+                // Check Pantry and find Bob
+                Assert.That(gameController.ParseInput("Check"), Is.EqualTo("You found 1 opponent hiding inside a cabinet"), "message when checking Pantry");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Pantry. You see the following exits:" +
+                    Environment.NewLine + " - the Landing is to the North" +
+                    Environment.NewLine + "Someone could hide inside a cabinet" +
+                    Environment.NewLine + "You have found 2 of 2 opponents: Joe, Bob"), "status after check Pantry");
+                Assert.That(gameController.MoveNumber, Is.EqualTo(11), "move number after check Pantry");
+            });
+
+            // Return game controller
+            return gameController;
+        }
+
+        /// <summary>
+        /// Helper method for FinishGame parameter of 
+        /// Test_GameController_ParseInput_ForFullGame_WithCustomOpponents_AndCheckMessageAndProperties - specify number - 6 opponents
+        /// </summary>
+        /// <param name="gameController">Game controller on move 5 in Hallway</param>
+        /// <returns>Game controller after game finished</returns>
+        private static GameController FinishGame_SpecifiedNumber_6Opponents(GameController gameController)
+        {
+            Assert.Multiple(() =>
+            {
+                // Go to Kitchen
+                gameController.ParseInput("Northwest"); // Go Northwest to Kitchen
+                Assert.That(gameController.MoveNumber, Is.EqualTo(6), "move number when enter Kitchen");
+
+                // Check Kitchen and find Joe, Owen, and Mary
+                Assert.That(gameController.ParseInput("Check"), Is.EqualTo("You found 3 opponents hiding next to the stove"), "message when checking Kitchen");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Kitchen. You see the following exits:" +
+                    Environment.NewLine + " - the Hallway is to the Southeast" +
+                    Environment.NewLine + "Someone could hide next to the stove" +
+                    Environment.NewLine + "You have found 3 of 6 opponents: Joe, Owen, Mary"), "status after check Kitchen");
+                Assert.That(gameController.MoveNumber, Is.EqualTo(7), "move number after check Kitchen");
+                Assert.That(gameController.GameOver, Is.False, "game not over after find first 3 opponent");
+
+                // Go to Hallway
+                gameController.ParseInput("Southeast"); // Go Southeast to Hallway
+                Assert.That(gameController.MoveNumber, Is.EqualTo(8), "move number when enter Hallway from Kitchen");
+
+                // Go to Bathroom
+                gameController.ParseInput("North"); // Go North to Bathroom
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Bathroom. You see the following exits:" +
+                    Environment.NewLine + " - the Hallway is to the South" +
+                    Environment.NewLine + "Someone could hide behind the door" +
+                    Environment.NewLine + "You have found 3 of 6 opponents: Joe, Owen, Mary"), "status when enter Bathroom");
+                Assert.That(gameController.MoveNumber, Is.EqualTo(9), "move number when enter Bathroom");
+
+                // Check Bathroom and find Ana
+                Assert.That(gameController.ParseInput("Check"), Is.EqualTo("You found 1 opponent hiding behind the door"), "message when checking Bathroom");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Bathroom. You see the following exits:" +
+                    Environment.NewLine + " - the Hallway is to the South" +
+                    Environment.NewLine + "Someone could hide behind the door" +
+                    Environment.NewLine + "You have found 4 of 6 opponents: Joe, Owen, Mary, Ana"), "status after check Bathroom");
+                Assert.That(gameController.MoveNumber, Is.EqualTo(10), "move number after check Kitchen");
+                Assert.That(gameController.GameOver, Is.False, "game not over after find first 4 opponents");
+
+                // Go to Hallway
+                gameController.ParseInput("South"); // Go South to Hallway
+                Assert.That(gameController.MoveNumber, Is.EqualTo(11), "move number when enter Hallway from Bathroom");
+
+                // Go to Landing
+                gameController.ParseInput("Up"); // Go Up to Landing
+                Assert.That(gameController.MoveNumber, Is.EqualTo(12), "move number when enter Landing from Hallway");
+
+                // Go to Pantry
+                gameController.ParseInput("S"); // Go South to Pantry
+                Assert.That(gameController.Status, Is.EqualTo(
+                        "You are in the Pantry. You see the following exits:" +
+                        Environment.NewLine + " - the Landing is to the North" +
+                        Environment.NewLine + "Someone could hide inside a cabinet" +
+                    Environment.NewLine + $"You have found 4 of 6 opponents: Joe, Owen, Mary, Ana"), "status when enter Pantry");
+                Assert.That(gameController.MoveNumber, Is.EqualTo(13), "move number when enter Pantry");
+
+                // Check Pantry and find Bob and Jimmy
+                Assert.That(gameController.ParseInput("Check"), Is.EqualTo("You found 2 opponents hiding inside a cabinet"), "message when checking Pantry");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Pantry. You see the following exits:" +
+                    Environment.NewLine + " - the Landing is to the North" +
+                    Environment.NewLine + "Someone could hide inside a cabinet" +
+                    Environment.NewLine + "You have found 6 of 6 opponents: Joe, Owen, Mary, Ana, Bob, Jimmy"), "status after check Pantry");
+                Assert.That(gameController.MoveNumber, Is.EqualTo(14), "move number after check Pantry");
+            });
+
+            // Return game controller
+            return gameController;
+        }
+
+        /// <summary>
+        /// Helper method for FinishGame parameter of 
+        /// Test_GameController_ParseInput_ForFullGame_WithCustomOpponents_AndCheckMessageAndProperties - specify number - 9 opponents
+        /// </summary>
+        /// <param name="gameController">Game controller on move 5 in Hallway</param>
+        /// <returns>Game controller after game finished</returns>
+        private static GameController FinishGame_SpecifiedNumber_9Opponents(GameController gameController)
         {
             Assert.Multiple(() =>
             {
@@ -328,7 +457,7 @@ namespace HideAndSeek
                     "You are in the Kitchen. You see the following exits:" +
                     Environment.NewLine + " - the Hallway is to the Southeast" +
                     Environment.NewLine + "Someone could hide next to the stove" +
-                    Environment.NewLine + $"You have found 4 {ofHowManyOpponentsStatusText}: Joe, Owen, Mary, Andy"), "status after check Kitchen");
+                    Environment.NewLine + "You have found 4 of 9 opponents: Joe, Owen, Mary, Andy"), "status after check Kitchen");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(7), "move number after check Kitchen");
                 Assert.That(gameController.GameOver, Is.False, "game not over after find first 4 opponents");
 
@@ -342,7 +471,7 @@ namespace HideAndSeek
                     "You are in the Bathroom. You see the following exits:" +
                     Environment.NewLine + " - the Hallway is to the South" +
                     Environment.NewLine + "Someone could hide behind the door" +
-                    Environment.NewLine + $"You have found 4 {ofHowManyOpponentsStatusText}: Joe, Owen, Mary, Andy"), "status when enter Bathroom");
+                    Environment.NewLine + $"You have found 4 of 9 opponents: Joe, Owen, Mary, Andy"), "status when enter Bathroom");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(9), "move number when enter Bathroom");
 
                 // Check Bathroom and find Ana
@@ -351,7 +480,7 @@ namespace HideAndSeek
                     "You are in the Bathroom. You see the following exits:" +
                     Environment.NewLine + " - the Hallway is to the South" +
                     Environment.NewLine + "Someone could hide behind the door" +
-                    Environment.NewLine + $"You have found 6 {ofHowManyOpponentsStatusText}: Joe, Owen, Mary, Andy, Ana, Tony"), "status after check Bathroom");
+                    Environment.NewLine + $"You have found 6 of 9 opponents: Joe, Owen, Mary, Andy, Ana, Tony"), "status after check Bathroom");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(10), "move number after check Bathroom");
                 Assert.That(gameController.GameOver, Is.False, "game not over after find first 6 opponent");
 
@@ -369,8 +498,97 @@ namespace HideAndSeek
                         "You are in the Pantry. You see the following exits:" +
                         Environment.NewLine + " - the Landing is to the North" +
                         Environment.NewLine + "Someone could hide inside a cabinet" +
-                    Environment.NewLine + $"You have found 6 {ofHowManyOpponentsStatusText}: Joe, Owen, Mary, Andy, Ana, Tony"), "status when enter Pantry");
+                    Environment.NewLine + $"You have found 6 of 9 opponents: Joe, Owen, Mary, Andy, Ana, Tony"), "status when enter Pantry");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(13), "move number when enter Pantry");
+                Assert.That(gameController.GameOver, Is.False, "game not over after find 6 opponents");
+
+                // Check Pantry and find Bob, Jimmy, And Alice
+                Assert.That(gameController.ParseInput("Check"), Is.EqualTo("You found 3 opponents hiding inside a cabinet"), "message when checking Pantry");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Pantry. You see the following exits:" +
+                    Environment.NewLine + " - the Landing is to the North" +
+                    Environment.NewLine + "Someone could hide inside a cabinet" +
+                    Environment.NewLine + $"You have found 9 of 9 opponents: Joe, Owen, Mary, Andy, Ana, Tony, Bob, Jimmy, Alice"), "status after check Pantry");
+                Assert.That(gameController.MoveNumber, Is.EqualTo(14), "move number after check Pantry");
+            });
+
+            // Return game controller
+            return gameController;
+        }
+
+        /// <summary>
+        /// Helper method for FinishGame parameter of 
+        /// Test_GameController_ParseInput_ForFullGame_WithCustomOpponents_AndCheckMessageAndProperties - specify number - 10 opponents
+        /// </summary>
+        /// <param name="gameController">Game controller on move 5 in Hallway</param>
+        /// <returns>Game controller after game finished</returns>
+        private static GameController FinishGame_SpecifiedNumber_10Opponents(GameController gameController)
+        {
+            Assert.Multiple(() =>
+            {
+                // Go to Kitchen
+                gameController.ParseInput("Northwest"); // Go Northwest to Kitchen
+                Assert.That(gameController.MoveNumber, Is.EqualTo(6), "move number when enter Kitchen");
+
+                // Check Kitchen and find Joe, Owen, Mary, and Andy
+                Assert.That(gameController.ParseInput("Check"), Is.EqualTo("You found 4 opponents hiding next to the stove"), "message when checking Kitchen");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Kitchen. You see the following exits:" +
+                    Environment.NewLine + " - the Hallway is to the Southeast" +
+                    Environment.NewLine + "Someone could hide next to the stove" +
+                    Environment.NewLine + "You have found 4 of 10 opponents: Joe, Owen, Mary, Andy"), "status after check Kitchen");
+                Assert.That(gameController.MoveNumber, Is.EqualTo(7), "move number after check Kitchen");
+                Assert.That(gameController.GameOver, Is.False, "game not over after find first 4 opponents");
+
+                // Go to Hallway
+                gameController.ParseInput("Southeast"); // Go Southeast to Hallway
+                Assert.That(gameController.MoveNumber, Is.EqualTo(8), "move number when enter Hallway from Kitchen");
+
+                // Go to Bathroom
+                gameController.ParseInput("North"); // Go North to Bathroom
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Bathroom. You see the following exits:" +
+                    Environment.NewLine + " - the Hallway is to the South" +
+                    Environment.NewLine + "Someone could hide behind the door" +
+                    Environment.NewLine + $"You have found 4 of 10 opponents: Joe, Owen, Mary, Andy"), "status when enter Bathroom");
+                Assert.That(gameController.MoveNumber, Is.EqualTo(9), "move number when enter Bathroom");
+
+                // Check Bathroom and find Ana
+                Assert.That(gameController.ParseInput("Check"), Is.EqualTo("You found 2 opponents hiding behind the door"), "message when checking Bathroom");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Bathroom. You see the following exits:" +
+                    Environment.NewLine + " - the Hallway is to the South" +
+                    Environment.NewLine + "Someone could hide behind the door" +
+                    Environment.NewLine + $"You have found 6 of 10 opponents: Joe, Owen, Mary, Andy, Ana, Tony"), "status after check Bathroom");
+                Assert.That(gameController.MoveNumber, Is.EqualTo(10), "move number after check Bathroom");
+                Assert.That(gameController.GameOver, Is.False, "game not over after find first 6 opponent");
+
+                // Go to Hallway
+                gameController.ParseInput("South"); // Go South to Hallway
+                Assert.That(gameController.MoveNumber, Is.EqualTo(11), "move number when enter Hallway from Bathroom");
+
+                // Go to Landing
+                gameController.ParseInput("Up"); // Go Up to Landing
+                Assert.That(gameController.MoveNumber, Is.EqualTo(12), "move number when enter Landing from Hallway");
+
+                // Go to Pantry
+                gameController.ParseInput("S"); // Go South to Pantry
+                Assert.That(gameController.Status, Is.EqualTo(
+                        "You are in the Pantry. You see the following exits:" +
+                        Environment.NewLine + " - the Landing is to the North" +
+                        Environment.NewLine + "Someone could hide inside a cabinet" +
+                    Environment.NewLine + $"You have found 6 of 10 opponents: Joe, Owen, Mary, Andy, Ana, Tony"), "status when enter Pantry");
+                Assert.That(gameController.MoveNumber, Is.EqualTo(13), "move number when enter Pantry");
+                Assert.That(gameController.GameOver, Is.False, "game not over after find 6 opponents");
+
+                // Check Pantry and find Bob, Jimmy, Alice, and Jill
+                Assert.That(gameController.ParseInput("Check"), Is.EqualTo("You found 4 opponents hiding inside a cabinet"), "message when checking Pantry");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Pantry. You see the following exits:" +
+                    Environment.NewLine + " - the Landing is to the North" +
+                    Environment.NewLine + "Someone could hide inside a cabinet" +
+                    Environment.NewLine + $"You have found 10 of 10 opponents: Joe, Owen, Mary, Andy, Ana, Tony, Bob, Jimmy, Alice, Jill"), "status after check Pantry");
+                Assert.That(gameController.MoveNumber, Is.EqualTo(14), "move number after check Pantry");
             });
 
             // Return game controller
@@ -385,7 +603,7 @@ namespace HideAndSeek
                 yield return new TestCaseData( // Joe in Kitchen
                     new int[] { 1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4 }, // Hide Opponent in Kitchen
                     () => new GameController(1, "DefaultHouse"),
-                    (GameController gameController) => CheckKitchenAndFind1Opponent_DefaultOpponentName(gameController, "Joe", "of 1 opponent"))
+                    (GameController gameController) => FinishGame_SpecifiedNumber_1Opponent(gameController))
                 .SetName("Test_GameController_ParseInput_ForFullGame_WithCustomOpponents_AndCheckMessageAndProperties - specify number - 1 opponent")
                 .SetCategory("GameController ParseInput Move Check Message Prompt Status MoveNumber GameOver Constructor SpecifiedNumberOfOpponents OpponentsAndHidingPlaces Success");
 
@@ -396,43 +614,7 @@ namespace HideAndSeek
                         0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2 // Hide opponent in Pantry
                     },
                     () => new GameController(2, "DefaultHouse"),
-                    (GameController gameController) => {
-                        Assert.Multiple(() =>
-                        {
-                            // Find first Opponent Joe in Kitchen
-                            gameController = CheckKitchenAndFind1Opponent_DefaultOpponentName(gameController, "Joe", "of 2 opponents");
-                            Assert.That(gameController.GameOver, Is.False, "game not over after find first opponent");
-
-                            // Go to Hallway
-                            gameController.ParseInput("Southeast"); // Go Southeast to Hallway
-                            Assert.That(gameController.MoveNumber, Is.EqualTo(8), "move number when enter Hallway from Kitchen");
-
-                            // Go to Landing
-                            gameController.ParseInput("Up"); // Go Up to Landing
-                            Assert.That(gameController.MoveNumber, Is.EqualTo(9), "move number when enter Landing");
-
-                            // Go to Pantry
-                            gameController.ParseInput("South"); // Go South to Pantry
-                            Assert.That(gameController.Status, Is.EqualTo(
-                                    "You are in the Pantry. You see the following exits:" +
-                                    Environment.NewLine + " - the Landing is to the North" +
-                                    Environment.NewLine + "Someone could hide inside a cabinet" +
-                                    Environment.NewLine + $"You have found 1 of 2 opponents: Joe"), "status when enter Pantry");
-                            Assert.That(gameController.MoveNumber, Is.EqualTo(10), "move number when enter Pantry");
-
-                            // Check Pantry and find Bob
-                            Assert.That(gameController.ParseInput("Check"), Is.EqualTo("You found 1 opponent hiding inside a cabinet"), "message when checking Pantry");
-                            Assert.That(gameController.Status, Is.EqualTo(
-                                "You are in the Pantry. You see the following exits:" +
-                                Environment.NewLine + " - the Landing is to the North" +
-                                Environment.NewLine + "Someone could hide inside a cabinet" +
-                                Environment.NewLine + $"You have found 2 of 2 opponents: Joe, Bob"), "status after check Pantry");
-                            Assert.That(gameController.MoveNumber, Is.EqualTo(11), "move number after check Pantry");
-                        });
-
-                        // Return game controller
-                        return gameController;
-                    })
+                    (GameController gameController) => FinishGame_SpecifiedNumber_2Opponents(gameController))
                 .SetName("Test_GameController_ParseInput_ForFullGame_WithCustomOpponents_AndCheckMessageAndProperties - specify number - 2 opponents")
                 .SetCategory("GameController ParseInput Move Check Message Prompt Status MoveNumber GameOver Constructor SpecifiedNumberOfOpponents OpponentsAndHidingPlaces Success");
                 
@@ -446,76 +628,7 @@ namespace HideAndSeek
                         0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
                     },
                     () => new GameController(6, "DefaultHouse"),
-                    (GameController gameController) => {
-                        Assert.Multiple(() =>
-                        {
-                            // Go to Kitchen
-                            gameController.ParseInput("Northwest"); // Go Northwest to Kitchen
-                            Assert.That(gameController.MoveNumber, Is.EqualTo(6), "move number when enter Kitchen");
-
-                            // Check Kitchen and find Joe, Owen, and Mary
-                            Assert.That(gameController.ParseInput("Check"), Is.EqualTo("You found 3 opponents hiding next to the stove"), "message when checking Kitchen");
-                            Assert.That(gameController.Status, Is.EqualTo(
-                                "You are in the Kitchen. You see the following exits:" +
-                                Environment.NewLine + " - the Hallway is to the Southeast" +
-                                Environment.NewLine + "Someone could hide next to the stove" +
-                                Environment.NewLine + "You have found 3 of 6 opponents: Joe, Owen, Mary"), "status after check Kitchen");
-                            Assert.That(gameController.MoveNumber, Is.EqualTo(7), "move number after check Kitchen");
-                            Assert.That(gameController.GameOver, Is.False, "game not over after find first 3 opponent");
-
-                            // Go to Hallway
-                            gameController.ParseInput("Southeast"); // Go Southeast to Hallway
-                            Assert.That(gameController.MoveNumber, Is.EqualTo(8), "move number when enter Hallway from Kitchen");
-
-                            // Go to Bathroom
-                            gameController.ParseInput("North"); // Go North to Bathroom
-                            Assert.That(gameController.Status, Is.EqualTo(
-                                "You are in the Bathroom. You see the following exits:" +
-                                Environment.NewLine + " - the Hallway is to the South" +
-                                Environment.NewLine + "Someone could hide behind the door" +
-                                Environment.NewLine + "You have found 3 of 6 opponents: Joe, Owen, Mary"), "status when enter Bathroom");
-                            Assert.That(gameController.MoveNumber, Is.EqualTo(9), "move number when enter Bathroom");
-
-                            // Check Bathroom and find Ana
-                            Assert.That(gameController.ParseInput("Check"), Is.EqualTo("You found 1 opponent hiding behind the door"), "message when checking Bathroom");
-                            Assert.That(gameController.Status, Is.EqualTo(
-                                "You are in the Bathroom. You see the following exits:" +
-                                Environment.NewLine + " - the Hallway is to the South" +
-                                Environment.NewLine + "Someone could hide behind the door" +
-                                Environment.NewLine + "You have found 4 of 6 opponents: Joe, Owen, Mary, Ana"), "status after check Bathroom");
-                            Assert.That(gameController.MoveNumber, Is.EqualTo(10), "move number after check Kitchen");
-                            Assert.That(gameController.GameOver, Is.False, "game not over after find first 4 opponents");
-
-                            // Go to Hallway
-                            gameController.ParseInput("South"); // Go South to Hallway
-                            Assert.That(gameController.MoveNumber, Is.EqualTo(11), "move number when enter Hallway from Bathroom");
-
-                            // Go to Landing
-                            gameController.ParseInput("Up"); // Go Up to Landing
-                            Assert.That(gameController.MoveNumber, Is.EqualTo(12), "move number when enter Landing from Hallway");
-
-                            // Go to Pantry
-                            gameController.ParseInput("S"); // Go South to Pantry
-                            Assert.That(gameController.Status, Is.EqualTo(
-                                    "You are in the Pantry. You see the following exits:" +
-                                    Environment.NewLine + " - the Landing is to the North" +
-                                    Environment.NewLine + "Someone could hide inside a cabinet" +
-                                Environment.NewLine + $"You have found 4 of 6 opponents: Joe, Owen, Mary, Ana"), "status when enter Pantry");
-                            Assert.That(gameController.MoveNumber, Is.EqualTo(13), "move number when enter Pantry");
-
-                            // Check Pantry and find Bob and Jimmy
-                            Assert.That(gameController.ParseInput("Check"), Is.EqualTo("You found 2 opponents hiding inside a cabinet"), "message when checking Pantry");
-                            Assert.That(gameController.Status, Is.EqualTo(
-                                "You are in the Pantry. You see the following exits:" +
-                                Environment.NewLine + " - the Landing is to the North" +
-                                Environment.NewLine + "Someone could hide inside a cabinet" +
-                                Environment.NewLine + $"You have found 6 of 6 opponents: Joe, Owen, Mary, Ana, Bob, Jimmy"), "status after check Pantry");
-                            Assert.That(gameController.MoveNumber, Is.EqualTo(14), "move number after check Pantry");
-                        });
-
-                        // Return game controller
-                        return gameController;
-                    })
+                    (GameController gameController) => FinishGame_SpecifiedNumber_6Opponents(gameController))
                 .SetName("Test_GameController_ParseInput_ForFullGame_WithCustomOpponents_AndCheckMessageAndProperties - specify number - 6 opponents")
                 .SetCategory("GameController ParseInput Move Check Message Prompt Status MoveNumber GameOver Constructor SpecifiedNumberOfOpponents OpponentsAndHidingPlaces Success");
                 
@@ -529,30 +642,10 @@ namespace HideAndSeek
                         0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
                     },
                     () => new GameController(9, "DefaultHouse"),
-                    (GameController gameController) =>
-                    {
-                        Assert.Multiple(() =>
-                        {
-                            // Check Kitchen and Bathroom and find first six Opponent
-                            gameController = CheckKitchenAndBathroomAndFind6Opponents_DefaultOpponentNames(gameController, "of 9 opponents");
-                            Assert.That(gameController.GameOver, Is.False, "game not over after find 6 opponents");
-
-                            // Check Pantry and find Bob, Jimmy, And Alice
-                            Assert.That(gameController.ParseInput("Check"), Is.EqualTo("You found 3 opponents hiding inside a cabinet"), "message when checking Pantry");
-                            Assert.That(gameController.Status, Is.EqualTo(
-                                "You are in the Pantry. You see the following exits:" +
-                                Environment.NewLine + " - the Landing is to the North" +
-                                Environment.NewLine + "Someone could hide inside a cabinet" +
-                                Environment.NewLine + $"You have found 9 of 9 opponents: Joe, Owen, Mary, Andy, Ana, Tony, Bob, Jimmy, Alice"), "status after check Pantry");
-                            Assert.That(gameController.MoveNumber, Is.EqualTo(14), "move number after check Pantry");
-                        });
-
-                        // Return game controller
-                        return gameController;
-                    })
+                    (GameController gameController) => FinishGame_SpecifiedNumber_9Opponents(gameController))
                 .SetName("Test_GameController_ParseInput_ForFullGame_WithCustomOpponents_AndCheckMessageAndProperties - specify number - 9 opponents")
                 .SetCategory("GameController ParseInput Move Check Message Prompt Status MoveNumber GameOver Constructor SpecifiedNumberOfOpponents OpponentsAndHidingPlaces Success");
-                
+
                 // Specified number of Opponents - 10
                 yield return new TestCaseData( // Joe, Owen, Mary, and Andy in Kitchen; Ana and Tony in Bathroom; Bob, Jimmy, Alice, and Jill in Pantry
                     new int[] {
@@ -563,26 +656,7 @@ namespace HideAndSeek
                         0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
                     },
                     () => new GameController(10, "DefaultHouse"),
-                    (GameController gameController) => {
-                        Assert.Multiple(() =>
-                        {
-                            // Check Kitchen and Bathroom and find first six Opponent
-                            gameController = CheckKitchenAndBathroomAndFind6Opponents_DefaultOpponentNames(gameController, "of 10 opponents");
-                            Assert.That(gameController.GameOver, Is.False, "game not over after find 6 opponents");
-
-                            // Check Pantry and find Bob, Jimmy, Alice, and Jill
-                            Assert.That(gameController.ParseInput("Check"), Is.EqualTo("You found 4 opponents hiding inside a cabinet"), "message when checking Pantry");
-                            Assert.That(gameController.Status, Is.EqualTo(
-                                "You are in the Pantry. You see the following exits:" +
-                                Environment.NewLine + " - the Landing is to the North" +
-                                Environment.NewLine + "Someone could hide inside a cabinet" +
-                                Environment.NewLine + $"You have found 10 of 10 opponents: Joe, Owen, Mary, Andy, Ana, Tony, Bob, Jimmy, Alice, Jill"), "status after check Pantry");
-                            Assert.That(gameController.MoveNumber, Is.EqualTo(14), "move number after check Pantry");
-                        });
-
-                        // Return game controller
-                        return gameController;
-                    })
+                    (GameController gameController) => FinishGame_SpecifiedNumber_10Opponents(gameController))
                 .SetName("Test_GameController_ParseInput_ForFullGame_WithCustomOpponents_AndCheckMessageAndProperties - specify number - 10 opponents")
                 .SetCategory("GameController ParseInput Move Check Message Prompt Status MoveNumber GameOver Constructor SpecifiedNumberOfOpponents OpponentsAndHidingPlaces Success");
             }
