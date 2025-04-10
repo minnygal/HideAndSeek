@@ -342,6 +342,7 @@ namespace HideAndSeek
         /// -I changed the method name to be consistent with the conventions I'm using in this test project.
         /// -I put all the assertions in the body of a multiple assert so all assertions will be run.
         /// -I changed the assertions to use the constraint model to stay up-to-date.
+        /// -I added assertions for other properties at beginning of game.
         /// -I used a custom method to hide Opponents.
         /// -I added/edited some comments for easier reading.
         /// -I added messages to the assertions to make them easier to debug.
@@ -355,8 +356,15 @@ namespace HideAndSeek
 
             Assert.Multiple(() =>
             {
-                // Assert that game is not over at beginning
+                // Assert game properties are as expected at beginning
                 Assert.That(gameController.GameOver, Is.False, "check game not over at beginning");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Entry. You see the following exits:" +
+                    Environment.NewLine + " - the Hallway is to the East" +
+                    Environment.NewLine + " - the Garage is Out" + 
+                    Environment.NewLine + "You have not found any opponents"), "check game status at beginning of game");
+                Assert.That(gameController.Prompt, Is.EqualTo("1: Which direction do you want to go: "), "check prompt at beginning of game");
+                Assert.That(gameController.MoveNumber, Is.EqualTo(1), "check game move number at beginning of game");
 
                 // Check the starting point (Entry) -- there are no players hiding there
                 Assert.That(gameController.MoveNumber, Is.EqualTo(1), "check game move number");
