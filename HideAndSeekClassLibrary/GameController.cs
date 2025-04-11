@@ -399,6 +399,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="direction">The Direction to move</param>
         /// <returns>Description</returns>
+        /// <exception cref="InvalidOperationException">Exception thrown when no exit in specified Direction</exception>
         public string Move(Direction direction)
         {
             // Increment move number
@@ -424,6 +425,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="direction">The direction to move</param>
         /// <returns>Description</returns>
+        /// <exception cref="InvalidOperationException">Exception thrown when no exit in specified Direction</exception>
         public string Move(string direction)
         {
             return Move(DirectionExtensions.Parse(direction));
@@ -556,7 +558,7 @@ namespace HideAndSeek
             {
                 if(e.Message == "House has not been set") // If SavedGame House property has not been set
                 {
-                    throw new NullReferenceException("Cannot process because data is corrupt - JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: HouseFileName"); // Throw exception with custom error message
+                    throw new JsonException("Cannot process because data is corrupt - JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: HouseFileName"); // Throw exception with custom error message
                 }
                 else // if other NullReferenceException
                 {

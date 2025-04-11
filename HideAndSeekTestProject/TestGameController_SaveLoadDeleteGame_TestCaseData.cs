@@ -454,7 +454,7 @@ namespace HideAndSeek
             "}";
         #endregion
 
-        public static IEnumerable TestCases_For_Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile
+        public static IEnumerable TestCases_For_Test_GameController_SaveGame_AndCheckTextSavedToFile
         {
             get
             {
@@ -469,8 +469,8 @@ namespace HideAndSeek
                                        .RehideAllOpponents(SavedGame_OpponentsAndHidingPlaces.Values);
                         }, 
                         SavedGame_Serialized_NoFoundOpponents)
-                    .SetName("Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile - default House - no opponents found")
-                    .SetCategory("GameController Save Success");
+                    .SetName("Test_GameController_SaveGame_AndCheckTextSavedToFile - default House - no opponents found")
+                    .SetCategory("GameController SaveGame Success");
 
                 // Default House, 3 Opponents found
                 yield return new TestCaseData(
@@ -483,14 +483,14 @@ namespace HideAndSeek
                                                                 .RehideAllOpponents(SavedGame_OpponentsAndHidingPlaces.Values);
 
                             // Go to Kitchen and check to find 2 Opponents
-                            gameController.ParseInput("East");
-                            gameController.ParseInput("Northwest");
-                            gameController.ParseInput("check");
+                            gameController.Move(Direction.East);
+                            gameController.Move(Direction.Northwest);;
+                            gameController.CheckCurrentLocation();
 
                             // Go to Bathroom and check to find 1 Opponent
-                            gameController.ParseInput("Southeast");
-                            gameController.ParseInput("North");
-                            gameController.ParseInput("check");
+                            gameController.Move(Direction.Southeast);;
+                            gameController.Move(Direction.North);;
+                            gameController.CheckCurrentLocation();
 
                             // Return GameController after 3 Opponents found
                             return gameController;
@@ -502,8 +502,8 @@ namespace HideAndSeek
                             SavedGame_Serialized_OpponentsAndHidingLocations + "," +
                             "\"FoundOpponents\":[\"Joe\",\"Owen\",\"Ana\"]" +
                         "}")
-                    .SetName("Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile - default House - 3 opponents found")
-                    .SetCategory("GameController Save Success");
+                    .SetName("Test_GameController_SaveGame_AndCheckTextSavedToFile - default House - 3 opponents found")
+                    .SetCategory("GameController SaveGame Success");
                 
                 // Custom House with constructor, no Opponents found
                 yield return new TestCaseData(
@@ -528,8 +528,8 @@ namespace HideAndSeek
                             "}" + "," +
                             "\"FoundOpponents\":[]" +
                         "}")
-                    .SetName("Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile - custom House - constructor - no opponents found")
-                    .SetCategory("GameController Save Success CustomHouse Constructor");
+                    .SetName("Test_GameController_SaveGame_AndCheckTextSavedToFile - custom House - constructor - no opponents found")
+                    .SetCategory("GameController SaveGame Success CustomHouse Constructor");
 
                 // Custom House with ReloadGame, no Opponents found
                 yield return new TestCaseData(
@@ -561,8 +561,8 @@ namespace HideAndSeek
                             "}" + "," +
                             "\"FoundOpponents\":[]" +
                         "}")
-                    .SetName("Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile - custom House - ReloadGame - no opponents found")
-                    .SetCategory("GameController Save Success CustomHouse ReloadGame");
+                    .SetName("Test_GameController_SaveGame_AndCheckTextSavedToFile - custom House - ReloadGame - no opponents found")
+                    .SetCategory("GameController SaveGame Success CustomHouse ReloadGame");
 
                 // Custom House with constructor, 3 Opponents found
                 yield return new TestCaseData(
@@ -581,15 +581,15 @@ namespace HideAndSeek
                                    .RehideAllOpponents(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" }); // and hide all Opponents in specified locations
 
                             // Go to Cellar and find 1 Opponent there
-                            gameController.ParseInput("North");
-                            gameController.ParseInput("East");
-                            gameController.ParseInput("Down");
-                            gameController.ParseInput("Check");
+                            gameController.Move(Direction.North);;
+                            gameController.Move(Direction.East);
+                            gameController.Move(Direction.Down);;
+                            gameController.CheckCurrentLocation();
 
                             // Go to Yard and find 2 Opponents there
-                            gameController.ParseInput("Up");
-                            gameController.ParseInput("Out");
-                            gameController.ParseInput("Check");
+                            gameController.Move(Direction.Up);;
+                            gameController.Move(Direction.Out);;
+                            gameController.CheckCurrentLocation();
 
                             // Return GameController
                             return gameController;
@@ -608,8 +608,8 @@ namespace HideAndSeek
                             "}" + "," +
                             "\"FoundOpponents\":[\"Ana\",\"Bob\",\"Jimmy\"]" +
                         "}")
-                    .SetName("Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile - custom House - constructor - 3 opponents found")
-                    .SetCategory("GameController Save Success CustomHouse Constructor");
+                    .SetName("Test_GameController_SaveGame_AndCheckTextSavedToFile - custom House - constructor - 3 opponents found")
+                    .SetCategory("GameController SaveGame Success CustomHouse Constructor");
 
                 // Custom House with ReloadGame, 3 Opponents found
                 yield return new TestCaseData(
@@ -622,15 +622,15 @@ namespace HideAndSeek
                                                                 .RehideAllOpponents(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" }); // and hide all Opponents in specified locations
 
                             // Go to Cellar and find 1 Opponent there
-                            gameController.ParseInput("North");
-                            gameController.ParseInput("East");
-                            gameController.ParseInput("Down");
-                            gameController.ParseInput("Check");
+                            gameController.Move(Direction.North);;
+                            gameController.Move(Direction.East);
+                            gameController.Move(Direction.Down);;
+                            gameController.CheckCurrentLocation();
 
                             // Go to Yard and find 2 Opponents there
-                            gameController.ParseInput("Up");
-                            gameController.ParseInput("Out");
-                            gameController.ParseInput("Check");
+                            gameController.Move(Direction.Up);;
+                            gameController.Move(Direction.Out);;
+                            gameController.CheckCurrentLocation();
 
                             // Return GameController
                             return gameController;
@@ -649,12 +649,12 @@ namespace HideAndSeek
                             "}" + "," +
                             "\"FoundOpponents\":[\"Ana\",\"Bob\",\"Jimmy\"]" +
                         "}")
-                    .SetName("Test_GameController_ParseInput_ToSaveGame_AndCheckTextSavedToFile - custom House - ReloadGame - 3 opponents found")
-                    .SetCategory("GameController Save Success CustomHouse ReloadGame");
+                    .SetName("Test_GameController_SaveGame_AndCheckTextSavedToFile - custom House - ReloadGame - 3 opponents found")
+                    .SetCategory("GameController SaveGame Success CustomHouse ReloadGame");
             }
         }
 
-        public static IEnumerable TestCases_For_Test_GameController_ParseInput_ToLoadGame_WithNoFoundOpponents
+        public static IEnumerable TestCases_For_Test_GameController_LoadGame_WithNoFoundOpponents
         {
             get
             {
@@ -678,8 +678,8 @@ namespace HideAndSeek
                         1,
                         new List<string>() { "Joe", "Bob", "Ana", "Owen", "Jimmy" },
                         new List<string>() { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry" })
-                    .SetName("Test_GameController_ParseInput_ToLoadGame_WithNoFoundOpponents - default House")
-                    .SetCategory("GameController Load Success");
+                    .SetName("Test_GameController_LoadGame_WithNoFoundOpponents - default House")
+                    .SetCategory("GameController LoadGame Success");
                 
                 // Custom test House
                 yield return new TestCaseData(
@@ -710,12 +710,12 @@ namespace HideAndSeek
                         1,
                         new List<string>() { "Joe", "Bob", "Ana", "Owen", "Jimmy" },
                         new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" })
-                    .SetName("Test_GameController_ParseInput_ToLoadGame_WithNoFoundOpponents - custom House")
-                    .SetCategory("GameController Load CustomHouse Success");
+                    .SetName("Test_GameController_LoadGame_WithNoFoundOpponents - custom House")
+                    .SetCategory("GameController LoadGame CustomHouse Success");
             }
         }
 
-        public static IEnumerable TestCases_For_Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData
+        public static IEnumerable TestCases_For_Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileFormatIsInvalid
         {
             get
             {
@@ -723,17 +723,17 @@ namespace HideAndSeek
                 // No data in file
                 yield return new TestCaseData("The input does not contain any JSON tokens. Expected the input to start with a valid JSON token, when isFinalBlock is true. Path: $ | LineNumber: 0 | BytePositionInLine: 0.",
                         "")
-                    .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - no data in file");
+                    .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileFormatIsInvalid - no data in file");
 
                 // Only whitespace in file
                 yield return new TestCaseData("The input does not contain any JSON tokens. Expected the input to start with a valid JSON token, when isFinalBlock is true. Path: $ | LineNumber: 0 | BytePositionInLine: 2.", 
                         "  ")
-                    .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - only whitespace in file");
+                    .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileFormatIsInvalid - only whitespace in file");
 
                 // Just characters in file (not JSON)
                 yield return new TestCaseData("'A' is an invalid start of a value. Path: $ | LineNumber: 0 | BytePositionInLine: 0.", 
                         "ABCDeaoueou[{}}({}")
-                    .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - just characters in file");
+                    .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileFormatIsInvalid - just characters in file");
 
                 // MISSING KEY/VALUE SET
                 // Missing House file name
@@ -744,7 +744,7 @@ namespace HideAndSeek
                             SavedGame_Serialized_OpponentsAndHidingLocations + "," +
                             SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")
-                    .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - missing house file name");
+                    .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileFormatIsInvalid - missing house file name");
                 
                 // Missing player location
                 yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: PlayerLocation",
@@ -754,7 +754,7 @@ namespace HideAndSeek
                             SavedGame_Serialized_OpponentsAndHidingLocations + "," +
                             SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")
-                    .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - missing player location");
+                    .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileFormatIsInvalid - missing player location");
 
                 // Missing move number
                 yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: MoveNumber",
@@ -764,7 +764,7 @@ namespace HideAndSeek
                             SavedGame_Serialized_OpponentsAndHidingLocations + "," +
                             SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")
-                    .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - missing move number");
+                    .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileFormatIsInvalid - missing move number");
 
                 // Missing opponents and hiding locations
                 yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: OpponentsAndHidingLocations",
@@ -774,7 +774,7 @@ namespace HideAndSeek
                             SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
                             SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")
-                    .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - missing opponents and hiding locations");
+                    .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileFormatIsInvalid - missing opponents and hiding locations");
 
                 // Missing found opponents
                 yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: FoundOpponents",
@@ -784,8 +784,14 @@ namespace HideAndSeek
                             SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
                             SavedGame_Serialized_OpponentsAndHidingLocations +
                         "}")
-                    .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - missing found opponents");
+                    .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileFormatIsInvalid - missing found opponents");
+            }
+        }
 
+        public static IEnumerable TestCases_For_Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileDataHasInvalidValue
+        {
+            get
+            {
                 // INVALID VALUE DATA
                 // Invalid House file name
                 yield return new TestCaseData("Cannot perform action because file name \"a8}{{ /@uaou12 \" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)",
@@ -796,7 +802,7 @@ namespace HideAndSeek
                             SavedGame_Serialized_OpponentsAndHidingLocations + "," +
                             SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")
-                    .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - invalid HouseFileName");
+                    .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileDataHasInvalidValue - invalid HouseFileName");
 
                 // Invalid player location
                 yield return new TestCaseData("invalid PlayerLocation",
@@ -807,7 +813,7 @@ namespace HideAndSeek
                             SavedGame_Serialized_OpponentsAndHidingLocations + "," +
                             SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")
-                    .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - invalid PlayerLocation");
+                    .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileDataHasInvalidValue - invalid PlayerLocation");
 
                 // Invalid (negative) move number
                 yield return new TestCaseData("invalid MoveNumber",
@@ -818,7 +824,7 @@ namespace HideAndSeek
                             SavedGame_Serialized_OpponentsAndHidingLocations + "," +
                             SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")
-                    .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - invalid MoveNumber");
+                    .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileDataHasInvalidValue - invalid MoveNumber");
 
                 // No opponents
                 yield return new TestCaseData("no opponents",
@@ -829,7 +835,7 @@ namespace HideAndSeek
                             "\"OpponentsAndHidingLocations\":{}" + "," +
                             SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")
-                    .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - no opponents");
+                    .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileDataHasInvalidValue - no opponents");
 
                 // Invalid hiding place for Joe (not yet found) because location does not exist
                 yield return new TestCaseData("invalid hiding location for opponent",
@@ -847,7 +853,7 @@ namespace HideAndSeek
                             "}" + "," +
                             SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")
-                    .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - invalid hiding place for opponent - Location does not exist");
+                    .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileDataHasInvalidValue - invalid hiding place for opponent - Location does not exist");
 
                 // Invalid hiding place for Joe (not yet found) because hiding location is not of type LocationWithHidingPlace
                 yield return new TestCaseData("invalid hiding location for opponent",
@@ -864,8 +870,8 @@ namespace HideAndSeek
                                 "\"Jimmy\":\"Pantry\"" +
                             "}" + "," +
                             SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
-                        "}")            
-                    .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - invalid hiding place for opponent - not LocationWithHidingPlace");
+                        "}")
+                    .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileDataHasInvalidValue - invalid hiding place for opponent - not LocationWithHidingPlace");
 
                 // Found opponent is not in all opponents list
                 yield return new TestCaseData("found opponent is not an opponent",
@@ -876,22 +882,22 @@ namespace HideAndSeek
                             SavedGame_Serialized_OpponentsAndHidingLocations + "," +
                             "\"FoundOpponents\":[\"Steve\"]" +
                         "}")
-                    .SetName("Test_GameController_ParseInput_ToLoadGame_AndCheckErrorMessage_ForInvalidData - found opponent Steve is not opponent");
+                    .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileDataHasInvalidValue - found opponent Steve is not opponent");
             }
         }
 
-        public static IEnumerable TestCases_For_Test_GameController_ParseInput_ToLoadGame_WithFoundOpponents
+        public static IEnumerable TestCases_For_Test_GameController_LoadGame_WithFoundOpponents
         {
             get
             {
                 // 1 found Opponent
                 yield return new TestCaseData("Bathroom", 4, new List<string>() { "Ana" },
-                        (GameController gameController) =>
+                        (IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces) =>
                         {
                             Assert.Multiple(() =>
                             {
                                 // Assert that Opponents Joe and Owen are hiding in the Kitchen
-                                Assert.That(gameController.House.LocationsWithHidingPlaces
+                                Assert.That(locationsWithHidingPlaces
                                                 .Where((l) => l.Name == "Kitchen").First()
                                                 .CheckHidingPlace()
                                                 .Select((o) => o.Name),
@@ -899,7 +905,7 @@ namespace HideAndSeek
                                             "Joe and Owen are hidden in the Kitchen");
 
                                 // Assert that Opponents Bob and Jimmy are hiding in the Pantry
-                                Assert.That(gameController.House.LocationsWithHidingPlaces
+                                Assert.That(locationsWithHidingPlaces
                                                 .Where((l) => l.Name == "Pantry").First()
                                                 .CheckHidingPlace()
                                                 .Select((o) => o.Name),
@@ -907,16 +913,16 @@ namespace HideAndSeek
                                             "Bob and Jimmy are hidden in the Pantry");
                             });
                         })
-                    .SetName("Test_GameController_ParseInput_ToLoadGame_WithFoundOpponents - 1 found opponent");
+                    .SetName("Test_GameController_LoadGame_WithFoundOpponents - 1 found opponent");
 
                 // 2 found Opponents
                 yield return new TestCaseData("Pantry", 10, new List<string>() { "Bob", "Jimmy" },
-                        (GameController gameController) =>
+                        (IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces) =>
                         {
                             Assert.Multiple(() =>
                             {
                                 // Assert that Opponents Joe and Owen are hiding in the Kitchen
-                                Assert.That(gameController.House.LocationsWithHidingPlaces
+                                Assert.That(locationsWithHidingPlaces
                                                 .Where((l) => l.Name == "Kitchen").First()
                                                 .CheckHidingPlace()
                                                 .Select((o) => o.Name),
@@ -924,7 +930,7 @@ namespace HideAndSeek
                                             "Joe and Owen are hidden in the Kitchen");
 
                                 // Assert that Ana is hiding in the Bathroom
-                                Assert.That(gameController.House.LocationsWithHidingPlaces
+                                Assert.That(locationsWithHidingPlaces
                                                 .Where((l) => l.Name == "Bathroom").First()
                                                 .CheckHidingPlace()
                                                 .Select((o) => o.Name),
@@ -932,35 +938,35 @@ namespace HideAndSeek
                                             "Ana is hidden in the Bathroom");
                             });
                         })
-                    .SetName("Test_GameController_ParseInput_ToLoadGame_WithFoundOpponents - 2 found opponents");
+                    .SetName("Test_GameController_LoadGame_WithFoundOpponents - 2 found opponents");
 
                 // 3 found Opponents
                 yield return new TestCaseData("Bathroom", 15, new List<string>() { "Joe", "Owen", "Ana" },
-                        (GameController gameController) =>
+                        (IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces) =>
                         {
                             // Assert that Opponents Joe and Owen are hiding in the Kitchen
-                            Assert.That(gameController.House.LocationsWithHidingPlaces
+                            Assert.That(locationsWithHidingPlaces
                                             .Where((l) => l.Name == "Pantry").First()
                                             .CheckHidingPlace()
                                             .Select((o) => o.Name),
                                         Is.EquivalentTo(new List<string>() { "Bob", "Jimmy" }),
                                         "Bob and Jimmy are hidden in the Kitchen");
                         })
-                    .SetName("Test_GameController_ParseInput_ToLoadGame_WithFoundOpponents - 3 found opponents");
+                    .SetName("Test_GameController_LoadGame_WithFoundOpponents - 3 found opponents");
 
                 // 4 found Opponents
                 yield return new TestCaseData("Pantry", 20, new List<string>() { "Joe", "Owen", "Bob", "Jimmy" },
-                        (GameController gameController) =>
+                        (IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces) =>
                         {
                             // Assert that Ana is hiding in the Bathroom
-                            Assert.That(gameController.House.LocationsWithHidingPlaces
+                            Assert.That(locationsWithHidingPlaces
                                             .Where((l) => l.Name == "Bathroom").First()
                                             .CheckHidingPlace()
                                             .Select((o) => o.Name),
                                         Is.EquivalentTo(new List<string>() { "Ana" }),
                                         "Ana is hidden in the Bathroom");
                         })
-                    .SetName("Test_GameController_ParseInput_ToLoadGame_WithFoundOpponents - 4 found opponents");
+                    .SetName("Test_GameController_LoadGame_WithFoundOpponents - 4 found opponents");
             }
         }
     }
