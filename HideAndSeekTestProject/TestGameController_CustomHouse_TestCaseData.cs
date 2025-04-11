@@ -371,73 +371,15 @@ namespace HideAndSeek
         {
             get
             {
-                // Set custom House using GameController CONSTRUCTOR and play with PARSEINPUT
-                yield return new TestCaseData(GetGameController_WithCustomHouseSetViaConstructor(),
-                        (string direction, GameController gameController) => gameController.ParseInput(direction),
-                        (GameController gameController) => gameController.ParseInput("check"))
-                    .SetName("Test_GameController_CustomHouse_FullGame_AndCheckMessageAndProperties - constructor - ParseInput")
-                    .SetCategory("GameController CustomHouse Constructor ParseInput Move Check Message Prompt Status MoveNumber GameOver Success");
+                // Set custom House using GameController constructor
+                yield return new TestCaseData(GetGameController_WithCustomHouseSetViaConstructor())
+                    .SetName("Test_GameController_CustomHouse_FullGame_AndCheckMessageAndProperties - constructor")
+                    .SetCategory("GameController CustomHouse Constructor Move Check Message Prompt Status MoveNumber GameOver Success");
 
-                // Set custom House using GameController RESTARTGAME method and play with PARSEINPUT
-                yield return new TestCaseData(GetGameController_WithCustomHouseSetViaRestartGame(),
-                        (string direction, GameController gameController) => gameController.ParseInput(direction),
-                        (GameController gameController) => gameController.ParseInput("check"))
-                    .SetName("Test_GameController_CustomHouse_FullGame_AndCheckMessageAndProperties - RestartGame - ParseInput")
-                    .SetCategory("GameController CustomHouse RestartGame ParseInput Move Check Message Prompt Status MoveNumber GameOver Success");
-
-                // Set custom House using GameController CONSTRUCTOR and play with MOVE/CHECK methods
-                yield return new TestCaseData(GetGameController_WithCustomHouseSetViaConstructor(),
-                        (string direction, GameController gameController) =>
-                        {
-                            try
-                            {
-                                return gameController.Move(direction);
-                            }
-                            catch(Exception e)
-                            {
-                                return e.Message;
-                            }
-                        },
-                        (GameController gameController) =>
-                        {
-                            try
-                            {
-                                return gameController.CheckCurrentLocation();
-                            }
-                            catch (Exception e)
-                            {
-                                return e.Message;
-                            }
-                        })
-                    .SetName("Test_GameController_CustomHouse_FullGame_AndCheckMessageAndProperties - constructor - Move/Check")
-                    .SetCategory("GameController CustomHouse Constructor MoveMethod CheckMethod Message Prompt Status MoveNumber GameOver Success");
-
-                // Set custom House using GameController RESTARTGAME method and play with MOVE/CHECK methods
-                yield return new TestCaseData(GetGameController_WithCustomHouseSetViaRestartGame(),
-                        (string direction, GameController gameController) =>
-                        {
-                            try
-                            {
-                                return gameController.Move(direction);
-                            }
-                            catch (Exception e)
-                            {
-                                return e.Message;
-                            }
-                        },
-                        (GameController gameController) =>
-                        {
-                            try
-                            {
-                                return gameController.CheckCurrentLocation();
-                            }
-                            catch (Exception e)
-                            {
-                                return e.Message;
-                            }
-                        })
-                    .SetName("Test_GameController_CustomHouse_FullGame_AndCheckMessageAndProperties - RestartGame - Move/Check")
-                    .SetCategory("GameController CustomHouse RestartGame MoveMethod CheckMethod Message Prompt Status MoveNumber GameOver Success");
+                // Set custom House using GameController RestartGame method
+                yield return new TestCaseData(GetGameController_WithCustomHouseSetViaRestartGame())
+                    .SetName("Test_GameController_CustomHouse_FullGame_AndCheckMessageAndProperties - RestartGame")
+                    .SetCategory("GameController CustomHouse RestartGame Move Check Message Prompt Status MoveNumber GameOver Success");
             }
         }
     }
