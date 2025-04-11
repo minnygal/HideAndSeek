@@ -418,6 +418,16 @@ namespace HideAndSeek
             return $"Moving {direction}";
         }
 
+        /// <summary>
+        /// Move to the Location in a direction
+        /// (increments move number regardless of return value)
+        /// </summary>
+        /// <param name="direction">The direction to move</param>
+        /// <returns>Description</returns>
+        public string Move(string direction)
+        {
+            return Move(DirectionExtensions.Parse(direction));
+        }
 
         /// <summary>
         /// Helper method to check current location for opponents

@@ -391,7 +391,7 @@ namespace HideAndSeek
                         {
                             try
                             {
-                                return gameController.Move(DirectionExtensions.Parse(direction));
+                                return gameController.Move(direction);
                             }
                             catch(Exception e)
                             {
@@ -418,7 +418,7 @@ namespace HideAndSeek
                         {
                             try
                             {
-                                return gameController.Move(DirectionExtensions.Parse(direction));
+                                return gameController.Move(direction);
                             }
                             catch (Exception e)
                             {
