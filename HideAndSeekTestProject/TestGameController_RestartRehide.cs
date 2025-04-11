@@ -6,11 +6,10 @@ using System.Xml.Linq;
 namespace HideAndSeek
 {
     /// <summary>
-    /// GameController tests for constructor with invalid file name or name of nonexistent file, RestartGame method,
-    /// RehideAllOpponents method, and checking Opponents' hiding locations when Opponents rehidden or game restarted
+    /// GameController tests for RestartGame and RehideAllOpponents methods
     /// </summary>
     [TestFixture]
-    public class TestGameController_Basic
+    public class TestGameController_RestartRehide
     {
         GameController gameController;
 
@@ -18,7 +17,7 @@ namespace HideAndSeek
         public void SetUp()
         {
             House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
-                                "DefaultHouse.json", TestGameController_Basic_TestData.DefaultHouse_Serialized); // Set static House file system to mock file system
+                                "DefaultHouse.json", TestGameController_RestartRehide_TestData.DefaultHouse_Serialized); // Set static House file system to mock file system
             House.Random = new Random(); // Set static House Random property to new Random number generator
             gameController = new GameController("DefaultHouse"); // Create new GameController
         }
@@ -30,7 +29,7 @@ namespace HideAndSeek
             House.Random = new Random(); // Set static House Random property to new Random number generator
         }
 
-        [TestCaseSource(typeof(TestGameController_Basic_TestData), nameof(TestGameController_Basic_TestData.TestCases_For_Test_GameController_RestartGame))]
+        [TestCaseSource(typeof(TestGameController_RestartRehide_TestData), nameof(TestGameController_RestartRehide_TestData.TestCases_For_Test_GameController_RestartGame))]
         [Category("GameController RestartGame HidingLocations Success")]
         public void Test_GameController_RestartGame(Func<GameController, GameController> GetGameController)
         {
@@ -116,39 +115,6 @@ namespace HideAndSeek
 
                 // Assert that exception message is as expected
                 Assert.That(exception.Message, Is.EqualTo("The number of hiding places must equal the number of opponents. (Parameter 'hidingPlaces')"));
-            });
-        }
-
-        [TestCaseSource(typeof(TestGameController_Basic_TestData), nameof(TestGameController_Basic_TestData.TestCases_For_Test_GameController_CheckErrorMessage_ForInvalidHouseFileName))]
-        [Category("GameController Constructor Failure")]
-        public void Test_GameController_CheckErrorMessage_ForInvalidHouseFileName(Action callWithInvalidHouseFileName)
-        {
-            Assert.Multiple(() =>
-            {
-                // Assert that doing action with name of nonexistent House file raises an exception
-                var exception = Assert.Throws<InvalidDataException>(() =>
-                {
-                    callWithInvalidHouseFileName();
-                });
-
-                // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo("Cannot perform action because file name \"@eou]} {(/\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
-            });
-        }
-
-        [TestCaseSource(typeof(TestGameController_Basic_TestData), nameof(TestGameController_Basic_TestData.TestCases_For_Test_GameController_CheckErrorMessage_ForHouseFileDoesNotExist))]
-        public void Test_GameController_CheckErrorMessage_ForHouseFileDoesNotExist(Action callWithNonexistentFileName)
-        {
-            Assert.Multiple(() =>
-            {
-                // Assert that doing action with name of nonexistent House file raises an exception
-                var exception = Assert.Throws<FileNotFoundException>(() =>
-                {
-                    callWithNonexistentFileName();
-                });
-
-                // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot load game because house layout file MyNonexistentFile does not exist"));
             });
         }
     }

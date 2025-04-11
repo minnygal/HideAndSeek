@@ -291,6 +291,59 @@ namespace HideAndSeek
             "}";
         #endregion
 
+        public static IEnumerable TestCases_For_Test_GameController_CustomHouse_Constructor_AndCheckErrorMessage_ForInvalidHouseFileName
+        {
+            get
+            {
+                yield return new TestCaseData(() =>
+                {
+                    new GameController("@eou]} {(/"); // Call GameController constructor
+                })
+                    .SetName("Test_GameController_CustomHouse_Constructor_AndCheckErrorMessage_ForInvalidHouseFileName - constructor")
+                    .SetCategory("GameController Constructor Failure");
+
+                yield return new TestCaseData(() =>
+                {
+                    new GameController().RestartGame("@eou]} {(/"); // Create new GameController and call RestartGame
+                })
+                    .SetName("Test_GameController_CustomHouse_Constructor_AndCheckErrorMessage_ForInvalidHouseFileName - RestartGame")
+                    .SetCategory("GameController RestartGame Failure");
+            }
+        }
+
+        /// <summary>
+        /// Helper method to set House file system to mock that file does not exist
+        /// </summary>
+        private static void SetUpMockFileSystemForNonexistentHouseFile()
+        {
+            Mock<IFileSystem> fileSystem = new Mock<IFileSystem>();
+            fileSystem.Setup((manager) => manager.File.Exists("MyNonexistentFile.json")).Returns(false);
+            House.FileSystem = fileSystem.Object;
+        }
+        
+        public static IEnumerable TestCases_For_Test_GameController_CheckErrorMessage_ForHouseFileDoesNotExist
+        {
+            get
+            {
+                yield return new TestCaseData(() =>
+                {
+                    SetUpMockFileSystemForNonexistentHouseFile(); // Set up mock file system
+                    new GameController("MyNonexistentFile"); // Call GameController constructor
+                })
+                    .SetName("Test_GameController_Constructor_AndCheckErrorMessage_ForHouseFileDoesNotExist - constructor")
+                    .SetCategory("GameController CustomHouse Constructor Failure");
+
+                yield return new TestCaseData(() =>
+                {
+                    GameController gameController = new GameController("DefaultHouse"); // Create new GameController
+                    SetUpMockFileSystemForNonexistentHouseFile(); // Set up mock file system
+                    gameController.RestartGame("MyNonexistentFile"); // Call RestartGame
+                })
+                    .SetName("Test_GameController_Constructor_AndCheckErrorMessage_ForHouseFileDoesNotExist - RestartGame")
+                    .SetCategory("GameController CustomHouse RestartGame Failure");
+            }
+        }
+
         /// <summary>
         /// Helper method to get GameController with House property 
         /// set to custom House via GameController constructor

@@ -11,10 +11,9 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// Test data for GameController basic tests for constructor with invalid file name or name of nonexistent file, RestartGame method,
-    /// RehideAllOpponents method, and checking Opponents' hiding locations when Opponents rehidden or game restarted
+    /// Test data for RestartGame and RehideAllOpponents method
     /// </summary>
-    public static class TestGameController_Basic_TestData
+    public static class TestGameController_RestartRehide_TestData
     {
         /// <summary>
         /// Text representing default House for tests serialized
@@ -155,59 +154,6 @@ namespace HideAndSeek
                             "}" +
                         "]" +
                     "}";
-            }
-        }
-
-        public static IEnumerable TestCases_For_Test_GameController_CheckErrorMessage_ForInvalidHouseFileName
-        {
-            get
-            {
-                yield return new TestCaseData(() =>
-                {
-                    new GameController("@eou]} {(/"); // Call GameController constructor
-                })
-                    .SetName("Test_GameController_CheckErrorMessage_ForInvalidHouseFileName - constructor")
-                    .SetCategory("GameController Constructor Failure");
-
-                yield return new TestCaseData(() =>
-                {
-                    new GameController().RestartGame("@eou]} {(/"); // Create new GameController and call RestartGame
-                })
-                    .SetName("Test_GameController_CheckErrorMessage_ForInvalidHouseFileName - RestartGame")
-                    .SetCategory("GameController RestartGame Failure");
-            }
-        }
-
-        /// <summary>
-        /// Helper method to set House file system to mock that file does not exist
-        /// </summary>
-        private static void SetUpMockFileSystemForNonexistentHouseFile()
-        {
-            Mock<IFileSystem> fileSystem = new Mock<IFileSystem>();
-            fileSystem.Setup((manager) => manager.File.Exists("MyNonexistentFile.json")).Returns(false);
-            House.FileSystem = fileSystem.Object;
-        }
-
-        public static IEnumerable TestCases_For_Test_GameController_CheckErrorMessage_ForHouseFileDoesNotExist
-        {
-            get
-            {
-                yield return new TestCaseData(() =>
-                    {
-                        SetUpMockFileSystemForNonexistentHouseFile(); // Set up mock file system
-                        new GameController("MyNonexistentFile"); // Call GameController constructor
-                    })
-                    .SetName("Test_GameController_CheckErrorMessage_ForHouseFileDoesNotExist - constructor")
-                    .SetCategory("GameController Constructor Failure");
-
-                yield return new TestCaseData(() =>
-                    {
-                        GameController gameController = new GameController("DefaultHouse"); // Create new GameController
-                        SetUpMockFileSystemForNonexistentHouseFile(); // Set up mock file system
-                        gameController.RestartGame("MyNonexistentFile"); // Call RestartGame
-                    })
-                    .SetName("Test_GameController_CheckErrorMessage_ForHouseFileDoesNotExist - RestartGame")
-                    .SetCategory("GameController RestartGame Failure");
             }
         }
 

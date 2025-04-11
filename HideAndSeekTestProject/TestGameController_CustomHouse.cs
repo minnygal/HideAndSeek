@@ -10,17 +10,58 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// GameController tests for layout of non-default House
-    /// set using GameController constructor or RestartGame method,
-    /// and playing full game in custom House 
+    /// GameController tests for:
+    /// -layout of non-default House set using GameController constructor or RestartGame method
+    /// -playing full game in custom House,
+    /// -GameController constructor called with file name but error
     /// </summary>
     [TestFixture]
     public class TestGameController_CustomHouse
     {
+        [SetUp]
+        public void SetUp()
+        {
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
+                                "DefaultHouse.json", TestGameController_CustomHouse_TestData.DefaultHouse_Serialized); // Set static House file system to mock file system
+        }
+
         [TearDown]
         public void TearDown()
         {
             House.FileSystem = new FileSystem(); // Set House file system to new clean file system
+        }
+
+        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CustomHouse_Constructor_AndCheckErrorMessage_ForInvalidHouseFileName))]
+        [Category("GameController Constructor Failure")]
+        public void Test_GameController_CustomHouse_Constructor_AndCheckErrorMessage_ForInvalidHouseFileName(Action CallWithInvalidHouseFileName)
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that doing action with name of nonexistent House file raises an exception
+                var exception = Assert.Throws<InvalidDataException>(() =>
+                {
+                    CallWithInvalidHouseFileName();
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo("Cannot perform action because file name \"@eou]} {(/\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+            });
+        }
+
+        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CheckErrorMessage_ForHouseFileDoesNotExist))]
+        public void Test_GameController_Constructor_AndCheckErrorMessage_ForHouseFileDoesNotExist(Action CallWithNonexistentFileName)
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that doing action with name of nonexistent House file raises an exception
+                var exception = Assert.Throws<FileNotFoundException>(() =>
+                {
+                    CallWithNonexistentFileName();
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo($"Cannot load game because house layout file MyNonexistentFile does not exist"));
+            });
         }
 
         [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CustomHouse_NameAndFileNameProperties))]
