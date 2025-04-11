@@ -23,7 +23,7 @@ namespace HideAndSeek
             House.FileSystem = new FileSystem(); // Set House file system to new clean file system
         }
 
-        [TestCaseSource(typeof(TestGameController_CustomHouse_TestCaseData), nameof(TestGameController_CustomHouse_TestCaseData.TestCases_For_Test_GameController_CustomHouse_NameAndFileNameProperties))]
+        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CustomHouse_NameAndFileNameProperties))]
         public void Test_GameController_CustomHouse_NameAndFileNameProperties(GameController gameController)
         {
             Assert.Multiple(() =>
@@ -33,7 +33,7 @@ namespace HideAndSeek
             });
         }
 
-        [TestCaseSource(typeof(TestGameController_CustomHouse_TestCaseData), nameof(TestGameController_CustomHouse_TestCaseData.TestCases_For_Test_GameController_CustomHouse_LocationNames_AndExits))]
+        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CustomHouse_LocationNames_AndExits))]
         public void Test_GameController_CustomHouse_LocationNames_AndExits(GameController gameController)
         {
             // Initialize variables to Location objects by names
@@ -170,7 +170,7 @@ namespace HideAndSeek
             });
         }
 
-        [TestCaseSource(typeof(TestGameController_CustomHouse_TestCaseData), nameof(TestGameController_CustomHouse_TestCaseData.TestCases_For_Test_GameController_CustomHouse_LocationsWithHidingPlaces_Names_And_HidingPlaces))]
+        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CustomHouse_LocationsWithHidingPlaces_Names_And_HidingPlaces))]
         public void Test_GameController_CustomHouse_LocationsWithHidingPlaces_Names_And_HidingPlaces(GameController gameController)
         {
             // Initialize variables to LocationWithHidingPlace objects by names
@@ -227,7 +227,7 @@ namespace HideAndSeek
         /// -I added/edited some comments for easier reading.
         /// -I added messages to the assertions to make them easier to debug.
         /// </summary>
-        [TestCaseSource(typeof(TestGameController_CustomHouse_TestCaseData), nameof(TestGameController_CustomHouse_TestCaseData.TestCases_For_Test_GameController_CustomHouse_FullGame_AndCheckMessageAndProperties))]
+        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CustomHouse_FullGame_AndCheckMessageAndProperties))]
         public void Test_GameController_CustomHouse_FullGame_AndCheckMessageAndProperties(GameController gameController)
         {
             // Hide Opponents is specific hiding places

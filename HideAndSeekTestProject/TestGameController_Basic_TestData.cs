@@ -11,9 +11,10 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// TestCaseData for GameController basic tests
+    /// Test data for GameController basic tests for constructor with invalid file name or name of nonexistent file, RestartGame method,
+    /// RehideAllOpponents method, and checking Opponents' hiding locations when Opponents rehidden or game restarted
     /// </summary>
-    public static class TestGameController_Basic_TestCaseData
+    public static class TestGameController_Basic_TestData
     {
         /// <summary>
         /// Text representing default House for tests serialized

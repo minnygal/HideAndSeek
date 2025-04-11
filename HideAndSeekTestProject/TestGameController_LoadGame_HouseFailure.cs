@@ -43,10 +43,10 @@ namespace HideAndSeek
             string textInFile =
             "{" +
                 "\"HouseFileName\":\"NonexistentHouse\"" + "," +
-                TestGameController_LoadGame_HouseFailure_TestCaseData.SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
-                TestGameController_LoadGame_HouseFailure_TestCaseData.SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
-                TestGameController_LoadGame_HouseFailure_TestCaseData.SavedGame_Serialized_OpponentsAndHidingLocations + "," +
-                TestGameController_LoadGame_HouseFailure_TestCaseData.SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
+                TestGameController_LoadGame_HouseFailure_TestData.SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                TestGameController_LoadGame_HouseFailure_TestData.SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
+                TestGameController_LoadGame_HouseFailure_TestData.SavedGame_Serialized_OpponentsAndHidingLocations + "," +
+                TestGameController_LoadGame_HouseFailure_TestData.SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
             "}";
 
             // Set up mock for GameController file system
@@ -54,7 +54,7 @@ namespace HideAndSeek
 
             // Set up mock for House file system
             Mock<IFileSystem> houseMockFileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText(
-                "DefaultHouse.json", TestGameController_LoadGame_HouseFailure_TestCaseData.DefaultHouse_Serialized); // Mock default House file
+                "DefaultHouse.json", TestGameController_LoadGame_HouseFailure_TestData.DefaultHouse_Serialized); // Mock default House file
             houseMockFileSystem.Setup((manager) => manager.File.Exists("NonexistentHouse.json")).Returns(false); // Mock that nonexistent House file does not exist
             House.FileSystem = houseMockFileSystem.Object; // Set House file system to mock file system
 
@@ -68,8 +68,8 @@ namespace HideAndSeek
             Assert.That(exception.Message, Is.EqualTo("Cannot load game because house layout file NonexistentHouse does not exist"));
         }
 
-        [TestCaseSource(typeof(TestGameController_LoadGame_HouseFailure_TestCaseData),
-            nameof(TestGameController_LoadGame_HouseFailure_TestCaseData.TestCases_For_Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileFormatIsInvalid))]
+        [TestCaseSource(typeof(TestGameController_LoadGame_HouseFailure_TestData),
+            nameof(TestGameController_LoadGame_HouseFailure_TestData.TestCases_For_Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileFormatIsInvalid))]
         [Category("GameController LoadGame House Failure")]
         public void Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileFormatIsInvalid(
             string exceptionMessageEnding, string fileText)
@@ -80,8 +80,8 @@ namespace HideAndSeek
                                                       exceptionMessageEnding));
         }
 
-        [TestCaseSource(typeof(TestGameController_LoadGame_HouseFailure_TestCaseData),
-            nameof(TestGameController_LoadGame_HouseFailure_TestCaseData.TestCases_For_Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasWhitespaceValue))]
+        [TestCaseSource(typeof(TestGameController_LoadGame_HouseFailure_TestData),
+            nameof(TestGameController_LoadGame_HouseFailure_TestData.TestCases_For_Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasWhitespaceValue))]
         [Category("GameController LoadGame House Failure")]
         public void Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasWhitespaceValue(
             string exceptionMessageEnding, string fileText)
@@ -92,8 +92,8 @@ namespace HideAndSeek
                                                       exceptionMessageEnding));
         }
 
-        [TestCaseSource(typeof(TestGameController_LoadGame_HouseFailure_TestCaseData),
-            nameof(TestGameController_LoadGame_HouseFailure_TestCaseData.TestCases_For_Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidDirection))]
+        [TestCaseSource(typeof(TestGameController_LoadGame_HouseFailure_TestData),
+            nameof(TestGameController_LoadGame_HouseFailure_TestData.TestCases_For_Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidDirection))]
         [Category("GameController LoadGame House Failure")]
         public void Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidDirection(string fileText)
         {
@@ -103,8 +103,8 @@ namespace HideAndSeek
                                                           "The JSON value could not be converted to HideAndSeek.Direction."));
         }
 
-        [TestCaseSource(typeof(TestGameController_LoadGame_HouseFailure_TestCaseData),
-            nameof(TestGameController_LoadGame_HouseFailure_TestCaseData.TestCases_For_Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidValue))]
+        [TestCaseSource(typeof(TestGameController_LoadGame_HouseFailure_TestData),
+            nameof(TestGameController_LoadGame_HouseFailure_TestData.TestCases_For_Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidValue))]
         [Category("GameController LoadGame House Failure")]
         public void Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidValue(
             string errorMessageEnding, string fileText)
@@ -126,10 +126,10 @@ namespace HideAndSeek
             string textInSavedGameFile =
             "{" +
                 "\"HouseFileName\":\"CorruptHouse\"" + "," +
-                TestGameController_LoadGame_HouseFailure_TestCaseData.SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
-                TestGameController_LoadGame_HouseFailure_TestCaseData.SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
-                TestGameController_LoadGame_HouseFailure_TestCaseData.SavedGame_Serialized_OpponentsAndHidingLocations + "," +
-                TestGameController_LoadGame_HouseFailure_TestCaseData.SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
+                TestGameController_LoadGame_HouseFailure_TestData.SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                TestGameController_LoadGame_HouseFailure_TestData.SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
+                TestGameController_LoadGame_HouseFailure_TestData.SavedGame_Serialized_OpponentsAndHidingLocations + "," +
+                TestGameController_LoadGame_HouseFailure_TestData.SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
             "}";
 
             // Set up mock for GameController file system
@@ -137,7 +137,7 @@ namespace HideAndSeek
             
             // Set up mock for House file system
             Mock<IFileSystem> houseMockFileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText(
-                "DefaultHouse.json", TestGameController_LoadGame_HouseFailure_TestCaseData.DefaultHouse_Serialized); // Create mock that returns text for default House file
+                "DefaultHouse.json", TestGameController_LoadGame_HouseFailure_TestData.DefaultHouse_Serialized); // Create mock that returns text for default House file
             houseMockFileSystem = MockFileSystemHelper.SetMockOfFileSystem_ToReadAllText(houseMockFileSystem, "CorruptHouse.json", houseFileText); // Set up mock to return corrupt House file text
             House.FileSystem = houseMockFileSystem.Object; // Set House file system to mock file system
 

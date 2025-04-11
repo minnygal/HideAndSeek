@@ -18,7 +18,7 @@ namespace HideAndSeek
         public void SetUp()
         {
             House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
-                                "DefaultHouse.json", TestGameController_Basic_TestCaseData.DefaultHouse_Serialized); // Set static House file system to mock file system
+                                "DefaultHouse.json", TestGameController_Basic_TestData.DefaultHouse_Serialized); // Set static House file system to mock file system
             House.Random = new Random(); // Set static House Random property to new Random number generator
             gameController = new GameController("DefaultHouse"); // Create new GameController
         }
@@ -30,7 +30,7 @@ namespace HideAndSeek
             House.Random = new Random(); // Set static House Random property to new Random number generator
         }
 
-        [TestCaseSource(typeof(TestGameController_Basic_TestCaseData), nameof(TestGameController_Basic_TestCaseData.TestCases_For_Test_GameController_RestartGame))]
+        [TestCaseSource(typeof(TestGameController_Basic_TestData), nameof(TestGameController_Basic_TestData.TestCases_For_Test_GameController_RestartGame))]
         [Category("GameController RestartGame HidingLocations Success")]
         public void Test_GameController_RestartGame(Func<GameController, GameController> GetGameController)
         {
@@ -119,7 +119,7 @@ namespace HideAndSeek
             });
         }
 
-        [TestCaseSource(typeof(TestGameController_Basic_TestCaseData), nameof(TestGameController_Basic_TestCaseData.TestCases_For_Test_GameController_CheckErrorMessage_ForInvalidHouseFileName))]
+        [TestCaseSource(typeof(TestGameController_Basic_TestData), nameof(TestGameController_Basic_TestData.TestCases_For_Test_GameController_CheckErrorMessage_ForInvalidHouseFileName))]
         [Category("GameController Constructor Failure")]
         public void Test_GameController_CheckErrorMessage_ForInvalidHouseFileName(Action callWithInvalidHouseFileName)
         {
@@ -136,7 +136,7 @@ namespace HideAndSeek
             });
         }
 
-        [TestCaseSource(typeof(TestGameController_Basic_TestCaseData), nameof(TestGameController_Basic_TestCaseData.TestCases_For_Test_GameController_CheckErrorMessage_ForHouseFileDoesNotExist))]
+        [TestCaseSource(typeof(TestGameController_Basic_TestData), nameof(TestGameController_Basic_TestData.TestCases_For_Test_GameController_CheckErrorMessage_ForHouseFileDoesNotExist))]
         public void Test_GameController_CheckErrorMessage_ForHouseFileDoesNotExist(Action callWithNonexistentFileName)
         {
             Assert.Multiple(() =>

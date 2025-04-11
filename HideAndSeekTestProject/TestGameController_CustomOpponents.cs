@@ -7,6 +7,9 @@ using System.Threading.Tasks;
 
 namespace HideAndSeek
 {
+    /// <summary>
+    /// GameController tests for custom Opponents
+    /// </summary>
     [TestFixture]
     public class TestGameController_CustomOpponents
     {
@@ -17,7 +20,7 @@ namespace HideAndSeek
         {
             // Set House file system to return text for default House
             House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.json", 
-                                    TestGameController_CustomOpponents_TestCaseData.DefaultHouse_Serialized);
+                                    TestGameController_CustomOpponents_TestData.DefaultHouse_Serialized);
         }
 
         [SetUp]
@@ -32,8 +35,8 @@ namespace HideAndSeek
             House.Random = new Random(); // Set static House Random property to new Random number generator
         }
 
-        [TestCaseSource(typeof(TestGameController_CustomOpponents_TestCaseData), 
-            nameof(TestGameController_CustomOpponents_TestCaseData.TestCases_For_Test_GameController_Constructor_WithSpecifiedNumberOfOpponents))]
+        [TestCaseSource(typeof(TestGameController_CustomOpponents_TestData), 
+            nameof(TestGameController_CustomOpponents_TestData.TestCases_For_Test_GameController_Constructor_WithSpecifiedNumberOfOpponents))]
         [Category("GameController Constructor SpecifiedNumberOfOpponents OpponentsAndHidingPlaces Success")]
         public void Test_GameController_Constructor_WithSpecifiedNumberOfOpponents(
             int numberOfOpponents, string[] expectedNames, string[] expectedHidingPlaces, int[] mockRandomValuesList)
@@ -81,8 +84,8 @@ namespace HideAndSeek
         /// <param name="mockRandomValuesList">Values for mock random for House Random (determines Opponents' hiding locations)</param>
         /// <param name="CreateGameController">Function to return GameController set up with custom Opponents</param>
         /// <param name="FinishGame">Function to return GameController after finish game, making assertions along the way</param>
-        [TestCaseSource(typeof(TestGameController_CustomOpponents_TestCaseData), 
-            nameof(TestGameController_CustomOpponents_TestCaseData.TestCases_For_Test_GameController_FullGame_WithCustomOpponents_AndCheckMessageAndProperties))]
+        [TestCaseSource(typeof(TestGameController_CustomOpponents_TestData), 
+            nameof(TestGameController_CustomOpponents_TestData.TestCases_For_Test_GameController_FullGame_WithCustomOpponents_AndCheckMessageAndProperties))]
         public void Test_GameController_FullGame_WithCustomOpponents_AndCheckMessageAndProperties(
             int[] mockRandomValuesList, Func<GameController> CreateGameController, Func<GameController, GameController> FinishGame)
         {
@@ -139,8 +142,8 @@ namespace HideAndSeek
             });
         }
 
-        [TestCaseSource(typeof(TestGameController_CustomOpponents_TestCaseData), 
-            nameof(TestGameController_CustomOpponents_TestCaseData.TestCases_For_Test_GameController_Constructor_WithSpecifiedNamesOfOpponents))]
+        [TestCaseSource(typeof(TestGameController_CustomOpponents_TestData), 
+            nameof(TestGameController_CustomOpponents_TestData.TestCases_For_Test_GameController_Constructor_WithSpecifiedNamesOfOpponents))]
         [Category("GameController Constructor SpecifiedNamesOfOpponents OpponentsAndHidingPlaces Success")]
         public void Test_GameController_Constructor_WithSpecifiedNamesOfOpponents(string[] names, string[] expectedHidingPlaces)
         {

@@ -26,7 +26,7 @@ namespace HideAndSeek
             message = null;
             exception = null;
             House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
-                               "DefaultHouse.json", TestGameController_LoadGame_TestCaseData.DefaultHouse_Serialized); // Set mock file system for House property to return default House file text
+                               "DefaultHouse.json", TestGameController_LoadGame_TestData.DefaultHouse_Serialized); // Set mock file system for House property to return default House file text
             GameController.FileSystem = new FileSystem(); // Set static GameController file system to new file system
         }
 
@@ -44,7 +44,7 @@ namespace HideAndSeek
         {
             // Set up mock for GameController file system
             GameController.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText($"{fileName}.json",
-                                            TestGameController_LoadGame_TestCaseData.SavedGame_Serialized_NoFoundOpponents);
+                                            TestGameController_LoadGame_TestData.SavedGame_Serialized_NoFoundOpponents);
 
             // Create new GameController
             gameController = new GameController("DefaultHouse");
@@ -56,8 +56,8 @@ namespace HideAndSeek
             Assert.That(message, Is.EqualTo(expected));
         }
 
-        [TestCaseSource(typeof(TestGameController_LoadGame_TestCaseData),
-                        nameof(TestGameController_LoadGame_TestCaseData.TestCases_For_Test_GameController_LoadGame_WithNoFoundOpponents))]
+        [TestCaseSource(typeof(TestGameController_LoadGame_TestData),
+                        nameof(TestGameController_LoadGame_TestData.TestCases_For_Test_GameController_LoadGame_WithNoFoundOpponents))]
         public void Test_GameController_LoadGame_WithNoFoundOpponents(
             string savedGameFileText, string houseName, string houseFileName, string houseFileText, string housePlayerStartingPoint,
             IEnumerable<string> locations, IEnumerable<string> locationsWithoutHidingPlaces, IEnumerable<string> locationsWithHidingPlaces,
@@ -104,8 +104,8 @@ namespace HideAndSeek
             });
         }
 
-        [TestCaseSource(typeof(TestGameController_LoadGame_TestCaseData),
-            nameof(TestGameController_LoadGame_TestCaseData.TestCases_For_Test_GameController_LoadGame_WithFoundOpponents))]
+        [TestCaseSource(typeof(TestGameController_LoadGame_TestData),
+            nameof(TestGameController_LoadGame_TestData.TestCases_For_Test_GameController_LoadGame_WithFoundOpponents))]
         [Category("GameController LoadGame Success")]
         public void Test_GameController_LoadGame_WithFoundOpponents(
             string playerLocation, int moveNumber, List<string> foundOpponents, Action<IEnumerable<LocationWithHidingPlace>> CheckHidingPlacesWithOpponents)
@@ -116,7 +116,7 @@ namespace HideAndSeek
                     "\"HouseFileName\":\"DefaultHouse\"" + "," +
                    $"\"PlayerLocation\":\"{playerLocation}\"" + "," +
                    $"\"MoveNumber\":{moveNumber}" + "," +
-                    TestGameController_LoadGame_TestCaseData.SavedGame_Serialized_OpponentsAndHidingLocations + "," +
+                    TestGameController_LoadGame_TestData.SavedGame_Serialized_OpponentsAndHidingLocations + "," +
                    $"\"FoundOpponents\":[{string.Join(",", foundOpponents.Select((o) => $"\"{o}\""))}]" +
                 "}";
 
@@ -139,9 +139,9 @@ namespace HideAndSeek
                 Assert.That(gameController.House.Name, Is.EqualTo("my house"), "House name");
                 Assert.That(gameController.House.HouseFileName, Is.EqualTo("DefaultHouse"), "House file name");
                 Assert.That(gameController.House.PlayerStartingPoint, Is.EqualTo("Entry"), "House starting point");
-                Assert.That(gameController.House.Locations.Select((l) => l.Name), Is.EquivalentTo(TestGameController_LoadGame_TestCaseData.DefaultHouse_Locations), "House all locations names");
-                Assert.That(gameController.House.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestGameController_LoadGame_TestCaseData.DefaultHouse_LocationsWithoutHidingPlaces), "House locations without hiding places names");
-                Assert.That(gameController.House.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestGameController_LoadGame_TestCaseData.DefaultHouse_LocationsWithHidingPlaces), "House locations with hiding places names");
+                Assert.That(gameController.House.Locations.Select((l) => l.Name), Is.EquivalentTo(TestGameController_LoadGame_TestData.DefaultHouse_Locations), "House all locations names");
+                Assert.That(gameController.House.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestGameController_LoadGame_TestData.DefaultHouse_LocationsWithoutHidingPlaces), "House locations without hiding places names");
+                Assert.That(gameController.House.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestGameController_LoadGame_TestData.DefaultHouse_LocationsWithHidingPlaces), "House locations with hiding places names");
 
                 // Assert that GameController properties are as expected
                 Assert.That(gameController.CurrentLocation.Name, Is.EqualTo(playerLocation), "player location");
@@ -154,7 +154,7 @@ namespace HideAndSeek
                 CheckHidingPlacesWithOpponents(gameController.House.LocationsWithHidingPlaces);
 
                 // Assert that all hiding places which had no Opponents hidden there in this game are empty
-                gameController.House.LocationsWithHidingPlaces.Where((l) => !(TestGameController_LoadGame_TestCaseData.SavedGame_OpponentsAndHidingPlaces
+                gameController.House.LocationsWithHidingPlaces.Where((l) => !(TestGameController_LoadGame_TestData.SavedGame_OpponentsAndHidingPlaces
                                                                               .Select((kvp) => kvp.Value).Distinct().Contains(l.Name)))
                                                               .ToList().ForEach((l) =>
                                                               {
@@ -193,8 +193,8 @@ namespace HideAndSeek
             Assert.That(message, Is.EqualTo("Cannot load game because file my_saved_game does not exist"));
         }
 
-        [TestCaseSource(typeof(TestGameController_LoadGame_TestCaseData),
-            nameof(TestGameController_LoadGame_TestCaseData.TestCases_For_Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileFormatIsInvalid))]
+        [TestCaseSource(typeof(TestGameController_LoadGame_TestData),
+            nameof(TestGameController_LoadGame_TestData.TestCases_For_Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileFormatIsInvalid))]
         [Category("GameController LoadGame JsonException Failure")]
         public void Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileDataHasInvalidValue(string endOfExceptionMessage, string textInFile)
         {
@@ -205,8 +205,8 @@ namespace HideAndSeek
             Assert.That(exception.Message, Is.EqualTo($"Cannot process because data is corrupt - {endOfExceptionMessage}"));
         }
 
-        [TestCaseSource(typeof(TestGameController_LoadGame_TestCaseData),
-            nameof(TestGameController_LoadGame_TestCaseData.TestCases_For_Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileDataHasInvalidValue))]
+        [TestCaseSource(typeof(TestGameController_LoadGame_TestData),
+            nameof(TestGameController_LoadGame_TestData.TestCases_For_Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileDataHasInvalidValue))]
         [Category("GameController LoadGame InvalidDataException Failure")]
         public void Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileFormatIsInvalid(string endOfExceptionMessage, string textInFile)
         {

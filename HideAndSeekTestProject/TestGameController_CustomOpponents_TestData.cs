@@ -8,7 +8,10 @@ using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HideAndSeek
 {
-    public static class TestGameController_CustomOpponents_TestCaseData
+    /// <summary>
+    /// Test data for GameController tests for custom Opponents
+    /// </summary>
+    public static class TestGameController_CustomOpponents_TestData
     {
         /// <summary>
         /// Text representing default House for tests serialized

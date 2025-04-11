@@ -22,7 +22,7 @@ namespace HideAndSeek
             message = null;
             exception = null;
             House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
-                               "DefaultHouse.json", TestGameController_SaveGame_TestCaseData.DefaultHouse_Serialized); // Set mock file system for House property to return default House file text
+                               "DefaultHouse.json", TestGameController_SaveGame_TestData.DefaultHouse_Serialized); // Set mock file system for House property to return default House file text
             GameController.FileSystem = new FileSystem(); // Set static GameController file system to new file system
         }
 
@@ -54,8 +54,8 @@ namespace HideAndSeek
         }
 
         // Tests default House, and tests custom House set via constructor and via ReloadGame
-        [TestCaseSource(typeof(TestGameController_SaveGame_TestCaseData),
-                        nameof(TestGameController_SaveGame_TestCaseData.TestCases_For_Test_GameController_SaveGame_AndCheckTextSavedToFile))]
+        [TestCaseSource(typeof(TestGameController_SaveGame_TestData),
+                        nameof(TestGameController_SaveGame_TestData.TestCases_For_Test_GameController_SaveGame_AndCheckTextSavedToFile))]
         public void Test_GameController_SaveGame_AndCheckTextSavedToFile(string houseFileName, string houseFileText,
                     Func<Mock<IFileSystem>, GameController> StartNewGame, string expectedTextInSavedGameFile)
         {
