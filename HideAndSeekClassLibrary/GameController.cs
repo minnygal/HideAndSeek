@@ -400,6 +400,7 @@ namespace HideAndSeek
         /// <param name="direction">The Direction to move</param>
         /// <returns>Description</returns>
         /// <exception cref="InvalidOperationException">Exception thrown when no exit in specified Direction</exception>
+        /// <exception cref="ArgumentException">Exception thrown if Direction is invalid</exception>
         public string Move(Direction direction)
         {
             // Increment move number
@@ -426,6 +427,7 @@ namespace HideAndSeek
         /// <param name="direction">The direction to move</param>
         /// <returns>Description</returns>
         /// <exception cref="InvalidOperationException">Exception thrown when no exit in specified Direction</exception>
+        /// <exception cref="ArgumentException">Exception thrown if direction is invalid</exception>
         public string Move(string direction)
         {
             return Move(DirectionExtensions.Parse(direction));
