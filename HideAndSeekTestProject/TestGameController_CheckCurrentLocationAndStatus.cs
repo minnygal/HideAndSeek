@@ -9,7 +9,7 @@ namespace HideAndSeek
 {
     /// <summary>
     /// GameController tests for CheckCurrentLocation method called in default House,
-    /// checking Status, CurrentLocation, Move, and GameOver properties along the way; and
+    /// checking FoundOpponents, Status, CurrentLocation, Move, and GameOver properties along the way; and
     /// automatically testing GameController constructor with default House file name passed in
     /// </summary>
     public class TestGameController_CheckCurrentLocationAndStatus
@@ -183,6 +183,7 @@ namespace HideAndSeek
             // Assert that properties are as expected
             Assert.Multiple(() =>
             {
+                Assert.That(gameController.FoundOpponents, Is.Empty, "no found opponents when game started");
                 Assert.That(gameController.CurrentLocation.Name, Is.EqualTo("Entry"), "start in Entry");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(1));
                 Assert.That(gameController.GameOver, Is.False, "game not over when started");
@@ -202,7 +203,7 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("GameController CheckCurrentLocation Status MoveNumber GameOver CurrentLocation Failure")]
+        [Category("GameController CheckCurrentLocation FoundOpponents Status MoveNumber GameOver CurrentLocation Failure")]
         public void Test_GameController_CheckCurrentlocation_InLocationWithoutHidingPlace_AndCheckErrorMessageAndProperties()
         {
             Location initialLocation = gameController.CurrentLocation; // Get initial location before attempt to check
@@ -214,6 +215,7 @@ namespace HideAndSeek
                     gameController.CheckCurrentLocation();
                 });
                 Assert.That(exception.Message, Is.EqualTo("There is no hiding place in the Entry"), "exception message");
+                Assert.That(gameController.FoundOpponents, Is.Empty, "no found opponents after trying to check");
                 Assert.That(gameController.Status, Is.EqualTo(initialStatus), "status does not change");
                 Assert.That(gameController.CurrentLocation, Is.EqualTo(initialLocation), "current location does not change");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(2), "move number increments");
@@ -222,7 +224,7 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("GameController CheckCurrentLocation Status MoveNumber GameOver CurrentLocation Success")]
+        [Category("GameController CheckCurrentLocation FoundOpponents Status MoveNumber GameOver CurrentLocation Success")]
         public void Test_GameController_CheckCurrentLocation_WhenNoOpponentHiding()
         {
             // Move to Garage
@@ -231,6 +233,7 @@ namespace HideAndSeek
             Assert.Multiple(() =>
             {
                 // Check that properties are as expected
+                Assert.That(gameController.FoundOpponents, Is.Empty, "no found opponents after move to Garage");
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Garage. You see the following exits:" +
                     Environment.NewLine + " - the Entry is In" +
@@ -242,6 +245,7 @@ namespace HideAndSeek
 
                 // Check current location and check return message and properties
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("Nobody was hiding behind the car"), "message when check Garage");
+                Assert.That(gameController.FoundOpponents, Is.Empty, "no found opponents after check Garage");
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Garage. You see the following exits:" +
                     Environment.NewLine + " - the Entry is In" +
@@ -254,7 +258,7 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("GameController CheckCurrentLocation Status MoveNumber GameOver CurrentLocation Success")]
+        [Category("GameController CheckCurrentLocation FoundOpponents Status MoveNumber GameOver CurrentLocation Success")]
         public void Test_GameController_CheckCurrentLocation_When1OpponentHiding()
         {
             // Move to Bathroom
@@ -264,6 +268,7 @@ namespace HideAndSeek
             Assert.Multiple(() =>
             {
                 // Check that properties are as expected
+                Assert.That(gameController.FoundOpponents, Is.Empty, "no found opponents after move to Bathroom");
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Bathroom. You see the following exits:" +
                     Environment.NewLine + " - the Hallway is to the South" +
@@ -275,6 +280,7 @@ namespace HideAndSeek
 
                 // Check current location and check return message and properties
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 1 opponent hiding behind the door"), "message when check Bathroom");
+                Assert.That(gameController.FoundOpponents.Select((o) => o.Name), Is.EquivalentTo(new List<string> { "Ana" }), "found opponents after check Bathroom");
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Bathroom. You see the following exits:" +
                     Environment.NewLine + " - the Hallway is to the South" +
@@ -287,7 +293,7 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("GameController CheckCurrentLocation Status MoveNumber GameOver CurrentLocation Success")]
+        [Category("GameController CheckCurrentLocation FoundOpponents Status MoveNumber GameOver CurrentLocation Success")]
         public void Test_GameController_CheckCurrentLocation_WhenMultipleOpponentsHiding()
         {
             // Move to Kitchen
@@ -297,6 +303,7 @@ namespace HideAndSeek
             Assert.Multiple(() =>
             {
                 // Check that properties are as expected
+                Assert.That(gameController.FoundOpponents, Is.Empty, "no found opponents after move to Kitchen");
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Kitchen. You see the following exits:" +
                     Environment.NewLine + " - the Hallway is to the Southeast" +
@@ -308,6 +315,7 @@ namespace HideAndSeek
 
                 // Check current location and check return message and properties
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 2 opponents hiding next to the stove"), "message when check Kitchen");
+                Assert.That(gameController.FoundOpponents.Select((o) => o.Name), Is.EquivalentTo(new List<string> { "Joe", "Owen" }), "found opponents after check Kitchen");
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Kitchen. You see the following exits:" +
                     Environment.NewLine + " - the Hallway is to the Southeast" +
@@ -320,7 +328,7 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("GameController CheckCurrentLocation Status MoveNumber GameOver CurrentLocation Success")]
+        [Category("GameController CheckCurrentLocation FoundOpponents Status MoveNumber GameOver CurrentLocation Success")]
         public void Test_GameController_CheckCurrentLocation_FindAllOpponents()
         {
             // Move to Bathroom
@@ -331,6 +339,7 @@ namespace HideAndSeek
             {
                 // Check Bathroom and check return message and properties
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 1 opponent hiding behind the door"), "message when check Bathroom");
+                Assert.That(gameController.FoundOpponents.Select((o) => o.Name), Is.EquivalentTo(new List<string> { "Ana" }), "found opponents after check Bathroom");
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Bathroom. You see the following exits:" +
                     Environment.NewLine + " - the Hallway is to the South" +
@@ -355,6 +364,7 @@ namespace HideAndSeek
 
                 // Check Kitchen and check return message and properties
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 2 opponents hiding next to the stove"), "message when check Kitchen");
+                Assert.That(gameController.FoundOpponents.Select((o) => o.Name), Is.EquivalentTo(new List<string> { "Ana", "Joe", "Owen" }), "found opponents after check Kitchen");
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Kitchen. You see the following exits:" +
                     Environment.NewLine + " - the Hallway is to the Southeast" +
@@ -380,6 +390,8 @@ namespace HideAndSeek
 
                 // Check Pantry and check return message and properties
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 2 opponents hiding inside a cabinet"), "message when check Pantry");
+                Assert.That(gameController.FoundOpponents.Select((o) => o.Name), 
+                            Is.EquivalentTo(new List<string> { "Ana", "Joe", "Owen", "Bob", "Jimmy" }), "found opponents after check Pantry");
                 Assert.That(gameController.Status, Is.EqualTo(
                     "You are in the Pantry. You see the following exits:" +
                     Environment.NewLine + " - the Landing is to the North" +
