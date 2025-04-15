@@ -30,18 +30,17 @@ namespace HideAndSeek
      * -You can start a new game w/o having to create a new GameController instance.
      * -Command keywords cannot have spaces.
      * -Current command keywords are: move, check, save, load, and delete
-     * -In ParseInput, file name is extracted from user input
      *  starting after the space following the save, load, or delete keyword.
      * **/
 
     /** CHANGES
+     * -I moved the ParseInput method to Console app.
      * -I added a restart method so the game can be restarted without creating a new GameController.
      * -I added methods to rehide all opponents.
      * -I made the list of found opponents public for easier game saving/restoration.
      * -I added a file system class variable for testing purposes.
      * -I added a constructor to accept specific names for opponents.
      * -I added a constructor to accept the number of opponents (between 1 and 10) to hide.
-     * -I used my own approach in ParseInput but accomplished the same results.
      * -I renamed methods to SaveGame and LoadGame for easier comprehension.
      * -I made SaveGame not overwrite a pre-existing file.
      * -I prevented overwriting a saved game file in the SaveGame method.
@@ -54,9 +53,8 @@ namespace HideAndSeek
      * -I changed some feedback/update messages for easier reading.
      * -I renamed a variable in Move method for easier comprehension.
      * -I added a method and command to delete a game.
-     * -I allowed direction shorthands to be used in the ParseInput method with the move command.
-     * -I added a teleport command which can be passed to ParseInput 
-     *  to take the user to a random location with hiding place.
+     * -I allowed direction shorthands to be used in the Move method.
+     * -I added a teleport method to take the user to a random location with hiding place.
      * -I created a property to store a House object.
      * -I made the constructor create a House object and assign it to the House property.
      * -I made the constructor accept a House file name passed in but also provided a default value.
@@ -319,90 +317,39 @@ namespace HideAndSeek
         /// (increments move number regardless of return value)
         /// </summary>
         /// <param name="direction">The Direction to move</param>
-        /// <returns>True if the player can move in that Direction, false otherwise</returns>
-        private bool Move(Direction direction)
+        /// <returns>Description</returns>
+        /// <exception cref="InvalidOperationException">Exception thrown when no exit in specified Direction</exception>
+        /// <exception cref="ArgumentException">Exception thrown if Direction is invalid</exception>
+        public string Move(Direction direction)
         {
-            MoveNumber++; // Increment move number
+            // Increment move number
+            MoveNumber++;
+
+            // Attempt to move in specified direction
             Location startLocation = CurrentLocation; // Set start location to current location
             CurrentLocation = CurrentLocation.GetExit(direction); // Set current location to exit returned
-            return CurrentLocation != startLocation; // Return whether the current location has changed (whether move was successful)
+
+            // If could not move in specified direction
+            if (CurrentLocation == startLocation)
+            {
+                throw new InvalidOperationException("There's no exit in that direction"); // Throw new exception with custom error message
+            }
+
+            // Return description
+            return $"Moving {direction}";
         }
 
         /// <summary>
-        /// Parse input from the player
+        /// Move to the Location in a direction
+        /// (increments move number regardless of return value)
         /// </summary>
-        /// <param name="input">Input to parse</param>
-        /// <returns>The results of parsing the input</returns>
-        public string ParseInput(string input)
+        /// <param name="direction">The direction to move</param>
+        /// <returns>Description</returns>
+        /// <exception cref="InvalidOperationException">Exception thrown when no exit in specified Direction</exception>
+        /// <exception cref="ArgumentException">Exception thrown if direction is invalid</exception>
+        public string Move(string direction)
         {
-            // Extract command, one version lowercase and one version original
-            string originalCommand = input.Split(" ").FirstOrDefault("");
-            string lowercaseCommand = originalCommand.ToLower();
-
-            // Evaluate command and act accordingly
-            if (lowercaseCommand == "check") // If input requests the current location be checked for hiding opponents
-            {
-                return CheckCurrentLocation(); // Check current location and return results
-            }
-            else if (lowercaseCommand == "teleport") // If input requests teleportation
-            {
-                return Teleport(); // Teleport and return message
-            }
-            else if ( // If input requests save, load, or delete game
-                lowercaseCommand == "save" || 
-                lowercaseCommand == "load" ||
-                lowercaseCommand == "delete" )
-            {
-                // Get index of first space in input (space after command and before name of file)
-                int indexOfSpace = input.IndexOf(' ');
-
-                // If input does not include a space
-                if (indexOfSpace == -1)
-                {
-                    return "Cannot perform action because no file name was entered"; // Return failure message
-                }
-                else // If input does include a space
-                {
-                    // Extract file name
-                    string fileName = input.Substring(indexOfSpace + 1);
-
-                    // If file name is invalid
-                    if( !(FileSystem.IsValidName(fileName)) )
-                    {
-                        return $"Cannot perform action because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"; // Return failure message
-                    }
-                    else // If file name is valid
-                    {
-                        // If input requests save game
-                        if (lowercaseCommand == "save")
-                        {
-                            return SaveGame(fileName); // Save game and return message
-                        }
-                        else if (lowercaseCommand == "load") // If input requests load game
-                        {
-                            return LoadGame(fileName); // Load game and return message
-                        }
-                        else // If input requests delete game
-                        {
-                            return DeleteGame(fileName); // Delete game and return message
-                        }
-                    }
-                }
-            }
-            // Try to parse input to Direction
-            else if ( !(DirectionExtensions.TryParse(originalCommand, out Direction direction)) ) // If input cannot be parsed to Direction
-            {
-                return "That's not a valid direction"; // Return invalid direction message
-            }
-            // Try to move in specified Direction
-            else if ( !(Move(direction)) ) // If cannot move in specified Direction
-            {
-                return "There's no exit in that direction"; // Return no exit in that direction message
-            }
-            else // If successfully moved in specified Direction
-            {
-                return "Moving " + direction; // Return the direction you're moving
-            }
+            return Move(DirectionExtensions.Parse(direction));
         }
 
         /// <summary>
@@ -410,31 +357,31 @@ namespace HideAndSeek
         /// (increments move number)
         /// </summary>
         /// <returns>The results of checking the location</returns>
-        private string CheckCurrentLocation()
+        /// <exception cref="InvalidOperationException">Exception thrown if no hiding place in current location</exception>
+        public string CheckCurrentLocation()
         {
             // Increment move number
-            MoveNumber++; 
+            MoveNumber++;
 
-            // If current location has a hiding place
-            if (CurrentLocation.GetType() == typeof(LocationWithHidingPlace))
+            // If current location does not have a hiding place
+            if( !(CurrentLocation.GetType() == typeof(LocationWithHidingPlace)) )
             {
-                LocationWithHidingPlace location = (LocationWithHidingPlace)CurrentLocation; // Convert CurrentLocation to LocationWithHidingPlace
-                List<Opponent> opponentsFound = location.CheckHidingPlace(); // Check hiding place and initialize list to Opponents found
-
-                // If any Opponents were found in the hiding place
-                if (opponentsFound.Count >= 1)
-                {
-                    FoundOpponents.AddRange(opponentsFound); // Add Opponents found to list of found opponents
-                    return $"You found {opponentsFound.Count} opponent{(opponentsFound.Count == 1 ? "" : "s")} hiding {location.HidingPlace}";
-                }
-                else // if no Opponents were found in the hiding place
-                {
-                    return $"Nobody was hiding {location.HidingPlace}";
-                }
+                throw new InvalidOperationException($"There is no hiding place in the {CurrentLocation}"); // Throw new exception with custom error message
             }
-            else // If current location does not have a hiding place
+
+            // Check hiding place
+            LocationWithHidingPlace location = (LocationWithHidingPlace)CurrentLocation; // Convert CurrentLocation to LocationWithHidingPlace
+            List<Opponent> opponentsFound = location.CheckHidingPlace(); // Check hiding place and initialize list to Opponents found
+
+            // If any Opponents were found in the hiding place
+            if (opponentsFound.Count >= 1)
             {
-                return $"There is no hiding place in the {CurrentLocation}";
+                FoundOpponents.AddRange(opponentsFound); // Add Opponents found to list of found opponents
+                return $"You found {opponentsFound.Count} opponent{(opponentsFound.Count == 1 ? "" : "s")} hiding {location.HidingPlace}";
+            }
+            else // if no Opponents were found in the hiding place
+            {
+                return $"Nobody was hiding {location.HidingPlace}";
             }
         }
 
@@ -443,7 +390,7 @@ namespace HideAndSeek
         /// (increments move numbber)
         /// </summary>
         /// <returns>Description</returns>
-        private string Teleport()
+        public string Teleport()
         {
             MoveNumber++; // Increment move number
             CurrentLocation = House.GetRandomLocationWithHidingPlace(); // Set player location to random location with hiding place
@@ -455,7 +402,8 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="fileName">Name of file in which to save game data</param>
         /// <returns>String describing what happened</returns>
-        private string SaveGame(string fileName)
+        /// <exception cref="InvalidOperationException">Exception thrown if file already exists</exception>
+        public string SaveGame(string fileName)
         {
             // Get full file name including extension
             string fullFileName = FileSystem.GetFullFileNameForJson(fileName);
@@ -463,7 +411,7 @@ namespace HideAndSeek
             // If file already exists
             if (FileSystem.File.Exists(fullFileName))
             {
-                return $"Cannot perform action because a file named {fileName} already exists"; // Return error message
+                throw new InvalidOperationException($"Cannot perform action because a file named {fileName} already exists"); // Throw new exception with custom error message
             }
 
             // Create dictionary of Opponents and hiding locations as strings
@@ -489,7 +437,11 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="fileName">Name of file from which to load game data</param>
         /// <returns>String describing what happened</returns>
-        private string LoadGame(string fileName)
+        /// <exception cref="JsonException">Exception thrown if JSON formatting issue</exception>
+        /// <exception cref="InvalidDataException">Exception thrown if invalid property value</exception>
+        /// <exception cref="InvalidOperationException">Exception thrown if invalid operation</exception>
+        /// <exception cref="NullReferenceException">Exception thrown if a reference is null</exception>
+        public string LoadGame(string fileName)
         {
             // Get full file name including extension
             string fullFileName = FileSystem.GetFullFileNameForJson(fileName);
@@ -511,34 +463,32 @@ namespace HideAndSeek
             {
                 savedGame = JsonSerializer.Deserialize<SavedGame>(fileText);
             } 
-            catch(NullReferenceException e)
+            catch(JsonException e) // If problem due to JSON formatting issue
             {
-                // If SavedGame House has not been set
-                if(e.Message == "House has not been set")
+                throw new JsonException($"Cannot process because data is corrupt - {e.Message}"); // Throw new exception with custom error message
+            }
+            catch(InvalidDataException e) // If problem due to invalid property value
+            {
+                throw new InvalidDataException($"Cannot process because data is corrupt - {e.Message}"); // Throw new exception with custom error message
+            }
+            catch(InvalidOperationException e) // If problem due to attempted invalid operation
+            {
+                throw new InvalidOperationException($"Cannot process because data is corrupt - {e.Message}"); // Throw new exception with custom error message
+            }
+            catch (NullReferenceException e)
+            {
+                if(e.Message == "House has not been set") // If SavedGame House property has not been set
                 {
-                    // Return custom message
-                    return $"Cannot process because data is corrupt - JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: HouseFileName";
+                    throw new JsonException("Cannot process because data is corrupt - JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: HouseFileName"); // Throw exception with custom error message
                 }
                 else // if other NullReferenceException
                 {
                     throw; // Bubble up exception
                 }
             }
-            catch(FileNotFoundException e) // If House file not found
-            {
-                return e.Message; // Return error message
-            }
             catch(Exception e)
             {
-                // If problem due to invalid property value, JSON format issue, or an invalid operation
-                if(e is InvalidDataException || e is JsonException || e is InvalidOperationException)
-                {
-                    return $"Cannot process because data is corrupt - {e.Message}"; // Return error message
-                }
-                else // If any other exception
-                {
-                    throw; // Bubble up exception
-                }
+                throw; // Bubble up exception
             }
 
             // Load game from SavedGame object.
@@ -552,7 +502,7 @@ namespace HideAndSeek
         /// Load game from SavedGame object
         /// </summary>
         /// <param name="savedGame">SavedGame object from which to load game</param>
-        private void LoadGame(SavedGame savedGame)
+        public void LoadGame(SavedGame savedGame)
         {
             // Set current location
             CurrentLocation = House.GetLocationByName(savedGame.PlayerLocation);
@@ -593,7 +543,8 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="fileName">Name of file to delete</param>
         /// <returns>String describing what happened</returns>
-        private string DeleteGame(string fileName)
+        /// <exception cref="FileNotFoundException">Exception thrown if file not found</exception>
+        public string DeleteGame(string fileName)
         {
             // Get full file name including extension
             string fullFileName = FileSystem.GetFullFileNameForJson(fileName);
@@ -601,7 +552,7 @@ namespace HideAndSeek
             // If file does not exist
             if ( !(FileSystem.File.Exists(fullFileName)) )
             {
-                return $"Could not delete game because file {fileName} does not exist"; // Return error message
+                throw new FileNotFoundException($"Could not delete game because file {fileName} does not exist"); // Throw new exception with custom error message
             }
 
             // Delete file
