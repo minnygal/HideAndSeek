@@ -85,12 +85,12 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("GameController SaveGame Failure")]
+        [Category("GameController SaveGame ArgumentException Failure")]
         public void Test_GameController_SaveGame_AndCheckErrorMessage_ForInvalidFileName(
             [Values("", " ", "my saved game", "my\\saved\\game", "my/saved/game", "my/saved\\ game")] string fileName)
         {
             gameController = new GameController("DefaultHouse");
-            exception = Assert.Throws<InvalidDataException>(() => gameController.SaveGame(fileName));
+            exception = Assert.Throws<ArgumentException>(() => gameController.SaveGame(fileName));
             Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because file name \"{fileName}\" " +
                                             $"is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
         }

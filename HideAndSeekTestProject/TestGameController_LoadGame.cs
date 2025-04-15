@@ -164,12 +164,12 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("GameController LoadGame Failure")]
+        [Category("GameController LoadGame ArgumentException Failure")]
         public void Test_GameController_LoadGame_AndCheckErrorMessage_ForInvalidFileName(
             [Values("", " ", "my saved game", "my\\saved\\game", "my/saved/game", "my/saved\\ game")] string fileName)
         {
             gameController = new GameController("DefaultHouse");
-            exception = Assert.Throws<InvalidDataException>(() => gameController.LoadGame(fileName));
+            exception = Assert.Throws<ArgumentException>(() => gameController.LoadGame(fileName));
             Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because file name \"{fileName}\" " +
                                             $"is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
         }
@@ -209,6 +209,28 @@ namespace HideAndSeek
 
             // Assert that error message is correct
             Assert.That(exception.Message, Is.EqualTo($"Cannot process because data is corrupt - {endOfExceptionMessage}"));
+        }
+
+        [Test]
+        [Category("GameController LoadGame ArgumentException Failure")]
+        public void Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileDataHasInvalidInvalidValue_ForHouseFileName()
+        {
+            // Assert that loading corrupt game raises exception
+            exception = Assert.Throws<ArgumentException>(() => {
+                GetExceptionWhenLoadGameWithCorruptSavedGameFile(
+                        "{" +
+                            "\"HouseFileName\":\"a8}{{ /@uaou12 \"" + "," +
+                            TestGameController_LoadGame_TestData.SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                            TestGameController_LoadGame_TestData.SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
+                            TestGameController_LoadGame_TestData.SavedGame_Serialized_OpponentsAndHidingLocations + "," +
+                            TestGameController_LoadGame_TestData.SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
+                        "}");
+            });
+
+            // Assert that error message is correct
+            Assert.That(exception.Message, Is.EqualTo("Cannot process because data is corrupt - " +
+                                                      "Cannot perform action because file name \"a8}{{ /@uaou12 \" is invalid " +
+                                                      "(is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
         }
 
         [TestCaseSource(typeof(TestGameController_LoadGame_TestData),

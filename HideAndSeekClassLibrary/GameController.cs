@@ -395,6 +395,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="fileName">Name of file in which to save game data</param>
         /// <returns>String describing what happened</returns>
+        /// <exception cref="ArgumentException">Exception thrown if file name is invalid</exception>
         /// <exception cref="InvalidOperationException">Exception thrown if file already exists</exception>
         public string SaveGame(string fileName)
         {
@@ -430,6 +431,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="fileName">Name of file from which to load game data</param>
         /// <returns>String describing what happened</returns>
+        /// <exception cref="ArgumentException">Exception thrown if file name is invalid</exception>
         /// <exception cref="JsonException">Exception thrown if JSON formatting issue</exception>
         /// <exception cref="InvalidDataException">Exception thrown if invalid property value</exception>
         /// <exception cref="InvalidOperationException">Exception thrown if invalid operation</exception>
@@ -468,6 +470,10 @@ namespace HideAndSeek
             catch(InvalidOperationException e) // If problem due to attempted invalid operation
             {
                 throw new InvalidOperationException($"Cannot process because data is corrupt - {e.Message}"); // Throw new exception with custom error message
+            }
+            catch (ArgumentException e) // If problem due to invalid argument (e.g. House file name is invalid)
+            {
+                throw new ArgumentException($"Cannot process because data is corrupt - {e.Message}"); // Throw new exception with custom error message
             }
             catch (NullReferenceException e)
             {
@@ -537,6 +543,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="fileName">Name of file to delete</param>
         /// <returns>String describing what happened</returns>
+        /// <exception cref="ArgumentException">Exception thrown if file name is invalid</exception>
         /// <exception cref="FileNotFoundException">Exception thrown if file not found</exception>
         public string DeleteGame(string fileName)
         {

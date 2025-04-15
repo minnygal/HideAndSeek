@@ -32,13 +32,13 @@ namespace HideAndSeek
         }
 
         [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CustomHouse_Constructor_AndCheckErrorMessage_ForInvalidHouseFileName))]
-        [Category("GameController Constructor Failure")]
+        [Category("GameController Constructor ArgumentException Failure")]
         public void Test_GameController_CustomHouse_Constructor_AndCheckErrorMessage_ForInvalidHouseFileName(Action CallWithInvalidHouseFileName)
         {
             Assert.Multiple(() =>
             {
                 // Assert that doing action with name of nonexistent House file raises an exception
-                var exception = Assert.Throws<InvalidDataException>(() =>
+                var exception = Assert.Throws<ArgumentException>(() =>
                 {
                     CallWithInvalidHouseFileName();
                 });
