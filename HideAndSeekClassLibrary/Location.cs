@@ -239,7 +239,8 @@ namespace HideAndSeek
         /// Get the exit location in a direction
         /// </summary>
         /// <param name="direction">Direction of exit location</param>
-        /// <returns>The exit location (or this location if there is no exit in that direction)</returns>
+        /// <returns>The exit location</returns>
+        /// <exception cref="InvalidOperationException">Exception thrown if no exit in specified direction</exception>
         public Location GetExit(Direction direction) {
             // Get exit in direction specified and store in location variable
             Exits.TryGetValue(direction, out Location location);
@@ -247,7 +248,7 @@ namespace HideAndSeek
             // If no location found in direction
             if(location == null)
             {
-                location = this; // Return calling location
+                throw new InvalidOperationException($"There is no exit for location \"{Name}\" in direction \"{direction}\""); // Throw exception
             }
 
             // Return location

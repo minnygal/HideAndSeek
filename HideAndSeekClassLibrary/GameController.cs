@@ -326,14 +326,7 @@ namespace HideAndSeek
             MoveNumber++;
 
             // Attempt to move in specified direction
-            Location startLocation = CurrentLocation; // Set start location to current location
-            CurrentLocation = CurrentLocation.GetExit(direction); // Set current location to exit returned
-
-            // If could not move in specified direction
-            if (CurrentLocation == startLocation)
-            {
-                throw new InvalidOperationException("There's no exit in that direction"); // Throw new exception with custom error message
-            }
+            CurrentLocation = CurrentLocation.GetExit(direction);
 
             // Return description
             return $"Moving {direction}";
