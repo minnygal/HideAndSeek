@@ -30,18 +30,17 @@ namespace HideAndSeek
      * -You can start a new game w/o having to create a new GameController instance.
      * -Command keywords cannot have spaces.
      * -Current command keywords are: move, check, save, load, and delete
-     * -In ParseInput, file name is extracted from user input
      *  starting after the space following the save, load, or delete keyword.
      * **/
 
     /** CHANGES
+     * -I moved the ParseInput method to Console app.
      * -I added a restart method so the game can be restarted without creating a new GameController.
      * -I added methods to rehide all opponents.
      * -I made the list of found opponents public for easier game saving/restoration.
      * -I added a file system class variable for testing purposes.
      * -I added a constructor to accept specific names for opponents.
      * -I added a constructor to accept the number of opponents (between 1 and 10) to hide.
-     * -I used my own approach in ParseInput but accomplished the same results.
      * -I renamed methods to SaveGame and LoadGame for easier comprehension.
      * -I made SaveGame not overwrite a pre-existing file.
      * -I prevented overwriting a saved game file in the SaveGame method.
@@ -54,9 +53,8 @@ namespace HideAndSeek
      * -I changed some feedback/update messages for easier reading.
      * -I renamed a variable in Move method for easier comprehension.
      * -I added a method and command to delete a game.
-     * -I allowed direction shorthands to be used in the ParseInput method with the move command.
-     * -I added a teleport command which can be passed to ParseInput 
-     *  to take the user to a random location with hiding place.
+     * -I allowed direction shorthands to be used in the Move method.
+     * -I added a teleport method to take the user to a random location with hiding place.
      * -I created a property to store a House object.
      * -I made the constructor create a House object and assign it to the House property.
      * -I made the constructor accept a House file name passed in but also provided a default value.
@@ -312,85 +310,6 @@ namespace HideAndSeek
 
             // Hide Opponents in hiding places
             return RehideAllOpponents(hidingLocations);
-        }
-
-        /// <summary>
-        /// Parse input from the player
-        /// </summary>
-        /// <param name="input">Input to parse</param>
-        /// <returns>The results of parsing the input</returns>
-        public string ParseInput(string input)
-        {
-            // Extract command and make lowercase
-            string lowercaseCommand = input.Trim().Split(" ").FirstOrDefault("").ToLower();
-
-            // Evaluate command and act accordingly
-            if (lowercaseCommand == "check") // If input requests the current location be checked for hiding opponents
-            {
-                try
-                {
-                    return CheckCurrentLocation(); // Check current location and return results
-                }
-                catch(Exception e)
-                {
-                    return e.Message; // Return error message
-                }
-            }
-            else if (lowercaseCommand == "teleport") // If input requests teleportation
-            {
-                return Teleport(); // Teleport and return message
-            }
-            else if ( // If input requests save, load, or delete game
-                lowercaseCommand == "save" || 
-                lowercaseCommand == "load" ||
-                lowercaseCommand == "delete" )
-            {
-                // Get index of first space in input (space after command and before name of file)
-                int indexOfSpace = input.IndexOf(' ');
-
-                // If input does not include a space
-                if (indexOfSpace == -1)
-                {
-                    return "Cannot perform action because no file name was entered"; // Return failure message
-                }
-                else // If input does include a space
-                {
-                    // Extract file name
-                    string fileName = input.Substring(indexOfSpace + 1);
-
-                    try
-                    {
-                        // Perform requested action
-                        if (lowercaseCommand == "save") // If input requests save game
-                        {
-                            return SaveGame(fileName); // Save game and return message
-                        }
-                        else if (lowercaseCommand == "load") // If input requests load game
-                        {
-                            return LoadGame(fileName); // Load game and return message
-                        }
-                        else // If input requests delete game
-                        {
-                            return DeleteGame(fileName); // Delete game and return message
-                        }
-                    }
-                    catch(Exception e)
-                    {
-                        return e.Message; // Return error message
-                    }
-                }
-            }
-            // Try to move in specified Direction
-            else {
-                try
-                {
-                    return Move( DirectionExtensions.Parse(lowercaseCommand));
-                }
-                catch(Exception e)
-                {
-                    return e.Message;
-                }
-            }
         }
 
         /// <summary>
