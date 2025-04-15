@@ -91,7 +91,7 @@ namespace HideAndSeek
 
         [Test]
         [Category("Location GetExit Success")]
-        public void Test_Location_GetExit_ReturnsLocation()
+        public void Test_Location_GetExit()
         {
             // Initialize array of expected exits (one per direction)
             Location[] expectedExits =
@@ -133,32 +133,18 @@ namespace HideAndSeek
 
         [Test]
         [Category("Location GetExit Failure")]
-        public void Test_Location_GetExit_ReturnsCallingLocation_WhenLocationDoesNotExist()
+        public void Test_Location_GetExit_AndCheckErrorMessage_WhenNoLocationInDirection()
         {
-            // Initialize array of actual exits returned (by attic) for directions where exit does not exist
-            // (one call and one exit returned per direction, except the down direction for which there is an exit)
-            Location[] actualExitsReturned = {
-                up_attic.GetExit(Direction.In),
-                up_attic.GetExit(Direction.Up),
-                up_attic.GetExit(Direction.Southeast),
-                up_attic.GetExit(Direction.Northeast),
-                up_attic.GetExit(Direction.East),
-                up_attic.GetExit(Direction.North),
-                up_attic.GetExit(Direction.South),
-                up_attic.GetExit(Direction.West),
-                up_attic.GetExit(Direction.Southwest),
-                up_attic.GetExit(Direction.Northwest),
-                up_attic.GetExit(Direction.Out)
-            };
-
-            // Initialize variable to exit returned (by basement) for direction (down) where exit does not exist
-            Location downExitReturnedForBasement = down_basement.GetExit(Direction.Down);
-
-            // Assert that the Location returned is the calling location
             Assert.Multiple(() =>
             {
-                Assert.That(actualExitsReturned.All((item) => item == up_attic), Is.True, "all exit locations returned are the calling location (attic)");
-                Assert.That(downExitReturnedForBasement, Is.EqualTo(down_basement), "exit location returned is the calling location (basement)");
+                // Assert that calling get exit with direction in which no location exists raises exception
+                Exception e = Assert.Throws<InvalidOperationException>(() =>
+                {
+                    up_attic.GetExit(Direction.Up);
+                });
+
+                // Assert that error message is as expected
+                Assert.That(e.Message, Is.EqualTo("There is no exit for location \"attic\" in direction \"Up\""));
             });
         }
 
