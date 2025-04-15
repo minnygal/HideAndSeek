@@ -165,13 +165,14 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="numberOfOpponents">Number of Opponents to hide in House</param>
         /// <param name="houseFileName">Name of file from which to load House layout</param>
+        /// <exception cref="ArgumentException">Exception thrown when number of Opponents is invalid</exception>
         public GameController(int numberOfOpponents, string houseFileName = "DefaultHouse")
         {
             // If number of Opponents invalid
             if(numberOfOpponents < 1 || numberOfOpponents > DefaultOpponentNames.Length)
             {
                 throw new ArgumentException("Cannot create a new instance of GameController " +
-                                                      "because the number of Opponents specified is invalid (must be between 1 and 10)"); // Throw exception
+                                            "because the number of Opponents specified is invalid (must be between 1 and 10)"); // Throw exception
             }
 
             // Set up initial game with specific Opponent names and House file name
@@ -183,6 +184,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="opponentNames">Names of Opponents to hide in House</param>
         /// <param name="houseFileName">Name of file from which to load House layout</param>
+        /// <exception cref="ArgumentException">Exception thrown when no names for Opponents were passed in</exception>"
         public GameController(string[] opponentNames, string houseFileName = "DefaultHouse")
         {
             // If no opponent names in array
@@ -278,6 +280,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="hidingPlaces">Names of hiding places for Opponents</param>
         /// <returns>GameController after Opponents rehidden</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Exception thrown if the number of hiding places is not equal to the number of Opponents</exception>
         public GameController RehideAllOpponents(IEnumerable<string> hidingPlaces)
         {
             // Initialize variable for LocationWithHidingPlace objects to empty list
@@ -319,7 +322,6 @@ namespace HideAndSeek
         /// <param name="direction">The Direction to move</param>
         /// <returns>Description</returns>
         /// <exception cref="InvalidOperationException">Exception thrown when no exit in specified Direction</exception>
-        /// <exception cref="ArgumentException">Exception thrown if Direction is invalid</exception>
         public string Move(Direction direction)
         {
             // Increment move number
@@ -342,7 +344,7 @@ namespace HideAndSeek
         /// <exception cref="ArgumentException">Exception thrown if direction is invalid</exception>
         public string Move(string direction)
         {
-            return Move(DirectionExtensions.Parse(direction));
+            return Move( DirectionExtensions.Parse(direction) );
         }
 
         /// <summary>
@@ -486,7 +488,7 @@ namespace HideAndSeek
                     throw; // Bubble up exception
                 }
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 throw; // Bubble up exception
             }

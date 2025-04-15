@@ -71,6 +71,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="fileName">Name of House file (not including .json extension)</param>
         /// <returns>House object created from file</returns>
+        /// <exception cref="ArgumentException">Exception thrown if House file name is invalid</exception>
         /// <exception cref="FileNotFoundException">Exception thrown if House file not found</exception>
         /// <exception cref="JsonException">Exception thrown if House file data is corrupt</exception>
         /// <exception cref="InvalidOperationException">Exception thrown if House file data is corrupt</exception>
@@ -109,9 +110,9 @@ namespace HideAndSeek
             {
                 throw new InvalidDataException($"Cannot process because data in house layout file {fileName} is invalid - {e.Message}");
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw e;
+                throw; // Bubble up exception
             }
 
             // Return House object
