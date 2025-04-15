@@ -440,6 +440,7 @@ namespace HideAndSeek
         /// <exception cref="JsonException">Exception thrown if JSON formatting issue</exception>
         /// <exception cref="InvalidDataException">Exception thrown if invalid property value</exception>
         /// <exception cref="InvalidOperationException">Exception thrown if invalid operation</exception>
+        /// <exception cref="FileNotFoundException">Exception thrown if saved game file not found</exception>
         /// <exception cref="NullReferenceException">Exception thrown if a reference is null</exception>
         public string LoadGame(string fileName)
         {
@@ -449,7 +450,7 @@ namespace HideAndSeek
             // If file does not exist
             if( !(FileSystem.File.Exists(fullFileName)) )
             {
-                return $"Cannot load game because file {fileName} does not exist"; // Return error message
+                throw new FileNotFoundException($"Cannot load game because file {fileName} does not exist"); // Throw exception with custom message
             }
 
             // Read text from file

@@ -180,17 +180,23 @@ namespace HideAndSeek
         {
             // Set up mock for GameController file system
             Mock<IFileSystem> mockFileSystemForGameController = new Mock<IFileSystem>();
-            mockFileSystemForGameController.Setup(manager => manager.File.Exists("my_saved_game.json")).Returns(false); // Mock that file does not exist
+            mockFileSystemForGameController.Setup(manager => manager.File.Exists("my_nonexistent_file.json")).Returns(false); // Mock that file does not exist
             GameController.FileSystem = mockFileSystemForGameController.Object;
 
             // Create new game controller
             gameController = new GameController("DefaultHouse");
 
-            // Have game controller load game
-            message = gameController.LoadGame("my_saved_game");
+            Assert.Multiple(() =>
+            {
+                // Assert that loading a game with a name of a nonexistent file raises an exception
+                exception = Assert.Throws<FileNotFoundException>(() =>
+                {
+                    gameController.LoadGame("my_nonexistent_file");
+                });
 
-            // Assert that error message is correct
-            Assert.That(message, Is.EqualTo("Cannot load game because file my_saved_game does not exist"));
+                // Assert that error message is correct
+                Assert.That(exception.Message, Is.EqualTo("Cannot load game because file my_nonexistent_file does not exist"));
+            });
         }
 
         [TestCaseSource(typeof(TestGameController_LoadGame_TestData),
