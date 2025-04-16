@@ -32,7 +32,7 @@ namespace HideAndSeek
             // If file name is invalid
             if( !(fileSystem.IsValidName(fileName)) )
             {
-                throw new ArgumentException($"Cannot perform action because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)");
+                throw new ArgumentException($"Cannot perform action because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)", nameof(fileName));
             }
 
             // Return file name with extension

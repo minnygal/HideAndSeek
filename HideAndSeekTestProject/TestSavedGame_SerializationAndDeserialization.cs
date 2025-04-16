@@ -265,7 +265,7 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo("Cannot perform action because file name \"a8}{{ /@uaou12 \" is invalid " +
+                Assert.That(exception.Message, Does.StartWith("Cannot perform action because file name \"a8}{{ /@uaou12 \" is invalid " +
                                                           "(is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
             });
         }

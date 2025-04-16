@@ -170,8 +170,8 @@ namespace HideAndSeek
         {
             gameController = new GameController("DefaultHouse");
             exception = Assert.Throws<ArgumentException>(() => gameController.LoadGame(fileName));
-            Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because file name \"{fileName}\" " +
-                                            $"is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+            Assert.That(exception.Message, Does.StartWith($"Cannot perform action because file name \"{fileName}\" " +
+                                                           "is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
         }
 
         [Test]
@@ -228,9 +228,9 @@ namespace HideAndSeek
             });
 
             // Assert that error message is correct
-            Assert.That(exception.Message, Is.EqualTo("Cannot process because data is corrupt - " +
-                                                      "Cannot perform action because file name \"a8}{{ /@uaou12 \" is invalid " +
-                                                      "(is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+            Assert.That(exception.Message, Does.StartWith("Cannot process because data is corrupt - " +
+                                                          "Cannot perform action because file name \"a8}{{ /@uaou12 \" is invalid " +
+                                                          "(is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
         }
 
         [TestCaseSource(typeof(TestGameController_LoadGame_TestData),

@@ -91,8 +91,8 @@ namespace HideAndSeek
         {
             gameController = new GameController("DefaultHouse");
             exception = Assert.Throws<ArgumentException>(() => gameController.SaveGame(fileName));
-            Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because file name \"{fileName}\" " +
-                                            $"is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+            Assert.That(exception.Message, Does.StartWith($"Cannot perform action because file name \"{fileName}\" " +
+                                                           "is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
         }
 
         [Test]
