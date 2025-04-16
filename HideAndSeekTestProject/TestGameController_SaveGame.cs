@@ -96,7 +96,7 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("GameController SaveGame Failure")]
+        [Category("GameController SaveGame InvalidOperationException Failure")]
         public void Test_GameController_SaveGame_AndCheckErrorMessage_ForAlreadyExistingFile()
         {
             // Set up mock for GameController file system

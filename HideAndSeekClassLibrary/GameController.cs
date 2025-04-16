@@ -172,7 +172,7 @@ namespace HideAndSeek
             if(numberOfOpponents < 1 || numberOfOpponents > DefaultOpponentNames.Length)
             {
                 throw new ArgumentException("Cannot create a new instance of GameController " +
-                                            "because the number of Opponents specified is invalid (must be between 1 and 10)"); // Throw exception
+                                            "because the number of Opponents specified is invalid (must be between 1 and 10)", nameof(numberOfOpponents)); // Throw exception
             }
 
             // Set up initial game with specific Opponent names and House file name
@@ -190,7 +190,7 @@ namespace HideAndSeek
             // If no opponent names in array
             if(opponentNames.Length == 0)
             {
-                throw new ArgumentException("Cannot create a new instance of GameController because no names for Opponents were passed in"); // Throw exception
+                throw new ArgumentException("Cannot create a new instance of GameController because no names for Opponents were passed in", nameof(opponentNames)); // Throw exception
             }
 
             // Set up initial game with specific Opponent names and House file name
@@ -328,7 +328,7 @@ namespace HideAndSeek
             MoveNumber++;
 
             // Attempt to move in specified direction
-            CurrentLocation = CurrentLocation.GetExit(direction);
+            CurrentLocation = CurrentLocation.GetExit(direction); // Throws exception if no exit in specified Direction
 
             // Return description
             return $"Moving {direction}";
@@ -433,10 +433,9 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="fileName">Name of file from which to load game data</param>
         /// <returns>String describing what happened</returns>
-        /// <exception cref="ArgumentException">Exception thrown if file name is invalid</exception>
+        /// <exception cref="ArgumentException">Exception thrown if file name or value in file is invalid</exception>
         /// <exception cref="JsonException">Exception thrown if JSON formatting issue</exception>
-        /// <exception cref="InvalidDataException">Exception thrown if invalid property value</exception>
-        /// <exception cref="InvalidOperationException">Exception thrown if invalid operation</exception>
+        /// <exception cref="InvalidOperationException">Exception thrown if invalid operation attempted</exception>
         /// <exception cref="FileNotFoundException">Exception thrown if saved game file not found</exception>
         /// <exception cref="NullReferenceException">Exception thrown if a reference is null</exception>
         public string LoadGame(string fileName)
@@ -465,19 +464,20 @@ namespace HideAndSeek
             {
                 throw new JsonException($"Cannot process because data is corrupt - {e.Message}"); // Throw new exception with custom error message
             }
-            catch(InvalidDataException e) // If problem due to invalid property value
-            {
-                throw new InvalidDataException($"Cannot process because data is corrupt - {e.Message}"); // Throw new exception with custom error message
-            }
             catch(InvalidOperationException e) // If problem due to attempted invalid operation
             {
                 throw new InvalidOperationException($"Cannot process because data is corrupt - {e.Message}"); // Throw new exception with custom error message
             }
-            catch (ArgumentException e) // If problem due to invalid argument (e.g. House file name is invalid)
+            catch(ArgumentOutOfRangeException e) // If problem due to value out of required range (e.g. MoveNumber not positive)
             {
-                throw new ArgumentException($"Cannot process because data is corrupt - {e.Message}"); // Throw new exception with custom error message
+                string message = $"Cannot process because data is corrupt - {e.Message}";
+                throw new ArgumentOutOfRangeException(e.ParamName, $"Cannot process because data is corrupt - {e.Message}"); // Throw new exception with custom error message
             }
-            catch (NullReferenceException e)
+            catch(ArgumentException e) // If problem due to invalid argument (e.g. House file name is invalid)
+            {
+                throw new ArgumentException($"Cannot process because data is corrupt - {e.Message}", e.ParamName); // Throw new exception with custom error message
+            }
+            catch(NullReferenceException e)
             {
                 if(e.Message == "House has not been set") // If SavedGame House property has not been set
                 {

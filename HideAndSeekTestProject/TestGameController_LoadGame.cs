@@ -11,6 +11,7 @@ namespace HideAndSeek
 {
     /// <summary>
     /// GameController tests for LoadGame method to load saved game from file
+    /// (not including tests with corrupt House file)
     /// </summary>
     [TestFixture]
     public class TestGameController_LoadGame
@@ -52,7 +53,7 @@ namespace HideAndSeek
             // Have game controller load game
             message = gameController.LoadGame(fileName);
 
-            // Assert that success message is correct
+            // Assert that return message is as expected
             Assert.That(message, Is.EqualTo(expected));
         }
 
@@ -175,8 +176,8 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("GameController LoadGame Failure")]
-        public void Test_GameController_LoadGame_AndCheckErrorMessage_ForNonexistentSavedGameFile()
+        [Category("GameController LoadGame FileNotFoundException Failure")]
+        public void Test_GameController_LoadGame_AndCheckErrorMessage_ForNonexistentFile()
         {
             // Set up mock for GameController file system
             Mock<IFileSystem> mockFileSystemForGameController = new Mock<IFileSystem>();
@@ -200,20 +201,60 @@ namespace HideAndSeek
         }
 
         [TestCaseSource(typeof(TestGameController_LoadGame_TestData),
-            nameof(TestGameController_LoadGame_TestData.TestCases_For_Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileFormatIsInvalid))]
-        [Category("GameController LoadGame JsonException Failure")]
-        public void Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileDataHasInvalidValue(string endOfExceptionMessage, string textInFile)
+            nameof(TestGameController_LoadGame_TestData.TestCases_For_Test_GameController_LoadGame_AndCheckErrorMessage_WhenFileDataHasInvalidValue))]
+        [Category("GameController LoadGame InvalidOperationException Failure")]
+        public void Test_GameController_LoadGame_AndCheckErrorMessage_WhenFileDataHasInvalidValue(string endOfExceptionMessage, string textInFile)
         {
             // Assert that loading corrupt game raises exception
-            exception = Assert.Throws<JsonException>(() => GetExceptionWhenLoadGameWithCorruptSavedGameFile(textInFile));
+            exception = Assert.Throws<InvalidOperationException>(() => GetExceptionWhenLoadGameWithCorruptSavedGameFile(textInFile));
 
             // Assert that error message is correct
             Assert.That(exception.Message, Is.EqualTo($"Cannot process because data is corrupt - {endOfExceptionMessage}"));
         }
 
         [Test]
+        [Category("GameController LoadGame ArgumentOutOfRangeException Failure")]
+        public void Test_GameController_LoadGame_AndCheckErrorMessage_WhenFileDataHasInvalidValue_ForMoveNumber()
+        {
+            // Assert that loading game with invalid opponents value raises exception
+            exception = Assert.Throws<ArgumentOutOfRangeException>(() => {
+                GetExceptionWhenLoadGameWithCorruptSavedGameFile(
+                    "{" +
+                        TestGameController_LoadGame_TestData.SavedGame_Serialized_HouseFileName + "," +
+                        TestGameController_LoadGame_TestData.SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                        "\"MoveNumber\":-1" + "," +
+                        TestGameController_LoadGame_TestData.SavedGame_Serialized_OpponentsAndHidingLocations + "," +
+                        TestGameController_LoadGame_TestData.SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
+                    "}");
+            });
+
+            // Assert that error message is correct
+            Assert.That(exception.Message, Does.StartWith($"Cannot process because data is corrupt - MoveNumber is invalid - must be positive number"));
+        }
+
+        [Test]
         [Category("GameController LoadGame ArgumentException Failure")]
-        public void Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileDataHasInvalidInvalidValue_ForHouseFileName()
+        public void Test_GameController_LoadGame_AndCheckErrorMessage_WhenFileDataHasInvalidValue_ForOpponents()
+        {
+            // Assert that loading game with invalid opponents value raises exception
+            exception = Assert.Throws<ArgumentException>(() => {
+                GetExceptionWhenLoadGameWithCorruptSavedGameFile(
+                    "{" +
+                        TestGameController_LoadGame_TestData.SavedGame_Serialized_HouseFileName + "," +
+                        TestGameController_LoadGame_TestData.SavedGame_Serialized_PlayerLocation_NoOpponentsGame + "," +
+                        TestGameController_LoadGame_TestData.SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
+                        "\"OpponentsAndHidingLocations\":{}" + "," +
+                        TestGameController_LoadGame_TestData.SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
+                    "}");
+            });
+
+            // Assert that error message is correct
+            Assert.That(exception.Message, Does.StartWith($"Cannot process because data is corrupt - invalid OpponentsAndHidingLocations - no opponents"));
+        }
+
+        [Test]
+        [Category("GameController LoadGame ArgumentException Failure")]
+        public void Test_GameController_LoadGame_AndCheckErrorMessage_WhenFileDataHasInvalidValue_ForHouseFileName()
         {
             // Assert that loading corrupt game raises exception
             exception = Assert.Throws<ArgumentException>(() => {
@@ -234,12 +275,12 @@ namespace HideAndSeek
         }
 
         [TestCaseSource(typeof(TestGameController_LoadGame_TestData),
-            nameof(TestGameController_LoadGame_TestData.TestCases_For_Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileDataHasInvalidValue))]
-        [Category("GameController LoadGame InvalidDataException Failure")]
-        public void Test_GameController_LoadGame_AndCheckErrorMessage_WhenSavedGameFileFormatIsInvalid(string endOfExceptionMessage, string textInFile)
+            nameof(TestGameController_LoadGame_TestData.TestCases_For_Test_GameController_LoadGame_AndCheckErrorMessage_WhenFileFormatIsInvalid))]
+        [Category("GameController LoadGame JsonException Failure")]
+        public void Test_GameController_LoadGame_AndCheckErrorMessage_WhenFileFormatIsInvalid(string endOfExceptionMessage, string textInFile)
         {
             // Assert that loading corrupt game raises exception
-            exception = Assert.Throws<InvalidDataException>(() => GetExceptionWhenLoadGameWithCorruptSavedGameFile(textInFile));
+            exception = Assert.Throws<JsonException>(() => GetExceptionWhenLoadGameWithCorruptSavedGameFile(textInFile));
 
             // Assert that error message is correct
             Assert.That(exception.Message, Is.EqualTo($"Cannot process because data is corrupt - {endOfExceptionMessage}"));

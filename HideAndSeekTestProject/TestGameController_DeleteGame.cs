@@ -45,10 +45,12 @@ namespace HideAndSeek
             exception = Assert.Throws<ArgumentException>(() => gameController.DeleteGame(fileName));
             Assert.That(exception.Message, Does.StartWith($"Cannot perform action because file name \"{fileName}\" " +
                                                        "is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+            Assert.That(exception.Message, Does.StartWith($"Cannot perform action because file name \"{fileName}\" " +
+                                                           "is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
         }
 
         [Test]
-        [Category("GameController DeleteGame Failure")]
+        [Category("GameController DeleteGame FileNotFoundException Failure")]
         public void Test_GameController_DeleteGame_AndCheckErrorMessage_ForNonexistentFile()
         {
             // Set up mock for file system

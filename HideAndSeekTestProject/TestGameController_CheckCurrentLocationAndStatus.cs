@@ -203,8 +203,8 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("GameController CheckCurrentLocation FoundOpponents Status MoveNumber GameOver CurrentLocation Failure")]
-        public void Test_GameController_CheckCurrentlocation_InLocationWithoutHidingPlace_AndCheckErrorMessageAndProperties()
+        [Category("GameController CheckCurrentLocation FoundOpponents Status MoveNumber GameOver CurrentLocation InvalidOperationException Failure")]
+        public void Test_GameController_CheckCurrentlocation_AndCheckErrorMessageAndProperties_InLocationWithoutHidingPlace()
         {
             Location initialLocation = gameController.CurrentLocation; // Get initial location before attempt to check
             string initialStatus = gameController.Status; // Get initial status before attempt to check

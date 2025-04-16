@@ -80,7 +80,7 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("GameController RehideAllOpponents Failure")]
+        [Category("GameController RehideAllOpponents InvalidOperationException Failure")]
         public void Test_GameController_RehideAllOpponents_InSpecificPlaces_AndCheckErrorMessage_ForNonexistentLocation()
         {
             Assert.Multiple(() =>
@@ -102,7 +102,7 @@ namespace HideAndSeek
         [TestCase("Living Room", "Kitchen", "Pantry")]
         [TestCase("Living Room", "Kitchen", "Pantry", "Attic")]
         [TestCase("Living Room", "Kitchen", "Pantry", "Attic", "Master Bedroom", "Kids Room")]
-        [Category("GameController RehideAllOpponents Failure")]
+        [Category("GameController RehideAllOpponents ArgumentOutOfRangeException Failure")]
         public void Test_GameController_RehideAllOpponents_InSpecificPlaces_AndCheckErrorMessage_ForIncorrectNumberOfHidingPlaces(params string[] hidingPlaces)
         {
             Assert.Multiple(() =>

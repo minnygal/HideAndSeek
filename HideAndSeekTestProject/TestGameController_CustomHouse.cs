@@ -48,8 +48,9 @@ namespace HideAndSeek
             });
         }
 
-        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CheckErrorMessage_ForHouseFileDoesNotExist))]
-        public void Test_GameController_Constructor_AndCheckErrorMessage_ForHouseFileDoesNotExist(Action CallWithNonexistentFileName)
+        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), 
+            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CheckErrorMessage_WhenHouseFileDoesNotExist))]
+        public void Test_GameController_Constructor_AndCheckErrorMessage_WhenHouseFileDoesNotExist(Action CallWithNonexistentFileName)
         {
             Assert.Multiple(() =>
             {
@@ -268,7 +269,8 @@ namespace HideAndSeek
         /// -I added/edited some comments for easier reading.
         /// -I added messages to the assertions to make them easier to debug.
         /// </summary>
-        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CustomHouse_FullGame_AndCheckMessageAndProperties))]
+        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), 
+            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CustomHouse_FullGame_AndCheckMessageAndProperties))]
         public void Test_GameController_CustomHouse_FullGame_AndCheckMessageAndProperties(GameController gameController)
         {
             // Hide Opponents is specific hiding places
