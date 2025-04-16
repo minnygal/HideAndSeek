@@ -39,6 +39,7 @@ namespace HideAndSeek
         /// <summary>
         /// Name of Opponent
         /// </summary>
+        /// <exception cref="ArgumentException">Exception thrown if value passed to setter is invalid (empty or only whitespace)</exception>
         public string Name
         {
             get
@@ -48,9 +49,9 @@ namespace HideAndSeek
             private set
             {
                 // If value is whitespace or empty
-                if(value.Trim().Length == 0)
+                if(value.Trim() == string.Empty)
                 {
-                    throw new InvalidDataException($"Cannot perform action because opponent name \"{value}\" is invalid (is empty or contains only whitespace)");
+                    throw new ArgumentException($"opponent name \"{value}\" is invalid (is empty or contains only whitespace)", "value");
                 }
 
                 // Set name

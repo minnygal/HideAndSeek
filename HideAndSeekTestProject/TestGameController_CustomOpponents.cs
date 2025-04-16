@@ -58,8 +58,8 @@ namespace HideAndSeek
         [TestCase(0)]
         [TestCase(11)]
         [TestCase(500)]
-        [Category("GameController Constructor SpecifiedNumberOfOpponents OpponentsAndHidingPlaces Failure")]
-        public void Test_GameController_Constructor_WithInvalidNumberOfOpponents_AndCheckErrorMessage(int numberOfOpponents)
+        [Category("GameController Constructor SpecifiedNumberOfOpponents OpponentsAndHidingPlaces ArgumentException Failure")]
+        public void Test_GameController_Constructor_AndCheckErrorMessage_ForInvalidNumberOfOpponents(int numberOfOpponents)
         {
             Assert.Multiple(() =>
             {
@@ -68,7 +68,7 @@ namespace HideAndSeek
                     new GameController(numberOfOpponents, "DefaultHouse");
                 });
 
-                Assert.That(exception.Message, Is.EqualTo("Cannot create a new instance of GameController " +
+                Assert.That(exception.Message, Does.StartWith("Cannot create a new instance of GameController " +
                                                           "because the number of Opponents specified is invalid (must be between 1 and 10)"));
             });
         }
@@ -170,8 +170,8 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("GameController Constructor SpecifiedNamesOfOpponents OpponentsAndHidingPlaces Failure")]
-        public void Test_GameController_Constructor_WithEmptyArrayOfNamesOfOpponents_AndCheckErrorMessage()
+        [Category("GameController Constructor SpecifiedNamesOfOpponents OpponentsAndHidingPlaces ArgumentException Failure")]
+        public void Test_GameController_Constructor_AndCheckErrorMessage_ForEmptyArrayOfNamesOfOpponents()
         {
             Assert.Multiple(() =>
             {
@@ -180,24 +180,23 @@ namespace HideAndSeek
                     new GameController(Array.Empty<string>(), "DefaultHouse");
                 });
 
-                Assert.That(exception.Message, Is.EqualTo("Cannot create a new instance of GameController because no names for Opponents were passed in"));
+                Assert.That(exception.Message, Does.StartWith("Cannot create a new instance of GameController because no names for Opponents were passed in"));
             });
         }
 
         [TestCase("")]
         [TestCase(" ")]
-        [Category("GameController Constructor SpecifiedNamesOfOpponents OpponentsAndHidingPlaces Failure")]
-        public void Test_GameController_Constructor_WithInvalidOpponentName_AndCheckErrorMessage(string invalidName)
+        [Category("GameController Constructor SpecifiedNamesOfOpponents OpponentsAndHidingPlaces ArgumentException Failure")]
+        public void Test_GameController_Constructor_AndCheckErrorMessage_ForInvalidOpponentName(string invalidName)
         {
             Assert.Multiple(() =>
             {
                 // Assert that calling constructor with array with invalid name of Opponent raises an exception
-                var exception = Assert.Throws<InvalidDataException>(() => {
+                var exception = Assert.Throws<ArgumentException>(() => {
                     new GameController(new string[] {invalidName}, "DefaultHouse");
                 });
 
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because opponent name \"{invalidName}\" is invalid " +
-                                                           "(is empty or contains only whitespace)"));
+                Assert.That(exception.Message, Does.StartWith($"opponent name \"{invalidName}\" is invalid (is empty or contains only whitespace)"));
             });
         }
     }
