@@ -225,7 +225,7 @@ namespace HideAndSeek
                 Exception exception = Assert.Throws<ArgumentException>(() => {
                     gameController.Move(directionText);
                 });
-                Assert.That(exception.Message, Is.EqualTo("That's not a valid direction"), "exception message");
+                Assert.That(exception.Message, Does.StartWith("That's not a valid direction"), "exception message");
                 Assert.That(gameController.CurrentLocation, Is.EqualTo(initialLocation), "current location does not change");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(1), "move number does not increment");
                 Assert.That(gameController.GameOver, Is.False, "game not over after trying to move");

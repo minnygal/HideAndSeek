@@ -134,7 +134,7 @@
             // Attempt to parse direction, if parse unsuccessful
             if( !(TextsForDirections.TryGetValue(directionText, out Direction parsedDirection)) )
             {
-                throw new ArgumentException("That's not a valid direction"); // Throw new exception with custom error message
+                throw new ArgumentException("That's not a valid direction", nameof(directionText)); // Throw new exception with custom error message
             }
 
             // Return whether parse was successful
