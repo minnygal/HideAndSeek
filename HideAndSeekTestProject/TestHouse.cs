@@ -156,10 +156,14 @@ namespace HideAndSeek
         [TestCase("MasterBedroom")]
         [TestCase(" ")]
         [TestCase("")]
-        [Category("House GetLocationByName Failure")]
-        public void Test_House_GetLocationByName_ReturnsNull_WhenLocationWithName_DoesNotExist(string locationName)
+        [Category("House GetLocationByName InvalidOperationException Failure")]
+        public void Test_House_GetLocationByName_AndCheckErrorMessage_WhenLocationWithName_DoesNotExist(string locationName)
         {
-            Assert.That(house.GetLocationByName(locationName), Is.Null);
+            Assert.Multiple(() =>
+            {
+                Exception exception = Assert.Throws<InvalidOperationException>(() => house.GetLocationByName(locationName));
+                Assert.That(exception.Message, Is.EqualTo("location \"" + locationName + "\" does not exist in House"));
+            });
         }
 
         [Test]
@@ -172,10 +176,14 @@ namespace HideAndSeek
         [TestCase("Entry")]
         [TestCase("Hallway")]
         [TestCase("Landing")]
-        [Category("House GetLocationWithHidingPlaceByName Failure")]
-        public void Test_House_GetLocationWithHidingPlaceByName_ReturnsNull_WhenLocationWithName_IsLocationWithoutHidingPlace(string locationName)
+        [Category("House GetLocationWithHidingPlaceByName InvalidOperationException Failure")]
+        public void Test_House_GetLocationWithHidingPlaceByName_AndCheckErrorMessage_WhenLocationDoesNotHaveHidingPlace(string locationName)
         {
-            Assert.That(house.GetLocationWithHidingPlaceByName(locationName), Is.Null);
+            Assert.Multiple(() =>
+            {
+                Exception exception = Assert.Throws<InvalidOperationException>(() => house.GetLocationWithHidingPlaceByName(locationName));
+                Assert.That(exception.Message, Is.EqualTo($"location with hiding place \"{locationName}\" does not exist in House"));
+            });
         }
 
         [TestCase("Secret Library")]
@@ -183,10 +191,14 @@ namespace HideAndSeek
         [TestCase("MasterBedroom")]
         [TestCase(" ")]
         [TestCase("")]
-        [Category("House GetLocationWithHidingPlaceByName Failure")]
-        public void Test_House_GetLocationWithHidingPlaceByName_ReturnsNull_WhenLocationWithName_DoesNotExist(string locationName)
+        [Category("House GetLocationWithHidingPlaceByName InvalidOperationException Failure")]
+        public void Test_House_GetLocationWithHidingPlaceByName_AndCheckErrorMessage_WhenNoLocationWithNameExistsInHouse(string locationName)
         {
-            Assert.That(house.GetLocationWithHidingPlaceByName(locationName), Is.Null);
+            Assert.Multiple(() =>
+            {
+                Exception exception = Assert.Throws<InvalidOperationException>(() => house.GetLocationWithHidingPlaceByName(locationName));
+                Assert.That(exception.Message, Is.EqualTo($"location with hiding place \"{locationName}\" does not exist in House"));
+            });
         }
 
         [Test]
@@ -554,6 +566,28 @@ namespace HideAndSeek
 
                 // Assert that exception message is as expected
                 Assert.That(exception.Message, Is.EqualTo($"Cannot process because data in house layout file MyInvalidDataFile is invalid - {exceptionMessageEnding}"));
+            });
+        }
+
+        [TestCaseSource(typeof(TestHouse_TestData),
+            nameof(TestHouse_TestData.TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue_NonexistentLocation))]
+        [Category("House CreateHouse InvalidOperationException Failure")]
+        public void Test_House_CreateHouse_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue_NonexistentLocation(
+            string exceptionMessageEnding, string fileText)
+        {
+            // Assign mock file system to House property
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("MyInvalidDataFile.json", fileText);
+
+            Assert.Multiple(() =>
+            {
+                // Assert that creating a SavedGame object with a file with an invalid value for a property throws an exception
+                var exception = Assert.Throws<InvalidOperationException>(() =>
+                {
+                    House.CreateHouse("MyInvalidDataFile");
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo($"Cannot process because data in house layout file MyInvalidDataFile is corrupt - {exceptionMessageEnding}"));
             });
         }
 

@@ -115,6 +115,18 @@ namespace HideAndSeek
                                                       errorMessageEnding));
         }
 
+        [TestCaseSource(typeof(TestGameController_LoadGame_HouseFailure_TestData),
+            nameof(TestGameController_LoadGame_HouseFailure_TestData.TestCases_For_Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidValue_NonexistentLocation))]
+        [Category("GameController LoadGame House InvalidOperationException Failure")]
+        public void Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidValue_NonexistentLocation(
+        string errorMessageEnding, string fileText)
+        {
+            exception = Assert.Throws<InvalidOperationException>(() => GetExceptionWhenLoadGameWithCorruptHouseFile(fileText));
+            Assert.That(exception.Message, Does.StartWith("Cannot process because data is corrupt - " +
+                                                          "Cannot process because data in house layout file CorruptHouse is corrupt - " +
+                                                          errorMessageEnding));
+        }
+
         /// <summary>
         /// Call LoadGame to load game from saved game file referencing corrupt House file
         /// Fails test if exception not thrown

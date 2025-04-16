@@ -396,7 +396,7 @@ namespace HideAndSeek
         /// <returns>True if Location exists</returns>
         public bool DoesLocationExist(string name)
         {
-            return GetLocationByName(name) != null;
+            return Locations.Select((l) => l.Name).ToList().Contains(name);
         }
 
         /// <summary>
@@ -406,7 +406,7 @@ namespace HideAndSeek
         /// <returns>True if LocationWithHidingPlace exists</returns>
         public bool DoesLocationWithHidingPlaceExist(string name)
         {
-            return GetLocationWithHidingPlaceByName(name) != null;
+            return LocationsWithHidingPlaces.Select((l) => l.Name).ToList().Contains(name);
         }
 
         /// <summary>
@@ -414,9 +414,17 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="name">Name of Location</param>
         /// <returns>Location with specified name (or null if not found)</returns>
+        /// <exception cref="InvalidOperationException">Exception thrown if no matching location in House</exception>
         public Location GetLocationByName(string name)
         {
-            return Locations.Where(l => l.Name == name).FirstOrDefault();
+            try
+            {
+                return Locations.Where(l => l.Name == name).First();
+            }
+            catch(InvalidOperationException e)
+            {
+                throw new InvalidOperationException($"location \"{name}\" does not exist in House"); // Throw exception
+            }
         }
 
         /// <summary>
@@ -424,9 +432,17 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="name">Name of LocationWithHidingPlace</param>
         /// <returns>LocationWithHidingPlace with specified name (or null if not found)</returns>
+        /// <exception cref="InvalidOperationException">Exception thrown if no matching location with hiding place in House</exception>
         public LocationWithHidingPlace GetLocationWithHidingPlaceByName(string name)
         {
-            return LocationsWithHidingPlaces.Where((x) => x.Name == name).FirstOrDefault();
+            try
+            {
+                return LocationsWithHidingPlaces.Where(l => l.Name == name).First();
+            }
+            catch (InvalidOperationException e)
+            {
+                throw new InvalidOperationException($"location with hiding place \"{name}\" does not exist in House"); // Throw exception
+            }
         }
 
         /// <summary>

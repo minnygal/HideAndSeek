@@ -310,6 +310,28 @@ namespace HideAndSeek
             });
         }
 
+        [TestCaseSource(typeof(TestSavedGame_SerializationAndDeserialization_TestData),
+            nameof(TestSavedGame_SerializationAndDeserialization_TestData.TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidOperationException_WhenHouseFileDataInvalidValue_NonexistentLocation))]
+        [Category("SavedGame Deserialize House InvalidOperationException Failure")]
+        public void Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidOperationException_WhenHouseFileDataInvalidValue_NonexistentLocation(string exceptionDescription, string houseFileText)
+        {
+            // Set House file system to mock file system to return text in file
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.json", houseFileText);
+
+            Assert.Multiple(() =>
+            {
+                // Assert that deserializing a SavedGame with a reference to a House with invalid file data raises an exception
+                var exception = Assert.Throws<InvalidOperationException>(() =>
+                {
+                    JsonSerializer.Deserialize<SavedGame>(TestSavedGame_SerializationAndDeserialization_TestData.SavedGame_Serialized_NoFoundOpponents);
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith(
+                     $"Cannot process because data in house layout file DefaultHouse is corrupt - {exceptionDescription}"));
+            });
+        }
+
         [TestCaseSource(typeof(TestSavedGame_SerializationAndDeserialization_TestData), nameof(TestSavedGame_SerializationAndDeserialization_TestData.TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenHouseFileDataHasInvalidDirection))]
         [Category("SavedGame Deserialize House Failure")]
         public void Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenHouseFileDataHasInvalidDirection(string houseFileText)

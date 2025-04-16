@@ -86,13 +86,13 @@ namespace HideAndSeek
             Assert.Multiple(() =>
             {
                 // Assert that hiding an Opponent in a location with an invalid name raises an exception
-                var exception = Assert.Throws<NullReferenceException>(() =>
+                var exception = Assert.Throws<InvalidOperationException>(() =>
                 {
                     gameController.RehideAllOpponents(new List<string>() { "Dungeon", "Lavatory", "Eggshells", "Worm Hole", "Zoo" });
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo("Object reference not set to an instance of an object."));
+                Assert.That(exception.Message, Is.EqualTo("location with hiding place \"Dungeon\" does not exist in House"));
             });
         }
 
