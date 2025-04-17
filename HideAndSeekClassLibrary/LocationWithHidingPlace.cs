@@ -59,6 +59,7 @@ namespace HideAndSeek
         /// <summary>
         /// Name of hiding place
         /// </summary>
+        /// <exception cref="ArgumentException">Exception thrown if value passed to setter is invalid (empty or only whitespace)</exception>
         [JsonRequired]
         public required string HidingPlace
         {
@@ -71,7 +72,7 @@ namespace HideAndSeek
                 // If invalid name is entered
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    throw new InvalidDataException($"Cannot perform action because hiding place \"{value}\" is invalid (is empty or contains only whitespace)"); // Throw exception
+                    throw new ArgumentException($"hiding place \"{value}\" is invalid (is empty or contains only whitespace)", "value"); // Throw exception
                 }
 
                 // Set backing field

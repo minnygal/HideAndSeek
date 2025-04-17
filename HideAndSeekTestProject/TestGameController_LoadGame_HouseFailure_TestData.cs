@@ -467,7 +467,7 @@ namespace HideAndSeek
             get
             {
                 // Invalid Name (whitespace)
-                yield return new TestCaseData("Cannot perform action because house name \" \" is invalid (is empty or contains only whitespace)",
+                yield return new TestCaseData("house name \" \" is invalid (is empty or contains only whitespace)",
                         "{" +
                            "\"Name\":\" \"" + "," +
                            DefaultHouse_Serialized_HouseFileName + "," +
@@ -478,7 +478,7 @@ namespace HideAndSeek
                    .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasWhitespaceValue - invalid Name - whitespace");
 
                 // Invalid HouseFileName (whitespace)
-                yield return new TestCaseData("Cannot perform action because house file name \" \" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)",
+                yield return new TestCaseData("house file name \" \" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
                            "\"HouseFileName\":\" \"" + "," +
@@ -489,7 +489,7 @@ namespace HideAndSeek
                    .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasWhitespaceValue - invalid HouseFileName - whitespace");
 
                 // Invalid PlayerStartingPoint (whitespace)
-                yield return new TestCaseData("Cannot perform action because player starting point location name \" \" is invalid (is empty or contains only whitespace)",
+                yield return new TestCaseData("player starting point location name \" \" is invalid (is empty or contains only whitespace)",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
                            DefaultHouse_Serialized_HouseFileName + "," +
@@ -500,7 +500,7 @@ namespace HideAndSeek
                    .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasWhitespaceValue - invalid PlayerStartingPoint - whitespace");
 
                 // Invalid LocationsWithoutHidingPlaces - Location name is invalid (whitespace)
-                yield return new TestCaseData("Cannot perform action because location name \" \" is invalid (is empty or contains only whitespace)",
+                yield return new TestCaseData("location name \" \" is invalid (is empty or contains only whitespace)",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
                            DefaultHouse_Serialized_HouseFileName + "," +
@@ -524,7 +524,7 @@ namespace HideAndSeek
                    .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasWhitespaceValue - LocationsWithoutHidingPlaces - invalid Location Name - whitespace");
 
                 // Invalid LocationsWithHidingPlaces - LocationWithHidingPlace name in invalid (whitespace)
-                yield return new TestCaseData("Cannot perform action because location name \" \" is invalid (is empty or contains only whitespace)",
+                yield return new TestCaseData("location name \" \" is invalid (is empty or contains only whitespace)",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
                            DefaultHouse_Serialized_HouseFileName + "," +
@@ -545,7 +545,7 @@ namespace HideAndSeek
                    .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasWhitespaceValue - LocationsWithHidingPlaces - invalid Location Name - whitespace");
 
                 // Invalid LocationsWithHidingPlaces - LocationWithHidingPlace description is invalid (whitespace)
-                yield return new TestCaseData("Cannot perform action because hiding place \" \" is invalid (is empty or contains only whitespace)",
+                yield return new TestCaseData("hiding place \" \" is invalid (is empty or contains only whitespace)",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
                            DefaultHouse_Serialized_HouseFileName + "," +
@@ -644,19 +644,8 @@ namespace HideAndSeek
         {
             get
             {
-                // Invalid PlayerStartingPoint - not a Location
-                yield return new TestCaseData("Cannot perform action because player starting point location \"Dungeon\" is not a location in the house",
-                        "{" +
-                           DefaultHouse_Serialized_Name + "," +
-                           DefaultHouse_Serialized_HouseFileName + "," +
-                           "\"PlayerStartingPoint\":\"Dungeon\"" + "," +
-                           DefaultHouse_Serialized_LocationsWithoutHidingPlaces + "," +
-                           DefaultHouse_Serialized_LocationsWithHidingPlaces +
-                       "}")
-                   .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidValue - invalid PlayerStartingPoint - nonexistent");
-
                 // Invalid LocationsWithHidingPlaces - empty list
-                yield return new TestCaseData("Cannot perform action because locations with hiding places list is empty",
+                yield return new TestCaseData("locations with hiding places list is empty",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
                            DefaultHouse_Serialized_HouseFileName + "," +
@@ -685,7 +674,7 @@ namespace HideAndSeek
                    .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidValue - invalid LocationsWithHidingPlaces - empty");
 
                 // Invalid LocationsWithoutHidingPlaces - Location has no exits
-                yield return new TestCaseData("Cannot perform action because location \"Hallway\" must be assigned at least one exit",
+                yield return new TestCaseData("location \"Hallway\" must be assigned at least one exit",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
                            DefaultHouse_Serialized_HouseFileName + "," +
@@ -725,7 +714,7 @@ namespace HideAndSeek
                    .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidValue - invalid LocationsWithoutHidingPlaces - no exits");
 
                 // Invalid LocationsWithHidingPlaces - LocationWithHidingPlace has no exits
-                yield return new TestCaseData("Cannot perform action because location \"Attic\" must be assigned at least one exit",
+                yield return new TestCaseData("location \"Attic\" must be assigned at least one exit",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
                            DefaultHouse_Serialized_HouseFileName + "," +
@@ -743,9 +732,26 @@ namespace HideAndSeek
                            "]" +
                        "}")
                    .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidValue - invalid LocationsWithHidingPlaces - no exits");
+            }
+        }
+
+        public static IEnumerable TestCases_For_Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidValue_NonexistentLocation
+        {
+            get
+            {
+                // Invalid PlayerStartingPoint - not a Location
+                yield return new TestCaseData("player starting point location \"Dungeon\" does not exist in House",
+                        "{" +
+                           DefaultHouse_Serialized_Name + "," +
+                           DefaultHouse_Serialized_HouseFileName + "," +
+                           "\"PlayerStartingPoint\":\"Dungeon\"" + "," +
+                           DefaultHouse_Serialized_LocationsWithoutHidingPlaces + "," +
+                           DefaultHouse_Serialized_LocationsWithHidingPlaces +
+                       "}")
+                   .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidValue_NonexistentLocation - PlayerStartingPoint");
 
                 // Invalid LocationsWithoutHidingPlaces - Location has nonexistent exit
-                yield return new TestCaseData("Cannot perform action because \"Hallway\" exit location \"Dungeon\" in direction \"Down\" does not exist",
+                yield return new TestCaseData("\"Hallway\" exit location \"Dungeon\" in direction \"Down\" does not exist",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
                            DefaultHouse_Serialized_HouseFileName + "," +
@@ -788,10 +794,10 @@ namespace HideAndSeek
                            "]" + "," +
                            DefaultHouse_Serialized_LocationsWithHidingPlaces +
                        "}")
-                   .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidValue - invalid LocationsWithoutHidingPlaces - nonexistent exit");
+                   .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidValue_NonexistentLocation - LocationsWithoutHidingPlaces");
 
                 // Invalid LocationsWithHidingPlaces - LocationWithHidingPlace has nonexistent exit
-                yield return new TestCaseData("Cannot perform action because \"Bathroom\" exit location \"Dungeon\" in direction \"Down\" does not exist",
+                yield return new TestCaseData("\"Bathroom\" exit location \"Dungeon\" in direction \"Down\" does not exist",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
                            DefaultHouse_Serialized_HouseFileName + "," +
@@ -890,7 +896,7 @@ namespace HideAndSeek
                                 "}" +
                            "]" +
                        "}")
-                   .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidValue - invalid LocationsWithHidingPlaces - nonexistent exit");
+                   .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidValue_NonexistentLocation - LocationsWithHidingPlaces");
             }
         }
     }

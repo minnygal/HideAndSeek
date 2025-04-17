@@ -215,8 +215,8 @@ namespace HideAndSeek
         [TestCase("}{yaeu\\@!//")]
         [TestCase("No")]
         [TestCase("Northuperly")]
-        [Category("GameController Move CurrentLocation MoveNumber Failure")]
-        public void Test_GameController_Move_InInvalidDirection_AndCheckErrorMessageAndProperties(string directionText)
+        [Category("GameController Move CurrentLocation MoveNumber ArgumentException Failure")]
+        public void Test_GameController_Move_AndCheckErrorMessageAndProperties_ForInvalidDirection(string directionText)
         {
             Location initialLocation = gameController.CurrentLocation; // Get initial location before attempt to move
 
@@ -225,7 +225,7 @@ namespace HideAndSeek
                 Exception exception = Assert.Throws<ArgumentException>(() => {
                     gameController.Move(directionText);
                 });
-                Assert.That(exception.Message, Is.EqualTo("That's not a valid direction"), "exception message");
+                Assert.That(exception.Message, Does.StartWith("That's not a valid direction"), "exception message");
                 Assert.That(gameController.CurrentLocation, Is.EqualTo(initialLocation), "current location does not change");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(1), "move number does not increment");
                 Assert.That(gameController.GameOver, Is.False, "game not over after trying to move");
@@ -235,7 +235,7 @@ namespace HideAndSeek
         [TestCaseSource(typeof(TestGameController_MoveAndTeleport_TestData), 
             nameof(TestGameController_MoveAndTeleport_TestData.TestCases_For_Test_GameController_Move_InDirectionWithNoLocation_AndCheckErrorMessageAndProperties))]
         [Category("GameController Move CurrentLocation MoveNumber Failure")]
-        public void Test_GameController_Move_InDirectionWithNoLocation_AndCheckErrorMessageAndProperties(
+        public void Test_GameController_Move_AndCheckErrorMessageAndProperties_ForDirectionWithNoLocation(
             Func<GameController, Exception> Move)
         {
             Location initialLocation = gameController.CurrentLocation; // Get initial location before attempt to move

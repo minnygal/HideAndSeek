@@ -321,7 +321,7 @@ namespace HideAndSeek
             House.FileSystem = fileSystem.Object;
         }
         
-        public static IEnumerable TestCases_For_Test_GameController_CheckErrorMessage_ForHouseFileDoesNotExist
+        public static IEnumerable TestCases_For_Test_GameController_CheckErrorMessage_WhenHouseFileDoesNotExist
         {
             get
             {
@@ -330,8 +330,8 @@ namespace HideAndSeek
                     SetUpMockFileSystemForNonexistentHouseFile(); // Set up mock file system
                     new GameController("MyNonexistentFile"); // Call GameController constructor
                 })
-                    .SetName("Test_GameController_Constructor_AndCheckErrorMessage_ForHouseFileDoesNotExist - constructor")
-                    .SetCategory("GameController CustomHouse Constructor Failure");
+                    .SetName("Test_GameController_Constructor_AndCheckErrorMessage_WhenHouseFileDoesNotExist - constructor")
+                    .SetCategory("GameController CustomHouse Constructor FileNotFoundException Failure");
 
                 yield return new TestCaseData(() =>
                 {
@@ -339,8 +339,8 @@ namespace HideAndSeek
                     SetUpMockFileSystemForNonexistentHouseFile(); // Set up mock file system
                     gameController.RestartGame("MyNonexistentFile"); // Call RestartGame
                 })
-                    .SetName("Test_GameController_Constructor_AndCheckErrorMessage_ForHouseFileDoesNotExist - RestartGame")
-                    .SetCategory("GameController CustomHouse RestartGame Failure");
+                    .SetName("Test_GameController_Constructor_AndCheckErrorMessage_WhenHouseFileDoesNotExist - RestartGame")
+                    .SetCategory("GameController CustomHouse RestartGame FileNotFoundException Failure");
             }
         }
 
@@ -428,12 +428,12 @@ namespace HideAndSeek
                 // Set custom House using GameController constructor
                 yield return new TestCaseData(GetGameController_WithCustomHouseSetViaConstructor())
                     .SetName("Test_GameController_CustomHouse_FullGame_AndCheckMessageAndProperties - constructor")
-                    .SetCategory("GameController CustomHouse Constructor Move Check Message Prompt Status MoveNumber GameOver Success");
+                    .SetCategory("GameController CustomHouse Constructor Move Check Message Prompt Status MoveNumber GameOver InvalidOperationException Success");
 
                 // Set custom House using GameController RestartGame method
                 yield return new TestCaseData(GetGameController_WithCustomHouseSetViaRestartGame())
                     .SetName("Test_GameController_CustomHouse_FullGame_AndCheckMessageAndProperties - RestartGame")
-                    .SetCategory("GameController CustomHouse RestartGame Move Check Message Prompt Status MoveNumber GameOver Success");
+                    .SetCategory("GameController CustomHouse RestartGame Move Check Message Prompt Status MoveNumber GameOver InvalidOperationException Success");
             }
         }
     }

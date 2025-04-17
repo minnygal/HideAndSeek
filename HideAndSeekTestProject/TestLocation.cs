@@ -132,7 +132,7 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("Location GetExit Failure")]
+        [Category("Location GetExit InvalidOperationException Failure")]
         public void Test_Location_GetExit_AndCheckErrorMessage_WhenNoLocationInDirection()
         {
             Assert.Multiple(() =>
@@ -347,27 +347,26 @@ namespace HideAndSeek
 
         [TestCase("")]
         [TestCase(" ")]
-        [Category("Location Name Failure")]
+        [Category("Location Name ArgumentException Failure")]
         public void Test_Location_Set_Name_AndCheckErrorMessage_ForInvalidName(string name)
         {
             Assert.Multiple(() =>
             {
                 // Assert that setting the Name to an invalid name raises exception
-                var exception = Assert.Throws<InvalidDataException>(() =>
+                var exception = Assert.Throws<ArgumentException>(() =>
                 {
                     center.Name = name;
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because location name \"{name}\" is invalid " +
-                                                           "(is empty or contains only whitespace)"));
+                Assert.That(exception.Message, Does.StartWith($"location name \"{name}\" is invalid (is empty or contains only whitespace)"));
             });
         }
 
         // The test for successful set ExitsForSerialization is in deserialization test
         [TestCase("")]
         [TestCase(" ")]
-        [Category("Location ExitsForSerialization Failure")]
+        [Category("Location ExitsForSerialization ArgumentException Failure")]
         public void Test_Location_Set_ExitsForSerialization_AndCheckErrorMessage_ForInvalidExitLocationName(string locationName)
         {
             // Create dictionary of exits
@@ -378,14 +377,14 @@ namespace HideAndSeek
             Assert.Multiple(() =>
             {
                 // Assert that setting the ExitsForSerialization property to a dictionary with an invalid location name raises an exception
-                var exception = Assert.Throws<InvalidDataException>(() =>
+                var exception = Assert.Throws<ArgumentException>(() =>
                 {
                     center.ExitsForSerialization = exits;
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because location name \"{locationName}\" " +
-                                                           "for exit in direction \"North\" is invalid (is empty or contains only whitespace"));
+                Assert.That(exception.Message, Does.StartWith($"location name \"{locationName}\" for exit in direction \"North\" " +
+                                                           "is invalid (is empty or contains only whitespace"));
             });
         }
 
@@ -406,20 +405,19 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("Location SetExitsDictionary Failure")]
+        [Category("Location SetExitsDictionary ArgumentException Failure")]
         public void Test_Location_SetExitsDictionary_AndCheckErrorMessage_ForEmptyDictionary()
         {
             Assert.Multiple(() =>
             {
                 // Assert that setting exits dictionary to empty dictionary raises exception
-                var exception = Assert.Throws<InvalidDataException>(() =>
+                var exception = Assert.Throws<ArgumentException>(() =>
                 {
                     center.SetExitsDictionary(new Dictionary<Direction, Location>());
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo("Cannot perform action because location \"living room\" " +
-                                                          "must be assigned at least one exit"));
+                Assert.That(exception.Message, Does.StartWith("location \"living room\" must be assigned at least one exit"));
             });
         }
 
@@ -507,7 +505,7 @@ namespace HideAndSeek
 
         [TestCase("")]
         [TestCase(" ")]
-        [Category("Location Deserialization Failure")]
+        [Category("Location Deserialization ArgumentException Failure")]
         public void Test_Location_Deserialization_AndCheckErrorMessage_ForInvalidName(string name)
         {
             // Set expected ExitsForSerialization property value
@@ -526,20 +524,19 @@ namespace HideAndSeek
             Assert.Multiple(() =>
             {
                 // Assert that deserializing raises exception
-                var exception = Assert.Throws<InvalidDataException>(() =>
+                var exception = Assert.Throws<ArgumentException>(() =>
                 {
                     JsonSerializer.Deserialize<Location>(serializedLocation);
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because location name \"{name}\" " +
-                                                          $"is invalid (is empty or contains only whitespace)"));
+                Assert.That(exception.Message, Does.StartWith($"location name \"{name}\" is invalid (is empty or contains only whitespace)"));
             });
         }
 
         [TestCase("")]
         [TestCase(" ")]
-        [Category("Location Deserialization Failure")]
+        [Category("Location Deserialization ArgumentException Failure")]
         public void Test_Location_Deserialization_AndCheckErrorMessage_ForInvalidExitLocationName(string name)
         {
             // Text representing serialized Location
@@ -554,14 +551,14 @@ namespace HideAndSeek
             Assert.Multiple(() =>
             {
                 // Assert that deserializing raises exception
-                var exception = Assert.Throws<InvalidDataException>(() =>
+                var exception = Assert.Throws<ArgumentException>(() =>
                 {
                     JsonSerializer.Deserialize<Location>(serializedLocation);
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because location name \"{name}\" " +
-                                                           "for exit in direction \"North\" is invalid (is empty or contains only whitespace"));
+                Assert.That(exception.Message, Does.StartWith($"location name \"{name}\" for exit in direction \"North\" " +
+                                                               "is invalid (is empty or contains only whitespace"));
             });
         }
     }

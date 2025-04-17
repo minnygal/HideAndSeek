@@ -42,19 +42,19 @@ namespace HideAndSeek
         [TestCase("/myFile")]
         [TestCase("myFile/")]
         [TestCase("my/File")]
-        [Category("FileExtensions GetFullFileNameForJson Failure")]
+        [Category("FileExtensions GetFullFileNameForJson ArgumentException Failure")]
         public void Test_FileExtensions_GetFullFileNameForJson_AndCheckErrorMessage_ForInvalidFileName(string fileName)
         {
             Assert.Multiple(() =>
             {
                 // Assert that getting full file name with invalid file name raises exception
-                var exception = Assert.Throws<InvalidDataException>(() =>
+                var exception = Assert.Throws<ArgumentException>(() =>
                 {
                     fileSystem.GetFullFileNameForJson(fileName);
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+                Assert.That(exception.Message, Does.StartWith($"Cannot perform action because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
             });
         }
 

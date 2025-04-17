@@ -101,8 +101,8 @@ namespace HideAndSeek
         [TestCase("}{yaeu\\@!//")]
         [TestCase("No")]
         [TestCase("Northuperly")]
-        [Category("DirectionExtensions Parse Failure")]
-        public void Test_DirectionExtensions_Parse_InvalidDirection_AndCatchErrorMessage(string directionText)
+        [Category("DirectionExtensions Parse ArgumentException Failure")]
+        public void Test_DirectionExtensions_Parse_AndCatchErrorMessage_ForInvalidDirection(string directionText)
         {
             Assert.Multiple(() =>
             {
@@ -113,7 +113,7 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo("That's not a valid direction"));
+                Assert.That(exception.Message, Does.StartWith("That's not a valid direction"));
             });
         }
     }

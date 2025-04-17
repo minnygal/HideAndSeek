@@ -32,24 +32,25 @@ namespace HideAndSeek
         }
 
         [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CustomHouse_Constructor_AndCheckErrorMessage_ForInvalidHouseFileName))]
-        [Category("GameController Constructor Failure")]
+        [Category("GameController Constructor ArgumentException Failure")]
         public void Test_GameController_CustomHouse_Constructor_AndCheckErrorMessage_ForInvalidHouseFileName(Action CallWithInvalidHouseFileName)
         {
             Assert.Multiple(() =>
             {
                 // Assert that doing action with name of nonexistent House file raises an exception
-                var exception = Assert.Throws<InvalidDataException>(() =>
+                var exception = Assert.Throws<ArgumentException>(() =>
                 {
                     CallWithInvalidHouseFileName();
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo("Cannot perform action because file name \"@eou]} {(/\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+                Assert.That(exception.Message, Does.StartWith("Cannot perform action because file name \"@eou]} {(/\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
             });
         }
 
-        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CheckErrorMessage_ForHouseFileDoesNotExist))]
-        public void Test_GameController_Constructor_AndCheckErrorMessage_ForHouseFileDoesNotExist(Action CallWithNonexistentFileName)
+        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), 
+            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CheckErrorMessage_WhenHouseFileDoesNotExist))]
+        public void Test_GameController_Constructor_AndCheckErrorMessage_WhenHouseFileDoesNotExist(Action CallWithNonexistentFileName)
         {
             Assert.Multiple(() =>
             {
@@ -268,7 +269,8 @@ namespace HideAndSeek
         /// -I added/edited some comments for easier reading.
         /// -I added messages to the assertions to make them easier to debug.
         /// </summary>
-        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CustomHouse_FullGame_AndCheckMessageAndProperties))]
+        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), 
+            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CustomHouse_FullGame_AndCheckMessageAndProperties))]
         public void Test_GameController_CustomHouse_FullGame_AndCheckMessageAndProperties(GameController gameController)
         {
             // Hide Opponents is specific hiding places

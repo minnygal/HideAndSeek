@@ -46,20 +46,19 @@ namespace HideAndSeek
 
         [TestCase("")]
         [TestCase(" ")]
-        [Category("Opponent Constructor Name Failure")]
+        [Category("Opponent Constructor Name ArgumentException Failure")]
         public void Test_Opponent_Constructor_Parameterized_AndCheckErrorMessage_ForInvalidName(string name)
         {
             Assert.Multiple(() =>
             {
                 // Assert that creating a new opponent with an invalid name raises exception
-                var exception = Assert.Throws<InvalidDataException>(() =>
+                var exception = Assert.Throws<ArgumentException>(() =>
                 {
                     new Opponent(name);
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because opponent name \"{name}\" is invalid " +
-                                                           "(is empty or contains only whitespace)"));
+                Assert.That(exception.Message, Does.StartWith($"opponent name \"{name}\" is invalid (is empty or contains only whitespace)"));
             });
         }
     }

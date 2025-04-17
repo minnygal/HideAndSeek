@@ -165,13 +165,14 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="numberOfOpponents">Number of Opponents to hide in House</param>
         /// <param name="houseFileName">Name of file from which to load House layout</param>
+        /// <exception cref="ArgumentException">Exception thrown when number of Opponents is invalid</exception>
         public GameController(int numberOfOpponents, string houseFileName = "DefaultHouse")
         {
             // If number of Opponents invalid
             if(numberOfOpponents < 1 || numberOfOpponents > DefaultOpponentNames.Length)
             {
                 throw new ArgumentException("Cannot create a new instance of GameController " +
-                                                      "because the number of Opponents specified is invalid (must be between 1 and 10)"); // Throw exception
+                                            "because the number of Opponents specified is invalid (must be between 1 and 10)", nameof(numberOfOpponents)); // Throw exception
             }
 
             // Set up initial game with specific Opponent names and House file name
@@ -183,12 +184,13 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="opponentNames">Names of Opponents to hide in House</param>
         /// <param name="houseFileName">Name of file from which to load House layout</param>
+        /// <exception cref="ArgumentException">Exception thrown when no names for Opponents were passed in</exception>"
         public GameController(string[] opponentNames, string houseFileName = "DefaultHouse")
         {
             // If no opponent names in array
             if(opponentNames.Length == 0)
             {
-                throw new ArgumentException("Cannot create a new instance of GameController because no names for Opponents were passed in"); // Throw exception
+                throw new ArgumentException("Cannot create a new instance of GameController because no names for Opponents were passed in", nameof(opponentNames)); // Throw exception
             }
 
             // Set up initial game with specific Opponent names and House file name
@@ -278,6 +280,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="hidingPlaces">Names of hiding places for Opponents</param>
         /// <returns>GameController after Opponents rehidden</returns>
+        /// <exception cref="ArgumentOutOfRangeException">Exception thrown if the number of hiding places is not equal to the number of Opponents</exception>
         public GameController RehideAllOpponents(IEnumerable<string> hidingPlaces)
         {
             // Initialize variable for LocationWithHidingPlace objects to empty list
@@ -319,14 +322,13 @@ namespace HideAndSeek
         /// <param name="direction">The Direction to move</param>
         /// <returns>Description</returns>
         /// <exception cref="InvalidOperationException">Exception thrown when no exit in specified Direction</exception>
-        /// <exception cref="ArgumentException">Exception thrown if Direction is invalid</exception>
         public string Move(Direction direction)
         {
             // Increment move number
             MoveNumber++;
 
             // Attempt to move in specified direction
-            CurrentLocation = CurrentLocation.GetExit(direction);
+            CurrentLocation = CurrentLocation.GetExit(direction); // Throws exception if no exit in specified Direction
 
             // Return description
             return $"Moving {direction}";
@@ -342,7 +344,7 @@ namespace HideAndSeek
         /// <exception cref="ArgumentException">Exception thrown if direction is invalid</exception>
         public string Move(string direction)
         {
-            return Move(DirectionExtensions.Parse(direction));
+            return Move( DirectionExtensions.Parse(direction) );
         }
 
         /// <summary>
@@ -395,6 +397,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="fileName">Name of file in which to save game data</param>
         /// <returns>String describing what happened</returns>
+        /// <exception cref="ArgumentException">Exception thrown if file name is invalid</exception>
         /// <exception cref="InvalidOperationException">Exception thrown if file already exists</exception>
         public string SaveGame(string fileName)
         {
@@ -430,9 +433,9 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="fileName">Name of file from which to load game data</param>
         /// <returns>String describing what happened</returns>
+        /// <exception cref="ArgumentException">Exception thrown if file name or value in file is invalid</exception>
         /// <exception cref="JsonException">Exception thrown if JSON formatting issue</exception>
-        /// <exception cref="InvalidDataException">Exception thrown if invalid property value</exception>
-        /// <exception cref="InvalidOperationException">Exception thrown if invalid operation</exception>
+        /// <exception cref="InvalidOperationException">Exception thrown if invalid operation attempted</exception>
         /// <exception cref="FileNotFoundException">Exception thrown if saved game file not found</exception>
         /// <exception cref="NullReferenceException">Exception thrown if a reference is null</exception>
         public string LoadGame(string fileName)
@@ -461,15 +464,20 @@ namespace HideAndSeek
             {
                 throw new JsonException($"Cannot process because data is corrupt - {e.Message}"); // Throw new exception with custom error message
             }
-            catch(InvalidDataException e) // If problem due to invalid property value
-            {
-                throw new InvalidDataException($"Cannot process because data is corrupt - {e.Message}"); // Throw new exception with custom error message
-            }
             catch(InvalidOperationException e) // If problem due to attempted invalid operation
             {
                 throw new InvalidOperationException($"Cannot process because data is corrupt - {e.Message}"); // Throw new exception with custom error message
             }
-            catch (NullReferenceException e)
+            catch(ArgumentOutOfRangeException e) // If problem due to value out of required range (e.g. MoveNumber not positive)
+            {
+                string message = $"Cannot process because data is corrupt - {e.Message}";
+                throw new ArgumentOutOfRangeException(e.ParamName, $"Cannot process because data is corrupt - {e.Message}"); // Throw new exception with custom error message
+            }
+            catch(ArgumentException e) // If problem due to invalid argument (e.g. House file name is invalid)
+            {
+                throw new ArgumentException($"Cannot process because data is corrupt - {e.Message}", e.ParamName); // Throw new exception with custom error message
+            }
+            catch(NullReferenceException e)
             {
                 if(e.Message == "House has not been set") // If SavedGame House property has not been set
                 {
@@ -480,7 +488,7 @@ namespace HideAndSeek
                     throw; // Bubble up exception
                 }
             }
-            catch(Exception e)
+            catch(Exception)
             {
                 throw; // Bubble up exception
             }
@@ -537,6 +545,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="fileName">Name of file to delete</param>
         /// <returns>String describing what happened</returns>
+        /// <exception cref="ArgumentException">Exception thrown if file name is invalid</exception>
         /// <exception cref="FileNotFoundException">Exception thrown if file not found</exception>
         public string DeleteGame(string fileName)
         {

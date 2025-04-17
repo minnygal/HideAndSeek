@@ -36,7 +36,7 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("GameController LoadGame House Failure")]
+        [Category("GameController LoadGame House FileNotFoundException Failure")]
         public void Test_GameController_LoadGame_AndCheckErrorMessage_ForNonexistentHouseFile()
         {
             // Initialize variable to text in SavedGame file
@@ -70,7 +70,7 @@ namespace HideAndSeek
 
         [TestCaseSource(typeof(TestGameController_LoadGame_HouseFailure_TestData),
             nameof(TestGameController_LoadGame_HouseFailure_TestData.TestCases_For_Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileFormatIsInvalid))]
-        [Category("GameController LoadGame House Failure")]
+        [Category("GameController LoadGame House JsonException Failure")]
         public void Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileFormatIsInvalid(
             string exceptionMessageEnding, string fileText)
         {
@@ -82,19 +82,19 @@ namespace HideAndSeek
 
         [TestCaseSource(typeof(TestGameController_LoadGame_HouseFailure_TestData),
             nameof(TestGameController_LoadGame_HouseFailure_TestData.TestCases_For_Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasWhitespaceValue))]
-        [Category("GameController LoadGame House Failure")]
+        [Category("GameController LoadGame House ArgumentException Failure")]
         public void Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasWhitespaceValue(
             string exceptionMessageEnding, string fileText)
         {
-            exception = Assert.Throws<InvalidDataException>(() => GetExceptionWhenLoadGameWithCorruptHouseFile(fileText));
-            Assert.That(exception.Message, Is.EqualTo("Cannot process because data is corrupt - " +
+            exception = Assert.Throws<ArgumentException>(() => GetExceptionWhenLoadGameWithCorruptHouseFile(fileText));
+            Assert.That(exception.Message, Does.StartWith("Cannot process because data is corrupt - " +
                                                       "Cannot process because data in house layout file CorruptHouse is invalid - " +
                                                       exceptionMessageEnding));
         }
 
         [TestCaseSource(typeof(TestGameController_LoadGame_HouseFailure_TestData),
             nameof(TestGameController_LoadGame_HouseFailure_TestData.TestCases_For_Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidDirection))]
-        [Category("GameController LoadGame House Failure")]
+        [Category("GameController LoadGame House JsonException Failure")]
         public void Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidDirection(string fileText)
         {
             exception = Assert.Throws<JsonException>(() => GetExceptionWhenLoadGameWithCorruptHouseFile(fileText));
@@ -105,13 +105,25 @@ namespace HideAndSeek
 
         [TestCaseSource(typeof(TestGameController_LoadGame_HouseFailure_TestData),
             nameof(TestGameController_LoadGame_HouseFailure_TestData.TestCases_For_Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidValue))]
-        [Category("GameController LoadGame House Failure")]
+        [Category("GameController LoadGame House ArgumentException Failure")]
         public void Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidValue(
             string errorMessageEnding, string fileText)
         {
-            exception = Assert.Throws<InvalidDataException>(() => GetExceptionWhenLoadGameWithCorruptHouseFile(fileText));
-            Assert.That(exception.Message, Is.EqualTo("Cannot process because data is corrupt - " +
+            exception = Assert.Throws<ArgumentException>(() => GetExceptionWhenLoadGameWithCorruptHouseFile(fileText));
+            Assert.That(exception.Message, Does.StartWith("Cannot process because data is corrupt - " +
                                                       "Cannot process because data in house layout file CorruptHouse is invalid - " +
+                                                      errorMessageEnding));
+        }
+
+        [TestCaseSource(typeof(TestGameController_LoadGame_HouseFailure_TestData),
+            nameof(TestGameController_LoadGame_HouseFailure_TestData.TestCases_For_Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidValue_NonexistentLocation))]
+        [Category("GameController LoadGame House InvalidOperationException Failure")]
+        public void Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileDataHasInvalidValue_NonexistentLocation(
+            string errorMessageEnding, string fileText)
+        {
+            exception = Assert.Throws<InvalidOperationException>(() => GetExceptionWhenLoadGameWithCorruptHouseFile(fileText));
+            Assert.That(exception.Message, Does.StartWith("Cannot process because data is corrupt - " +
+                                                      "Cannot process because data in house layout file CorruptHouse is corrupt - " +
                                                       errorMessageEnding));
         }
 

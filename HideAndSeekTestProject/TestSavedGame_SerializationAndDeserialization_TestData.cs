@@ -487,7 +487,7 @@ namespace HideAndSeek
             }
         }
 
-        public static IEnumerable TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenNoJsonTokens
+        public static IEnumerable TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenNoJsonTokens
         {
             get
             {
@@ -496,23 +496,23 @@ namespace HideAndSeek
                                               "Expected the input to start with a valid JSON token, when isFinalBlock is true. " +
                                               "Path: $ | LineNumber: 0 | BytePositionInLine: 0.",
                         "")
-                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenNoJsonTokens - no data in file");
+                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenNoJsonTokens - no data in file");
 
                 // Only whitespace in file
                 yield return new TestCaseData("The input does not contain any JSON tokens. " +
                                               "Expected the input to start with a valid JSON token, when isFinalBlock is true. " +
                                               "Path: $ | LineNumber: 0 | BytePositionInLine: 2.",
                         "  ")
-                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenNoJsonTokens - only whitespace in file");
+                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenNoJsonTokens - only whitespace in file");
 
                 // Just characters in file (not JSON)
                 yield return new TestCaseData("'A' is an invalid start of a value. Path: $ | LineNumber: 0 | BytePositionInLine: 0.",
                         "ABCDeaoueou[{}}({}")
-                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenNoJsonTokens - just characters in file");
+                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenNoJsonTokens - just characters in file");
             }
         }
 
-        public static IEnumerable TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenPropertyIsMissing
+        public static IEnumerable TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenPropertyIsMissing
         {
             get
             {
@@ -525,7 +525,7 @@ namespace HideAndSeek
                             SavedGame_Serialized_OpponentsAndHidingLocations + "," +
                             SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")
-                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenPropertyIsMissing - missing player location");
+                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenPropertyIsMissing - missing player location");
 
                 // Missing move number
                 yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, " +
@@ -536,7 +536,7 @@ namespace HideAndSeek
                             SavedGame_Serialized_OpponentsAndHidingLocations + "," +
                             SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")
-                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenPropertyIsMissing - missing move number");
+                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenPropertyIsMissing - missing move number");
 
                 // Missing opponents and hiding locations
                 yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, " +
@@ -547,7 +547,7 @@ namespace HideAndSeek
                             SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
                             SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")
-                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenPropertyIsMissing - missing opponents and hiding locations");
+                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenPropertyIsMissing - missing opponents and hiding locations");
 
                 // Missing found opponents
                 yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, " +
@@ -558,29 +558,17 @@ namespace HideAndSeek
                             SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
                             SavedGame_Serialized_OpponentsAndHidingLocations +
                         "}")
-                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenPropertyIsMissing - missing found opponents");
+                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenPropertyIsMissing - missing found opponents");
 
             }
         }
 
-        public static IEnumerable TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue
+        public static IEnumerable TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenFileDataHasInvalidValue
         {
             get
             {
-                // Invalid House file name
-                yield return new TestCaseData("Cannot perform action because file name \"a8}{{ /@uaou12 \" is invalid " +
-                                              "(is empty or contains illegal characters, e.g. \\, /, or whitespace)",
-                        "{" +
-                            "\"HouseFileName\":\"a8}{{ /@uaou12 \"" + "," +
-                            SavedGame_Serialized_PlayerLocation_NoFoundOpponents + "," +
-                            SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
-                            SavedGame_Serialized_OpponentsAndHidingLocations + "," +
-                            SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
-                        "}")
-                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue - invalid HouseFileName");
-
                 // Invalid player location
-                yield return new TestCaseData("invalid PlayerLocation",
+                yield return new TestCaseData("invalid PlayerLocation - location \"Tree\" does not exist in House",
                         "{" +
                             SavedGame_Serialized_HouseFileName + "," +
                             "\"PlayerLocation\":\"Tree\"," +
@@ -588,32 +576,10 @@ namespace HideAndSeek
                             SavedGame_Serialized_OpponentsAndHidingLocations + "," +
                             SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")
-                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue - invalid PlayerLocation");
-
-                // Invalid (negative) move number
-                yield return new TestCaseData("invalid MoveNumber",
-                        "{" +
-                            SavedGame_Serialized_HouseFileName + "," +
-                            SavedGame_Serialized_PlayerLocation_NoFoundOpponents + "," +
-                            "\"MoveNumber\":-1" + "," +
-                            SavedGame_Serialized_OpponentsAndHidingLocations + "," +
-                            SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
-                        "}")
-                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue - invalid MoveNumber");
-
-                // No opponents
-                yield return new TestCaseData("no opponents",
-                        "{" +
-                            SavedGame_Serialized_HouseFileName + "," +
-                            SavedGame_Serialized_PlayerLocation_NoFoundOpponents + "," +
-                            SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
-                            "\"OpponentsAndHidingLocations\":{}" + "," +
-                            SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
-                        "}")
-                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue - no opponents");
+                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenFileDataHasInvalidValue - invalid PlayerLocation");
 
                 // Invalid hiding place for Joe (not yet found) because location does not exist
-                yield return new TestCaseData("invalid hiding location for opponent",
+                yield return new TestCaseData("location with hiding place \"Tree\" does not exist in House",
                         "{" +
                             SavedGame_Serialized_HouseFileName + "," +
                             SavedGame_Serialized_PlayerLocation_NoFoundOpponents + "," +
@@ -628,10 +594,10 @@ namespace HideAndSeek
                             "}" + "," +
                             SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")
-                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue - invalid hiding place for opponent - Location does not exist");
+                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenFileDataHasInvalidValue - invalid hiding place for opponent - Location does not exist");
 
                 // Invalid hiding place for Joe (not yet found) because hiding location is not of type LocationWithHidingPlace
-                yield return new TestCaseData("invalid hiding location for opponent",
+                yield return new TestCaseData("location with hiding place \"Hallway\" does not exist in House",
                         "{" +
                             SavedGame_Serialized_HouseFileName + "," +
                             SavedGame_Serialized_PlayerLocation_NoFoundOpponents + "," +
@@ -646,7 +612,7 @@ namespace HideAndSeek
                             "}" + "," +
                             SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
                         "}")
-                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue - invalid hiding place for opponent - not LocationWithHidingPlace");
+                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenFileDataHasInvalidValue - invalid hiding place for opponent - not LocationWithHidingPlace");
 
                 // Found opponent is not in all opponents list
                 yield return new TestCaseData("found opponent is not an opponent",
@@ -657,11 +623,11 @@ namespace HideAndSeek
                             SavedGame_Serialized_OpponentsAndHidingLocations + "," +
                             "\"FoundOpponents\":[\"Steve\"]" +
                         "}")
-                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenFileDataHasInvalidValue - found opponent Steve is not opponent");
+                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenFileDataHasInvalidValue - found opponent Steve is not opponent");
             }
         }
 
-        public static IEnumerable TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenHouseFileFormatIsInvalid
+        public static IEnumerable TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileFormatIsInvalid
         {
             get
             {
@@ -671,19 +637,19 @@ namespace HideAndSeek
                                               "Expected the input to start with a valid JSON token, when isFinalBlock is true. " +
                                               "Path: $ | LineNumber: 0 | BytePositionInLine: 0.",
                         "")
-                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenHouseFileFormatIsInvalid - empty file");
+                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileFormatIsInvalid - empty file");
 
                 // File with only whitespace
                 yield return new TestCaseData("The input does not contain any JSON tokens. " +
                                               "Expected the input to start with a valid JSON token, when isFinalBlock is true. " +
                                               "Path: $ | LineNumber: 0 | BytePositionInLine: 1.",
                         " ")
-                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenHouseFileFormatIsInvalid - only whitespace");
+                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileFormatIsInvalid - only whitespace");
 
                 // File with random letters and characters
                 yield return new TestCaseData("'A' is an invalid start of a value. Path: $ | LineNumber: 0 | BytePositionInLine: 0.",
                         "ABCDeaoueou[{}}({}")
-                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenHouseFileFormatIsInvalid - random characters");
+                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileFormatIsInvalid - random characters");
 
                 // MISSING PROPERTIES
                 // File missing Name
@@ -695,7 +661,7 @@ namespace HideAndSeek
                             DefaultHouse_Serialized_LocationsWithoutHidingPlaces + "," +
                             DefaultHouse_Serialized_LocationsWithHidingPlaces +
                         "}")
-                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenHouseFileFormatIsInvalid - no Name");
+                    .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileFormatIsInvalid - no Name");
 
                 // File missing HouseFileName
                 yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.House' was missing required properties, " +
@@ -706,7 +672,7 @@ namespace HideAndSeek
                            DefaultHouse_Serialized_LocationsWithoutHidingPlaces + "," +
                            DefaultHouse_Serialized_LocationsWithHidingPlaces +
                        "}")
-                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenHouseFileFormatIsInvalid - no HouseFileName");
+                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileFormatIsInvalid - no HouseFileName");
 
                 // File missing PlayerStartingPoint
                 yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.House' was missing required properties, " +
@@ -717,7 +683,7 @@ namespace HideAndSeek
                            DefaultHouse_Serialized_LocationsWithoutHidingPlaces + "," +
                            DefaultHouse_Serialized_LocationsWithHidingPlaces +
                        "}")
-                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenHouseFileFormatIsInvalid - no PlayerStartingPoint");
+                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileFormatIsInvalid - no PlayerStartingPoint");
 
                 // File missing LocationsWithoutHidingPlaces
                 yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.House' was missing required properties, " +
@@ -728,7 +694,7 @@ namespace HideAndSeek
                            DefaultHouse_Serialized_PlayerStartingPoint + "," +
                            DefaultHouse_Serialized_LocationsWithHidingPlaces +
                        "}")
-                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenHouseFileFormatIsInvalid - no LocationsWithoutHidingPlaces");
+                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileFormatIsInvalid - no LocationsWithoutHidingPlaces");
 
                 // File missing LocationsWithHidingPlaces
                 yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.House' was missing required properties, " +
@@ -739,17 +705,17 @@ namespace HideAndSeek
                            DefaultHouse_Serialized_PlayerStartingPoint + "," +
                            DefaultHouse_Serialized_LocationsWithoutHidingPlaces +
                        "}")
-                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenHouseFileFormatIsInvalid - no LocationsWithHidingPlaces");
+                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileFormatIsInvalid - no LocationsWithHidingPlaces");
             }
         }
 
-        public static IEnumerable TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenHouseFileDataInvalidValue
+        public static IEnumerable TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileDataInvalidValue
         {
             get
             {
                 // INVALID VALUE OF WHITESPACE
                 // Invalid Name - whitespace
-                yield return new TestCaseData("Cannot perform action because house name \" \" is invalid " +
+                yield return new TestCaseData("house name \" \" is invalid " +
                                               "(is empty or contains only whitespace)",
                         "{" +
                            "\"Name\":\" \"" + "," +
@@ -758,10 +724,10 @@ namespace HideAndSeek
                            DefaultHouse_Serialized_LocationsWithoutHidingPlaces + "," +
                            DefaultHouse_Serialized_LocationsWithHidingPlaces +
                        "}")
-                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenHouseFileDataInvalidValue - invalid Name - whitespace");
+                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileDataInvalidValue - invalid Name - whitespace");
 
                 // Invalid HouseFileName - whitespace
-                yield return new TestCaseData("Cannot perform action because house file name \" \" is invalid " +
+                yield return new TestCaseData("house file name \" \" is invalid " +
                                               "(is empty or contains illegal characters, e.g. \\, /, or whitespace)",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
@@ -770,10 +736,10 @@ namespace HideAndSeek
                            DefaultHouse_Serialized_LocationsWithoutHidingPlaces + "," +
                            DefaultHouse_Serialized_LocationsWithHidingPlaces +
                        "}")
-                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenHouseFileDataInvalidValue - invalid HouseFileName - whitespace");
+                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileDataInvalidValue - invalid HouseFileName - whitespace");
 
                 // Invalid PlayerStartingPoint - whitespace
-                yield return new TestCaseData("Cannot perform action because player starting point location name \" \" is invalid " +
+                yield return new TestCaseData("player starting point location name \" \" is invalid " +
                                               "(is empty or contains only whitespace)",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
@@ -782,10 +748,10 @@ namespace HideAndSeek
                            DefaultHouse_Serialized_LocationsWithoutHidingPlaces + "," +
                            DefaultHouse_Serialized_LocationsWithHidingPlaces +
                        "}")
-                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenHouseFileDataInvalidValue - invalid PlayerStartingPoint - whitespace");
+                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileDataInvalidValue - invalid PlayerStartingPoint - whitespace");
 
                 // Invalid LocationsWithoutHidingPlaces - Location name is invalid (whitespace)
-                yield return new TestCaseData("Cannot perform action because location name \" \" is invalid " +
+                yield return new TestCaseData("location name \" \" is invalid " +
                                               "(is empty or contains only whitespace)",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
@@ -807,10 +773,10 @@ namespace HideAndSeek
                            "]" + "," +
                            DefaultHouse_Serialized_LocationsWithHidingPlaces +
                        "}")
-                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenHouseFileDataInvalidValue - LocationsWithoutHidingPlaces - invalid Location Name - whitespace");
+                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileDataInvalidValue - LocationsWithoutHidingPlaces - invalid Location Name - whitespace");
 
                 // Invalid LocationsWithHidingPlaces - LocationWithHidingPlace name in invalid (whitespace)
-                yield return new TestCaseData("Cannot perform action because location name \" \" is invalid " +
+                yield return new TestCaseData("location name \" \" is invalid " +
                                               "(is empty or contains only whitespace)",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
@@ -829,10 +795,10 @@ namespace HideAndSeek
                                 "}" +
                             "]" +
                        "}")
-                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenHouseFileDataInvalidValue - LocationsWithHidingPlaces - invalid Location Name - whitespace");
+                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileDataInvalidValue - LocationsWithHidingPlaces - invalid Location Name - whitespace");
 
                 // Invalid LocationsWithHidingPlaces - LocationWithHidingPlace description is invalid (whitespace)
-                yield return new TestCaseData("Cannot perform action because hiding place \" \" is invalid " +
+                yield return new TestCaseData("hiding place \" \" is invalid " +
                                               "(is empty or contains only whitespace)",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
@@ -851,23 +817,11 @@ namespace HideAndSeek
                                 "}" +
                             "]" +
                        "}")
-                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenHouseFileDataInvalidValue - LocationsWithHidingPlaces - invalid Location HidingPlace - whitespace");
+                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileDataInvalidValue - LocationsWithHidingPlaces - invalid Location HidingPlace - whitespace");
 
                 // OTHER INVALID VALUES
-                // Invalid PlayerStartingPoint - not a Location
-                yield return new TestCaseData("Cannot perform action because player starting point location \"Dungeon\" " +
-                                              "is not a location in the house",
-                        "{" +
-                           DefaultHouse_Serialized_Name + "," +
-                           DefaultHouse_Serialized_HouseFileName + "," +
-                           "\"PlayerStartingPoint\":\"Dungeon\"" + "," +
-                           DefaultHouse_Serialized_LocationsWithoutHidingPlaces + "," +
-                           DefaultHouse_Serialized_LocationsWithHidingPlaces +
-                       "}")
-                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenHouseFileDataInvalidValue - invalid PlayerStartingPoint - nonexistent");
-
                 // Invalid LocationsWithHidingPlaces - empty list
-                yield return new TestCaseData("Cannot perform action because locations with hiding places list is empty",
+                yield return new TestCaseData("locations with hiding places list is empty",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
                            DefaultHouse_Serialized_HouseFileName + "," +
@@ -893,10 +847,10 @@ namespace HideAndSeek
                            "[" +
                            "]" +
                        "}")
-                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenHouseFileDataInvalidValue - invalid LocationsWithHidingPlaces - empty");
+                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileDataInvalidValue - invalid LocationsWithHidingPlaces - empty");
 
                 // Invalid LocationsWithoutHidingPlaces - Location has no exits
-                yield return new TestCaseData("Cannot perform action because location \"Hallway\" must be assigned at least one exit",
+                yield return new TestCaseData("location \"Hallway\" must be assigned at least one exit",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
                            DefaultHouse_Serialized_HouseFileName + "," +
@@ -933,10 +887,10 @@ namespace HideAndSeek
                            "]" + "," +
                            DefaultHouse_Serialized_LocationsWithHidingPlaces +
                        "}")
-                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenHouseFileDataInvalidValue - invalid LocationsWithoutHidingPlaces - no exits");
+                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileDataInvalidValue - invalid LocationsWithoutHidingPlaces - no exits");
 
                 // Invalid LocationsWithHidingPlaces - LocationWithHidingPlace has no exits
-                yield return new TestCaseData("Cannot perform action because location \"Attic\" must be assigned at least one exit",
+                yield return new TestCaseData("location \"Attic\" must be assigned at least one exit",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
                            DefaultHouse_Serialized_HouseFileName + "," +
@@ -953,10 +907,28 @@ namespace HideAndSeek
                                 "}" +
                            "]" +
                        "}")
-                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenHouseFileDataInvalidValue - invalid LocationsWithHidingPlaces - no exits");
+                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileDataInvalidValue - invalid LocationsWithHidingPlaces - no exits");
+
+            }
+        }
+
+        public static IEnumerable TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileDataInvalidValue_NonexistentLocation
+        {
+            get
+            {
+                // Invalid PlayerStartingPoint - not a Location
+                yield return new TestCaseData("player starting point location \"Dungeon\" does not exist in House",
+                        "{" +
+                           DefaultHouse_Serialized_Name + "," +
+                           DefaultHouse_Serialized_HouseFileName + "," +
+                           "\"PlayerStartingPoint\":\"Dungeon\"" + "," +
+                           DefaultHouse_Serialized_LocationsWithoutHidingPlaces + "," +
+                           DefaultHouse_Serialized_LocationsWithHidingPlaces +
+                       "}")
+                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileDataInvalidValue_NonexistentLocation - invalid PlayerStartingPoint - nonexistent");
 
                 // Invalid LocationsWithoutHidingPlaces - Location has nonexistent exit
-                yield return new TestCaseData("Cannot perform action because \"Hallway\" exit location \"Dungeon\" " +
+                yield return new TestCaseData("\"Hallway\" exit location \"Dungeon\" " +
                                               "in direction \"Down\" does not exist",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
@@ -1000,10 +972,10 @@ namespace HideAndSeek
                            "]" + "," +
                            DefaultHouse_Serialized_LocationsWithHidingPlaces +
                        "}")
-                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenHouseFileDataInvalidValue - invalid LocationsWithoutHidingPlaces - nonexistent exit");
+                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileDataInvalidValue_NonexistentLocation - invalid LocationsWithoutHidingPlaces - nonexistent exit");
 
                 // Invalid LocationsWithHidingPlaces - LocationWithHidingPlace has nonexistent exit
-                yield return new TestCaseData("Cannot perform action because \"Bathroom\" exit location \"Dungeon\" " +
+                yield return new TestCaseData("\"Bathroom\" exit location \"Dungeon\" " +
                                               "in direction \"Down\" does not exist",
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
@@ -1103,11 +1075,11 @@ namespace HideAndSeek
                                 "}" +
                            "]" +
                        "}")
-                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForInvalidDataException_WhenHouseFileDataInvalidValue - invalid LocationsWithHidingPlaces - nonexistent exit");
+                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileDataInvalidValue_NonexistentLocation - invalid LocationsWithHidingPlaces - nonexistent exit");
             }
         }
 
-        public static IEnumerable TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenHouseFileDataHasInvalidDirection
+        public static IEnumerable TestCases_For_Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileDataHasInvalidDirection
         {
             get
             {
@@ -1146,7 +1118,7 @@ namespace HideAndSeek
                                 "}" +
                            "]" +
                        "}")
-                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenHouseFileDataHasInvalidDirection - LocationsWithoutHidingPlaces");
+                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileDataHasInvalidDirection - LocationsWithoutHidingPlaces");
 
                 // Invalid LocationsWithHidingPlaces - exit direction is invalid
                 yield return new TestCaseData("{" +
@@ -1176,7 +1148,7 @@ namespace HideAndSeek
                                 "}" +
                             "]" +
                         "}")
-                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_ForJsonException_WhenHouseFileDataHasInvalidDirection - LocationsWithHidingPlaces");
+                   .SetName("Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileDataHasInvalidDirection - LocationsWithHidingPlaces");
             }
         }
     }
