@@ -112,7 +112,7 @@ namespace HideAndSeek
                 Assert.That(gameController.Move(Direction.Out), Is.EqualTo("Moving Out"), "message when moving out to Garage"); // Go Out to Garage
                 Assert.That(gameController.GameOver, Is.False, "game not over when enter Garage");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Garage. You see the following exits:" +
+                    "You are in the Garage. You see the following exit:" +
                     Environment.NewLine + " - the Entry is In" +
                     Environment.NewLine + "Someone could hide behind the car" +
                     Environment.NewLine + "You have not found any opponents"), "status when enter Garage");
@@ -123,7 +123,7 @@ namespace HideAndSeek
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("Nobody was hiding behind the car"), "message when checking Garage"); // Check Garage, no Opponents found
                 Assert.That(gameController.GameOver, Is.False, "game not over after check Garage");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Garage. You see the following exits:" +
+                    "You are in the Garage. You see the following exit:" +
                     Environment.NewLine + " - the Entry is In" +
                     Environment.NewLine + "Someone could hide behind the car" +
                     Environment.NewLine + "You have not found any opponents"), "status after check Garage");
