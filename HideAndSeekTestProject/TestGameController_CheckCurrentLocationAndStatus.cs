@@ -252,7 +252,7 @@ namespace HideAndSeek
                 Assert.That(gameController.FoundOpponents, Is.Empty, "no found opponents after trying to check");
                 Assert.That(gameController.Status, Is.EqualTo(initialStatus), "status does not change");
                 Assert.That(gameController.CurrentLocation, Is.EqualTo(initialLocation), "current location does not change");
-                Assert.That(gameController.MoveNumber, Is.EqualTo(2), "move number increments");
+                Assert.That(gameController.MoveNumber, Is.EqualTo(1), "move number does not increment");
                 Assert.That(gameController.GameOver, Is.False, "game not over after trying to check");
             });
         }
