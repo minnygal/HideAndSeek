@@ -349,20 +349,20 @@ namespace HideAndSeek
 
         /// <summary>
         /// Helper method to check current location for opponents
-        /// (increments move number)
+        /// (increments move number unless there is no hiding place)
         /// </summary>
         /// <returns>The results of checking the location</returns>
         /// <exception cref="InvalidOperationException">Exception thrown if no hiding place in current location</exception>
         public string CheckCurrentLocation()
         {
-            // Increment move number
-            MoveNumber++;
-
             // If current location does not have a hiding place
             if( !(CurrentLocation.GetType() == typeof(LocationWithHidingPlace)) )
             {
                 throw new InvalidOperationException($"There is no hiding place in the {CurrentLocation}"); // Throw new exception with custom error message
             }
+
+            // Increment move number
+            MoveNumber++;
 
             // Check hiding place
             LocationWithHidingPlace location = (LocationWithHidingPlace)CurrentLocation; // Convert CurrentLocation to LocationWithHidingPlace
