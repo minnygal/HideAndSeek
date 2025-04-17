@@ -49,7 +49,7 @@ namespace HideAndSeek
             while (true)
             {
                 // Welcome user to the House
-                Console.WriteLine($"Welcome to {gameController.House.Name}!");
+                PrintWelcomeToHouse();
 
                 // Until game is over
                 while ( !(gameController.GameOver) )
@@ -74,6 +74,14 @@ namespace HideAndSeek
                 gameController.RestartGame();
                 Console.WriteLine();
             }
+        }
+
+        /// <summary>
+        /// Helper method to welcome user to the House
+        /// </summary>
+        private static void PrintWelcomeToHouse()
+        {
+            Console.WriteLine($"Welcome to {gameController.House.Name}!");
         }
 
         /// <summary>
@@ -148,6 +156,7 @@ namespace HideAndSeek
                             case "save":
                                 return gameController.SaveGame(fileName);
                             case "load":
+                                PrintWelcomeToHouse(); // Welcome user to the House
                                 return gameController.LoadGame(fileName);
                             default:
                                 return gameController.DeleteGame(fileName);
@@ -162,7 +171,8 @@ namespace HideAndSeek
             else if(lowercaseCommand == "new") // If input requests start new custom game
             {
                 Console.WriteLine(); // Add an empty line
-                gameController = GetGameControllerForCustomGame(); // Set game controller to game controller for new custom game
+                gameController = GetGameControllerForCustomGame(); // Set game controller to game controller for new custom game                            
+                PrintWelcomeToHouse(); // Welcome user to the House
                 return "New game started";
             }
             else // Try to move in specified Direction
