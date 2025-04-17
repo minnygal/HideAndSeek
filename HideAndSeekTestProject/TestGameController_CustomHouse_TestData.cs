@@ -10,9 +10,10 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// TestCaseData for GameController tests for testing layout of non-default House 
-    /// set using GameController constructor or RestartGame method 
-    public static class TestGameController_CustomHouse_TestCaseData
+    /// Test data for GameController tests for testing layout of non-default House 
+    /// set using GameController constructor or RestartGame method
+    /// </summary>
+    public static class TestGameController_CustomHouse_TestData
     {
         /// <summary>
         /// Text representing default House for tests serialized
@@ -290,6 +291,59 @@ namespace HideAndSeek
             "}";
         #endregion
 
+        public static IEnumerable TestCases_For_Test_GameController_CustomHouse_Constructor_AndCheckErrorMessage_ForInvalidHouseFileName
+        {
+            get
+            {
+                yield return new TestCaseData(() =>
+                {
+                    new GameController("@eou]} {(/"); // Call GameController constructor
+                })
+                    .SetName("Test_GameController_CustomHouse_Constructor_AndCheckErrorMessage_ForInvalidHouseFileName - constructor")
+                    .SetCategory("GameController Constructor Failure");
+
+                yield return new TestCaseData(() =>
+                {
+                    new GameController().RestartGame("@eou]} {(/"); // Create new GameController and call RestartGame
+                })
+                    .SetName("Test_GameController_CustomHouse_Constructor_AndCheckErrorMessage_ForInvalidHouseFileName - RestartGame")
+                    .SetCategory("GameController RestartGame Failure");
+            }
+        }
+
+        /// <summary>
+        /// Helper method to set House file system to mock that file does not exist
+        /// </summary>
+        private static void SetUpMockFileSystemForNonexistentHouseFile()
+        {
+            Mock<IFileSystem> fileSystem = new Mock<IFileSystem>();
+            fileSystem.Setup((manager) => manager.File.Exists("MyNonexistentFile.json")).Returns(false);
+            House.FileSystem = fileSystem.Object;
+        }
+        
+        public static IEnumerable TestCases_For_Test_GameController_CheckErrorMessage_WhenHouseFileDoesNotExist
+        {
+            get
+            {
+                yield return new TestCaseData(() =>
+                {
+                    SetUpMockFileSystemForNonexistentHouseFile(); // Set up mock file system
+                    new GameController("MyNonexistentFile"); // Call GameController constructor
+                })
+                    .SetName("Test_GameController_Constructor_AndCheckErrorMessage_WhenHouseFileDoesNotExist - constructor")
+                    .SetCategory("GameController CustomHouse Constructor FileNotFoundException Failure");
+
+                yield return new TestCaseData(() =>
+                {
+                    GameController gameController = new GameController("DefaultHouse"); // Create new GameController
+                    SetUpMockFileSystemForNonexistentHouseFile(); // Set up mock file system
+                    gameController.RestartGame("MyNonexistentFile"); // Call RestartGame
+                })
+                    .SetName("Test_GameController_Constructor_AndCheckErrorMessage_WhenHouseFileDoesNotExist - RestartGame")
+                    .SetCategory("GameController CustomHouse RestartGame FileNotFoundException Failure");
+            }
+        }
+
         /// <summary>
         /// Helper method to get GameController with House property 
         /// set to custom House via GameController constructor
@@ -310,7 +364,7 @@ namespace HideAndSeek
         {
             // Set up House file system
             Mock<IFileSystem> houseMockFileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText(
-                                                    "DefaultHouse.json", TestGameController_CustomHouse_TestCaseData.DefaultHouse_Serialized); // Create mock file system to return default House file text
+                                                    "DefaultHouse.json", TestGameController_CustomHouse_TestData.DefaultHouse_Serialized); // Create mock file system to return default House file text
             MockFileSystemHelper.SetMockOfFileSystem_ToReadAllText(houseMockFileSystem, "TestHouse.json", textInHouseFile); // Set up mock file system to return test House file text
             House.FileSystem = houseMockFileSystem.Object; // Set static House file system to mock file system 
             
@@ -367,19 +421,19 @@ namespace HideAndSeek
             }
         }
 
-        public static IEnumerable TestCases_For_Test_GameController_CustomHouse_ParseInput_ForFullGame_WithOpponentsHiding_AndCheckMessageAndProperties
+        public static IEnumerable TestCases_For_Test_GameController_CustomHouse_FullGame_AndCheckMessageAndProperties
         {
             get
             {
                 // Set custom House using GameController constructor
                 yield return new TestCaseData(GetGameController_WithCustomHouseSetViaConstructor())
-                    .SetName("Test_GameController_CustomHouse_ParseInput_ForFullGame_WithOpponentsHiding_AndCheckMessageAndProperties - constructor")
-                    .SetCategory("GameController ParseInput Move Check Message Prompt Status MoveNumber GameOver Success");
+                    .SetName("Test_GameController_CustomHouse_FullGame_AndCheckMessageAndProperties - constructor")
+                    .SetCategory("GameController CustomHouse Constructor Move Check Message Prompt Status MoveNumber GameOver InvalidOperationException Success");
 
                 // Set custom House using GameController RestartGame method
                 yield return new TestCaseData(GetGameController_WithCustomHouseSetViaRestartGame())
-                    .SetName("Test_GameController_CustomHouse_ParseInput_ForFullGame_WithOpponentsHiding_AndCheckMessageAndProperties - RestartGame")
-                    .SetCategory("GameController ParseInput Move Check Message Prompt Status MoveNumber GameOver Success");
+                    .SetName("Test_GameController_CustomHouse_FullGame_AndCheckMessageAndProperties - RestartGame")
+                    .SetCategory("GameController CustomHouse RestartGame Move Check Message Prompt Status MoveNumber GameOver InvalidOperationException Success");
             }
         }
     }

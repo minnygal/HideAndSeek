@@ -75,7 +75,7 @@ namespace HideAndSeek
 
         [TestCase("")]
         [TestCase(" ")]
-        [Category("LocationWithHidingPlace HidingPlace Failure")]
+        [Category("LocationWithHidingPlace HidingPlace ArgumentException Failure")]
         public void Test_LocationWithHidingPlace_Set_HidingPlace_AndCheckErrorMessage_ForInvalidDescription(string description)
         {
             // Create LocationWithHidingPlace
@@ -84,14 +84,13 @@ namespace HideAndSeek
             Assert.Multiple(() =>
             {
                 // Assert that setting the hiding place to an invalid description throws exception
-                var exception = Assert.Throws<InvalidDataException>(() =>
+                var exception = Assert.Throws<ArgumentException>(() =>
                 {
                     locationWithHidingPlace.HidingPlace = description;
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because hiding place \"{description}\" is invalid " +
-                                                           "(is empty or contains only whitespace)"));
+                Assert.That(exception.Message, Does.StartWith($"hiding place \"{description}\" is invalid (is empty or contains only whitespace)"));
             });
         }
 
@@ -183,7 +182,7 @@ namespace HideAndSeek
         // Tests HidingLocation data validation
         [TestCase("")]
         [TestCase(" ")]
-        [Category("LocationWithHidingPlace Deserialize Failure")]
+        [Category("LocationWithHidingPlace Deserialize ArgumentException Failure")]
         public void Test_LocationWithHidingPlace_Deserialize_AndCheckErrorMessage_ForInvalidHidingLocation(string hidingPlace)
         {
             // Initialize to expected ExitsForSerialization property value
@@ -203,14 +202,13 @@ namespace HideAndSeek
             Assert.Multiple(() =>
             {
                 // Assert that deserializing raises exception
-                var exception = Assert.Throws<InvalidDataException>(() =>
+                var exception = Assert.Throws<ArgumentException>(() =>
                 {
                     JsonSerializer.Deserialize<LocationWithHidingPlace>(serializedLocation);
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot perform action because hiding place \"{hidingPlace}\" is invalid " +
-                                                           "(is empty or contains only whitespace)"));
+                Assert.That(exception.Message, Does.StartWith($"hiding place \"{hidingPlace}\" is invalid (is empty or contains only whitespace)"));
             });
         }
 

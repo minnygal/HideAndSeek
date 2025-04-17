@@ -21,37 +21,42 @@ namespace HideAndSeek
      * -I added instructions to be printed for the user when they launch the program.
      * -I used the RestartGame method I added to GameController so
      *  GameController only has to be created once.
+     * -I allow the user to select the number or names of opponents.
      * -I allow the user to enter a House layout name or use the default House layout.
+     * -I moved the ParseInput method to this class.
      * -I added comments to make the code more readable.
      * -I made code conform to my formatting.
      * -I added code to print an empty line to put space between moves information.
      * **/
     class Program
     {
-        static void Main(string[] args)
+        private static GameController gameController; // Game controller used by Main and ParseInput methods
+
+        /// <summary>
+        /// Main method to play a game of Hide and Seek
+        /// </summary>
+        /// <param name="args"></param>
+        public static void Main(string[] args)
         {
             // Print welcome and basic instructions
             PrintWelcomeAndInstructions();
             Console.WriteLine();
 
-            // Create variable to store game controller
-            GameController gameController;
+            // Create new game controller
+            gameController = new GameController();
 
             // Until the user quits the program
             while (true)
             {
-                // Get game controller to start game
-                gameController = GetGameControllerToStartGame();
-
-                // Welcome player to the House
-                Console.WriteLine($"{Environment.NewLine}Welcome to {gameController.House.Name}!");
+                // Welcome user to the House
+                Console.WriteLine($"Welcome to {gameController.House.Name}!");
 
                 // Until game is over
                 while ( !(gameController.GameOver) )
                 {
                     Console.WriteLine(gameController.Status); // Print game status
                     Console.Write(gameController.Prompt); // Print game prompt
-                    Console.WriteLine( gameController.ParseInput(Console.ReadLine()) ); // Get user input, parse input, and print message
+                    Console.WriteLine( ParseInput( Console.ReadLine()) ); // Get user input, parse input, and print message
                     Console.WriteLine(); // Print empty line to put space between moves
                 }
 
@@ -64,6 +69,10 @@ namespace HideAndSeek
                 {
                     return;
                 }
+
+                // If user does want to play again, restart game
+                gameController.RestartGame();
+                Console.WriteLine();
             }
         }
 
@@ -73,22 +82,108 @@ namespace HideAndSeek
         private static void PrintWelcomeAndInstructions()
         {
             Console.WriteLine("Welcome to the Hide And Seek Console App!");
-            Console.WriteLine("-Navigate through rooms in a virtual house to find all the hiding opponents " +
+            Console.WriteLine("Navigate through rooms in a virtual house to find all the hiding opponents " +
                               "in the fewest number of moves possible.");
             Console.WriteLine("-To MOVE, enter the direction in which you want to move.");
             Console.WriteLine("-To CHECK if any opponents are hiding in your current location, enter \"check\".");
-            Console.WriteLine("-To TELEPORT to a random location with hiding place, enter \"teleport\".");
+            Console.WriteLine("-To TELEPORT to a random location with a hiding place, enter \"teleport\".");
             Console.WriteLine("-To SAVE your progress, enter \"save\" followed by a space and a name for your game.");
             Console.WriteLine("-To LOAD a saved game, enter \"load\" followed by a space and the name of your game.");
             Console.WriteLine("-To DELETE a saved game, enter \"delete\" followed by a space and the name of your game.");
+            Console.WriteLine("-To start a NEW custom game, enter \"new\" and follow the prompts.");
         }
 
         /// <summary>
-        /// Helper method to get game controller to start game based on user input; also sets House layout
-        /// (allows user to enter number of opponents, names for opponents, load command, or empty string)
+        /// Parse input from the player
+        /// Accepts case-insensitive commands for directions, 
+        /// teleport, check, new, save, load, delete
+        /// Modifies class's GameController's state
+        /// </summary>
+        /// <param name="input">Input to parse</param>
+        /// <returns>The results of parsing the input</returns>
+        private static string ParseInput(string input)
+        {
+            // Extract command and make lowercase
+            string lowercaseCommand = input.Trim().Split(" ").FirstOrDefault("").ToLower();
+
+            // Evaluate command and act accordingly
+            if (lowercaseCommand == "check") // If input requests the current location be checked for hiding opponents
+            {
+                try
+                {
+                    return gameController.CheckCurrentLocation(); // Check current location and return results
+                }
+                catch (Exception e)
+                {
+                    return e.Message; // Return error message
+                }
+            }
+            else if (lowercaseCommand == "teleport") // If input requests teleportation
+            {
+                return gameController.Teleport(); // Teleport and return message
+            }
+            else if ( // If input requests save, load, or delete game
+                lowercaseCommand == "save" ||
+                lowercaseCommand == "load" ||
+                lowercaseCommand == "delete")
+            {
+                // Get index of first space in input (space after command and before name of file)
+                int indexOfSpace = input.IndexOf(' ');
+
+                // If input does not include a space
+                if (indexOfSpace == -1)
+                {
+                    return "Cannot perform action because no file name was entered"; // Return failure message
+                }
+                else // If input does include a space
+                {
+                    // Extract file name
+                    string fileName = input.Substring(indexOfSpace + 1);
+
+                    // Perform requested action and return message
+                    try
+                    {
+                        switch (lowercaseCommand)
+                        {
+                            case "save":
+                                return gameController.SaveGame(fileName);
+                            case "load":
+                                return gameController.LoadGame(fileName);
+                            default:
+                                return gameController.DeleteGame(fileName);
+                        }
+                    }
+                    catch (Exception e)
+                    {
+                        return e.Message; // Return error message
+                    }
+                }
+            }
+            else if(lowercaseCommand == "new") // If input requests start new custom game
+            {
+                Console.WriteLine(); // Add an empty line
+                gameController = GetGameControllerForCustomGame(); // Set game controller to game controller for new custom game
+                return "New game started";
+            }
+            else // Try to move in specified Direction
+            {
+                try
+                {
+                    return gameController.Move( DirectionExtensions.Parse(lowercaseCommand) );
+                }
+                catch (Exception e)
+                {
+                    return e.Message;
+                }
+            }
+        }
+
+        /// <summary>
+        /// Helper method to get game controller for new game based on user input; also sets House layout
+        /// (allows user to enter number or names of opponents, or empty string for default opponents)
         /// </summary>
         /// <returns>Game controller set up for game</returns>
-        private static GameController GetGameControllerToStartGame()
+        private static GameController GetGameControllerForCustomGame()
         {
             // Set game controller to null (used as flag in do-while to create new game controller)
             GameController gameController = null;
@@ -101,36 +196,27 @@ namespace HideAndSeek
 
                 try
                 {
-                    // If user entered load command
-                    if (userInput.ToLower().StartsWith("load"))
+                    // If user did not enter anything
+                    if(userInput == string.Empty)
                     {
-                        gameController = LoadGame(userInput); // Load game and set game controller
-
-                        // If game loaded sucessfully
-                        if(gameController != null)
-                        {
-                            return gameController; // Return game controller
-                        }
+                        gameController = new GameController(); // Create a new default game controller
                     }
-                    else // If user did not enter load command
+                    else if( int.TryParse(userInput, out int numberOfOpponents) ) // If user entered a number
                     {
-                        // If user did not enter anything
-                        if (userInput == string.Empty)
-                        {
-                            gameController = new GameController(); // Create a new default game controller
-                        }
-                        else if (int.TryParse(userInput, out int numberOfOpponents)) // If user entered a number
-                        {
-                            gameController = new GameController(numberOfOpponents); // Create new game controller with user input
-                        }
-                        else // if user did not enter load command, empty string, or a number, assume user entered names for opponents
-                        {
-                            gameController = new GameController(Regex.Replace(userInput, @"\s", string.Empty).Split(',')); // Create new game controller with names entered by user as array (without whitespace)
-                        }
-
-                        // Get game controller with House layout set
-                        gameController = SetHouseLayoutForGameController(gameController);
+                        gameController = new GameController(numberOfOpponents); // Create new game controller with specified number of opponents
                     }
+                    else // if user did not enter empty string or a number, then assume user entered names for opponents
+                    {
+                        string[] namesOfOpponents = userInput.Split(','); // Extract names from user input
+                        for(int i = 0; i < namesOfOpponents.Length; i++)
+                        {
+                            namesOfOpponents[i] = namesOfOpponents[i].Trim(); // Remove whitespace before or after each name
+                        }
+                        gameController = new GameController(namesOfOpponents); // Create new game controller with names entered by user as array (without whitespace)
+                    }
+
+                    // Get game controller with House layout set
+                    gameController = SetHouseLayoutForGameController(gameController);
                 }
                 catch (Exception e)
                 {
@@ -138,28 +224,6 @@ namespace HideAndSeek
                     gameController = null; // Make sure game controller variable is not set
                 }
             } while (gameController == null);
-
-            // Return game controller
-            return gameController;
-        }
-
-        /// <summary>
-        /// Helper method to load game from saved game file and return game controller
-        /// </summary>
-        /// <param name="userInput">User input containing load command and name of saved game file</param>
-        /// <returns>Game controller with saved game loaded (or null if not loaded successfully)</returns>
-        private static GameController LoadGame(string userInput)
-        {
-            // Create new GameController
-            GameController gameController = new GameController();
-            string message = gameController.ParseInput(userInput); // Parse input to load game
-            Console.WriteLine(message); // Display message
-
-            // If return message does not indicate success
-            if (!(message.StartsWith("Game successfully loaded")))
-            {
-                gameController = null; // Set game controller to null
-            }
 
             // Return game controller
             return gameController;
@@ -178,20 +242,16 @@ namespace HideAndSeek
             do
             {
                 // Get House file name from user
-                Console.Write(Environment.NewLine + "Type a house layout file name or just press Enter to use the default house layout: "); // Prompt for House layout file name
+                Console.Write("Type a house layout file name or just press Enter to use the default house layout: "); // Prompt for House layout file name
                 string houseLayoutFileName = Console.ReadLine(); // Get user input for file name
 
                 try
                 {
-                    // If no House file name entered
-                    if (houseLayoutFileName.Trim() == "")
-                    {
-                        gameController.RestartGame(); // Restart game without House file specified
-                    }
-                    else // If House file name entered
+                    // If any text was entered
+                    if (houseLayoutFileName.Trim() != string.Empty)
                     {
                         gameController.RestartGame(houseLayoutFileName); // Restart game with House layout file, throws exception if anything invalid
-                    }
+                    } // else if no text entered, don't change House layout
 
                     // Update flag
                     houseLayoutChosen = true;
@@ -200,7 +260,7 @@ namespace HideAndSeek
                 {
                     Console.WriteLine(e.Message); // Print exception message
                 }
-            } while (!(houseLayoutChosen));
+            } while( !(houseLayoutChosen) );
 
             // Return game controller
             return gameController;

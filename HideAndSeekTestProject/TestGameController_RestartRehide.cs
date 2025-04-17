@@ -6,11 +6,10 @@ using System.Xml.Linq;
 namespace HideAndSeek
 {
     /// <summary>
-    /// GameController tests for constructor with invalid file name or name of nonexistent file, RestartGame method,
-    /// RehideAllOpponents method, and checking Opponents' hiding locations when Opponents rehidden or game restarted
+    /// GameController tests for RestartGame and RehideAllOpponents methods
     /// </summary>
     [TestFixture]
-    public class TestGameController_Basic
+    public class TestGameController_RestartRehide
     {
         GameController gameController;
 
@@ -18,7 +17,7 @@ namespace HideAndSeek
         public void SetUp()
         {
             House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
-                                "DefaultHouse.json", TestGameController_Basic_TestCaseData.DefaultHouse_Serialized); // Set static House file system to mock file system
+                                "DefaultHouse.json", TestGameController_RestartRehide_TestData.DefaultHouse_Serialized); // Set static House file system to mock file system
             House.Random = new Random(); // Set static House Random property to new Random number generator
             gameController = new GameController("DefaultHouse"); // Create new GameController
         }
@@ -30,7 +29,7 @@ namespace HideAndSeek
             House.Random = new Random(); // Set static House Random property to new Random number generator
         }
 
-        [TestCaseSource(typeof(TestGameController_Basic_TestCaseData), nameof(TestGameController_Basic_TestCaseData.TestCases_For_Test_GameController_RestartGame))]
+        [TestCaseSource(typeof(TestGameController_RestartRehide_TestData), nameof(TestGameController_RestartRehide_TestData.TestCases_For_Test_GameController_RestartGame))]
         [Category("GameController RestartGame HidingLocations Success")]
         public void Test_GameController_RestartGame(Func<GameController, GameController> GetGameController)
         {
@@ -81,19 +80,19 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("GameController RehideAllOpponents Failure")]
+        [Category("GameController RehideAllOpponents InvalidOperationException Failure")]
         public void Test_GameController_RehideAllOpponents_InSpecificPlaces_AndCheckErrorMessage_ForNonexistentLocation()
         {
             Assert.Multiple(() =>
             {
                 // Assert that hiding an Opponent in a location with an invalid name raises an exception
-                var exception = Assert.Throws<NullReferenceException>(() =>
+                var exception = Assert.Throws<InvalidOperationException>(() =>
                 {
                     gameController.RehideAllOpponents(new List<string>() { "Dungeon", "Lavatory", "Eggshells", "Worm Hole", "Zoo" });
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo("Object reference not set to an instance of an object."));
+                Assert.That(exception.Message, Is.EqualTo("location with hiding place \"Dungeon\" does not exist in House"));
             });
         }
 
@@ -103,7 +102,7 @@ namespace HideAndSeek
         [TestCase("Living Room", "Kitchen", "Pantry")]
         [TestCase("Living Room", "Kitchen", "Pantry", "Attic")]
         [TestCase("Living Room", "Kitchen", "Pantry", "Attic", "Master Bedroom", "Kids Room")]
-        [Category("GameController RehideAllOpponents Failure")]
+        [Category("GameController RehideAllOpponents ArgumentOutOfRangeException Failure")]
         public void Test_GameController_RehideAllOpponents_InSpecificPlaces_AndCheckErrorMessage_ForIncorrectNumberOfHidingPlaces(params string[] hidingPlaces)
         {
             Assert.Multiple(() =>
@@ -116,39 +115,6 @@ namespace HideAndSeek
 
                 // Assert that exception message is as expected
                 Assert.That(exception.Message, Is.EqualTo("The number of hiding places must equal the number of opponents. (Parameter 'hidingPlaces')"));
-            });
-        }
-
-        [TestCaseSource(typeof(TestGameController_Basic_TestCaseData), nameof(TestGameController_Basic_TestCaseData.TestCases_For_Test_GameController_CheckErrorMessage_ForInvalidHouseFileName))]
-        [Category("GameController Constructor Failure")]
-        public void Test_GameController_CheckErrorMessage_ForInvalidHouseFileName(Action callWithInvalidHouseFileName)
-        {
-            Assert.Multiple(() =>
-            {
-                // Assert that doing action with name of nonexistent House file raises an exception
-                var exception = Assert.Throws<InvalidDataException>(() =>
-                {
-                    callWithInvalidHouseFileName();
-                });
-
-                // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo("Cannot perform action because file name \"@eou]} {(/\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
-            });
-        }
-
-        [TestCaseSource(typeof(TestGameController_Basic_TestCaseData), nameof(TestGameController_Basic_TestCaseData.TestCases_For_Test_GameController_CheckErrorMessage_ForHouseFileDoesNotExist))]
-        public void Test_GameController_CheckErrorMessage_ForHouseFileDoesNotExist(Action callWithNonexistentFileName)
-        {
-            Assert.Multiple(() =>
-            {
-                // Assert that doing action with name of nonexistent House file raises an exception
-                var exception = Assert.Throws<FileNotFoundException>(() =>
-                {
-                    callWithNonexistentFileName();
-                });
-
-                // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot load game because house layout file MyNonexistentFile does not exist"));
             });
         }
     }

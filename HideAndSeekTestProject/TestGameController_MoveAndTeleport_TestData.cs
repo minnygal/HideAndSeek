@@ -1,19 +1,18 @@
-﻿using Moq;
-using System;
+﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO.Abstractions;
 using System.Linq;
-using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace HideAndSeek
 {
     /// <summary>
-    /// TestCaseData for GameController basic tests
+    /// Test data for GameController tests for Move and Teleport methods called in default House,
+    /// checking CurrentLocation, Move, and GameOver properties along the way; and
+    /// automatically testing GameController constructor with default House file name passed in
     /// </summary>
-    public static class TestGameController_Basic_TestCaseData
+    public static class TestGameController_MoveAndTeleport_TestData
     {
         /// <summary>
         /// Text representing default House for tests serialized
@@ -157,117 +156,53 @@ namespace HideAndSeek
             }
         }
 
-        public static IEnumerable TestCases_For_Test_GameController_CheckErrorMessage_ForInvalidHouseFileName
+        public static IEnumerable TestCases_For_Test_GameController_Move_InAllDirectionsAsStrings
         {
             get
             {
-                yield return new TestCaseData(() =>
-                {
-                    new GameController("@eou]} {(/"); // Call GameController constructor
-                })
-                    .SetName("Test_GameController_CheckErrorMessage_ForInvalidHouseFileName - constructor")
-                    .SetCategory("GameController Constructor Failure");
+                // Full direction names
+                yield return new TestCaseData("north", "south", "east", "west", "northeast", "southwest",
+                                              "southeast", "northwest", "up", "down", "in", "out")
+                .SetName("Test_GameController_Move_InAllDirectionsAsStrings - full names");
 
-                yield return new TestCaseData(() =>
-                {
-                    new GameController().RestartGame("@eou]} {(/"); // Create new GameController and call RestartGame
-                })
-                    .SetName("Test_GameController_CheckErrorMessage_ForInvalidHouseFileName - RestartGame")
-                    .SetCategory("GameController RestartGame Failure");
+                // Direction shorthands
+                yield return new TestCaseData("n", "s", "e", "w", "ne", "sw", "se", "nw", "u", "d", "i", "o")
+                .SetName("Test_GameController_Move_InAllDirectionsAsStrings - shorthands");
             }
         }
 
-        /// <summary>
-        /// Helper method to set House file system to mock that file does not exist
-        /// </summary>
-        private static void SetUpMockFileSystemForNonexistentHouseFile()
-        {
-            Mock<IFileSystem> fileSystem = new Mock<IFileSystem>();
-            fileSystem.Setup((manager) => manager.File.Exists("MyNonexistentFile.json")).Returns(false);
-            House.FileSystem = fileSystem.Object;
-        }
-
-        public static IEnumerable TestCases_For_Test_GameController_CheckErrorMessage_ForHouseFileDoesNotExist
+        public static IEnumerable TestCases_For_Test_GameController_Move_InDirectionWithNoLocation_AndCheckErrorMessageAndProperties
         {
             get
             {
-                yield return new TestCaseData(() =>
+                // Full direction names
+                yield return new TestCaseData((GameController gameController) => {
+                    try
                     {
-                        SetUpMockFileSystemForNonexistentHouseFile(); // Set up mock file system
-                        new GameController("MyNonexistentFile"); // Call GameController constructor
-                    })
-                    .SetName("Test_GameController_CheckErrorMessage_ForHouseFileDoesNotExist - constructor")
-                    .SetCategory("GameController Constructor Failure");
-
-                yield return new TestCaseData(() =>
+                        gameController.Move(Direction.Up);
+                    }
+                    catch(Exception e)
                     {
-                        GameController gameController = new GameController("DefaultHouse"); // Create new GameController
-                        SetUpMockFileSystemForNonexistentHouseFile(); // Set up mock file system
-                        gameController.RestartGame("MyNonexistentFile"); // Call RestartGame
-                    })
-                    .SetName("Test_GameController_CheckErrorMessage_ForHouseFileDoesNotExist - RestartGame")
-                    .SetCategory("GameController RestartGame Failure");
-            }
-        }
+                        return e;
+                    }
+                    return null;
+                })
+                .SetName("Test_GameController_Move_InDirectionWithNoLocation_AndCheckErrorMessageAndProperties - Direction");
 
-        /// <summary>
-        /// Helper method to find all Opponents 
-        /// for Test_GameController_RestartGame with initial game completed
-        /// </summary>
-        /// <param name="gameController">GameController at start of game</param>
-        /// <returns>GameController after all Opponents found</returns>
-        private static GameController FindAllOpponents(GameController gameController)
-        {
-            gameController.ParseInput("East"); // Move to Hallway
-            gameController.ParseInput("Northwest"); // Move to Kitchen
-            gameController.ParseInput("Check"); // Check Kitchen and find Bob and Owen
-            gameController.ParseInput("Southeast"); // Move to Hallway
-            gameController.ParseInput("North"); // Move to Bathroom
-            gameController.ParseInput("Check"); // Check Bathroom and find Ana
-            gameController.ParseInput("South"); // Move to Hallway
-            gameController.ParseInput("Up"); // Move to Landing
-            gameController.ParseInput("South"); // Move to Pantry
-            gameController.ParseInput("Check"); // Check Pantry and find Bob and Jimmy
-            return gameController;
-        }
-
-        public static IEnumerable TestCases_For_Test_GameController_RestartGame
-        {
-            get
-            {
-                // Initial game not completed before parameterless RestartGame called
-                yield return new TestCaseData(
-                    (GameController gameController) =>
+                // Direction shorthands
+                yield return new TestCaseData((GameController gameController) =>
+                {
+                    try
                     {
-                        return gameController.RestartGame(); // Restart game and return GameController
-                    })
-                    .SetName("Test_GameController_RestartGame - parameterless - initial game not completed");
-
-                // Initial game not completed before parameterized RestartGame called
-                yield return new TestCaseData(
-                    (GameController gameController) =>
+                        gameController.Move("Up");
+                    }
+                    catch (Exception e)
                     {
-                        gameController.RestartGame("DefaultHouse"); // Restart game with specific House layout
-                        return gameController.RestartGame(); // Restart game and return GameController
-                    })
-                    .SetName("Test_GameController_RestartGame - both - initial game not completed");
-
-                // Initial game completed before parameterless RestartGame called
-                yield return new TestCaseData(
-                    (GameController gameController) =>
-                    {
-                        return FindAllOpponents(gameController).RestartGame(); // Find all Opponents, restart game and return GameController
-                    })
-                    .SetName("Test_GameController_RestartGame - parameterless - initial game completed");
-
-                // Initial game completed before parameterized RestartGame called
-                yield return new TestCaseData(
-                    (GameController gameController) =>
-                    {
-                        gameController.RestartGame("DefaultHouse"); // Restart game with specific House layout
-                        return FindAllOpponents(gameController).RestartGame(); // Find all Opponents, restart game and return GameController
-                    })
-                    .SetName("Test_GameController_RestartGame - both - initial game completed");
+                        return e;
+                    }
+                    return null;
+                })
+                .SetName("Test_GameController_Move_InDirectionWithNoLocation_AndCheckErrorMessageAndProperties - string");
             }
         }
     }

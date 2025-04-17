@@ -71,8 +71,9 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="fileName">Name of House file (not including .json extension)</param>
         /// <returns>House object created from file</returns>
+        /// <exception cref="ArgumentException">Exception thrown if House file name or file value is invalid</exception>
         /// <exception cref="FileNotFoundException">Exception thrown if House file not found</exception>
-        /// <exception cref="JsonException">Exception thrown if House file data is corrupt</exception>
+        /// <exception cref="JsonException">Exception thrown if JSON formatting issue</exception>
         /// <exception cref="InvalidOperationException">Exception thrown if House file data is corrupt</exception>
         public static House CreateHouse(string fileName)
         {
@@ -97,21 +98,21 @@ namespace HideAndSeek
                 house = JsonSerializer.Deserialize<House>(houseFileText); // Deserialize House
                 house.SetUpHouseAfterDeserialization(); // Set up House after deserialization
             }
-            catch (JsonException e)
+            catch (JsonException e) // If JSON format is corrupt
             {
                 throw new JsonException($"Cannot process because data in house layout file {fileName} is corrupt - {e.Message}");
             }
-            catch (InvalidOperationException e)
+            catch (InvalidOperationException e) // If invalid operation attempted
             {
                 throw new InvalidOperationException($"Cannot process because data in house layout file {fileName} is corrupt - {e.Message}");
             }
-            catch (InvalidDataException e)
+            catch (ArgumentException e) // If argument is invalid
             {
-                throw new InvalidDataException($"Cannot process because data in house layout file {fileName} is invalid - {e.Message}");
+                throw new ArgumentException($"Cannot process because data in house layout file {fileName} is invalid - {e.Message}", e.ParamName);
             }
-            catch (Exception e)
+            catch (Exception)
             {
-                throw e;
+                throw; // Bubble up exception
             }
 
             // Return House object
@@ -123,6 +124,7 @@ namespace HideAndSeek
         /// <summary>
         /// Name of House
         /// </summary>
+        /// <exception cref="ArgumentException">Exception thrown if value passed to setter is invalid (empty or only whitespace)</exception>
         [JsonRequired]
         public required string Name
         {
@@ -135,7 +137,7 @@ namespace HideAndSeek
                 // If invalid name is entered
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    throw new InvalidDataException($"Cannot perform action because house name \"{value}\" is invalid (is empty or contains only whitespace)"); // Throw exception
+                    throw new ArgumentException($"house name \"{value}\" is invalid (is empty or contains only whitespace)", "value"); // Throw exception
                 }
 
                 // Set backing field
@@ -148,6 +150,7 @@ namespace HideAndSeek
         /// <summary>
         /// Name of file from which House is loaded (not including JSON extension)
         /// </summary>
+        /// <exception cref="ArgumentException">Exception thrown if value passed to setter is invalid (empty, illegal characters, whitespace)</exception>
         [JsonRequired]
         public required string HouseFileName
         {
@@ -158,9 +161,10 @@ namespace HideAndSeek
             set
             {
                 // If file name is invalid
-                if (!(FileSystem.IsValidName(value)))
+                if( !(FileSystem.IsValidName(value)) )
                 {
-                    throw new InvalidDataException($"Cannot perform action because house file name \"{value}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"); // Throw exception
+                    throw new ArgumentException(
+                        $"house file name \"{value}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)", "value"); // Throw exception
                 }
 
                 // Set backing field
@@ -173,6 +177,7 @@ namespace HideAndSeek
         /// <summary>
         /// Player starting point in House as string
         /// </summary>
+        /// <exception cref="ArgumentException">Exception thrown if value passed to setter is invalid (empty of contains whitespace)</exception>
         [JsonRequired]
         public required string PlayerStartingPoint
         {
@@ -185,7 +190,8 @@ namespace HideAndSeek
                 // If invalid Location name is entered
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    throw new InvalidDataException($"Cannot perform action because player starting point location name \"{value}\" is invalid (is empty or contains only whitespace)"); // Throw exception
+                    throw new ArgumentException(
+                        $"player starting point location name \"{value}\" is invalid (is empty or contains only whitespace)", "value"); // Throw exception
                 }
 
                 // Set backing field
@@ -198,6 +204,7 @@ namespace HideAndSeek
         /// <summary>
         /// Player starting point in House
         /// </summary>
+        /// <exception cref="InvalidOperationException">Exception thrown if value passed to setter is not in House</exception>
         [JsonIgnore]
         public Location StartingPoint
         {
@@ -207,10 +214,10 @@ namespace HideAndSeek
             }
             set
             {
-                // If Location does not exist in House
-                if ( !(DoesLocationExist(value.Name)) )
+                // If Location is null or does not exist in House
+                if ( value == null || !(DoesLocationExist(value.Name)) )
                 {
-                    throw new InvalidDataException($"Cannot perform action because player starting point location \"{value}\" is not a location in the house"); // Throw exception
+                    throw new InvalidOperationException($"player starting point location \"{value}\" does not exist in House"); // Throw exception
                 }
 
                 // Set backing field and property for JSON serialization
@@ -230,6 +237,7 @@ namespace HideAndSeek
         /// <summary>
         /// List of all LocationWithHidingPlace objects in House
         /// </summary>
+        /// <exception cref="ArgumentException">Exception thrown if value passed to setter is empty list</exception>
         [JsonRequired]
         public IEnumerable<LocationWithHidingPlace> LocationsWithHidingPlaces
         {
@@ -242,7 +250,7 @@ namespace HideAndSeek
                 // If enumerable is empty
                 if(value.Count() == 0)
                 {
-                    throw new InvalidDataException("Cannot perform action because locations with hiding places list is empty"); // Throw exception
+                    throw new ArgumentException("locations with hiding places list is empty", "value"); // Throw exception
                 }
 
                 // Set backing field
@@ -255,6 +263,7 @@ namespace HideAndSeek
         /// <summary>
         /// List of all Locations in House
         /// </summary>
+        /// <exception cref="ArgumentException">Exception thrown if value passed to setter is empty list</exception>
         [JsonIgnore]
         public IEnumerable<Location> Locations
         {
@@ -267,7 +276,7 @@ namespace HideAndSeek
                 // If enumerable is empty
                 if(value.Count() == 0)
                 {
-                    throw new InvalidDataException("Cannot perform action because locations list is empty"); // Throw exception
+                    throw new ArgumentException("locations list is empty", "value"); // Throw exception
                 }
 
                 // Set backing field
@@ -294,6 +303,7 @@ namespace HideAndSeek
         /// <param name="playerStartingPoint">Name of Location where player should start a new game</param>
         /// <param name="locationsWithoutHidingPlaces">Enumerable of Location objects (without hiding places)</param>
         /// <param name="locationsWithHidingPlaces">Enumerable of LocationWithHidingPlace objects</param>
+        /// <exception cref="InvalidOperationException">Exception thrown if player starting location is not in House</exception>
         [SetsRequiredMembers]
         public House(string name, string houseFileName, string playerStartingPoint, 
                      IEnumerable<Location> locationsWithoutHidingPlaces, 
@@ -314,29 +324,34 @@ namespace HideAndSeek
         /// Helper method to set Locations and StartingPoint properties
         /// after LocationsWithoutHidingPlaces and LocationsWithHidingPlaces are set
         /// </summary>
+        /// <exception cref="InvalidOperationException">Exception thrown if player starting location is not in House</exception>
         private void SetLocationsAndStartingPoint()
         {
             // Set list of all Locations in House
             Locations = LocationsWithHidingPlaces.Concat(LocationsWithoutHidingPlaces).ToList();
 
-            // Attempt to get player starting point location
-            Location startingPoint = GetLocationByName(PlayerStartingPoint);
+            // Declare variable to store starting point
+            Location startingPoint;
 
-            // If starting point is not in House
-            if(startingPoint == null)
+            try
             {
-                throw new InvalidDataException($"Cannot perform action because player starting point location \"{PlayerStartingPoint}\" is not a location in the house"); // Throw exception
-            }
+                // Attempt to get player starting point location
+                startingPoint = GetLocationByName(PlayerStartingPoint);
 
-            // Set StartingPoint
-            StartingPoint = startingPoint;
+                // Set StartingPoint
+                StartingPoint = startingPoint;
+            }
+            catch (InvalidOperationException e)
+            {
+                throw new InvalidOperationException($"player starting point location \"{PlayerStartingPoint}\" does not exist in House"); // Throw exception
+            }
         }
 
         /// <summary>
         /// Set up House after deserialization
         /// (set Locations, StartingPoint, and Exits property for each Location in House)
         /// </summary>
-        /// <exception cref="InvalidDataException">Exception thrown if exit Location does not exist</exception>
+        /// <exception cref="InvalidOperationException">Exception thrown if a Location does not exist in House</exception>
         private void SetUpHouseAfterDeserialization()
         {
             // Set Locations and StartingPoint properties
@@ -348,18 +363,21 @@ namespace HideAndSeek
                 // Initialize empty Dictionary to store exits
                 IDictionary<Direction, Location> exitsDictionary = new Dictionary<Direction, Location>();
 
+                // Declare variable to store exit location
+                Location exitLocation;
+
                 // For each exit
                 foreach (KeyValuePair<Direction, string> exit in location.ExitsForSerialization)
                 {
-                    // Get exit Location object
-                    Location exitLocation = GetLocationByName(exit.Value);
-                    
-                    // If exit Location does not exist
-                    if(exitLocation == null)
+                    try
                     {
-                        throw new InvalidDataException(
-                            $"Cannot perform action because \"{location.Name}\" exit location \"{exit.Value}\" " +
-                            $"in direction \"{exit.Key}\" does not exist"); // Throw exception
+                        // Get exit Location object
+                        exitLocation = GetLocationByName(exit.Value);
+                    }
+                    catch(InvalidOperationException e)
+                    {
+                        throw new InvalidOperationException(
+                            $"\"{location.Name}\" exit location \"{exit.Value}\" in direction \"{exit.Key}\" does not exist"); // Throw exception
                     }
 
                     // Add exit location to Dictionary
@@ -395,7 +413,7 @@ namespace HideAndSeek
         /// <returns>True if Location exists</returns>
         public bool DoesLocationExist(string name)
         {
-            return GetLocationByName(name) != null;
+            return Locations.Select((l) => l.Name).ToList().Contains(name);
         }
 
         /// <summary>
@@ -405,7 +423,7 @@ namespace HideAndSeek
         /// <returns>True if LocationWithHidingPlace exists</returns>
         public bool DoesLocationWithHidingPlaceExist(string name)
         {
-            return GetLocationWithHidingPlaceByName(name) != null;
+            return LocationsWithHidingPlaces.Select((l) => l.Name).ToList().Contains(name);
         }
 
         /// <summary>
@@ -413,9 +431,17 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="name">Name of Location</param>
         /// <returns>Location with specified name (or null if not found)</returns>
+        /// <exception cref="InvalidOperationException">Exception thrown if no matching location in House</exception>
         public Location GetLocationByName(string name)
         {
-            return Locations.Where(l => l.Name == name).FirstOrDefault();
+            try
+            {
+                return Locations.Where(l => l.Name == name).First();
+            }
+            catch(InvalidOperationException e)
+            {
+                throw new InvalidOperationException($"location \"{name}\" does not exist in House"); // Throw exception
+            }
         }
 
         /// <summary>
@@ -423,9 +449,17 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="name">Name of LocationWithHidingPlace</param>
         /// <returns>LocationWithHidingPlace with specified name (or null if not found)</returns>
+        /// <exception cref="InvalidOperationException">Exception thrown if no matching location with hiding place in House</exception>
         public LocationWithHidingPlace GetLocationWithHidingPlaceByName(string name)
         {
-            return LocationsWithHidingPlaces.Where((x) => x.Name == name).FirstOrDefault();
+            try
+            {
+                return LocationsWithHidingPlaces.Where(l => l.Name == name).First();
+            }
+            catch (InvalidOperationException e)
+            {
+                throw new InvalidOperationException($"location with hiding place \"{name}\" does not exist in House"); // Throw exception
+            }
         }
 
         /// <summary>

@@ -49,6 +49,7 @@ namespace HideAndSeek
         /// <summary>
         /// The name of this location
         /// </summary>
+        /// <exception cref="ArgumentException">Exception thrown if value passed to setter is invalid (empty or only whitespace)</exception>
         [JsonRequired]
         public required string Name
         {
@@ -61,10 +62,10 @@ namespace HideAndSeek
                 // If invalid name is entered
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    throw new InvalidDataException($"Cannot perform action because location name \"{value}\" is invalid (is empty or contains only whitespace)"); // Throw exception
+                    throw new ArgumentException($"location name \"{value}\" is invalid (is empty or contains only whitespace)", "value"); // Throw exception
                 }
 
-                // Set name variable
+                // Set backing field
                 _name = value;
             }
         }
@@ -76,6 +77,7 @@ namespace HideAndSeek
         /// (Locations as strings so duplicate Locations 
         /// are not created when multiple linked Locations are restored)
         /// </summary>
+        /// <exception cref="ArgumentException">Exception thrown if value passed to setter contains invalid value (empty or only whitespace)</exception>
         [JsonRequired]
         public IDictionary<Direction, string> ExitsForSerialization
         {
@@ -91,7 +93,8 @@ namespace HideAndSeek
                     // If name is invalid
                     if(string.IsNullOrWhiteSpace(kvp.Value))
                     {
-                        throw new InvalidDataException($"Cannot perform action because location name \"{kvp.Value}\" for exit in direction \"{kvp.Key}\" is invalid (is empty or contains only whitespace"); // Throw exception
+                        throw new ArgumentException(
+                            $"location name \"{kvp.Value}\" for exit in direction \"{kvp.Key}\" is invalid (is empty or contains only whitespace", "value"); // Throw exception
                     }
                 }
 
@@ -139,13 +142,13 @@ namespace HideAndSeek
         /// Should only be called by House method
         /// </summary>
         /// <param name="exits">Dictionary of exits</param>
-        /// <exception cref="InvalidDataException">Exception thrown if dictionary is empty</exception>
+        /// <exception cref="ArgumentException">Exception thrown if exits dictionary is empty</exception>
         public void SetExitsDictionary(IDictionary<Direction, Location> exits)
         {
             // If dictionary is empty
             if(exits.Count() == 0)
             {
-                throw new InvalidDataException($"Cannot perform action because location \"{Name}\" must be assigned at least one exit"); // Throw exception
+                throw new ArgumentException($"location \"{Name}\" must be assigned at least one exit", nameof(exits)); // Throw exception
             }
 
             // Set Exits property
@@ -239,7 +242,8 @@ namespace HideAndSeek
         /// Get the exit location in a direction
         /// </summary>
         /// <param name="direction">Direction of exit location</param>
-        /// <returns>The exit location (or this location if there is no exit in that direction)</returns>
+        /// <returns>The exit location</returns>
+        /// <exception cref="InvalidOperationException">Exception thrown if no exit in specified direction</exception>
         public Location GetExit(Direction direction) {
             // Get exit in direction specified and store in location variable
             Exits.TryGetValue(direction, out Location location);
@@ -247,7 +251,7 @@ namespace HideAndSeek
             // If no location found in direction
             if(location == null)
             {
-                location = this; // Return calling location
+                throw new InvalidOperationException($"There is no exit for location \"{Name}\" in direction \"{direction}\""); // Throw exception
             }
 
             // Return location

@@ -47,6 +47,8 @@ namespace HideAndSeek
         /// Can only use setter when backing field has not already been set
         /// (security measure since other properties' setters rely on this property for data validation)
         /// </summary>
+        /// <exception cref="NullReferenceException">Exception thrown if House property has not been set</exception>"
+        /// <exception cref="InvalidOperationException">Exception thrown if House property has already been set</exception>
         [JsonIgnore]
         public House House
         {
@@ -80,13 +82,14 @@ namespace HideAndSeek
         /// Set the House file name backing field, bypassing the HouseFileName property setter which calls House's CreateHouse method
         /// </summary>
         /// <param name="fileName">Name of file to set</param>
-        /// <exception cref="InvalidDataException">Exception thrown if file name is invalid</exception>
+        /// <exception cref="ArgumentException">Exception thrown if file name is invalid</exception>
         private void SetHouseFileName_WithoutCreatingHouse(string fileName)
         {
             // If House file name is invalid
-            if (!(new FileSystem().IsValidName(fileName)))
+            if ( !(new FileSystem().IsValidName(fileName)) )
             {
-                throw new InvalidDataException($"House file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"); // Throw exception
+                throw new ArgumentException($"House file name \"{fileName}\" is invalid " +
+                                             "(is empty or contains illegal characters, e.g. \\, /, or whitespace)", "value"); // Throw exception
             }
 
             // Set House file name backing field, bypassing the HouseFileName property setter which calls House's CreateHouse method
@@ -100,11 +103,19 @@ namespace HideAndSeek
         /// Should only be used by JSON deserializer and tests
         /// CAUTION: setter calls House's CreateHouse method
         /// </summary>
+        /// <exception cref="NullReferenceException">Exception thrown if HouseFileName property has not been set</exception>"
+        /// <exception cref="InvalidOperationException">Exception thrown if HouseFileName property has already been set</exception>
         [JsonRequired]
         public required string HouseFileName
         {
             get
             {
+                // If backing field has not been set
+                if (_houseFileName == null)
+                {
+                    throw new NullReferenceException("House file name has not been set"); // Throw exception
+                }
+
                 return _houseFileName;
             }
             set
@@ -126,6 +137,7 @@ namespace HideAndSeek
         /// <summary>
         /// Player's current location
         /// </summary>
+        /// <exception cref="InvalidOperationException">Exception thrown if value passed to setter does not exist in House</exception>
         [JsonRequired]
         public required string PlayerLocation {
             get
@@ -137,7 +149,7 @@ namespace HideAndSeek
                 // If location does not exist
                 if ( !(House.DoesLocationExist(value)) )
                 {
-                    throw new InvalidDataException("invalid PlayerLocation"); // Throw exception
+                    throw new InvalidOperationException($"invalid PlayerLocation - location \"{value}\" does not exist in House"); // Throw exception
                 }
 
                 // Set backing field
@@ -150,6 +162,7 @@ namespace HideAndSeek
         /// <summary>
         /// Current move number
         /// </summary>
+        /// <exception cref="ArgumentOutOfRangeException">Exception thrown if value passed to setter is not a positive number</exception>
         [JsonRequired]
         public required int MoveNumber
         {
@@ -162,7 +175,7 @@ namespace HideAndSeek
                 // If move number is invalid
                 if (value < 1)
                 {
-                    throw new InvalidDataException("invalid MoveNumber"); // Throw exception
+                    throw new ArgumentOutOfRangeException("value", "MoveNumber is invalid - must be positive number"); // Throw exception
                 }
 
                 // Set backing field
@@ -176,6 +189,8 @@ namespace HideAndSeek
         /// Opponents and their locations with hiding place
         /// (opponent name as key, location with hiding place name as value)
         /// </summary>
+        /// <exception cref="ArgumentException">Exception thrown if value passed to setter is empty dictionary</exception>
+        /// <exception cref="InvalidOperationException">Exception thrown if value passed to setter has value not existing as location with hiding place in House</exception>
         [JsonRequired]
         public required Dictionary<string, string> OpponentsAndHidingLocations
         {
@@ -188,7 +203,7 @@ namespace HideAndSeek
                 // If no items
                 if (value.Count == 0)
                 {
-                    throw new InvalidDataException("no opponents"); // Throw exception
+                    throw new ArgumentException("invalid OpponentsAndHidingLocations - no opponents", "value"); // Throw exception
                 }
 
                 // If any of the LocationWithHidingPlaces do not exist, throw exception
@@ -196,7 +211,7 @@ namespace HideAndSeek
                 {
                     if (!(House.DoesLocationWithHidingPlaceExist(opponentInfo.Value)))
                     {
-                        throw new InvalidDataException("invalid hiding location for opponent");
+                        throw new InvalidOperationException($"location with hiding place \"{opponentInfo.Value}\" does not exist in House");
                     }
                 }
 
@@ -210,6 +225,7 @@ namespace HideAndSeek
         /// <summary>
         /// All found opponents' names
         /// </summary>
+        /// <exception cref="InvalidOperationException">Exception thrown if value passed to setter includes name of opponent not in game</exception>
         [JsonRequired]
         public required IEnumerable<string> FoundOpponents
         {
@@ -222,9 +238,9 @@ namespace HideAndSeek
                 // If any found opponents do not exist in OpponentsAndHidingLocations dictionary keys, throw exception
                 foreach (string foundOpponent in value)
                 {
-                    if (!(OpponentsAndHidingLocations.Keys.Contains(foundOpponent)))
+                    if( !(OpponentsAndHidingLocations.Keys.Contains(foundOpponent)) )
                     {
-                        throw new InvalidDataException("found opponent is not an opponent");
+                        throw new InvalidOperationException("found opponent is not an opponent");
                     }
                 }
 
