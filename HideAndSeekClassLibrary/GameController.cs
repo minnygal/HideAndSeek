@@ -84,7 +84,7 @@ namespace HideAndSeek
             get
             {
                 // Initialize variable to first part of message for status
-                string message = $"You are in the {CurrentLocation.Name}. You see the following exits:";
+                string message = $"You are in the {CurrentLocation.Name}. You see the following exit{(CurrentLocation.Exits.Count() == 1 ? "" : "s")}:";
 
                 // Add each exit's description to the message for status
                 foreach (string exitDescription in CurrentLocation.ExitList())
