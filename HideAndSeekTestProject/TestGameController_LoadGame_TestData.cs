@@ -702,6 +702,174 @@ namespace HideAndSeek
             }
         }
 
+        public static IEnumerable TestCases_For_Test_GameController_LoadGame_WithFoundOpponents_AndSameHouse
+        {
+            get
+            {
+                // 1 found Opponent
+                yield return new TestCaseData("Bathroom", 4, new List<string>() { "Ana" },
+                        (IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces) =>
+                        {
+                            Assert.Multiple(() =>
+                            {
+                                // Assert that Opponents Joe and Owen are hiding in the Kitchen
+                                Assert.That(locationsWithHidingPlaces
+                                                .Where((l) => l.Name == "Kitchen").First()
+                                                .CheckHidingPlace()
+                                                .Select((o) => o.Name),
+                                            Is.EquivalentTo(new List<string>() { "Joe", "Owen" }),
+                                            "Joe and Owen are hidden in the Kitchen");
+
+                                // Assert that Opponents Bob and Jimmy are hiding in the Pantry
+                                Assert.That(locationsWithHidingPlaces
+                                                .Where((l) => l.Name == "Pantry").First()
+                                                .CheckHidingPlace()
+                                                .Select((o) => o.Name),
+                                            Is.EquivalentTo(new List<string>() { "Bob", "Jimmy" }),
+                                            "Bob and Jimmy are hidden in the Pantry");
+                            });
+                        })
+                    .SetName("Test_GameController_LoadGame_WithFoundOpponents_AndSameHouse - 1 found opponent");
+
+                // 2 found Opponents
+                yield return new TestCaseData("Pantry", 10, new List<string>() { "Bob", "Jimmy" },
+                        (IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces) =>
+                        {
+                            Assert.Multiple(() =>
+                            {
+                                // Assert that Opponents Joe and Owen are hiding in the Kitchen
+                                Assert.That(locationsWithHidingPlaces
+                                                .Where((l) => l.Name == "Kitchen").First()
+                                                .CheckHidingPlace()
+                                                .Select((o) => o.Name),
+                                            Is.EquivalentTo(new List<string>() { "Joe", "Owen" }),
+                                            "Joe and Owen are hidden in the Kitchen");
+
+                                // Assert that Ana is hiding in the Bathroom
+                                Assert.That(locationsWithHidingPlaces
+                                                .Where((l) => l.Name == "Bathroom").First()
+                                                .CheckHidingPlace()
+                                                .Select((o) => o.Name),
+                                            Is.EquivalentTo(new List<string>() { "Ana" }),
+                                            "Ana is hidden in the Bathroom");
+                            });
+                        })
+                    .SetName("Test_GameController_LoadGame_WithFoundOpponents_AndSameHouse - 2 found opponents");
+
+                // 3 found Opponents
+                yield return new TestCaseData("Bathroom", 15, new List<string>() { "Joe", "Owen", "Ana" },
+                        (IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces) =>
+                        {
+                            // Assert that Opponents Joe and Owen are hiding in the Kitchen
+                            Assert.That(locationsWithHidingPlaces
+                                            .Where((l) => l.Name == "Pantry").First()
+                                            .CheckHidingPlace()
+                                            .Select((o) => o.Name),
+                                        Is.EquivalentTo(new List<string>() { "Bob", "Jimmy" }),
+                                        "Bob and Jimmy are hidden in the Kitchen");
+                        })
+                    .SetName("Test_GameController_LoadGame_WithFoundOpponents_AndSameHouse - 3 found opponents");
+
+                // 4 found Opponents
+                yield return new TestCaseData("Pantry", 20, new List<string>() { "Joe", "Owen", "Bob", "Jimmy" },
+                        (IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces) =>
+                        {
+                            // Assert that Ana is hiding in the Bathroom
+                            Assert.That(locationsWithHidingPlaces
+                                            .Where((l) => l.Name == "Bathroom").First()
+                                            .CheckHidingPlace()
+                                            .Select((o) => o.Name),
+                                        Is.EquivalentTo(new List<string>() { "Ana" }),
+                                        "Ana is hidden in the Bathroom");
+                        })
+                    .SetName("Test_GameController_LoadGame_WithFoundOpponents_AndSameHouse - 4 found opponents");
+            }
+        }
+
+        public static IEnumerable TestCases_For_Test_GameController_LoadGame_WithFoundOpponents_AndDifferentHouse
+        {
+            get
+            {
+                // 1 found Opponent
+                yield return new TestCaseData("Bathroom", 4, new List<string>() { "Ana" },
+                        (IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces) =>
+                        {
+                            Assert.Multiple(() =>
+                            {
+                                // Assert that Opponents Joe and Owen are hiding in the Kitchen
+                                Assert.That(locationsWithHidingPlaces
+                                                .Where((l) => l.Name == "Kitchen").First()
+                                                .CheckHidingPlace()
+                                                .Select((o) => o.Name),
+                                            Is.EquivalentTo(new List<string>() { "Joe", "Owen" }),
+                                            "Joe and Owen are hidden in the Kitchen");
+
+                                // Assert that Opponents Bob and Jimmy are hiding in the Pantry
+                                Assert.That(locationsWithHidingPlaces
+                                                .Where((l) => l.Name == "Pantry").First()
+                                                .CheckHidingPlace()
+                                                .Select((o) => o.Name),
+                                            Is.EquivalentTo(new List<string>() { "Bob", "Jimmy" }),
+                                            "Bob and Jimmy are hidden in the Pantry");
+                            });
+                        })
+                    .SetName("Test_GameController_LoadGame_WithFoundOpponents_AndDifferentHouse - 1 found opponent");
+
+                // 2 found Opponents
+                yield return new TestCaseData("Pantry", 10, new List<string>() { "Bob", "Jimmy" },
+                        (IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces) =>
+                        {
+                            Assert.Multiple(() =>
+                            {
+                                // Assert that Opponents Joe and Owen are hiding in the Kitchen
+                                Assert.That(locationsWithHidingPlaces
+                                                .Where((l) => l.Name == "Kitchen").First()
+                                                .CheckHidingPlace()
+                                                .Select((o) => o.Name),
+                                            Is.EquivalentTo(new List<string>() { "Joe", "Owen" }),
+                                            "Joe and Owen are hidden in the Kitchen");
+
+                                // Assert that Ana is hiding in the Bathroom
+                                Assert.That(locationsWithHidingPlaces
+                                                .Where((l) => l.Name == "Bathroom").First()
+                                                .CheckHidingPlace()
+                                                .Select((o) => o.Name),
+                                            Is.EquivalentTo(new List<string>() { "Ana" }),
+                                            "Ana is hidden in the Bathroom");
+                            });
+                        })
+                    .SetName("Test_GameController_LoadGame_WithFoundOpponents_AndDifferentHouse - 2 found opponents");
+
+                // 3 found Opponents
+                yield return new TestCaseData("Bathroom", 15, new List<string>() { "Joe", "Owen", "Ana" },
+                        (IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces) =>
+                        {
+                            // Assert that Opponents Joe and Owen are hiding in the Kitchen
+                            Assert.That(locationsWithHidingPlaces
+                                            .Where((l) => l.Name == "Pantry").First()
+                                            .CheckHidingPlace()
+                                            .Select((o) => o.Name),
+                                        Is.EquivalentTo(new List<string>() { "Bob", "Jimmy" }),
+                                        "Bob and Jimmy are hidden in the Kitchen");
+                        })
+                    .SetName("Test_GameController_LoadGame_WithFoundOpponents_AndDifferentHouse - 3 found opponents");
+
+                // 4 found Opponents
+                yield return new TestCaseData("Pantry", 20, new List<string>() { "Joe", "Owen", "Bob", "Jimmy" },
+                        (IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces) =>
+                        {
+                            // Assert that Ana is hiding in the Bathroom
+                            Assert.That(locationsWithHidingPlaces
+                                            .Where((l) => l.Name == "Bathroom").First()
+                                            .CheckHidingPlace()
+                                            .Select((o) => o.Name),
+                                        Is.EquivalentTo(new List<string>() { "Ana" }),
+                                        "Ana is hidden in the Bathroom");
+                        })
+                    .SetName("Test_GameController_LoadGame_WithFoundOpponents_AndDifferentHouse - 4 found opponents");
+            }
+        }
+
         public static IEnumerable TestCases_For_Test_GameController_LoadGame_AndCheckErrorMessage_WhenFileFormatIsInvalid
         {
             get
@@ -837,90 +1005,6 @@ namespace HideAndSeek
                             "\"FoundOpponents\":[\"Steve\"]" +
                         "}")
                     .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenFileDataHasInvalidValue - found opponent Steve is not opponent");
-            }
-        }
-
-        public static IEnumerable TestCases_For_Test_GameController_LoadGame_WithFoundOpponents
-        {
-            get
-            {
-                // 1 found Opponent
-                yield return new TestCaseData("Bathroom", 4, new List<string>() { "Ana" },
-                        (IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces) =>
-                        {
-                            Assert.Multiple(() =>
-                            {
-                                // Assert that Opponents Joe and Owen are hiding in the Kitchen
-                                Assert.That(locationsWithHidingPlaces
-                                                .Where((l) => l.Name == "Kitchen").First()
-                                                .CheckHidingPlace()
-                                                .Select((o) => o.Name),
-                                            Is.EquivalentTo(new List<string>() { "Joe", "Owen" }),
-                                            "Joe and Owen are hidden in the Kitchen");
-
-                                // Assert that Opponents Bob and Jimmy are hiding in the Pantry
-                                Assert.That(locationsWithHidingPlaces
-                                                .Where((l) => l.Name == "Pantry").First()
-                                                .CheckHidingPlace()
-                                                .Select((o) => o.Name),
-                                            Is.EquivalentTo(new List<string>() { "Bob", "Jimmy" }),
-                                            "Bob and Jimmy are hidden in the Pantry");
-                            });
-                        })
-                    .SetName("Test_GameController_LoadGame_WithFoundOpponents - 1 found opponent");
-
-                // 2 found Opponents
-                yield return new TestCaseData("Pantry", 10, new List<string>() { "Bob", "Jimmy" },
-                        (IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces) =>
-                        {
-                            Assert.Multiple(() =>
-                            {
-                                // Assert that Opponents Joe and Owen are hiding in the Kitchen
-                                Assert.That(locationsWithHidingPlaces
-                                                .Where((l) => l.Name == "Kitchen").First()
-                                                .CheckHidingPlace()
-                                                .Select((o) => o.Name),
-                                            Is.EquivalentTo(new List<string>() { "Joe", "Owen" }),
-                                            "Joe and Owen are hidden in the Kitchen");
-
-                                // Assert that Ana is hiding in the Bathroom
-                                Assert.That(locationsWithHidingPlaces
-                                                .Where((l) => l.Name == "Bathroom").First()
-                                                .CheckHidingPlace()
-                                                .Select((o) => o.Name),
-                                            Is.EquivalentTo(new List<string>() { "Ana" }),
-                                            "Ana is hidden in the Bathroom");
-                            });
-                        })
-                    .SetName("Test_GameController_LoadGame_WithFoundOpponents - 2 found opponents");
-
-                // 3 found Opponents
-                yield return new TestCaseData("Bathroom", 15, new List<string>() { "Joe", "Owen", "Ana" },
-                        (IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces) =>
-                        {
-                            // Assert that Opponents Joe and Owen are hiding in the Kitchen
-                            Assert.That(locationsWithHidingPlaces
-                                            .Where((l) => l.Name == "Pantry").First()
-                                            .CheckHidingPlace()
-                                            .Select((o) => o.Name),
-                                        Is.EquivalentTo(new List<string>() { "Bob", "Jimmy" }),
-                                        "Bob and Jimmy are hidden in the Kitchen");
-                        })
-                    .SetName("Test_GameController_LoadGame_WithFoundOpponents - 3 found opponents");
-
-                // 4 found Opponents
-                yield return new TestCaseData("Pantry", 20, new List<string>() { "Joe", "Owen", "Bob", "Jimmy" },
-                        (IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces) =>
-                        {
-                            // Assert that Ana is hiding in the Bathroom
-                            Assert.That(locationsWithHidingPlaces
-                                            .Where((l) => l.Name == "Bathroom").First()
-                                            .CheckHidingPlace()
-                                            .Select((o) => o.Name),
-                                        Is.EquivalentTo(new List<string>() { "Ana" }),
-                                        "Ana is hidden in the Bathroom");
-                        })
-                    .SetName("Test_GameController_LoadGame_WithFoundOpponents - 4 found opponents");
             }
         }
     }
