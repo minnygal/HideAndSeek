@@ -317,18 +317,18 @@ namespace HideAndSeek
 
         /// <summary>
         /// Move to the Location in a Direction
-        /// (increments move number regardless of return value)
+        /// (increments move number unless there is no exit in specified Direction)
         /// </summary>
         /// <param name="direction">The Direction to move</param>
         /// <returns>Description</returns>
         /// <exception cref="InvalidOperationException">Exception thrown when no exit in specified Direction</exception>
         public string Move(Direction direction)
         {
-            // Increment move number
-            MoveNumber++;
-
             // Attempt to move in specified direction
             CurrentLocation = CurrentLocation.GetExit(direction); // Throws exception if no exit in specified Direction
+
+            // Increment move number
+            MoveNumber++;
 
             // Return description
             return $"Moving {direction}";

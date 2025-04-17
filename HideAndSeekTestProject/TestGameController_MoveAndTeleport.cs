@@ -235,7 +235,7 @@ namespace HideAndSeek
         [TestCaseSource(typeof(TestGameController_MoveAndTeleport_TestData), 
             nameof(TestGameController_MoveAndTeleport_TestData.TestCases_For_Test_GameController_Move_InDirectionWithNoLocation_AndCheckErrorMessageAndProperties))]
         [Category("GameController Move CurrentLocation MoveNumber Failure")]
-        public void Test_GameController_Move_AndCheckErrorMessageAndProperties_ForDirectionWithNoLocation(
+        public void Test_GameController_Move_InDirectionWithNoLocation_AndCheckErrorMessageAndProperties(
             Func<GameController, Exception> Move)
         {
             Location initialLocation = gameController.CurrentLocation; // Get initial location before attempt to move
@@ -246,7 +246,7 @@ namespace HideAndSeek
                 Assert.That(exception, Is.TypeOf<InvalidOperationException>());
                 Assert.That(exception.Message, Is.EqualTo("There is no exit for location \"Entry\" in direction \"Up\""), "exception message");
                 Assert.That(gameController.CurrentLocation, Is.EqualTo(initialLocation), "current location does not change");
-                Assert.That(gameController.MoveNumber, Is.EqualTo(2), "move number increments");
+                Assert.That(gameController.MoveNumber, Is.EqualTo(1), "move number does not increment");
                 Assert.That(gameController.GameOver, Is.False, "game not over after trying to move");
             });
         }
