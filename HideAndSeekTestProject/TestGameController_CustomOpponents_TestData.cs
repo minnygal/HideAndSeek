@@ -296,7 +296,7 @@ namespace HideAndSeek
                 // Check Kitchen and find Joe
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 1 opponent hiding next to the stove"), "message when checking Kitchen");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Kitchen. You see the following exits:" +
+                    "You are in the Kitchen. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the Southeast" +
                     Environment.NewLine + "Someone could hide next to the stove" +
                     Environment.NewLine + "You have found 1 of 1 opponent: Joe"), "status after check Kitchen");
@@ -324,7 +324,7 @@ namespace HideAndSeek
                 // Check Kitchen and find Amy
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 1 opponent hiding next to the stove"), "message when checking Kitchen");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Kitchen. You see the following exits:" +
+                    "You are in the Kitchen. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the Southeast" +
                     Environment.NewLine + "Someone could hide next to the stove" +
                     Environment.NewLine + "You have found 1 of 1 opponent: Amy"), "status after check Kitchen");
@@ -352,7 +352,7 @@ namespace HideAndSeek
                 // Check Kitchen and find Joe
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 1 opponent hiding next to the stove"), "message when checking Kitchen");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Kitchen. You see the following exits:" +
+                    "You are in the Kitchen. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the Southeast" +
                     Environment.NewLine + "Someone could hide next to the stove" +
                     Environment.NewLine + "You have found 1 of 2 opponents: Joe"), "status after check Kitchen");
@@ -370,7 +370,7 @@ namespace HideAndSeek
                 // Go to Pantry
                 gameController.Move(Direction.South); // Go South to Pantry
                 Assert.That(gameController.Status, Is.EqualTo(
-                        "You are in the Pantry. You see the following exits:" +
+                        "You are in the Pantry. You see the following exit:" +
                         Environment.NewLine + " - the Landing is to the North" +
                         Environment.NewLine + "Someone could hide inside a cabinet" +
                         Environment.NewLine + "You have found 1 of 2 opponents: Joe"), "status when enter Pantry");
@@ -379,7 +379,7 @@ namespace HideAndSeek
                 // Check Pantry and find Bob
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 1 opponent hiding inside a cabinet"), "message when checking Pantry");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Pantry. You see the following exits:" +
+                    "You are in the Pantry. You see the following exit:" +
                     Environment.NewLine + " - the Landing is to the North" +
                     Environment.NewLine + "Someone could hide inside a cabinet" +
                     Environment.NewLine + "You have found 2 of 2 opponents: Joe, Bob"), "status after check Pantry");
@@ -407,7 +407,7 @@ namespace HideAndSeek
                 // Check Kitchen and find Amy
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 1 opponent hiding next to the stove"), "message when checking Kitchen");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Kitchen. You see the following exits:" +
+                    "You are in the Kitchen. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the Southeast" +
                     Environment.NewLine + "Someone could hide next to the stove" +
                     Environment.NewLine + "You have found 1 of 2 opponents: Amy"), "status after check Kitchen");
@@ -425,7 +425,7 @@ namespace HideAndSeek
                 // Go to Pantry
                 gameController.Move(Direction.South); // Go South to Pantry
                 Assert.That(gameController.Status, Is.EqualTo(
-                        "You are in the Pantry. You see the following exits:" +
+                        "You are in the Pantry. You see the following exit:" +
                         Environment.NewLine + " - the Landing is to the North" +
                         Environment.NewLine + "Someone could hide inside a cabinet" +
                         Environment.NewLine + "You have found 1 of 2 opponents: Amy"), "status when enter Pantry");
@@ -434,7 +434,7 @@ namespace HideAndSeek
                 // Check Pantry and find John
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 1 opponent hiding inside a cabinet"), "message when checking Pantry");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Pantry. You see the following exits:" +
+                    "You are in the Pantry. You see the following exit:" +
                     Environment.NewLine + " - the Landing is to the North" +
                     Environment.NewLine + "Someone could hide inside a cabinet" +
                     Environment.NewLine + "You have found 2 of 2 opponents: Amy, John"), "status after check Pantry");
@@ -462,7 +462,7 @@ namespace HideAndSeek
                 // Check Kitchen and find Joe, Owen, and Mary
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 3 opponents hiding next to the stove"), "message when checking Kitchen");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Kitchen. You see the following exits:" +
+                    "You are in the Kitchen. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the Southeast" +
                     Environment.NewLine + "Someone could hide next to the stove" +
                     Environment.NewLine + "You have found 3 of 6 opponents: Joe, Owen, Mary"), "status after check Kitchen");
@@ -476,7 +476,7 @@ namespace HideAndSeek
                 // Go to Bathroom
                 gameController.Move(Direction.North); // Go North to Bathroom
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Bathroom. You see the following exits:" +
+                    "You are in the Bathroom. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the South" +
                     Environment.NewLine + "Someone could hide behind the door" +
                     Environment.NewLine + "You have found 3 of 6 opponents: Joe, Owen, Mary"), "status when enter Bathroom");
@@ -485,7 +485,7 @@ namespace HideAndSeek
                 // Check Bathroom and find Ana
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 1 opponent hiding behind the door"), "message when checking Bathroom");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Bathroom. You see the following exits:" +
+                    "You are in the Bathroom. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the South" +
                     Environment.NewLine + "Someone could hide behind the door" +
                     Environment.NewLine + "You have found 4 of 6 opponents: Joe, Owen, Mary, Ana"), "status after check Bathroom");
@@ -503,7 +503,7 @@ namespace HideAndSeek
                 // Go to Pantry
                 gameController.Move(Direction.South); // Go South to Pantry
                 Assert.That(gameController.Status, Is.EqualTo(
-                        "You are in the Pantry. You see the following exits:" +
+                        "You are in the Pantry. You see the following exit:" +
                         Environment.NewLine + " - the Landing is to the North" +
                         Environment.NewLine + "Someone could hide inside a cabinet" +
                     Environment.NewLine + "You have found 4 of 6 opponents: Joe, Owen, Mary, Ana"), "status when enter Pantry");
@@ -512,7 +512,7 @@ namespace HideAndSeek
                 // Check Pantry and find Bob and Jimmy
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 2 opponents hiding inside a cabinet"), "message when checking Pantry");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Pantry. You see the following exits:" +
+                    "You are in the Pantry. You see the following exit:" +
                     Environment.NewLine + " - the Landing is to the North" +
                     Environment.NewLine + "Someone could hide inside a cabinet" +
                     Environment.NewLine + "You have found 6 of 6 opponents: Joe, Owen, Mary, Ana, Bob, Jimmy"), "status after check Pantry");
@@ -540,7 +540,7 @@ namespace HideAndSeek
                 // Check Kitchen and find Amy, Robert, and Zelda
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 3 opponents hiding next to the stove"), "message when checking Kitchen");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Kitchen. You see the following exits:" +
+                    "You are in the Kitchen. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the Southeast" +
                     Environment.NewLine + "Someone could hide next to the stove" +
                     Environment.NewLine + "You have found 3 of 6 opponents: Amy, Robert, Zelda"), "status after check Kitchen");
@@ -554,7 +554,7 @@ namespace HideAndSeek
                 // Go to Bathroom
                 gameController.Move(Direction.North); // Go North to Bathroom
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Bathroom. You see the following exits:" +
+                    "You are in the Bathroom. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the South" +
                     Environment.NewLine + "Someone could hide behind the door" +
                     Environment.NewLine + "You have found 3 of 6 opponents: Amy, Robert, Zelda"), "status when enter Bathroom");
@@ -563,7 +563,7 @@ namespace HideAndSeek
                 // Check Bathroom and find Wendy
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 1 opponent hiding behind the door"), "message when checking Bathroom");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Bathroom. You see the following exits:" +
+                    "You are in the Bathroom. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the South" +
                     Environment.NewLine + "Someone could hide behind the door" +
                     Environment.NewLine + "You have found 4 of 6 opponents: Amy, Robert, Zelda, Wendy"), "status after check Bathroom");
@@ -581,7 +581,7 @@ namespace HideAndSeek
                 // Go to Pantry
                 gameController.Move(Direction.South); // Go South to Pantry
                 Assert.That(gameController.Status, Is.EqualTo(
-                        "You are in the Pantry. You see the following exits:" +
+                        "You are in the Pantry. You see the following exit:" +
                         Environment.NewLine + " - the Landing is to the North" +
                         Environment.NewLine + "Someone could hide inside a cabinet" +
                     Environment.NewLine + "You have found 4 of 6 opponents: Amy, Robert, Zelda, Wendy"), "status when enter Pantry");
@@ -590,7 +590,7 @@ namespace HideAndSeek
                 // Check Pantry and find John and Gina
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 2 opponents hiding inside a cabinet"), "message when checking Pantry");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Pantry. You see the following exits:" +
+                    "You are in the Pantry. You see the following exit:" +
                     Environment.NewLine + " - the Landing is to the North" +
                     Environment.NewLine + "Someone could hide inside a cabinet" +
                     Environment.NewLine + "You have found 6 of 6 opponents: Amy, Robert, Zelda, Wendy, John, Gina"), "status after check Pantry");
@@ -618,7 +618,7 @@ namespace HideAndSeek
                 // Check Kitchen and find Joe, Owen, Mary, and Andy
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 4 opponents hiding next to the stove"), "message when checking Kitchen");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Kitchen. You see the following exits:" +
+                    "You are in the Kitchen. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the Southeast" +
                     Environment.NewLine + "Someone could hide next to the stove" +
                     Environment.NewLine + "You have found 4 of 9 opponents: Joe, Owen, Mary, Andy"), "status after check Kitchen");
@@ -632,7 +632,7 @@ namespace HideAndSeek
                 // Go to Bathroom
                 gameController.Move(Direction.North); // Go North to Bathroom
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Bathroom. You see the following exits:" +
+                    "You are in the Bathroom. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the South" +
                     Environment.NewLine + "Someone could hide behind the door" +
                     Environment.NewLine + $"You have found 4 of 9 opponents: Joe, Owen, Mary, Andy"), "status when enter Bathroom");
@@ -641,7 +641,7 @@ namespace HideAndSeek
                 // Check Bathroom and find Ana and Tony
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 2 opponents hiding behind the door"), "message when checking Bathroom");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Bathroom. You see the following exits:" +
+                    "You are in the Bathroom. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the South" +
                     Environment.NewLine + "Someone could hide behind the door" +
                     Environment.NewLine + $"You have found 6 of 9 opponents: Joe, Owen, Mary, Andy, Ana, Tony"), "status after check Bathroom");
@@ -659,7 +659,7 @@ namespace HideAndSeek
                 // Go to Pantry
                 gameController.Move(Direction.South); // Go South to Pantry
                 Assert.That(gameController.Status, Is.EqualTo(
-                        "You are in the Pantry. You see the following exits:" +
+                        "You are in the Pantry. You see the following exit:" +
                         Environment.NewLine + " - the Landing is to the North" +
                         Environment.NewLine + "Someone could hide inside a cabinet" +
                     Environment.NewLine + "You have found 6 of 9 opponents: Joe, Owen, Mary, Andy, Ana, Tony"), "status when enter Pantry");
@@ -669,7 +669,7 @@ namespace HideAndSeek
                 // Check Pantry and find Bob, Jimmy, And Alice
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 3 opponents hiding inside a cabinet"), "message when checking Pantry");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Pantry. You see the following exits:" +
+                    "You are in the Pantry. You see the following exit:" +
                     Environment.NewLine + " - the Landing is to the North" +
                     Environment.NewLine + "Someone could hide inside a cabinet" +
                     Environment.NewLine + "You have found 9 of 9 opponents: Joe, Owen, Mary, Andy, Ana, Tony, Bob, Jimmy, Alice"), "status after check Pantry");
@@ -697,7 +697,7 @@ namespace HideAndSeek
                 // Check Kitchen and find Joe, Owen, Mary, and Andy
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 4 opponents hiding next to the stove"), "message when checking Kitchen");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Kitchen. You see the following exits:" +
+                    "You are in the Kitchen. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the Southeast" +
                     Environment.NewLine + "Someone could hide next to the stove" +
                     Environment.NewLine + "You have found 4 of 10 opponents: Joe, Owen, Mary, Andy"), "status after check Kitchen");
@@ -711,7 +711,7 @@ namespace HideAndSeek
                 // Go to Bathroom
                 gameController.Move(Direction.North); // Go North to Bathroom
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Bathroom. You see the following exits:" +
+                    "You are in the Bathroom. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the South" +
                     Environment.NewLine + "Someone could hide behind the door" +
                     Environment.NewLine + "You have found 4 of 10 opponents: Joe, Owen, Mary, Andy"), "status when enter Bathroom");
@@ -720,7 +720,7 @@ namespace HideAndSeek
                 // Check Bathroom and find Ana and Tony
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 2 opponents hiding behind the door"), "message when checking Bathroom");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Bathroom. You see the following exits:" +
+                    "You are in the Bathroom. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the South" +
                     Environment.NewLine + "Someone could hide behind the door" +
                     Environment.NewLine + "You have found 6 of 10 opponents: Joe, Owen, Mary, Andy, Ana, Tony"), "status after check Bathroom");
@@ -738,7 +738,7 @@ namespace HideAndSeek
                 // Go to Pantry
                 gameController.Move(Direction.South); // Go South to Pantry
                 Assert.That(gameController.Status, Is.EqualTo(
-                        "You are in the Pantry. You see the following exits:" +
+                        "You are in the Pantry. You see the following exit:" +
                         Environment.NewLine + " - the Landing is to the North" +
                         Environment.NewLine + "Someone could hide inside a cabinet" +
                     Environment.NewLine + "You have found 6 of 10 opponents: Joe, Owen, Mary, Andy, Ana, Tony"), "status when enter Pantry");
@@ -748,7 +748,7 @@ namespace HideAndSeek
                 // Check Pantry and find Bob, Jimmy, Alice, and Jill
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 4 opponents hiding inside a cabinet"), "message when checking Pantry");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Pantry. You see the following exits:" +
+                    "You are in the Pantry. You see the following exit:" +
                     Environment.NewLine + " - the Landing is to the North" +
                     Environment.NewLine + "Someone could hide inside a cabinet" +
                     Environment.NewLine + "You have found 10 of 10 opponents: Joe, Owen, Mary, Andy, Ana, Tony, Bob, Jimmy, Alice, Jill"), "status after check Pantry");
@@ -776,7 +776,7 @@ namespace HideAndSeek
                 // Check Kitchen and find Amy, Robert, Zelda, and Rose
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 4 opponents hiding next to the stove"), "message when checking Kitchen");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Kitchen. You see the following exits:" +
+                    "You are in the Kitchen. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the Southeast" +
                     Environment.NewLine + "Someone could hide next to the stove" +
                     Environment.NewLine + "You have found 4 of 10 opponents: Amy, Robert, Zelda, Rose"), "status after check Kitchen");
@@ -790,7 +790,7 @@ namespace HideAndSeek
                 // Go to Bathroom
                 gameController.Move(Direction.North); // Go North to Bathroom
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Bathroom. You see the following exits:" +
+                    "You are in the Bathroom. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the South" +
                     Environment.NewLine + "Someone could hide behind the door" +
                     Environment.NewLine + "You have found 4 of 10 opponents: Amy, Robert, Zelda, Rose"), "status when enter Bathroom");
@@ -799,7 +799,7 @@ namespace HideAndSeek
                 // Check Bathroom and find Wendy and Benjamin
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 2 opponents hiding behind the door"), "message when checking Bathroom");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Bathroom. You see the following exits:" +
+                    "You are in the Bathroom. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the South" +
                     Environment.NewLine + "Someone could hide behind the door" +
                     Environment.NewLine + "You have found 6 of 10 opponents: Amy, Robert, Zelda, Rose, Wendy, Benjamin"), "status after check Bathroom");
@@ -817,7 +817,7 @@ namespace HideAndSeek
                 // Go to Pantry
                 gameController.Move(Direction.South); // Go South to Pantry
                 Assert.That(gameController.Status, Is.EqualTo(
-                        "You are in the Pantry. You see the following exits:" +
+                        "You are in the Pantry. You see the following exit:" +
                         Environment.NewLine + " - the Landing is to the North" +
                         Environment.NewLine + "Someone could hide inside a cabinet" +
                     Environment.NewLine + "You have found 6 of 10 opponents: Amy, Robert, Zelda, Rose, Wendy, Benjamin"), "status when enter Pantry");
@@ -827,7 +827,7 @@ namespace HideAndSeek
                 // Check Pantry and find John, Gina, Paul, and Mike
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 4 opponents hiding inside a cabinet"), "message when checking Pantry");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Pantry. You see the following exits:" +
+                    "You are in the Pantry. You see the following exit:" +
                     Environment.NewLine + " - the Landing is to the North" +
                     Environment.NewLine + "Someone could hide inside a cabinet" +
                     Environment.NewLine + "You have found 10 of 10 opponents: Amy, Robert, Zelda, Rose, Wendy, Benjamin, John, Gina, Paul, Mike"), "status after check Pantry");
@@ -855,7 +855,7 @@ namespace HideAndSeek
                 // Check Kitchen and find Amy, Robert, Zelda, Rose, Patrick, and Sarah
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 6 opponents hiding next to the stove"), "message when checking Kitchen");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Kitchen. You see the following exits:" +
+                    "You are in the Kitchen. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the Southeast" +
                     Environment.NewLine + "Someone could hide next to the stove" +
                     Environment.NewLine + "You have found 6 of 15 opponents: Amy, Robert, Zelda, Rose, Patrick, Sarah"), "status after check Kitchen");
@@ -869,7 +869,7 @@ namespace HideAndSeek
                 // Go to Bathroom
                 gameController.Move(Direction.North); // Go North to Bathroom
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Bathroom. You see the following exits:" +
+                    "You are in the Bathroom. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the South" +
                     Environment.NewLine + "Someone could hide behind the door" +
                     Environment.NewLine + "You have found 6 of 15 opponents: Amy, Robert, Zelda, Rose, Patrick, Sarah"), "status when enter Bathroom");
@@ -878,7 +878,7 @@ namespace HideAndSeek
                 // Check Bathroom and find Wendy, Benjamin, and Chris
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 3 opponents hiding behind the door"), "message when checking Bathroom");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Bathroom. You see the following exits:" +
+                    "You are in the Bathroom. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the South" +
                     Environment.NewLine + "Someone could hide behind the door" +
                     Environment.NewLine + "You have found 9 of 15 opponents: Amy, Robert, Zelda, Rose, Patrick, Sarah, Wendy, " +
@@ -897,7 +897,7 @@ namespace HideAndSeek
                 // Go to Pantry
                 gameController.Move(Direction.South); // Go South to Pantry
                 Assert.That(gameController.Status, Is.EqualTo(
-                        "You are in the Pantry. You see the following exits:" +
+                        "You are in the Pantry. You see the following exit:" +
                         Environment.NewLine + " - the Landing is to the North" +
                         Environment.NewLine + "Someone could hide inside a cabinet" +
                     Environment.NewLine + "You have found 9 of 15 opponents: Amy, Robert, Zelda, Rose, Patrick, Sarah, Wendy, " +
@@ -908,7 +908,7 @@ namespace HideAndSeek
                 // Check Pantry and find John, Gina, Paul, Mike, Cassie, and Jonathan
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 6 opponents hiding inside a cabinet"), "message when checking Pantry");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Pantry. You see the following exits:" +
+                    "You are in the Pantry. You see the following exit:" +
                     Environment.NewLine + " - the Landing is to the North" +
                     Environment.NewLine + "Someone could hide inside a cabinet" +
                     Environment.NewLine + "You have found 15 of 15 opponents: Amy, Robert, Zelda, Rose, Patrick, Sarah, Wendy, " +

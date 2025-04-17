@@ -9,7 +9,8 @@ namespace HideAndSeek
 {
     /// <summary>
     /// GameController tests for CheckCurrentLocation method called in default House,
-    /// checking FoundOpponents, Status, CurrentLocation, Move, and GameOver properties along the way; and
+    /// checking FoundOpponents, Status, CurrentLocation, Move, and GameOver properties along the way; 
+    /// tests for Status singular/pluralized "exit/s"; and
     /// automatically testing GameController constructor with default House file name passed in
     /// </summary>
     public class TestGameController_CheckCurrentLocationAndStatus
@@ -203,6 +204,39 @@ namespace HideAndSeek
         }
 
         [Test]
+        [Category("GameController Status CurrentLocation Exits ExitsList")]
+        public void Test_GameController_Status_IsLocationWithSingleExit()
+        {
+            gameController.Move(Direction.Out); // Move to Garage
+            Assert.Multiple(() =>
+            {
+                Assert.That(gameController.CurrentLocation.Name, Is.EqualTo("Garage"), "current location");
+                Assert.That(gameController.CurrentLocation.Exits.Count(), Is.EqualTo(1), "number of exits");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Garage. You see the following exit:" + Environment.NewLine +
+                    " - the Entry is In" + Environment.NewLine +
+                    "Someone could hide behind the car" + Environment.NewLine +
+                    "You have not found any opponents"), "status");
+            });
+        }
+
+        [Test]
+        [Category("GameController Status CurrentLocation Exits ExitsList")]
+        public void Test_GameController_Status_IsLocationWithMultipleExits()
+        {
+            Assert.Multiple(() =>
+            {
+                Assert.That(gameController.CurrentLocation.Name, Is.EqualTo("Entry"), "current location");
+                Assert.That(gameController.CurrentLocation.Exits.Count(), Is.EqualTo(2), "number of exits");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Entry. You see the following exits:" + Environment.NewLine +
+                    " - the Hallway is to the East" + Environment.NewLine +
+                    " - the Garage is Out" + Environment.NewLine +
+                    "You have not found any opponents"), "status");
+            });
+        }
+
+        [Test]
         [Category("GameController CheckCurrentLocation FoundOpponents Status MoveNumber GameOver CurrentLocation InvalidOperationException Failure")]
         public void Test_GameController_CheckCurrentlocation_AndCheckErrorMessageAndProperties_InLocationWithoutHidingPlace()
         {
@@ -218,7 +252,7 @@ namespace HideAndSeek
                 Assert.That(gameController.FoundOpponents, Is.Empty, "no found opponents after trying to check");
                 Assert.That(gameController.Status, Is.EqualTo(initialStatus), "status does not change");
                 Assert.That(gameController.CurrentLocation, Is.EqualTo(initialLocation), "current location does not change");
-                Assert.That(gameController.MoveNumber, Is.EqualTo(2), "move number increments");
+                Assert.That(gameController.MoveNumber, Is.EqualTo(1), "move number does not increment");
                 Assert.That(gameController.GameOver, Is.False, "game not over after trying to check");
             });
         }
@@ -235,7 +269,7 @@ namespace HideAndSeek
                 // Check that properties are as expected
                 Assert.That(gameController.FoundOpponents, Is.Empty, "no found opponents after move to Garage");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Garage. You see the following exits:" +
+                    "You are in the Garage. You see the following exit:" +
                     Environment.NewLine + " - the Entry is In" +
                     Environment.NewLine + "Someone could hide behind the car" +
                     Environment.NewLine + "You have not found any opponents"), "status after move to Garage");
@@ -247,7 +281,7 @@ namespace HideAndSeek
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("Nobody was hiding behind the car"), "message when check Garage");
                 Assert.That(gameController.FoundOpponents, Is.Empty, "no found opponents after check Garage");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Garage. You see the following exits:" +
+                    "You are in the Garage. You see the following exit:" +
                     Environment.NewLine + " - the Entry is In" +
                     Environment.NewLine + "Someone could hide behind the car" +
                     Environment.NewLine + "You have not found any opponents"), "status after check Garage");
@@ -270,7 +304,7 @@ namespace HideAndSeek
                 // Check that properties are as expected
                 Assert.That(gameController.FoundOpponents, Is.Empty, "no found opponents after move to Bathroom");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Bathroom. You see the following exits:" +
+                    "You are in the Bathroom. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the South" +
                     Environment.NewLine + "Someone could hide behind the door" +
                     Environment.NewLine + "You have not found any opponents"), "status after move to Bathroom");
@@ -282,7 +316,7 @@ namespace HideAndSeek
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 1 opponent hiding behind the door"), "message when check Bathroom");
                 Assert.That(gameController.FoundOpponents.Select((o) => o.Name), Is.EquivalentTo(new List<string> { "Ana" }), "found opponents after check Bathroom");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Bathroom. You see the following exits:" +
+                    "You are in the Bathroom. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the South" +
                     Environment.NewLine + "Someone could hide behind the door" +
                     Environment.NewLine + "You have found 1 of 5 opponents: Ana"), "status after check Bathroom");
@@ -305,7 +339,7 @@ namespace HideAndSeek
                 // Check that properties are as expected
                 Assert.That(gameController.FoundOpponents, Is.Empty, "no found opponents after move to Kitchen");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Kitchen. You see the following exits:" +
+                    "You are in the Kitchen. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the Southeast" +
                     Environment.NewLine + "Someone could hide next to the stove" +
                     Environment.NewLine + "You have not found any opponents"), "status after move to Kitchen");
@@ -317,7 +351,7 @@ namespace HideAndSeek
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 2 opponents hiding next to the stove"), "message when check Kitchen");
                 Assert.That(gameController.FoundOpponents.Select((o) => o.Name), Is.EquivalentTo(new List<string> { "Joe", "Owen" }), "found opponents after check Kitchen");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Kitchen. You see the following exits:" +
+                    "You are in the Kitchen. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the Southeast" +
                     Environment.NewLine + "Someone could hide next to the stove" +
                     Environment.NewLine + "You have found 2 of 5 opponents: Joe, Owen"), "status after check Kitchen");
@@ -341,7 +375,7 @@ namespace HideAndSeek
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 1 opponent hiding behind the door"), "message when check Bathroom");
                 Assert.That(gameController.FoundOpponents.Select((o) => o.Name), Is.EquivalentTo(new List<string> { "Ana" }), "found opponents after check Bathroom");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Bathroom. You see the following exits:" +
+                    "You are in the Bathroom. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the South" +
                     Environment.NewLine + "Someone could hide behind the door" +
                     Environment.NewLine + "You have found 1 of 5 opponents: Ana"), "status after check Bathroom");
@@ -366,7 +400,7 @@ namespace HideAndSeek
                 Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 2 opponents hiding next to the stove"), "message when check Kitchen");
                 Assert.That(gameController.FoundOpponents.Select((o) => o.Name), Is.EquivalentTo(new List<string> { "Ana", "Joe", "Owen" }), "found opponents after check Kitchen");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Kitchen. You see the following exits:" +
+                    "You are in the Kitchen. You see the following exit:" +
                     Environment.NewLine + " - the Hallway is to the Southeast" +
                     Environment.NewLine + "Someone could hide next to the stove" +
                     Environment.NewLine + "You have found 3 of 5 opponents: Ana, Joe, Owen"), "status after check Kitchen");
@@ -393,7 +427,7 @@ namespace HideAndSeek
                 Assert.That(gameController.FoundOpponents.Select((o) => o.Name), 
                             Is.EquivalentTo(new List<string> { "Ana", "Joe", "Owen", "Bob", "Jimmy" }), "found opponents after check Pantry");
                 Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Pantry. You see the following exits:" +
+                    "You are in the Pantry. You see the following exit:" +
                     Environment.NewLine + " - the Landing is to the North" +
                     Environment.NewLine + "Someone could hide inside a cabinet" +
                     Environment.NewLine + "You have found 5 of 5 opponents: Ana, Joe, Owen, Bob, Jimmy"), "status after check Pantry");
