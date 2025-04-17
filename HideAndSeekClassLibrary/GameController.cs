@@ -506,6 +506,9 @@ namespace HideAndSeek
         /// <param name="savedGame">SavedGame object from which to load game</param>
         private void LoadGame(SavedGame savedGame)
         {
+            // Set GameController House
+            House = savedGame.House;
+
             // Set current location
             CurrentLocation = House.GetLocationByName(savedGame.PlayerLocation);
 
