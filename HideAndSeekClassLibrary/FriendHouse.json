@@ -30,7 +30,8 @@
       "Name":"Bedroom",
       "ExitsForSerialization": { 
         "North":"Closet",
-        "East":"Sensory Room"
+        "East": "Sensory Room",
+        "South": "Hallway"
       } 
     },
     {
