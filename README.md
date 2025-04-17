@@ -1,4 +1,4 @@
-# Hide And Seek Game Console App Version 4.0.0
+# Hide And Seek Game Console App Version 4.1.0
 
 
 ## Table of Contents
@@ -12,11 +12,14 @@
   - [Run executable from command line](#run-exe-cl)
   - [Run app using the dotnet command from command line](#run-dll-cl)
 - [App usage](#usage)
-  - [Enter number or names of opponents](#usage-opponents)
-  - [Select house layout](#usage-select-house)
+  - [Table of commands](#usage-table)
   - [Move in specific direction](#usage-move)
+	- [Direction shorthands](#usage-move-shorthands)
   - [Check for hiding opponents](#usage-check)
-  - [Teleport to a random location with hiding place](#usage-teleport)
+  - [Teleport to random location with hiding place](#usage-teleport)
+  - [Start new game with custom settings](#usage-new)
+	- [Set opponents](#usage-new-opponents)
+	- [Set house layout](#usage-new-house)
   - [Save game](#usage-save)
   - [Load game](#usage-load)
   - [Delete game](#usage-delete)
@@ -37,8 +40,10 @@ The Hide and Seek Game Console app allows a user (playing the role of the seeker
 
 <a name="whats-new"></a>
 ## What's new
-- The user can specify the number of opponents (1-10).
-- The user can specify the names of opponents (unlimited number of opponents).
+- Launching the app starts a new game with default settings (5 opponents, default house layout).
+- The user can enter the ```new``` command to start a new game with custom settings at any time.
+- Fixed bug so the app does not crash when the user loads a saved game with a different House layout than is currently being run.
+- Code improvements (fixed exception types, etc.).
 
 
 
@@ -86,58 +91,28 @@ dotnet HideAndSeekConsole.dll
 <a name="usage"></a>
 ## App usage
 
-**Follow the prompts and options given.  To enter a command, type the command and then press the Enter key on your keyboard.**
+**Follow the prompts and options given.  To enter a command, type the command and then press the Enter key on your keyboard.**  Commands are not case-sensitive.
 
 **Remember that the "save" and "delete" commands create/delete actual files stored on your machine.  So, whenever you run the app, the files saved/deleted during previous app usages will remain saved/deleted.*
 
 
-<a name="usage-opponents"></a>
-### Enter number or names of opponents
-At the beginning of a new game, you will be asked to enter the number of opponents you'd like or a list of names.  **To use the default number of opponents (5) and default names, don't type anything** and press the Enter key on your keyboard.
+<a name="usage-table"></a>
+### Table of commands
 
-**To specify the number of opponents and use default names, type a number (between 1 and 10)** and press the Enter key on your keyboard.
-
-For example:
-```
-How many opponents would you like?  Enter a number between 1 and 10, or a comma-separated list of names: 6
-```
-
-Or **specify names for the opponents by typing the names separated by commas** and pressing the Enter key on your keyboard.  You must type at least one name.  There is no limit to the number of names you may type.
-
-For example:
-```
-How many opponents would you like?  Enter a number between 1 and 10, or a comma-separated list of names: Jane
-```
-Or:
-```
-How many opponents would you like?  Enter a number between 1 and 10, or a comma-separated list of names: Jane, John, Jude, Jerry, Justin, Jackie
-```
-
-
-<a name="usage-select-house"></a>
-### Select house layout
-At the beginning of a new game, after you enter the number or names of opponents, you will see a prompt to type a house layout name or just press enter.  **To use the default house layout, don't type anything** and press the Enter key on your keyboard.
-
-If you want **to use a specific house layout (contained in the application folder), type the name of the file** (without the .json file extension) and press the Enter key on your keyboard.  For example, to use the built-in FriendHouse layout:
-```
-Type a house layout file name or just press Enter to use the default house layout: FriendHouse
-```
-
-If the house layout was loaded successfully, you will see a greeting and a game play prompt such as:
-```
-Welcome to your friend's house!
-You are in the Landing. You see the following exits:
- - the Hallway is to the North
-You have not found any opponents
-1: Which direction do you want to go:
-```
-
-If there is a problem loading the house layout, you will see an error message and be asked to type a house layout name or just press enter.
+| Command			| Description														|
+| -----------------	| ----------------------------------------------------------------- |
+| ```move```		| [move in specific direction](#usage-move)							|
+| ```check```		| [check for hiding opponents](#usage-check)						|
+| ```teleport```	| [teleport to random location with hiding place](#usage-teleport)	|
+| ```new```			| [start new game with custom settings](#usage-new)					|
+| ```save```		| [save game](#usage-save)											|
+| ```load```		| [load saved game](#usage-load)									|
+| ```delete```		| [delete saved game](#usage-delete)								|
 
 
 <a name="usage-move"></a>
 ### Move in specific direction
-**Move in any of the directions listed in the exit list** (right below the "You see the following exits:" text) **by typing the direction** (or direction shorthand*) and pressing the Enter key on your keyboard. (This counts as a move!)
+**Move in any of the directions listed in the exit list** (right below the "You see the following exits:" text) **by typing the direction** (or [direction shorthand*](#usage-move-shorthands)) and pressing the Enter key on your keyboard. (This counts as a move!)
 
 For example, when you're in the Garage, you could type ```In``` and press the Enter key to move to the Entry.
 ```
@@ -148,8 +123,11 @@ You have not found any opponents
 2: Which direction do you want to go (or type 'check'): In
 ```
 
-#### *Direction shorthands:
-| Shorthand | Direction |
+<a name="usage-move-shorthands"></a>
+#### *Direction shorthands
+Direction shorthands are not case-sensitive.
+
+| Shorthand | Direction	   |
 | --------- | ------------ |
 |  ```U```  |      Up      |
 |  ```D```  |     Down     |
@@ -196,7 +174,7 @@ Nobody was hiding behind the car
 
 
 <a name="usage-teleport"></a>
-### Teleport to a random location with hiding place
+### Teleport to random location with hiding place
 **To teleport to a random location with hiding place, type ```teleport```** and press the Enter key on your keyboard.  (*You risk being teleported to the room in which you are currently. Teleporting counts as a move regardless!*)
 
 In the example below, you're in the Garage, you typed ```teleport``` and pressed the Enter key, and you were be taken to the Pantry in 1 move.
@@ -215,6 +193,56 @@ Someone could hide inside a cabinet
 You have not found any opponents
 3: Which direction do you want to go (or type 'check'):
 ```
+
+
+<a name="usage-new"></a>
+### Start new game with custom settings
+**Type the ```new``` command**, press the Enter key on your keyboard, **and then follow the prompts to start a new game with custom settings.**
+
+<a name="usage-new-opponents"></a>
+#### Set opponents
+You will be asked to enter the number of opponents you'd like or a list of names.  **To use the default number of opponents (5) and default names, don't type anything** and press the Enter key on your keyboard.
+
+**To specify the number of opponents and use default names, type a number (between 1 and 10)** and press the Enter key on your keyboard.
+
+For example:
+```
+How many opponents would you like?  Enter a number between 1 and 10, or a comma-separated list of names: 6
+```
+
+Or **specify names for the opponents by typing the names separated by commas** and pressing the Enter key on your keyboard.  You must type at least one name.  There is no limit to the number of names you may type.
+
+For example:
+```
+How many opponents would you like?  Enter a number between 1 and 10, or a comma-separated list of names: Jane
+```
+Or:
+```
+How many opponents would you like?  Enter a number between 1 and 10, or a comma-separated list of names: Jane, John, Jude, Jerry, Justin, Jackie
+```
+
+
+<a name="usage-new-house"></a>
+#### Set house layout
+At the beginning of a new game, after you enter the number or names of opponents, you will see a prompt to type a house layout name or just press enter.  **To use the default house layout, don't type anything** and press the Enter key on your keyboard.
+
+If you want **to use a specific house layout (contained in the application folder), type the name of the file** (without the .json file extension) and press the Enter key on your keyboard.  For example, to use the built-in FriendHouse layout:
+```
+Type a house layout file name or just press Enter to use the default house layout: FriendHouse
+```
+
+If the house layout was loaded successfully, you will see a greeting and a game play prompt such as:
+```
+Welcome to your friend's house!
+New game started
+
+You are in the Landing. You see the following exits:
+ - the Hallway is to the North
+You have not found any opponents
+1: Which direction do you want to go:
+```
+
+If there is a problem loading the house layout, you will see an error message and be asked to type a house layout name or just press enter.
 
 
 <a name="usage-save"></a>
@@ -308,8 +336,17 @@ Please message me via the [contact form here](https://minnystuff.com/contact/) w
 <a name="roadmap"></a>
 ## Roadmap
 
-### Version 4.1 - make GameController main methods public
-- Make GameController main methods public so the game doesn't have to be played solely via the ParseInput method.
+### Version 4.2 - make unsuccessful Move or Check attempts not count as moves
+- Make GameController Move and CheckCurrentLocation methods not increment MoveNumber unless the move/check action can be completed successfully.
+
+
+### Version 4.3 - list saved games and houses
+- Make GameController method to list saved games.
+- Display list of saved games when exception caught when user tries to load a saved game.
+- Display list of available saved games on command.
+- Make GameController method to list house layouts.
+- Display list of house layouts when exception caught when user tries to load a house layout.
+- Display list of available house layouts on command.
 
 
 ### Version 5.0 - location tracking, saved game list
@@ -358,7 +395,7 @@ Please feel free to clone, fork, or download this repository to your heart's con
 <a name="credits"></a>
 ## Credits
 Adapted from Stellman & Greene's [HideAndSeek](https://github.com/head-first-csharp/fourth-edition/tree/master/Code/Chapter_10/HideAndSeek_part_3)\
-© 2023 Andrew Stellman and Jennifer Greene\
+© 2023 Andrew Stellman and Jennifer Greene
 Published under the [MIT License](https://github.com/head-first-csharp/fourth-edition/blob/master/LICENSE)\
 Link valid as of 04-10-2025
 
