@@ -44,7 +44,7 @@ The Hide and Seek Game Console app allows a user (playing the role of the seeker
 - Attempting to check a location in which there is no hiding place does not increment the move number.
 
 
-- 
+
 <a name="installation"></a>
 ## Installation
 
