@@ -24,19 +24,30 @@ namespace HideAndSeek
         /// Get full name for file (including extension)
         /// </summary>
         /// <param name="fileSystem"></param>
-        /// <param name="fileName">Name of file not including extension</param>
+        /// <param name="fileNameWithoutExtension">Name of file not including extension</param>
         /// <returns>Full name of file including extension</returns>
         /// <exception cref="ArgumentException">Exception thrown if file name is invalid</exception>
-        public static string GetFullFileNameForJson(this IFileSystem fileSystem, string fileName)
+        public static string GetFullFileNameForJson(this IFileSystem fileSystem, string fileNameWithoutExtension)
+        {
+            return GetFullFileNameForJson(fileNameWithoutExtension);
+        }
+
+        /// <summary>
+        /// Get full name for file (including extension)
+        /// </summary>
+        /// <param name="fileNameWithoutExtension">Name of file not including extension</param>
+        /// <returns></returns>
+        /// <exception cref="ArgumentException">Exception thrown if file name is invalid</exception>
+        public static string GetFullFileNameForJson(string fileNameWithoutExtension)
         {
             // If file name is invalid
-            if( !(fileSystem.IsValidName(fileName)) )
+            if( !(FileExtensions.IsValidName(fileNameWithoutExtension)) )
             {
-                throw new ArgumentException($"Cannot perform action because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)", nameof(fileName));
+                throw new ArgumentException($"Cannot perform action because file name \"{fileNameWithoutExtension}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)", nameof(fileNameWithoutExtension));
             }
 
             // Return file name with extension
-            return $"{fileName}{JsonFileExtension}";
+            return $"{fileNameWithoutExtension}{JsonFileExtension}";
         }
 
         /// <summary>
@@ -46,6 +57,16 @@ namespace HideAndSeek
         /// <param name="name">File name to evaluate</param>
         /// <returns>Whether file name is valid</returns>
         public static bool IsValidName(this IFileSystem fileSystem, string name)
+        {
+            return IsValidName(name);
+        }
+
+        /// <summary>
+        /// Return whether file name is valid (not empty and no illegal characters)
+        /// </summary>
+        /// <param name="name">File name to evaluate</param>
+        /// <returns>Whether file name is valid</returns>
+        public static bool IsValidName(string name)
         {
             // Return whether file name does NOT contain whitespace, a backslash, or a forward slash
             return !(name.Contains(' ') || name.Contains('\\') || name.Contains('/') || name.Equals(""));
