@@ -154,19 +154,25 @@ namespace HideAndSeek
         /// <summary>
         /// Create a GameController with an optional specified House file name and 5 Opponents with default names
         /// </summary>
-        /// <param name="houseFileName"></param>
-        public GameController(string houseFileName = "DefaultHouse")
+        /// <param name="houseFileNameWithoutEnding">Name of House layout file without ending or extension</param>
+        /// <exception cref="ArgumentException">Exception thrown if file name or value in file is invalid</exception>
+        /// <exception cref="JsonException">Exception thrown if JSON formatting issue</exception>
+        /// <exception cref="InvalidOperationException">Exception thrown if invalid operation attempted</exception>
+        /// <exception cref="FileNotFoundException">Exception thrown if saved game file not found</exception>
+        /// <exception cref="NullReferenceException">Exception thrown if a reference is null</exception>
+        public GameController(string houseFileNameWithoutEnding = "DefaultHouse")
         {
-            SetUpInitialGameWithSpecificOpponentNamesAndHouseFile(DefaultOpponentNames.Take(5).ToArray(), houseFileName);
+            SetUpInitialGameWithSpecificOpponentNamesAndHouseFile(
+                DefaultOpponentNames.Take(5).ToArray(), houseFileNameWithoutEnding);
         }
 
         /// <summary>
         /// Create a GameController with a specific number of Opponents and an optional specified House file name
         /// </summary>
         /// <param name="numberOfOpponents">Number of Opponents to hide in House</param>
-        /// <param name="houseFileName">Name of file from which to load House layout</param>
+        /// <param name="houseFileNameWithoutEnding">Name of House layout file without ending or extension</param>
         /// <exception cref="ArgumentException">Exception thrown when number of Opponents is invalid</exception>
-        public GameController(int numberOfOpponents, string houseFileName = "DefaultHouse")
+        public GameController(int numberOfOpponents, string houseFileNameWithoutEnding = "DefaultHouse")
         {
             // If number of Opponents invalid
             if(numberOfOpponents < 1 || numberOfOpponents > DefaultOpponentNames.Length)
@@ -176,16 +182,16 @@ namespace HideAndSeek
             }
 
             // Set up initial game with specific Opponent names and House file name
-            SetUpInitialGameWithSpecificOpponentNamesAndHouseFile(DefaultOpponentNames.Take(numberOfOpponents).ToArray(), houseFileName);
+            SetUpInitialGameWithSpecificOpponentNamesAndHouseFile(DefaultOpponentNames.Take(numberOfOpponents).ToArray(), houseFileNameWithoutEnding);
         }
 
         /// <summary>
         /// Create a GameController with Opponents with specific names and an optional specified House file name
         /// </summary>
         /// <param name="opponentNames">Names of Opponents to hide in House</param>
-        /// <param name="houseFileName">Name of file from which to load House layout</param>
+        /// <param name="houseFileNameWithoutEnding">Name of House layout file without ending or extension</param>
         /// <exception cref="ArgumentException">Exception thrown when no names for Opponents were passed in</exception>"
-        public GameController(string[] opponentNames, string houseFileName = "DefaultHouse")
+        public GameController(string[] opponentNames, string houseFileNameWithoutEnding = "DefaultHouse")
         {
             // If no opponent names in array
             if(opponentNames.Length == 0)
@@ -194,14 +200,14 @@ namespace HideAndSeek
             }
 
             // Set up initial game with specific Opponent names and House file name
-            SetUpInitialGameWithSpecificOpponentNamesAndHouseFile(opponentNames, houseFileName);
+            SetUpInitialGameWithSpecificOpponentNamesAndHouseFile(opponentNames, houseFileNameWithoutEnding);
         }
 
         /// <summary>
         /// Set up initial game with specific Opponent names and specific House file name
         /// </summary>
         /// <param name="opponentNames">Names of Opponents</param>
-        /// <param name="houseFileName">Name of file from which to load House layout</param>
+        /// <param name="houseFileName">Name of House layout file without ending or extension</param>
         private void SetUpInitialGameWithSpecificOpponentNamesAndHouseFile(string[] opponentNames, string houseFileName)
         {
             // Set Opponents and hiding locations property to new Dictionary
@@ -220,11 +226,16 @@ namespace HideAndSeek
         /// <summary>
         /// Restart game from beginning in House from specified file
         /// </summary>
-        /// <param name="houseFileName">Name of House layout file</param>
+        /// <param name="houseFileNameWithoutEnding">Name of House layout file without ending or extension</param>
         /// <returns>This GameController</returns>
-        public GameController RestartGame(string houseFileName)
+        /// <exception cref="ArgumentException">Exception thrown if file name or value in file is invalid</exception>
+        /// <exception cref="JsonException">Exception thrown if JSON formatting issue</exception>
+        /// <exception cref="InvalidOperationException">Exception thrown if invalid operation attempted</exception>
+        /// <exception cref="FileNotFoundException">Exception thrown if saved game file not found</exception>
+        /// <exception cref="NullReferenceException">Exception thrown if a reference is null</exception>
+        public GameController RestartGame(string houseFileNameWithoutEnding)
         {
-            House = House.CreateHouse(houseFileName);
+            House = House.CreateHouse(houseFileNameWithoutEnding);
             return RestartGame();
         }
 

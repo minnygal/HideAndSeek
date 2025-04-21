@@ -54,7 +54,7 @@ namespace HideAndSeek
 
             // Set up mock for House file system
             Mock<IFileSystem> houseMockFileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText(
-                "DefaultHouse.json", TestGameController_LoadGame_HouseFailure_TestData.DefaultHouse_Serialized); // Mock default House file
+                "DefaultHouse_h.json", TestGameController_LoadGame_HouseFailure_TestData.DefaultHouse_Serialized); // Mock default House file
             houseMockFileSystem.Setup((manager) => manager.File.Exists("NonexistentHouse.json")).Returns(false); // Mock that nonexistent House file does not exist
             House.FileSystem = houseMockFileSystem.Object; // Set House file system to mock file system
 
@@ -149,8 +149,8 @@ namespace HideAndSeek
             
             // Set up mock for House file system
             Mock<IFileSystem> houseMockFileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText(
-                "DefaultHouse.json", TestGameController_LoadGame_HouseFailure_TestData.DefaultHouse_Serialized); // Create mock that returns text for default House file
-            houseMockFileSystem = MockFileSystemHelper.SetMockOfFileSystem_ToReadAllText(houseMockFileSystem, "CorruptHouse.json", houseFileText); // Set up mock to return corrupt House file text
+                "DefaultHouse_h.json", TestGameController_LoadGame_HouseFailure_TestData.DefaultHouse_Serialized); // Create mock that returns text for default House file
+            houseMockFileSystem = MockFileSystemHelper.SetMockOfFileSystem_ToReadAllText(houseMockFileSystem, "CorruptHouse_h.json", houseFileText); // Set up mock to return corrupt House file text
             House.FileSystem = houseMockFileSystem.Object; // Set House file system to mock file system
 
             // Load game from SavedGame with corrupt House file
