@@ -44,7 +44,7 @@ namespace HideAndSeek
         public void Test_GameController_LoadGame_AndCheckSuccessMessage(string fileName, string expected)
         {
             // Set up mock for GameController file system
-            GameController.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText($"{fileName}.json",
+            GameController.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText($"{fileName}_sg.json",
                                             TestGameController_LoadGame_TestData.SavedGame_Serialized_NoFoundOpponents);
 
             // Create new GameController
@@ -69,7 +69,7 @@ namespace HideAndSeek
             House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText($"{houseFileName}.json", houseFileText);
 
             // Set up mock for GameController file system
-            GameController.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("my_saved_game.json", savedGameFileText);
+            GameController.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("my_saved_game_sg.json", savedGameFileText);
 
             // Create new GameController with specified House layout
             gameController = new GameController(houseFileName);
@@ -125,7 +125,7 @@ namespace HideAndSeek
             House.FileSystem = houseFileSystem.Object; // Set House file system property
 
             // Set up mock for GameController file system
-            GameController.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("my_saved_game.json", savedGameFileText);
+            GameController.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("my_saved_game_sg.json", savedGameFileText);
 
             // Create new GameController with specified House layout for starting game
             gameController = new GameController(startHouseFileName);
@@ -188,7 +188,7 @@ namespace HideAndSeek
                 "}";
 
             // Set up mock for file system for GameController
-            GameController.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("my_saved_game.json", savedGameFileText);
+            GameController.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("my_saved_game_sg.json", savedGameFileText);
 
             // Create new game controller
             gameController = new GameController("DefaultHouse");
@@ -255,7 +255,7 @@ namespace HideAndSeek
                 "}";
 
             // Set up mock for GameController file system
-            GameController.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("my_saved_game.json", savedGameFileText);
+            GameController.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("my_saved_game_sg.json", savedGameFileText);
 
             // Create new game controller
             gameController = new GameController("TestHouse");
@@ -427,7 +427,7 @@ namespace HideAndSeek
         private void GetExceptionWhenLoadGameWithCorruptSavedGameFile(string savedGameFileText)
         {
             // Set up mock for GameController file system
-            GameController.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("my_corrupt_game.json", savedGameFileText);
+            GameController.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("my_corrupt_game_sg.json", savedGameFileText);
 
             // Create new game controller
             gameController = new GameController("DefaultHouse");

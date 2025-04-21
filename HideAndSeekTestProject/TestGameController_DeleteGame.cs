@@ -74,7 +74,7 @@ namespace HideAndSeek
         {
             // Set up mock for GameController file system
             Mock<IFileSystem> mockFileSystemForGameController = new Mock<IFileSystem>();
-            mockFileSystemForGameController.Setup(manager => manager.File.Exists("my_saved_game.json")).Returns(true); // Mock that file exists
+            mockFileSystemForGameController.Setup(manager => manager.File.Exists("my_saved_game_sg.json")).Returns(true); // Mock that file exists
             GameController.FileSystem = mockFileSystemForGameController.Object;
 
             // Create new game controller
@@ -84,7 +84,7 @@ namespace HideAndSeek
             message = gameController.DeleteGame("my_saved_game");
 
             // Verify that File.Delete was called once
-            mockFileSystemForGameController.Verify(manager => manager.File.Delete("my_saved_game.json"), Times.Once);
+            mockFileSystemForGameController.Verify(manager => manager.File.Delete("my_saved_game_sg.json"), Times.Once);
 
             // Assert that success message is as expected
             Assert.That(message, Is.EqualTo("Game file my_saved_game has been successfully deleted"));
