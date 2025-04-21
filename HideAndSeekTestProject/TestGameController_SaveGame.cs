@@ -68,7 +68,7 @@ namespace HideAndSeek
 
             // Set up mock for GameController file system
             Mock<IFileSystem> mockFileSystemForGameController = new Mock<IFileSystem>();
-            mockFileSystemForGameController.Setup(system => system.File.WriteAllText("my_saved_game.json", It.IsAny<string>()))
+            mockFileSystemForGameController.Setup(system => system.File.WriteAllText("my_saved_game_sg.json", It.IsAny<string>()))
                     .Callback((string path, string text) =>
                     {
                         actualTextInSavedGameFile = text; // Store text written to file in variable
@@ -101,7 +101,7 @@ namespace HideAndSeek
         {
             // Set up mock for GameController file system
             Mock<IFileSystem> mockFileSystemForGameController = new Mock<IFileSystem>();
-            mockFileSystemForGameController.Setup(system => system.File.Exists("fileName.json")).Returns(true); // Mock that file already exists
+            mockFileSystemForGameController.Setup(system => system.File.Exists("fileName_sg.json")).Returns(true); // Mock that file already exists
             GameController.FileSystem = mockFileSystemForGameController.Object;
 
             // Set up game cotroller

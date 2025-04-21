@@ -50,7 +50,7 @@ namespace HideAndSeek
             "}";
 
             // Set up mock for GameController file system
-            GameController.FileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText("my_saved_game.json", textInFile).Object;
+            GameController.FileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText("my_saved_game_sg.json", textInFile).Object;
 
             // Set up mock for House file system
             Mock<IFileSystem> houseMockFileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText(
@@ -145,7 +145,7 @@ namespace HideAndSeek
             "}";
 
             // Set up mock for GameController file system
-            GameController.FileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText("my_saved_game.json", textInSavedGameFile).Object;
+            GameController.FileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText("my_saved_game_sg.json", textInSavedGameFile).Object;
             
             // Set up mock for House file system
             Mock<IFileSystem> houseMockFileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText(

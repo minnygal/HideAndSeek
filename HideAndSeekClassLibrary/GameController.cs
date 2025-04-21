@@ -70,6 +70,35 @@ namespace HideAndSeek
         public static IFileSystem FileSystem { get; set; } = new FileSystem();
 
         /// <summary>
+        /// Ending text for SavedGame file
+        /// </summary>
+        public static string SavedGameFileEnding
+        {
+            get
+            {
+                return "_sg";
+            }
+        }
+
+        /// <summary>
+        /// Get full file name for a saved game file
+        /// </summary>
+        /// <param name="fileNameWithoutEnding">Name of saved game file without ending</param>
+        /// <returns>Name of saved game file with ending and extension</returns>
+        /// <exception cref="ArgumentException">Exception thrown if file name is invalid</exception>
+        private static string GetSavedGameFileName(string fileNameWithoutEnding)
+        {
+            // If file name without ending is invalid
+            if( !(FileSystem.IsValidName(fileNameWithoutEnding)) )
+            {
+                throw new ArgumentException($"Cannot perform action because file name \"{fileNameWithoutEnding}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)", nameof(fileNameWithoutEnding)); // Throw new exception with custom error message
+            }
+
+            // Return full file name including saved game ending and extension
+            return FileSystem.GetFullFileNameForJson(fileNameWithoutEnding + SavedGameFileEnding);
+        }
+
+        /// <summary>
         /// The player's current location in the house
         /// </summary>
         public Location CurrentLocation { get; private set; }
@@ -395,19 +424,19 @@ namespace HideAndSeek
         /// <summary>
         /// Save game to file
         /// </summary>
-        /// <param name="fileName">Name of file in which to save game data</param>
+        /// <param name="fileNameWithoutEnding">Name of file (without saved game ending or extension) in which to save game data</param>
         /// <returns>String describing what happened</returns>
         /// <exception cref="ArgumentException">Exception thrown if file name is invalid</exception>
         /// <exception cref="InvalidOperationException">Exception thrown if file already exists</exception>
-        public string SaveGame(string fileName)
+        public string SaveGame(string fileNameWithoutEnding)
         {
-            // Get full file name including extension
-            string fullFileName = FileSystem.GetFullFileNameForJson(fileName);
+            // Get full file name including saved game ending and extension
+            string fullFileName = GetSavedGameFileName(fileNameWithoutEnding);
 
             // If file already exists
             if (FileSystem.File.Exists(fullFileName))
             {
-                throw new InvalidOperationException($"Cannot perform action because a file named {fileName} already exists"); // Throw new exception with custom error message
+                throw new InvalidOperationException($"Cannot perform action because a file named {fileNameWithoutEnding} already exists"); // Throw new exception with custom error message
             }
 
             // Create dictionary of Opponents and hiding locations as strings
@@ -425,28 +454,28 @@ namespace HideAndSeek
             // Save game as JSON to file and return success message
             string savedGameAsJSON = JsonSerializer.Serialize(savedGame); // Convert game's state data to JSON
             FileSystem.File.WriteAllText(fullFileName, savedGameAsJSON); // Save game's state data in file
-            return $"Game successfully saved in {fileName}"; // Return success message
+            return $"Game successfully saved in {fileNameWithoutEnding}"; // Return success message
         }
 
         /// <summary>
         /// Load game from file
         /// </summary>
-        /// <param name="fileName">Name of file from which to load game data</param>
+        /// <param name="fileNameWithoutEnding">Name of file (without saved game ending or extension) from which to load game data</param>
         /// <returns>String describing what happened</returns>
         /// <exception cref="ArgumentException">Exception thrown if file name or value in file is invalid</exception>
         /// <exception cref="JsonException">Exception thrown if JSON formatting issue</exception>
         /// <exception cref="InvalidOperationException">Exception thrown if invalid operation attempted</exception>
         /// <exception cref="FileNotFoundException">Exception thrown if saved game file not found</exception>
         /// <exception cref="NullReferenceException">Exception thrown if a reference is null</exception>
-        public string LoadGame(string fileName)
+        public string LoadGame(string fileNameWithoutEnding)
         {
-            // Get full file name including extension
-            string fullFileName = FileSystem.GetFullFileNameForJson(fileName);
+            // Get full file name including saved game ending and extension
+            string fullFileName = GetSavedGameFileName(fileNameWithoutEnding);
 
             // If file does not exist
-            if( !(FileSystem.File.Exists(fullFileName)) )
+            if ( !(FileSystem.File.Exists(fullFileName)) )
             {
-                throw new FileNotFoundException($"Cannot load game because file {fileName} does not exist"); // Throw exception with custom message
+                throw new FileNotFoundException($"Cannot load game because file {fileNameWithoutEnding} does not exist"); // Throw exception with custom message
             }
 
             // Read text from file
@@ -497,7 +526,7 @@ namespace HideAndSeek
             LoadGame(savedGame);
 
             // Return success message
-            return $"Game successfully loaded from {fileName}";
+            return $"Game successfully loaded from {fileNameWithoutEnding}";
         }
 
         /// <summary>
@@ -546,26 +575,26 @@ namespace HideAndSeek
         /// <summary>
         /// Delete game file
         /// </summary>
-        /// <param name="fileName">Name of file to delete</param>
+        /// <param name="fileNameWithoutEnding">Name of file to delete without saved game ending or extension</param>
         /// <returns>String describing what happened</returns>
         /// <exception cref="ArgumentException">Exception thrown if file name is invalid</exception>
         /// <exception cref="FileNotFoundException">Exception thrown if file not found</exception>
-        public string DeleteGame(string fileName)
+        public string DeleteGame(string fileNameWithoutEnding)
         {
-            // Get full file name including extension
-            string fullFileName = FileSystem.GetFullFileNameForJson(fileName);
+            // Get full file name including saved game ending and extension
+            string fullFileName = GetSavedGameFileName(fileNameWithoutEnding);
 
             // If file does not exist
             if ( !(FileSystem.File.Exists(fullFileName)) )
             {
-                throw new FileNotFoundException($"Could not delete game because file {fileName} does not exist"); // Throw new exception with custom error message
+                throw new FileNotFoundException($"Could not delete game because file {fileNameWithoutEnding} does not exist"); // Throw new exception with custom error message
             }
 
             // Delete file
             FileSystem.File.Delete(fullFileName);
 
             // Return success message
-            return $"Game file {fileName} has been successfully deleted";
+            return $"Game file {fileNameWithoutEnding} has been successfully deleted";
         }
     }
 }
