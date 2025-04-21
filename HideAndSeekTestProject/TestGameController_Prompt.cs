@@ -160,7 +160,7 @@ namespace HideAndSeek
         public void OneTimeSetUp()
         {
             // Set static House file system to mock file system (not changed in any tests)
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.json", DefaultHouse_Serialized);
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse_h.json", DefaultHouse_Serialized);
         }
 
         [SetUp]

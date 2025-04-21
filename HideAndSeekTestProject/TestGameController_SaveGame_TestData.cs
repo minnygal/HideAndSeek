@@ -464,7 +464,7 @@ namespace HideAndSeek
             {
                 // Default House, no Opponents found
                 yield return new TestCaseData(
-                        "DefaultHouse.json",
+                        "DefaultHouse_h.json",
                         DefaultHouse_Serialized,
                         (Mock<IFileSystem> mockHouseFileSystem) =>
                         {
@@ -478,7 +478,7 @@ namespace HideAndSeek
 
                 // Default House, 3 Opponents found
                 yield return new TestCaseData(
-                        "DefaultHouse.json",
+                        "DefaultHouse_h.json",
                         DefaultHouse_Serialized,
                         (Mock<IFileSystem> mockHouseFileSystem) => 
                         {
@@ -511,7 +511,7 @@ namespace HideAndSeek
                 
                 // Custom House with constructor, no Opponents found
                 yield return new TestCaseData(
-                        "TestHouse.json",
+                        "TestHouse_h.json",
                         SerializedCustomTestHouse,
                         (Mock<IFileSystem> mockHouseFileSystem) =>
                         {
@@ -537,13 +537,13 @@ namespace HideAndSeek
 
                 // Custom House with ReloadGame, no Opponents found
                 yield return new TestCaseData(
-                    "TestHouse.json",
+                    "TestHouse_h.json",
                         SerializedCustomTestHouse,
                         (Mock<IFileSystem> mockHouseFileSystem) =>
                         {
                             // Add DefaultHouse file to House file system mock and set House file system
                             mockHouseFileSystem = MockFileSystemHelper.SetMockOfFileSystem_ToReadAllText(
-                                                  mockHouseFileSystem, "DefaultHouse.json", DefaultHouse_Serialized);
+                                                  mockHouseFileSystem, "DefaultHouse_h.json", DefaultHouse_Serialized);
                             House.FileSystem = mockHouseFileSystem.Object;
 
                             // Return GameController with restarted game and rehidden Opponents
@@ -570,13 +570,13 @@ namespace HideAndSeek
 
                 // Custom House with constructor, 3 Opponents found
                 yield return new TestCaseData(
-                        "TestHouse.json",
+                        "TestHouse_h.json",
                         SerializedCustomTestHouse,
                         (Mock<IFileSystem> mockHouseFileSystem) =>
                         {
                             // Add DefaultHouse file to House file system mock and set House file system
                             mockHouseFileSystem = MockFileSystemHelper.SetMockOfFileSystem_ToReadAllText(
-                                                  mockHouseFileSystem, "DefaultHouse.json", DefaultHouse_Serialized);
+                                                  mockHouseFileSystem, "DefaultHouse_h.json", DefaultHouse_Serialized);
                             House.FileSystem = mockHouseFileSystem.Object;
 
                             // Initialize to GameController with restarted game and rehidden Opponents
@@ -617,7 +617,7 @@ namespace HideAndSeek
 
                 // Custom House with ReloadGame, 3 Opponents found
                 yield return new TestCaseData(
-                        "TestHouse.json",
+                        "TestHouse_h.json",
                         SerializedCustomTestHouse,
                         (Mock<IFileSystem> mockHouseFileSystem) =>
                         {

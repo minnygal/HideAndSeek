@@ -66,27 +66,56 @@ namespace HideAndSeek
         public static IFileSystem FileSystem { get; set; } = new FileSystem();
 
         /// <summary>
+        /// Ending text for House layout file
+        /// </summary>
+        public static string HouseFileEnding
+        {
+            get
+            {
+                return "_h";
+            }
+        }
+
+        /// <summary>
+        /// Get full file name for a house layout file
+        /// </summary>
+        /// <param name="fileNameWithoutEnding">Name of house file without ending</param>
+        /// <returns>Name of house file with ending and extension</returns>
+        /// <exception cref="ArgumentException">Exception thrown if file name is invalid</exception>
+        public static string GetFullHouseFileName(string fileNameWithoutEnding)
+        {
+            // If file name without ending is invalid
+            if (!(FileSystem.IsValidName(fileNameWithoutEnding)))
+            {
+                throw new ArgumentException($"Cannot perform action because file name \"{fileNameWithoutEnding}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)", nameof(fileNameWithoutEnding)); // Throw new exception with custom error message
+            }
+
+            // Return full file name including ending and extension
+            return FileSystem.GetFullFileNameForJson(fileNameWithoutEnding + HouseFileEnding);
+        }
+
+        /// <summary>
         /// Create a House object from a file
         /// Should only be called from GameController and SavedGame, and tests
         /// </summary>
-        /// <param name="fileName">Name of House file (not including .json extension)</param>
+        /// <param name="houseFileNameWithoutEnding">Name of House file without ending or extension</param>
         /// <returns>House object created from file</returns>
         /// <exception cref="ArgumentException">Exception thrown if House file name or file value is invalid</exception>
         /// <exception cref="FileNotFoundException">Exception thrown if House file not found</exception>
         /// <exception cref="JsonException">Exception thrown if JSON formatting issue</exception>
         /// <exception cref="InvalidOperationException">Exception thrown if House file data is corrupt</exception>
-        public static House CreateHouse(string fileName)
+        public static House CreateHouse(string houseFileNameWithoutEnding)
         {
             // Create variable to store deserialized House
             House house;
 
             // Get full file name including extension
-            string fullFileName = FileSystem.GetFullFileNameForJson(fileName);
+            string fullFileName = GetFullHouseFileName(houseFileNameWithoutEnding);
 
             // If file does not exist
             if ( !(FileSystem.File.Exists(fullFileName)) )
             {
-                throw new FileNotFoundException($"Cannot load game because house layout file {fileName} does not exist"); // Throw exception
+                throw new FileNotFoundException($"Cannot load game because house layout file {houseFileNameWithoutEnding} does not exist"); // Throw exception
             }
 
             // Get text from House file
@@ -100,15 +129,15 @@ namespace HideAndSeek
             }
             catch (JsonException e) // If JSON format is corrupt
             {
-                throw new JsonException($"Cannot process because data in house layout file {fileName} is corrupt - {e.Message}");
+                throw new JsonException($"Cannot process because data in house layout file {houseFileNameWithoutEnding} is corrupt - {e.Message}");
             }
             catch (InvalidOperationException e) // If invalid operation attempted
             {
-                throw new InvalidOperationException($"Cannot process because data in house layout file {fileName} is corrupt - {e.Message}");
+                throw new InvalidOperationException($"Cannot process because data in house layout file {houseFileNameWithoutEnding} is corrupt - {e.Message}");
             }
             catch (ArgumentException e) // If argument is invalid
             {
-                throw new ArgumentException($"Cannot process because data in house layout file {fileName} is invalid - {e.Message}", e.ParamName);
+                throw new ArgumentException($"Cannot process because data in house layout file {houseFileNameWithoutEnding} is invalid - {e.Message}", e.ParamName);
             }
             catch (Exception)
             {

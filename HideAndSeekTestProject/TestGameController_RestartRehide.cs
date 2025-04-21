@@ -17,7 +17,7 @@ namespace HideAndSeek
         public void SetUp()
         {
             House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
-                                "DefaultHouse.json", TestGameController_RestartRehide_TestData.DefaultHouse_Serialized); // Set static House file system to mock file system
+                                "DefaultHouse_h.json", TestGameController_RestartRehide_TestData.DefaultHouse_Serialized); // Set static House file system to mock file system
             House.Random = new Random(); // Set static House Random property to new Random number generator
             gameController = new GameController("DefaultHouse"); // Create new GameController
         }

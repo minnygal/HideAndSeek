@@ -22,7 +22,7 @@ namespace HideAndSeek
             message = null;
             exception = null;
             House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
-                               "DefaultHouse.json", TestGameController_SaveGame_TestData.DefaultHouse_Serialized); // Set mock file system for House property to return default House file text
+                               "DefaultHouse_h.json", TestGameController_SaveGame_TestData.DefaultHouse_Serialized); // Set mock file system for House property to return default House file text
             GameController.FileSystem = new FileSystem(); // Set static GameController file system to new file system
         }
 
