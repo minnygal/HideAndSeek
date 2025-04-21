@@ -29,6 +29,42 @@ namespace HideAndSeek
             savedGame = null;
         }
 
+        [Test]
+        [Category("SavedGame GetFullSavedGameFileName Success")]
+        public void Test_SavedGame_GetFullSavedGameFileName()
+        {
+            Assert.That(SavedGame.GetFullSavedGameFileName("my_saved_game"), Is.EqualTo("my_saved_game_sg.json"));
+        }
+
+        [TestCase("")]
+        [TestCase(" ")]
+        [TestCase("my file")]
+        [TestCase(" myFile")]
+        [TestCase("myFile ")]
+        [TestCase("\\")]
+        [TestCase("\\myFile")]
+        [TestCase("myFile\\")]
+        [TestCase("my\\File")]
+        [TestCase("/")]
+        [TestCase("/myFile")]
+        [TestCase("myFile/")]
+        [TestCase("my/File")]
+        [Category("SavedGame GetFullSavedGameFileName ArgumentException Failure")]
+        public void Test_SavedGame_GetFullSavedGameFileName_AndCheckErrorMessage_ForInvalidFileName(string fileName)
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that getting full saved game file name with invalid file name raises exception
+                var exception = Assert.Throws<ArgumentException>(() =>
+                {
+                    SavedGame.GetFullSavedGameFileName(fileName);
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith($"Cannot perform action because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+            });
+        }
+
         // Tests all setters except House and HouseFileName (accesses House and HouseFileName propertyes' backing fields)
         [Test]
         [Category("SavedGame Constructor Success")]
