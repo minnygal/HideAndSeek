@@ -1,4 +1,5 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace HideAndSeek
@@ -49,7 +50,7 @@ namespace HideAndSeek
             while (true)
             {
                 // Welcome user to the House
-                PrintWelcomeToHouse();
+                Console.WriteLine(GetWelcomeToHouse());
 
                 // Until game is over
                 while ( !(gameController.GameOver) )
@@ -77,11 +78,11 @@ namespace HideAndSeek
         }
 
         /// <summary>
-        /// Helper method to welcome user to the House
+        /// Helper method to return welcome to house message
         /// </summary>
-        private static void PrintWelcomeToHouse()
+        private static string GetWelcomeToHouse()
         {
-            Console.WriteLine($"Welcome to {gameController.House.Name}!");
+            return $"Welcome to {gameController.House.Name}!";
         }
 
         /// <summary>
@@ -156,8 +157,8 @@ namespace HideAndSeek
                             case "save":
                                 return gameController.SaveGame(fileName);
                             case "load":
-                                PrintWelcomeToHouse(); // Welcome user to the House
-                                return gameController.LoadGame(fileName);
+                                Console.WriteLine(Environment.NewLine + gameController.LoadGame(fileName)); // Load game and store return message
+                                return GetWelcomeToHouse(); // Return welcome
                             default:
                                 return gameController.DeleteGame(fileName);
                         }
@@ -172,8 +173,8 @@ namespace HideAndSeek
             {
                 Console.WriteLine(); // Add an empty line
                 gameController = GetGameControllerForCustomGame(); // Set game controller to game controller for new custom game                            
-                PrintWelcomeToHouse(); // Welcome user to the House
-                return "New game started";
+                Console.WriteLine("New game started"); // Inform user that new game has been started
+                return GetWelcomeToHouse(); // Return welcome to House
             }
             else // Try to move in specified Direction
             {
