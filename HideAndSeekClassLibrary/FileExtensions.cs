@@ -41,7 +41,7 @@ namespace HideAndSeek
         public static string GetFullFileNameForJson(string fileNameWithoutExtension)
         {
             // If file name is invalid
-            if( !(FileExtensions.IsValidName(fileNameWithoutExtension)) )
+            if( !(IsValidName(fileNameWithoutExtension)) )
             {
                 throw new ArgumentException($"Cannot perform action because file name \"{fileNameWithoutExtension}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)", nameof(fileNameWithoutExtension));
             }
