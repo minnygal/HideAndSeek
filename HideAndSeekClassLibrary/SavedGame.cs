@@ -40,6 +40,35 @@ namespace HideAndSeek
 
     public class SavedGame
     {
+        /// <summary>
+        /// Ending text for SavedGame file
+        /// </summary>
+        public static string SavedGameFileEnding
+        {
+            get
+            {
+                return "_sg";
+            }
+        }
+
+        /// <summary>
+        /// Get full file name for a saved game file
+        /// </summary>
+        /// <param name="fileNameWithoutEnding">Name of saved game file without ending</param>
+        /// <returns>Name of saved game file with ending and extension</returns>
+        /// <exception cref="ArgumentException">Exception thrown if file name is invalid</exception>
+        public static string GetFullSavedGameFileName(string fileNameWithoutEnding)
+        {
+            // If file name without ending is invalid
+            if ( !(FileExtensions.IsValidName(fileNameWithoutEnding)) )
+            {
+                throw new ArgumentException($"Cannot perform action because file name \"{fileNameWithoutEnding}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)", nameof(fileNameWithoutEnding)); // Throw new exception with custom error message
+            }
+
+            // Return full file name including ending and extension
+            return FileExtensions.GetFullFileNameForJson(fileNameWithoutEnding + SavedGameFileEnding);
+        }
+
         private House _house;
 
         /// <summary>

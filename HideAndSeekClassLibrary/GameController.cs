@@ -70,35 +70,6 @@ namespace HideAndSeek
         public static IFileSystem FileSystem { get; set; } = new FileSystem();
 
         /// <summary>
-        /// Ending text for SavedGame file
-        /// </summary>
-        public static string SavedGameFileEnding
-        {
-            get
-            {
-                return "_sg";
-            }
-        }
-
-        /// <summary>
-        /// Get full file name for a saved game file
-        /// </summary>
-        /// <param name="fileNameWithoutEnding">Name of saved game file without ending</param>
-        /// <returns>Name of saved game file with ending and extension</returns>
-        /// <exception cref="ArgumentException">Exception thrown if file name is invalid</exception>
-        private static string GetSavedGameFileName(string fileNameWithoutEnding)
-        {
-            // If file name without ending is invalid
-            if( !(FileSystem.IsValidName(fileNameWithoutEnding)) )
-            {
-                throw new ArgumentException($"Cannot perform action because file name \"{fileNameWithoutEnding}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)", nameof(fileNameWithoutEnding)); // Throw new exception with custom error message
-            }
-
-            // Return full file name including saved game ending and extension
-            return FileSystem.GetFullFileNameForJson(fileNameWithoutEnding + SavedGameFileEnding);
-        }
-
-        /// <summary>
         /// The player's current location in the house
         /// </summary>
         public Location CurrentLocation { get; private set; }
@@ -431,7 +402,7 @@ namespace HideAndSeek
         public string SaveGame(string fileNameWithoutEnding)
         {
             // Get full file name including saved game ending and extension
-            string fullFileName = GetSavedGameFileName(fileNameWithoutEnding);
+            string fullFileName = SavedGame.GetFullSavedGameFileName(fileNameWithoutEnding);
 
             // If file already exists
             if (FileSystem.File.Exists(fullFileName))
@@ -470,7 +441,7 @@ namespace HideAndSeek
         public string LoadGame(string fileNameWithoutEnding)
         {
             // Get full file name including saved game ending and extension
-            string fullFileName = GetSavedGameFileName(fileNameWithoutEnding);
+            string fullFileName = SavedGame.GetFullSavedGameFileName(fileNameWithoutEnding);
 
             // If file does not exist
             if ( !(FileSystem.File.Exists(fullFileName)) )
@@ -582,7 +553,7 @@ namespace HideAndSeek
         public string DeleteGame(string fileNameWithoutEnding)
         {
             // Get full file name including saved game ending and extension
-            string fullFileName = GetSavedGameFileName(fileNameWithoutEnding);
+            string fullFileName = SavedGame.GetFullSavedGameFileName(fileNameWithoutEnding);
 
             // If file does not exist
             if ( !(FileSystem.File.Exists(fullFileName)) )
