@@ -22,7 +22,7 @@ namespace HideAndSeek
             message = null;
             exception = null;
             House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
-                               "DefaultHouse_h.json", TestGameController_SaveGame_TestData.DefaultHouse_Serialized); // Set mock file system for House property to return default House file text
+                               "DefaultHouse.house.json", TestGameController_SaveGame_TestData.DefaultHouse_Serialized); // Set mock file system for House property to return default House file text
             GameController.FileSystem = new FileSystem(); // Set static GameController file system to new file system
         }
 
@@ -68,7 +68,7 @@ namespace HideAndSeek
 
             // Set up mock for GameController file system
             Mock<IFileSystem> mockFileSystemForGameController = new Mock<IFileSystem>();
-            mockFileSystemForGameController.Setup(system => system.File.WriteAllText("my_saved_game_sg.json", It.IsAny<string>()))
+            mockFileSystemForGameController.Setup(system => system.File.WriteAllText("my_saved_game.game.json", It.IsAny<string>()))
                     .Callback((string path, string text) =>
                     {
                         actualTextInSavedGameFile = text; // Store text written to file in variable
@@ -101,7 +101,7 @@ namespace HideAndSeek
         {
             // Set up mock for GameController file system
             Mock<IFileSystem> mockFileSystemForGameController = new Mock<IFileSystem>();
-            mockFileSystemForGameController.Setup(system => system.File.Exists("fileName_sg.json")).Returns(true); // Mock that file already exists
+            mockFileSystemForGameController.Setup(system => system.File.Exists("fileName.game.json")).Returns(true); // Mock that file already exists
             GameController.FileSystem = mockFileSystemForGameController.Object;
 
             // Set up game cotroller

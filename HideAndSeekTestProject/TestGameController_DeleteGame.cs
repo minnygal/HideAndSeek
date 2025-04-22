@@ -25,7 +25,7 @@ namespace HideAndSeek
             message = null;
             exception = null;
             House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
-                               "DefaultHouse_h.json", TestGameController_DeleteGame_TestData.DefaultHouse_Serialized); // Set mock file system for House property to return default House file text
+                               "DefaultHouse.house.json", TestGameController_DeleteGame_TestData.DefaultHouse_Serialized); // Set mock file system for House property to return default House file text
             GameController.FileSystem = new FileSystem(); // Set static GameController file system to new file system
         }
 
@@ -55,7 +55,7 @@ namespace HideAndSeek
         {
             // Set up mock for file system
             Mock<IFileSystem> mockFileSystemForGameController = new Mock<IFileSystem>();
-            mockFileSystemForGameController.Setup(manager => manager.File.Exists("my_nonexistent_game.json")).Returns(false); // Mock that file does not exist
+            mockFileSystemForGameController.Setup(manager => manager.File.Exists("my_nonexistent.game.json")).Returns(false); // Mock that file does not exist
             GameController.FileSystem = mockFileSystemForGameController.Object;
 
             // Create new game controller
@@ -74,7 +74,7 @@ namespace HideAndSeek
         {
             // Set up mock for GameController file system
             Mock<IFileSystem> mockFileSystemForGameController = new Mock<IFileSystem>();
-            mockFileSystemForGameController.Setup(manager => manager.File.Exists("my_saved_game_sg.json")).Returns(true); // Mock that file exists
+            mockFileSystemForGameController.Setup(manager => manager.File.Exists("my_saved_game.game.json")).Returns(true); // Mock that file exists
             GameController.FileSystem = mockFileSystemForGameController.Object;
 
             // Create new game controller
@@ -84,7 +84,7 @@ namespace HideAndSeek
             message = gameController.DeleteGame("my_saved_game");
 
             // Verify that File.Delete was called once
-            mockFileSystemForGameController.Verify(manager => manager.File.Delete("my_saved_game_sg.json"), Times.Once);
+            mockFileSystemForGameController.Verify(manager => manager.File.Delete("my_saved_game.game.json"), Times.Once);
 
             // Assert that success message is as expected
             Assert.That(message, Is.EqualTo("Game file my_saved_game has been successfully deleted"));

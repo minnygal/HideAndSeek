@@ -73,7 +73,7 @@ namespace HideAndSeek
         {
             get
             {
-                return "_h";
+                return ".house";
             }
         }
 

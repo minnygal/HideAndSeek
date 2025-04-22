@@ -76,7 +76,7 @@ namespace HideAndSeek
         public void Test_SavedGame_Deserialize_NoFoundOpponents()
         {
             // Set mock file system to House property
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse_h.json", 
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.house.json", 
                                     TestSavedGame_SerializationAndDeserialization_TestData.DefaultHouse_Serialized);
 
             // Initialize variable to serialized SavedGame
@@ -118,7 +118,7 @@ namespace HideAndSeek
         public void Test_SavedGame_Deserialize_3FoundOpponents()
         {
             // Set mock file system to House property
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse_h.json", 
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.house.json", 
                                     TestSavedGame_SerializationAndDeserialization_TestData.DefaultHouse_Serialized);
 
             // Initialize variable to serialized SavedGame
@@ -206,7 +206,7 @@ namespace HideAndSeek
         public void Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenPropertyIsMissing(string expectedErrorMessage, string textInFile)
         {
             // Set House file system to mock file system to return text in file
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse_h.json", 
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.house.json", 
                                     TestSavedGame_SerializationAndDeserialization_TestData.DefaultHouse_Serialized);
 
             Assert.Multiple(() =>
@@ -228,7 +228,7 @@ namespace HideAndSeek
         public void Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenFileDataHasInvalidValue(string expectedErrorMessage, string textInFile)
         {
             // Set House file system to mock file system to return text in file
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse_h.json", 
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.house.json", 
                                     TestSavedGame_SerializationAndDeserialization_TestData.DefaultHouse_Serialized);
 
             Assert.Multiple(() =>
@@ -249,7 +249,7 @@ namespace HideAndSeek
         public void Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenFileDataHasInvalidValue_ForHouseFileName()
         {
             // Set House file system to mock file system to return text in file
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse_h.json",
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.house.json",
                                     TestSavedGame_SerializationAndDeserialization_TestData.DefaultHouse_Serialized);
 
             Assert.Multiple(() =>
@@ -278,7 +278,7 @@ namespace HideAndSeek
         public void Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenFileDataHasInvalidValue_ForMoveNumber()
         {
             // Set House file system to mock file system to return text in file
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse_h.json",
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.house.json",
                                     TestSavedGame_SerializationAndDeserialization_TestData.DefaultHouse_Serialized);
 
             Assert.Multiple(() =>
@@ -306,7 +306,7 @@ namespace HideAndSeek
         public void Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenFileDataHasInvalidValue_ForOpponents()
         {
             // Set House file system to mock file system to return text in file
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse_h.json",
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.house.json",
                                     TestSavedGame_SerializationAndDeserialization_TestData.DefaultHouse_Serialized);
 
             Assert.Multiple(() =>
@@ -335,7 +335,7 @@ namespace HideAndSeek
         public void Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileFormatIsInvalid(string exceptionMessageEnding, string houseFileText)
         {
             // Set House file system to mock file system to return text in file
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse_h.json", houseFileText);
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.house.json", houseFileText);
 
             Assert.Multiple(() =>
             {
@@ -356,7 +356,7 @@ namespace HideAndSeek
         public void Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileDataInvalidValue(string exceptionDescription, string houseFileText)
         {
             // Set House file system to mock file system to return text in file
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse_h.json", houseFileText);
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.house.json", houseFileText);
 
             Assert.Multiple(() =>
             {
@@ -378,7 +378,7 @@ namespace HideAndSeek
         public void Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileDataInvalidValue_NonexistentLocation(string exceptionDescription, string houseFileText)
         {
             // Set House file system to mock file system to return text in file
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse_h.json", houseFileText);
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.house.json", houseFileText);
 
             Assert.Multiple(() =>
             {
@@ -400,7 +400,7 @@ namespace HideAndSeek
         public void Test_SavedGame_Deserialize_AndCheckErrorMessage_WhenHouseFileDataHasInvalidDirection(string houseFileText)
         {
             // Set House file system to mock file system to return text in file
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse_h.json", houseFileText);
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.house.json", houseFileText);
 
             Assert.Multiple(() =>
             {

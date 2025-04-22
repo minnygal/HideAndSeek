@@ -41,7 +41,7 @@ namespace HideAndSeek
         [Category("House GetFullHouseFileName Success")]
         public void Test_House_GetFullHouseFileName()
         {
-            Assert.That(House.GetFullHouseFileName("my_house"), Is.EqualTo("my_house_h.json"));
+            Assert.That(House.GetFullHouseFileName("my_house"), Is.EqualTo("my_house.house.json"));
         }
 
         [TestCase("")]
@@ -78,10 +78,10 @@ namespace HideAndSeek
         public void Test_House_GetHouseFileNames_SingleHouseFile(Func<IEnumerable<string>> GetHouseFileNames)
         {
             SetHouseFileSystemForGetHouseFileNamesTest(
-                new string[] { "AGame_sg.json", "DefaultHouse_h.json", "NotAHouse.json", "HideAndSeekClassLibrary.dll", 
+                new string[] { "AGame.game.json", "DefaultHouse.house.json", "NotAHouse.json", "HideAndSeekClassLibrary.dll", 
                                "HideAndSeekClassLibrary.pdb", "HideAndSeekConsole.deps.json", "HideAndSeekConsole.dll", 
                                "HideAndSeekConsole.exe", "HideAndSeekConsole.pdb", "HideAndSeekConsole.runtimeconfig.json",
-                               "OtherGame_sg.json", "TestableIO.System.IO.Abstractions.dll", 
+                               "OtherGame.game.json", "TestableIO.System.IO.Abstractions.dll", 
                                "TestableIO.System.IO.Abstractions.Wrappers.dll"
                               });
             Assert.That(GetHouseFileNames(), Is.EquivalentTo(new List<string>() { "DefaultHouse" }));
@@ -92,12 +92,12 @@ namespace HideAndSeek
         public void Test_House_GetHouseFileNames_MultipleHouseFiles(Func<IEnumerable<string>> GetHouseFileNames)
         {
             SetHouseFileSystemForGetHouseFileNamesTest(
-                new string[] { "1CoolHouse$$_h.json", "AGame_sg.json", "DefaultHouse_h.json", "NotAHouse.json",
+                new string[] { "1CoolHouse$$.house.json", "AGame.game.json", "DefaultHouse.house.json", "NotAHouse.json",
                                "HideAndSeekClassLibrary.dll", "HideAndSeekClassLibrary.pdb", "HideAndSeekConsole.deps.json", 
                                "HideAndSeekConsole.dll", "HideAndSeekConsole.exe", "HideAndSeekConsole.pdb", 
-                               "HideAndSeekConsole.runtimeconfig.json", "OtherGame_sg.json", "SecretMansion_h.json", 
+                               "HideAndSeekConsole.runtimeconfig.json", "OtherGame.game.json", "SecretMansion.house.json", 
                                "TestableIO.System.IO.Abstractions.dll", "TestableIO.System.IO.Abstractions.Wrappers.dll", 
-                               "TestHouse_h.json" 
+                               "TestHouse.house.json" 
                              });
             Assert.That(GetHouseFileNames(), Is.EquivalentTo(new List<string>() { "1CoolHouse$$", "DefaultHouse", "SecretMansion", "TestHouse" }));
         }
@@ -107,10 +107,10 @@ namespace HideAndSeek
         public void Test_House_GetHouseFileNames_NoHouseFiles(Func<IEnumerable<string>> GetHouseFileNames)
         {
             SetHouseFileSystemForGetHouseFileNamesTest(
-                new string[] { "AGame_sg.json", "NotAHouse.json",
+                new string[] { "AGame.game.json", "NotAHouse.json",
                                "HideAndSeekClassLibrary.dll", "HideAndSeekClassLibrary.pdb", "HideAndSeekConsole.deps.json",
                                "HideAndSeekConsole.dll", "HideAndSeekConsole.exe", "HideAndSeekConsole.pdb",
-                               "HideAndSeekConsole.runtimeconfig.json", "OtherGame_sg.json",
+                               "HideAndSeekConsole.runtimeconfig.json", "OtherGame.game.json",
                                "TestableIO.System.IO.Abstractions.dll", "TestableIO.System.IO.Abstractions.Wrappers.dll"
                              });
             Assert.That(GetHouseFileNames(), Is.Empty);
@@ -442,7 +442,7 @@ namespace HideAndSeek
             // ARRANGE
             // Assign mock file system to House property
             House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
-                               "DefaultHouse_h.json", TestHouse_TestData.DefaultHouse_Serialized);
+                               "DefaultHouse.house.json", TestHouse_TestData.DefaultHouse_Serialized);
 
             // ACT
             // Call method to create House
@@ -547,7 +547,7 @@ namespace HideAndSeek
                 "}";
 
             // Assign mock file system to House property
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse_h.json", textInHouseFile);
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.house.json", textInHouseFile);
 
             // ACT
             // Call method to create House
@@ -588,7 +588,7 @@ namespace HideAndSeek
             string exceptionMessageEnding, string fileText)
         {
             // Assign mock file system to House property
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("MyCorruptFile_h.json", fileText);
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("MyCorruptFile.house.json", fileText);
 
             Assert.Multiple(() =>
             {
@@ -609,7 +609,7 @@ namespace HideAndSeek
         public void Test_House_CreateHouse_AndCheckErrorMessage_WhenFileDataHasInvalidDirection(string fileText)
         {
             // Assign mock file system to House property
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("MyCorruptFile_h.json", fileText);
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("MyCorruptFile.house.json", fileText);
 
             Assert.Multiple(() =>
             {
@@ -632,7 +632,7 @@ namespace HideAndSeek
             string exceptionMessageEnding, string fileText)
         {
             // Assign mock file system to House property
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("MyInvalidDataFile_h.json", fileText);
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("MyInvalidDataFile.house.json", fileText);
 
             Assert.Multiple(() =>
             {
@@ -654,7 +654,7 @@ namespace HideAndSeek
             string exceptionMessageEnding, string fileText)
         {
             // Assign mock file system to House property
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("MyInvalidDataFile_h.json", fileText);
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("MyInvalidDataFile.house.json", fileText);
 
             Assert.Multiple(() =>
             {
@@ -676,7 +676,7 @@ namespace HideAndSeek
             string exceptionMessageEnding, string fileText)
         {
             // Assign mock file system to House property
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("MyInvalidDataFile_h.json", fileText);
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("MyInvalidDataFile.house.json", fileText);
 
             Assert.Multiple(() =>
             {
