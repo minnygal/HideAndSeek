@@ -73,6 +73,70 @@ namespace HideAndSeek
             });
         }
 
+        [TestCaseSource(typeof(TestHouse_TestData), nameof(TestHouse_TestData.TestCases_For_Test_House_GetHouseFileNames_SingleHouseFile))]
+        [Category("House GetHouseFileNames Success")]
+        public void Test_House_GetHouseFileNames_SingleHouseFile(Func<IEnumerable<string>> GetHouseFileNames)
+        {
+            SetHouseFileSystemForGetHouseFileNamesTest(
+                new string[] { "AGame_sg.json", "DefaultHouse_h.json", "NotAHouse.json", "HideAndSeekClassLibrary.dll", 
+                               "HideAndSeekClassLibrary.pdb", "HideAndSeekConsole.deps.json", "HideAndSeekConsole.dll", 
+                               "HideAndSeekConsole.exe", "HideAndSeekConsole.pdb", "HideAndSeekConsole.runtimeconfig.json",
+                               "OtherGame_sg.json", "TestableIO.System.IO.Abstractions.dll", 
+                               "TestableIO.System.IO.Abstractions.Wrappers.dll"
+                              });
+            Assert.That(GetHouseFileNames(), Is.EquivalentTo(new List<string>() { "DefaultHouse" }));
+        }
+
+        [TestCaseSource(typeof(TestHouse_TestData), nameof(TestHouse_TestData.TestCases_For_Test_House_GetHouseFileNames_MultipleHouseFiles))]
+        [Category("House GetHouseFileNames Success")]
+        public void Test_House_GetHouseFileNames_MultipleHouseFiles(Func<IEnumerable<string>> GetHouseFileNames)
+        {
+            SetHouseFileSystemForGetHouseFileNamesTest(
+                new string[] { "1CoolHouse$$_h.json", "AGame_sg.json", "DefaultHouse_h.json", "NotAHouse.json",
+                               "HideAndSeekClassLibrary.dll", "HideAndSeekClassLibrary.pdb", "HideAndSeekConsole.deps.json", 
+                               "HideAndSeekConsole.dll", "HideAndSeekConsole.exe", "HideAndSeekConsole.pdb", 
+                               "HideAndSeekConsole.runtimeconfig.json", "OtherGame_sg.json", "SecretMansion_h.json", 
+                               "TestableIO.System.IO.Abstractions.dll", "TestableIO.System.IO.Abstractions.Wrappers.dll", 
+                               "TestHouse_h.json" 
+                             });
+            Assert.That(GetHouseFileNames(), Is.EquivalentTo(new List<string>() { "1CoolHouse$$", "DefaultHouse", "SecretMansion", "TestHouse" }));
+        }
+
+        [TestCaseSource(typeof(TestHouse_TestData), nameof(TestHouse_TestData.TestCases_For_Test_House_GetHouseFileNames_NoHouseFiles))]
+        [Category("House GetHouseFileNames Success")]
+        public void Test_House_GetHouseFileNames_NoHouseFiles(Func<IEnumerable<string>> GetHouseFileNames)
+        {
+            SetHouseFileSystemForGetHouseFileNamesTest(
+                new string[] { "AGame_sg.json", "NotAHouse.json",
+                               "HideAndSeekClassLibrary.dll", "HideAndSeekClassLibrary.pdb", "HideAndSeekConsole.deps.json",
+                               "HideAndSeekConsole.dll", "HideAndSeekConsole.exe", "HideAndSeekConsole.pdb",
+                               "HideAndSeekConsole.runtimeconfig.json", "OtherGame_sg.json",
+                               "TestableIO.System.IO.Abstractions.dll", "TestableIO.System.IO.Abstractions.Wrappers.dll"
+                             });
+            Assert.That(GetHouseFileNames(), Is.Empty);
+        }
+
+        [Test]
+        [Category("House GetHouseFileNames Failure")]
+        public void Test_House_GetHouseFileNames_AndCheckErrorMessage_ForInvalidDirectoryName()
+        {
+            Assert.Multiple(() =>
+            {
+                Exception exception = Assert.Throws<DirectoryNotFoundException>(() => House.GetHouseFileNames("C:\\Users\\Tester\\Desktop\\HideAndSeekConsole"));
+                Assert.That(exception.Message, Is.EqualTo("Could not find a part of the path 'C:\\Users\\Tester\\Desktop\\HideAndSeekConsole'."));
+            });
+        }
+
+        private static void SetHouseFileSystemForGetHouseFileNamesTest(string[] fileNames)
+        {
+            // Set up mock file system
+            Mock<IFileSystem> mockFileSystem = new Mock<IFileSystem>();
+            mockFileSystem.Setup((d) => d.Directory.GetFiles("C:\\Users\\Tester\\Desktop\\HideAndSeekConsole"))
+                          .Returns(fileNames); // Set up mock to return files
+            mockFileSystem.Setup((d) => d.Path.GetDirectoryName(It.IsAny<string>())).Returns("C:\\Users\\Tester\\Desktop\\HideAndSeekConsole"); // Mock default directory name assigned if no argument passed in
+            House.FileSystem = mockFileSystem.Object; // Set House file system
+        }
+
         /// <summary>
         /// Assert that layout of House is as expected using House's GetExit method and Location's Name property
         /// 
