@@ -109,12 +109,13 @@ namespace HideAndSeek
             }
 
             // Return names of House layout files (without House file ending or extension) in directory
-            return FileSystem.Directory.GetFiles(directoryFullName).Where((n) => n.EndsWith($"{HouseFileEnding}{FileExtensions.JsonFileExtension}"))
-                                                        .Select((n) =>
-                                                        {
-                                                            string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(n); // Get file name without extension
-                                                            return fileNameWithoutExtension.Substring(0, fileNameWithoutExtension.Length - HouseFileEnding.Length); // Return file name without house file ending or extension
-                                                        });
+            return FileSystem.Directory.GetFiles(directoryFullName)
+                    .Where((n) => n.EndsWith($"{HouseFileEnding}{FileExtensions.JsonFileExtension}"))
+                    .Select((n) =>
+                    {
+                        string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(n); // Get file name without extension
+                        return fileNameWithoutExtension.Substring(0, fileNameWithoutExtension.Length - HouseFileEnding.Length); // Return file name without house file ending or extension
+                    });
         }
 
         /// <summary>
