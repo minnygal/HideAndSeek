@@ -10,7 +10,7 @@ namespace HideAndSeek
     /// <summary>
     /// Test data for SavedGame tests for constructors and public properties
     /// </summary>
-    public static class TestSavedGame_Basic_TestData
+    public static class TestSavedGame_TestData
     {
         public static IEnumerable TestCases_For_Test_SavedGame_GetSavedGameFileNames_SingleSavedGameFile
         {

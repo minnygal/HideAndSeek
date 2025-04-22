@@ -12,7 +12,7 @@ namespace HideAndSeek
     /// SavedGame tests for constructors and public properties
     /// </summary>
     [TestFixture]
-    public class TestSavedGame_Basic
+    public class TestSavedGame
     {
         private SavedGame savedGame;
         private Dictionary<string, string> opponentsAndHidingPlaces = new Dictionary<string, string>()
@@ -73,7 +73,7 @@ namespace HideAndSeek
             });
         }
 
-        [TestCaseSource(typeof(TestSavedGame_Basic_TestData), nameof(TestSavedGame_Basic_TestData.TestCases_For_Test_SavedGame_GetSavedGameFileNames_SingleSavedGameFile))]
+        [TestCaseSource(typeof(TestSavedGame_TestData), nameof(TestSavedGame_TestData.TestCases_For_Test_SavedGame_GetSavedGameFileNames_SingleSavedGameFile))]
         [Category("SavedGame GetSavedGameFileNames Success")]
         public void Test_SavedGame_GetSavedGameFileNames_SingleSavedGameFile(Func<IEnumerable<string>> GetSavedGameFileNames)
         {
@@ -87,7 +87,7 @@ namespace HideAndSeek
             Assert.That(GetSavedGameFileNames(), Is.EquivalentTo(new List<string>() { "MyGame" }));
         }
 
-        [TestCaseSource(typeof(TestSavedGame_Basic_TestData), nameof(TestSavedGame_Basic_TestData.TestCases_For_Test_SavedGame_GetSavedGameFileNames_MultipleSavedGameFiles))]
+        [TestCaseSource(typeof(TestSavedGame_TestData), nameof(TestSavedGame_TestData.TestCases_For_Test_SavedGame_GetSavedGameFileNames_MultipleSavedGameFiles))]
         [Category("SavedGame GetSavedGameFileNames Success")]
         public void Test_SavedGame_GetSavedGameFileNames_MultipleSavedGameFiles(Func<IEnumerable<string>> GetSavedGameFileNames)
         {
@@ -101,7 +101,7 @@ namespace HideAndSeek
             Assert.That(GetSavedGameFileNames(), Is.EquivalentTo(new List<string>() { "1G@m3", "AGame", "MyGame", "Winning"}));
         }
 
-        [TestCaseSource(typeof(TestSavedGame_Basic_TestData), nameof(TestSavedGame_Basic_TestData.TestCases_For_Test_SavedGame_GetSavedGameFileNames_NoSavedGameFiles))]
+        [TestCaseSource(typeof(TestSavedGame_TestData), nameof(TestSavedGame_TestData.TestCases_For_Test_SavedGame_GetSavedGameFileNames_NoSavedGameFiles))]
         [Category("SavedGame GetSavedGameFileNames Success")]
         public void Test_SavedGame_GetSavedGameFileNames_NoSavedGameFiles(Func<IEnumerable<string>> GetSavedGameFileNames)
         {
