@@ -60,7 +60,7 @@ namespace HideAndSeek
                 {
                     Console.WriteLine(gameController.Status); // Print game status
                     Console.Write(gameController.Prompt); // Print game prompt
-                    Console.WriteLine( ParseInput( Console.ReadLine()) ); // Get user input, parse input, and print message
+                    Console.WriteLine( RemoveParamText(ParseInput(Console.ReadLine())) ); // Get user input, parse input, and print message
                     Console.WriteLine(); // Print empty line to put space between moves
                 }
 
@@ -103,6 +103,23 @@ namespace HideAndSeek
             Console.WriteLine("-To LOAD a saved game, enter \"load\" followed by a space and the name of your game.");
             Console.WriteLine("-To DELETE a saved game, enter \"delete\" followed by a space and the name of your game.");
             Console.WriteLine("-To start a NEW custom game, enter \"new\" and follow the prompts.");
+        }
+        
+        /// <summary>
+        /// Remove parameter text in error messages
+        /// </summary>
+        /// <param name="text">Text to remove parameter text from</param>
+        /// <returns>Text without parameter text</returns>
+        private static string RemoveParamText(string text)
+        {
+            int indexOfParam = text.IndexOf("(Param");
+            if(indexOfParam == -1)
+            {
+                return text;
+            }
+
+            // Remove parameter text
+            return text.Substring(0, indexOfParam - 1);
         }
 
         /// <summary>
