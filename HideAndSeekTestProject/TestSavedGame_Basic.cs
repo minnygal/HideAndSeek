@@ -1,4 +1,5 @@
 ﻿using Moq;
+using NUnit.Framework.Constraints;
 using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
@@ -27,6 +28,13 @@ namespace HideAndSeek
         public void SetUp()
         {
             savedGame = null;
+            SavedGame.FileSystem = new FileSystem(); // Set static SavedGame file system to new file system
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            SavedGame.FileSystem = new FileSystem(); // Set static SavedGame file system to new file system
         }
 
         [Test]
@@ -63,6 +71,68 @@ namespace HideAndSeek
                 // Assert that exception message is as expected
                 Assert.That(exception.Message, Does.StartWith($"Cannot perform action because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
             });
+        }
+
+        [TestCaseSource(typeof(TestSavedGame_Basic_TestData), nameof(TestSavedGame_Basic_TestData.TestCases_For_Test_SavedGame_GetSavedGameFileNames_SingleSavedGameFile))]
+        [Category("SavedGame GetSavedGameFileNames Success")]
+        public void Test_SavedGame_GetSavedGameFileNames_SingleSavedGameFile(Func<IEnumerable<string>> GetSavedGameFileNames)
+        {
+            SetSavedGameFileSystemForGetSavedGameFileNamesTest(
+                new string[] { "DefaultHouse_h.json", "NotASavedGame.json", "HideAndSeekClassLibrary.dll",
+                               "HideAndSeekClassLibrary.pdb", "HideAndSeekConsole.deps.json", "HideAndSeekConsole.dll",
+                               "HideAndSeekConsole.exe", "HideAndSeekConsole.pdb", "HideAndSeekConsole.runtimeconfig.json",
+                               "MyGame_sg.json", "OtherHouse_h.json", "TestableIO.System.IO.Abstractions.dll",
+                               "TestableIO.System.IO.Abstractions.Wrappers.dll"
+                              });
+            Assert.That(GetSavedGameFileNames(), Is.EquivalentTo(new List<string>() { "MyGame" }));
+        }
+
+        [TestCaseSource(typeof(TestSavedGame_Basic_TestData), nameof(TestSavedGame_Basic_TestData.TestCases_For_Test_SavedGame_GetSavedGameFileNames_MultipleSavedGameFiles))]
+        [Category("SavedGame GetSavedGameFileNames Success")]
+        public void Test_SavedGame_GetSavedGameFileNames_MultipleSavedGameFiles(Func<IEnumerable<string>> GetSavedGameFileNames)
+        {
+            SetSavedGameFileSystemForGetSavedGameFileNamesTest(
+                new string[] { "1G@m3_sg.json", "AGame_sg.json", "DefaultHouse_h.json", "NotASavedGame.json", "HideAndSeekClassLibrary.dll",
+                               "HideAndSeekClassLibrary.pdb", "HideAndSeekConsole.deps.json", "HideAndSeekConsole.dll",
+                               "HideAndSeekConsole.exe", "HideAndSeekConsole.pdb", "HideAndSeekConsole.runtimeconfig.json",
+                               "MyGame_sg.json", "OtherHouse_h.json", "TestableIO.System.IO.Abstractions.dll",
+                               "TestableIO.System.IO.Abstractions.Wrappers.dll", "Winning_sg.json"
+                             });
+            Assert.That(GetSavedGameFileNames(), Is.EquivalentTo(new List<string>() { "1G@m3", "AGame", "MyGame", "Winning"}));
+        }
+
+        [TestCaseSource(typeof(TestSavedGame_Basic_TestData), nameof(TestSavedGame_Basic_TestData.TestCases_For_Test_SavedGame_GetSavedGameFileNames_NoSavedGameFiles))]
+        [Category("SavedGame GetSavedGameFileNames Success")]
+        public void Test_SavedGame_GetSavedGameFileNames_NoSavedGameFiles(Func<IEnumerable<string>> GetSavedGameFileNames)
+        {
+            SetSavedGameFileSystemForGetSavedGameFileNamesTest(
+                new string[] { "NotASavedGame.json", "HideAndSeekClassLibrary.dll", "HideAndSeekClassLibrary.pdb", 
+                               "HideAndSeekConsole.deps.json", "HideAndSeekConsole.dll", "HideAndSeekConsole.exe", 
+                               "HideAndSeekConsole.pdb", "HideAndSeekConsole.runtimeconfig.json",
+                               "TestableIO.System.IO.Abstractions.dll", "TestableIO.System.IO.Abstractions.Wrappers.dll"
+                             });
+            Assert.That(GetSavedGameFileNames(), Is.Empty);
+        }
+
+        [Test]
+        [Category("SavedGame GetSavedGameFileNames Failure")]
+        public void Test_SavedGame_GetSavedGameFileNames_AndCheckErrorMessage_ForInvalidDirectoryName()
+        {
+            Assert.Multiple(() =>
+            {
+                Exception exception = Assert.Throws<DirectoryNotFoundException>(() => SavedGame.GetSavedGameFileNames("C:\\Users\\Tester\\Desktop\\HideAndSeekConsole"));
+                Assert.That(exception.Message, Is.EqualTo("Could not find a part of the path 'C:\\Users\\Tester\\Desktop\\HideAndSeekConsole'."));
+            });
+        }
+
+        private static void SetSavedGameFileSystemForGetSavedGameFileNamesTest(string[] fileNames)
+        {
+            // Set up mock file system
+            Mock<IFileSystem> mockFileSystem = new Mock<IFileSystem>();
+            mockFileSystem.Setup((d) => d.Directory.GetFiles("C:\\Users\\Tester\\Desktop\\HideAndSeekConsole"))
+                          .Returns(fileNames); // Set up mock to return files
+            mockFileSystem.Setup((d) => d.Path.GetDirectoryName(It.IsAny<string>())).Returns("C:\\Users\\Tester\\Desktop\\HideAndSeekConsole"); // Mock default directory name assigned if no argument passed in
+            SavedGame.FileSystem = mockFileSystem.Object; // Set SavedGame file system
         }
 
         // Tests all setters except House and HouseFileName (accesses House and HouseFileName propertyes' backing fields)
