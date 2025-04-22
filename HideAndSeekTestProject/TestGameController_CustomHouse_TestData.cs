@@ -351,7 +351,7 @@ namespace HideAndSeek
         /// <returns>GameController with custom House</returns>
         private static GameController GetGameController_WithCustomHouseSetViaConstructor()
         {
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("TestHouse_h.json", textInHouseFile); // Set House file system to mock
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("TestHouse.house.json", textInHouseFile); // Set House file system to mock
             return new GameController("TestHouse"); // Return new GameController with custom House
         }
         
@@ -364,8 +364,8 @@ namespace HideAndSeek
         {
             // Set up House file system
             Mock<IFileSystem> houseMockFileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText(
-                                                    "DefaultHouse_h.json", TestGameController_CustomHouse_TestData.DefaultHouse_Serialized); // Create mock file system to return default House file text
-            MockFileSystemHelper.SetMockOfFileSystem_ToReadAllText(houseMockFileSystem, "TestHouse_h.json", textInHouseFile); // Set up mock file system to return test House file text
+                                                    "DefaultHouse.house.json", TestGameController_CustomHouse_TestData.DefaultHouse_Serialized); // Create mock file system to return default House file text
+            MockFileSystemHelper.SetMockOfFileSystem_ToReadAllText(houseMockFileSystem, "TestHouse.house.json", textInHouseFile); // Set up mock file system to return test House file text
             House.FileSystem = houseMockFileSystem.Object; // Set static House file system to mock file system 
             
             // Return GameController after RestartGame called

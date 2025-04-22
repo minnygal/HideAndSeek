@@ -54,7 +54,7 @@ namespace HideAndSeek
         {
             get
             {
-                return "_sg";
+                return ".game";
             }
         }
 

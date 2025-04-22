@@ -19,7 +19,7 @@ namespace HideAndSeek
         public void OneTimeSetUp()
         {
             // Set House file system to return text for default House
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse_h.json", 
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.house.json", 
                                     TestGameController_CustomOpponents_TestData.DefaultHouse_Serialized);
         }
 

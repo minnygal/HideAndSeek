@@ -22,7 +22,7 @@ namespace HideAndSeek
         {
             // Set static House file system to mock file system (not changed in any tests)
             House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
-                "DefaultHouse_h.json", TestGameController_MoveAndTeleport_TestData.DefaultHouse_Serialized);
+                "DefaultHouse.house.json", TestGameController_MoveAndTeleport_TestData.DefaultHouse_Serialized);
         }
 
         [SetUp]

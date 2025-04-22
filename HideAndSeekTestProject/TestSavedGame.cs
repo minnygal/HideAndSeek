@@ -41,7 +41,7 @@ namespace HideAndSeek
         [Category("SavedGame GetFullSavedGameFileName Success")]
         public void Test_SavedGame_GetFullSavedGameFileName()
         {
-            Assert.That(SavedGame.GetFullSavedGameFileName("my_saved_game"), Is.EqualTo("my_saved_game_sg.json"));
+            Assert.That(SavedGame.GetFullSavedGameFileName("my_saved_game"), Is.EqualTo("my_saved_game.game.json"));
         }
 
         [TestCase("")]
@@ -78,10 +78,10 @@ namespace HideAndSeek
         public void Test_SavedGame_GetSavedGameFileNames_SingleSavedGameFile(Func<IEnumerable<string>> GetSavedGameFileNames)
         {
             SetSavedGameFileSystemForGetSavedGameFileNamesTest(
-                new string[] { "DefaultHouse_h.json", "NotASavedGame.json", "HideAndSeekClassLibrary.dll",
+                new string[] { "DefaultHouse.house.json", "NotASavedGame.json", "HideAndSeekClassLibrary.dll",
                                "HideAndSeekClassLibrary.pdb", "HideAndSeekConsole.deps.json", "HideAndSeekConsole.dll",
                                "HideAndSeekConsole.exe", "HideAndSeekConsole.pdb", "HideAndSeekConsole.runtimeconfig.json",
-                               "MyGame_sg.json", "OtherHouse_h.json", "TestableIO.System.IO.Abstractions.dll",
+                               "MyGame.game.json", "OtherHouse.house.json", "TestableIO.System.IO.Abstractions.dll",
                                "TestableIO.System.IO.Abstractions.Wrappers.dll"
                               });
             Assert.That(GetSavedGameFileNames(), Is.EquivalentTo(new List<string>() { "MyGame" }));
@@ -92,11 +92,12 @@ namespace HideAndSeek
         public void Test_SavedGame_GetSavedGameFileNames_MultipleSavedGameFiles(Func<IEnumerable<string>> GetSavedGameFileNames)
         {
             SetSavedGameFileSystemForGetSavedGameFileNamesTest(
-                new string[] { "1G@m3_sg.json", "AGame_sg.json", "DefaultHouse_h.json", "NotASavedGame.json", "HideAndSeekClassLibrary.dll",
-                               "HideAndSeekClassLibrary.pdb", "HideAndSeekConsole.deps.json", "HideAndSeekConsole.dll",
-                               "HideAndSeekConsole.exe", "HideAndSeekConsole.pdb", "HideAndSeekConsole.runtimeconfig.json",
-                               "MyGame_sg.json", "OtherHouse_h.json", "TestableIO.System.IO.Abstractions.dll",
-                               "TestableIO.System.IO.Abstractions.Wrappers.dll", "Winning_sg.json"
+                new string[] { "1G@m3.game.json", "AGame.game.json", "DefaultHouse.house.json", "NotASavedGame.json", 
+                               "HideAndSeekClassLibrary.dll", "HideAndSeekClassLibrary.pdb", "HideAndSeekConsole.deps.json", 
+                               "HideAndSeekConsole.dll", "HideAndSeekConsole.exe", "HideAndSeekConsole.pdb", 
+                               "HideAndSeekConsole.runtimeconfig.json", "MyGame.game.json", "OtherHouse.house.json", 
+                               "TestableIO.System.IO.Abstractions.dll", "TestableIO.System.IO.Abstractions.Wrappers.dll", 
+                               "Winning.game.json"
                              });
             Assert.That(GetSavedGameFileNames(), Is.EquivalentTo(new List<string>() { "1G@m3", "AGame", "MyGame", "Winning"}));
         }
@@ -106,7 +107,8 @@ namespace HideAndSeek
         public void Test_SavedGame_GetSavedGameFileNames_NoSavedGameFiles(Func<IEnumerable<string>> GetSavedGameFileNames)
         {
             SetSavedGameFileSystemForGetSavedGameFileNamesTest(
-                new string[] { "NotASavedGame.json", "HideAndSeekClassLibrary.dll", "HideAndSeekClassLibrary.pdb", 
+                new string[] { "DefaultHouse.house.json", "FriendHouse.house.json", "NotASavedGame.json", 
+                               "HideAndSeekClassLibrary.dll", "HideAndSeekClassLibrary.pdb", 
                                "HideAndSeekConsole.deps.json", "HideAndSeekConsole.dll", "HideAndSeekConsole.exe", 
                                "HideAndSeekConsole.pdb", "HideAndSeekConsole.runtimeconfig.json",
                                "TestableIO.System.IO.Abstractions.dll", "TestableIO.System.IO.Abstractions.Wrappers.dll"

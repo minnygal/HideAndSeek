@@ -22,7 +22,7 @@ namespace HideAndSeek
         public void SetUp()
         {
             House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
-                                "DefaultHouse_h.json", TestGameController_CustomHouse_TestData.DefaultHouse_Serialized); // Set static House file system to mock file system
+                                "DefaultHouse.house.json", TestGameController_CustomHouse_TestData.DefaultHouse_Serialized); // Set static House file system to mock file system
         }
 
         [TearDown]
