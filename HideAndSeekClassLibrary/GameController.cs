@@ -154,19 +154,25 @@ namespace HideAndSeek
         /// <summary>
         /// Create a GameController with an optional specified House file name and 5 Opponents with default names
         /// </summary>
-        /// <param name="houseFileName"></param>
-        public GameController(string houseFileName = "DefaultHouse")
+        /// <param name="houseFileNameWithoutEnding">Name of House layout file without ending or extension</param>
+        /// <exception cref="ArgumentException">Exception thrown if file name or value in file is invalid</exception>
+        /// <exception cref="JsonException">Exception thrown if JSON formatting issue</exception>
+        /// <exception cref="InvalidOperationException">Exception thrown if invalid operation attempted</exception>
+        /// <exception cref="FileNotFoundException">Exception thrown if saved game file not found</exception>
+        /// <exception cref="NullReferenceException">Exception thrown if a reference is null</exception>
+        public GameController(string houseFileNameWithoutEnding = "DefaultHouse")
         {
-            SetUpInitialGameWithSpecificOpponentNamesAndHouseFile(DefaultOpponentNames.Take(5).ToArray(), houseFileName);
+            SetUpInitialGameWithSpecificOpponentNamesAndHouseFile(
+                DefaultOpponentNames.Take(5).ToArray(), houseFileNameWithoutEnding);
         }
 
         /// <summary>
         /// Create a GameController with a specific number of Opponents and an optional specified House file name
         /// </summary>
         /// <param name="numberOfOpponents">Number of Opponents to hide in House</param>
-        /// <param name="houseFileName">Name of file from which to load House layout</param>
+        /// <param name="houseFileNameWithoutEnding">Name of House layout file without ending or extension</param>
         /// <exception cref="ArgumentException">Exception thrown when number of Opponents is invalid</exception>
-        public GameController(int numberOfOpponents, string houseFileName = "DefaultHouse")
+        public GameController(int numberOfOpponents, string houseFileNameWithoutEnding = "DefaultHouse")
         {
             // If number of Opponents invalid
             if(numberOfOpponents < 1 || numberOfOpponents > DefaultOpponentNames.Length)
@@ -176,16 +182,16 @@ namespace HideAndSeek
             }
 
             // Set up initial game with specific Opponent names and House file name
-            SetUpInitialGameWithSpecificOpponentNamesAndHouseFile(DefaultOpponentNames.Take(numberOfOpponents).ToArray(), houseFileName);
+            SetUpInitialGameWithSpecificOpponentNamesAndHouseFile(DefaultOpponentNames.Take(numberOfOpponents).ToArray(), houseFileNameWithoutEnding);
         }
 
         /// <summary>
         /// Create a GameController with Opponents with specific names and an optional specified House file name
         /// </summary>
         /// <param name="opponentNames">Names of Opponents to hide in House</param>
-        /// <param name="houseFileName">Name of file from which to load House layout</param>
+        /// <param name="houseFileNameWithoutEnding">Name of House layout file without ending or extension</param>
         /// <exception cref="ArgumentException">Exception thrown when no names for Opponents were passed in</exception>"
-        public GameController(string[] opponentNames, string houseFileName = "DefaultHouse")
+        public GameController(string[] opponentNames, string houseFileNameWithoutEnding = "DefaultHouse")
         {
             // If no opponent names in array
             if(opponentNames.Length == 0)
@@ -194,14 +200,14 @@ namespace HideAndSeek
             }
 
             // Set up initial game with specific Opponent names and House file name
-            SetUpInitialGameWithSpecificOpponentNamesAndHouseFile(opponentNames, houseFileName);
+            SetUpInitialGameWithSpecificOpponentNamesAndHouseFile(opponentNames, houseFileNameWithoutEnding);
         }
 
         /// <summary>
         /// Set up initial game with specific Opponent names and specific House file name
         /// </summary>
         /// <param name="opponentNames">Names of Opponents</param>
-        /// <param name="houseFileName">Name of file from which to load House layout</param>
+        /// <param name="houseFileName">Name of House layout file without ending or extension</param>
         private void SetUpInitialGameWithSpecificOpponentNamesAndHouseFile(string[] opponentNames, string houseFileName)
         {
             // Set Opponents and hiding locations property to new Dictionary
@@ -220,11 +226,16 @@ namespace HideAndSeek
         /// <summary>
         /// Restart game from beginning in House from specified file
         /// </summary>
-        /// <param name="houseFileName">Name of House layout file</param>
+        /// <param name="houseFileNameWithoutEnding">Name of House layout file without ending or extension</param>
         /// <returns>This GameController</returns>
-        public GameController RestartGame(string houseFileName)
+        /// <exception cref="ArgumentException">Exception thrown if file name or value in file is invalid</exception>
+        /// <exception cref="JsonException">Exception thrown if JSON formatting issue</exception>
+        /// <exception cref="InvalidOperationException">Exception thrown if invalid operation attempted</exception>
+        /// <exception cref="FileNotFoundException">Exception thrown if saved game file not found</exception>
+        /// <exception cref="NullReferenceException">Exception thrown if a reference is null</exception>
+        public GameController RestartGame(string houseFileNameWithoutEnding)
         {
-            House = House.CreateHouse(houseFileName);
+            House = House.CreateHouse(houseFileNameWithoutEnding);
             return RestartGame();
         }
 
@@ -395,19 +406,19 @@ namespace HideAndSeek
         /// <summary>
         /// Save game to file
         /// </summary>
-        /// <param name="fileName">Name of file in which to save game data</param>
+        /// <param name="fileNameWithoutEnding">Name of file (without saved game ending or extension) in which to save game data</param>
         /// <returns>String describing what happened</returns>
         /// <exception cref="ArgumentException">Exception thrown if file name is invalid</exception>
         /// <exception cref="InvalidOperationException">Exception thrown if file already exists</exception>
-        public string SaveGame(string fileName)
+        public string SaveGame(string fileNameWithoutEnding)
         {
-            // Get full file name including extension
-            string fullFileName = FileSystem.GetFullFileNameForJson(fileName);
+            // Get full file name including saved game ending and extension
+            string fullFileName = SavedGame.GetFullSavedGameFileName(fileNameWithoutEnding);
 
             // If file already exists
             if (FileSystem.File.Exists(fullFileName))
             {
-                throw new InvalidOperationException($"Cannot perform action because a file named {fileName} already exists"); // Throw new exception with custom error message
+                throw new InvalidOperationException($"Cannot perform action because a file named {fileNameWithoutEnding} already exists"); // Throw new exception with custom error message
             }
 
             // Create dictionary of Opponents and hiding locations as strings
@@ -425,28 +436,28 @@ namespace HideAndSeek
             // Save game as JSON to file and return success message
             string savedGameAsJSON = JsonSerializer.Serialize(savedGame); // Convert game's state data to JSON
             FileSystem.File.WriteAllText(fullFileName, savedGameAsJSON); // Save game's state data in file
-            return $"Game successfully saved in {fileName}"; // Return success message
+            return $"Game successfully saved in {fileNameWithoutEnding}"; // Return success message
         }
 
         /// <summary>
         /// Load game from file
         /// </summary>
-        /// <param name="fileName">Name of file from which to load game data</param>
+        /// <param name="fileNameWithoutEnding">Name of file (without saved game ending or extension) from which to load game data</param>
         /// <returns>String describing what happened</returns>
         /// <exception cref="ArgumentException">Exception thrown if file name or value in file is invalid</exception>
         /// <exception cref="JsonException">Exception thrown if JSON formatting issue</exception>
         /// <exception cref="InvalidOperationException">Exception thrown if invalid operation attempted</exception>
         /// <exception cref="FileNotFoundException">Exception thrown if saved game file not found</exception>
         /// <exception cref="NullReferenceException">Exception thrown if a reference is null</exception>
-        public string LoadGame(string fileName)
+        public string LoadGame(string fileNameWithoutEnding)
         {
-            // Get full file name including extension
-            string fullFileName = FileSystem.GetFullFileNameForJson(fileName);
+            // Get full file name including saved game ending and extension
+            string fullFileName = SavedGame.GetFullSavedGameFileName(fileNameWithoutEnding);
 
             // If file does not exist
-            if( !(FileSystem.File.Exists(fullFileName)) )
+            if ( !(FileSystem.File.Exists(fullFileName)) )
             {
-                throw new FileNotFoundException($"Cannot load game because file {fileName} does not exist"); // Throw exception with custom message
+                throw new FileNotFoundException($"Cannot load game because file {fileNameWithoutEnding} does not exist"); // Throw exception with custom message
             }
 
             // Read text from file
@@ -497,7 +508,7 @@ namespace HideAndSeek
             LoadGame(savedGame);
 
             // Return success message
-            return $"Game successfully loaded from {fileName}";
+            return $"Game successfully loaded from {fileNameWithoutEnding}";
         }
 
         /// <summary>
@@ -546,26 +557,26 @@ namespace HideAndSeek
         /// <summary>
         /// Delete game file
         /// </summary>
-        /// <param name="fileName">Name of file to delete</param>
+        /// <param name="fileNameWithoutEnding">Name of file to delete without saved game ending or extension</param>
         /// <returns>String describing what happened</returns>
         /// <exception cref="ArgumentException">Exception thrown if file name is invalid</exception>
         /// <exception cref="FileNotFoundException">Exception thrown if file not found</exception>
-        public string DeleteGame(string fileName)
+        public string DeleteGame(string fileNameWithoutEnding)
         {
-            // Get full file name including extension
-            string fullFileName = FileSystem.GetFullFileNameForJson(fileName);
+            // Get full file name including saved game ending and extension
+            string fullFileName = SavedGame.GetFullSavedGameFileName(fileNameWithoutEnding);
 
             // If file does not exist
             if ( !(FileSystem.File.Exists(fullFileName)) )
             {
-                throw new FileNotFoundException($"Could not delete game because file {fileName} does not exist"); // Throw new exception with custom error message
+                throw new FileNotFoundException($"Could not delete game because file {fileNameWithoutEnding} does not exist"); // Throw new exception with custom error message
             }
 
             // Delete file
             FileSystem.File.Delete(fullFileName);
 
             // Return success message
-            return $"Game file {fileName} has been successfully deleted";
+            return $"Game file {fileNameWithoutEnding} has been successfully deleted";
         }
     }
 }

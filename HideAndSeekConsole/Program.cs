@@ -1,4 +1,6 @@
-﻿using System.Text.RegularExpressions;
+﻿using System.IO.Abstractions;
+using System.Reflection;
+using System.Text.RegularExpressions;
 using System.Xml.Linq;
 
 namespace HideAndSeek
@@ -19,10 +21,12 @@ namespace HideAndSeek
 
     /** CHANGES
      * -I added instructions to be printed for the user when they launch the program.
+     * -I allow the user to select the number or names of opponents.
      * -I used the RestartGame method I added to GameController so
      *  GameController only has to be created once.
-     * -I allow the user to select the number or names of opponents.
-     * -I allow the user to enter a House layout name or use the default House layout.
+     * -I display available House layouts and allow the user to enter a House layout name 
+     *  or use the default House layout.
+     * -I display available SavedGame file names.
      * -I moved the ParseInput method to this class.
      * -I added comments to make the code more readable.
      * -I made code conform to my formatting.
@@ -49,14 +53,14 @@ namespace HideAndSeek
             while (true)
             {
                 // Welcome user to the House
-                PrintWelcomeToHouse();
+                Console.WriteLine(GetWelcomeToHouse());
 
                 // Until game is over
                 while ( !(gameController.GameOver) )
                 {
                     Console.WriteLine(gameController.Status); // Print game status
                     Console.Write(gameController.Prompt); // Print game prompt
-                    Console.WriteLine( ParseInput( Console.ReadLine()) ); // Get user input, parse input, and print message
+                    Console.WriteLine( RemoveParamText(ParseInput(Console.ReadLine())) ); // Get user input, parse input, and print message
                     Console.WriteLine(); // Print empty line to put space between moves
                 }
 
@@ -77,11 +81,11 @@ namespace HideAndSeek
         }
 
         /// <summary>
-        /// Helper method to welcome user to the House
+        /// Helper method to return welcome to house message
         /// </summary>
-        private static void PrintWelcomeToHouse()
+        private static string GetWelcomeToHouse()
         {
-            Console.WriteLine($"Welcome to {gameController.House.Name}!");
+            return $"Welcome to {gameController.House.Name}!";
         }
 
         /// <summary>
@@ -99,6 +103,23 @@ namespace HideAndSeek
             Console.WriteLine("-To LOAD a saved game, enter \"load\" followed by a space and the name of your game.");
             Console.WriteLine("-To DELETE a saved game, enter \"delete\" followed by a space and the name of your game.");
             Console.WriteLine("-To start a NEW custom game, enter \"new\" and follow the prompts.");
+        }
+        
+        /// <summary>
+        /// Remove parameter text in error messages
+        /// </summary>
+        /// <param name="text">Text to remove parameter text from</param>
+        /// <returns>Text without parameter text</returns>
+        private static string RemoveParamText(string text)
+        {
+            int indexOfParam = text.IndexOf("(Param");
+            if(indexOfParam == -1)
+            {
+                return text;
+            }
+
+            // Remove parameter text
+            return text.Substring(0, indexOfParam - 1);
         }
 
         /// <summary>
@@ -130,10 +151,46 @@ namespace HideAndSeek
             {
                 return gameController.Teleport(); // Teleport and return message
             }
-            else if ( // If input requests save, load, or delete game
-                lowercaseCommand == "save" ||
-                lowercaseCommand == "load" ||
-                lowercaseCommand == "delete")
+            else if(lowercaseCommand == "load" || lowercaseCommand == "delete") // If input requests load or delete
+            {
+                // Declare a variable to store file name
+                string fileName;
+
+                // Print a space
+                Console.WriteLine();
+
+                // Get index of first space in input (space after command and before name of file)
+                int indexOfSpace = input.IndexOf(' ');
+
+                try
+                {
+                    // If input includes a space
+                    if (indexOfSpace != -1)
+                    {
+                        fileName = input.Substring(indexOfSpace + 1); // Extract file name
+                    }
+                    else // If input does not include a space
+                    {
+                        fileName = DisplayListOfSavedGamesAndGetInput(lowercaseCommand); // Display list of saved game files and get input for file name
+                    }
+
+                    // Perform requested action and return message
+                    if (lowercaseCommand == "load") // If user wants to load game
+                    {
+                        Console.WriteLine(gameController.LoadGame(fileName)); // Load game and print return message
+                        return GetWelcomeToHouse(); // Return welcome
+                    }
+                    else // If user wants to delete game
+                    {
+                        return gameController.DeleteGame(fileName); // Delete game and return message
+                    }
+                }
+                catch (Exception e)
+                {
+                    return e.Message; // Return error message
+                }
+            }
+            else if (lowercaseCommand == "save") // If input requests save current game
             {
                 // Get index of first space in input (space after command and before name of file)
                 int indexOfSpace = input.IndexOf(' ');
@@ -148,19 +205,10 @@ namespace HideAndSeek
                     // Extract file name
                     string fileName = input.Substring(indexOfSpace + 1);
 
-                    // Perform requested action and return message
+                    // Save game and return message
                     try
                     {
-                        switch (lowercaseCommand)
-                        {
-                            case "save":
-                                return gameController.SaveGame(fileName);
-                            case "load":
-                                PrintWelcomeToHouse(); // Welcome user to the House
-                                return gameController.LoadGame(fileName);
-                            default:
-                                return gameController.DeleteGame(fileName);
-                        }
+                        return gameController.SaveGame(fileName);
                     }
                     catch (Exception e)
                     {
@@ -168,24 +216,54 @@ namespace HideAndSeek
                     }
                 }
             }
-            else if(lowercaseCommand == "new") // If input requests start new custom game
+            else if (lowercaseCommand == "new") // If input requests start new custom game
             {
                 Console.WriteLine(); // Add an empty line
                 gameController = GetGameControllerForCustomGame(); // Set game controller to game controller for new custom game                            
-                PrintWelcomeToHouse(); // Welcome user to the House
-                return "New game started";
+                Console.WriteLine("New game started"); // Inform user that new game has been started
+                return GetWelcomeToHouse(); // Return welcome to House
             }
             else // Try to move in specified Direction
             {
                 try
                 {
-                    return gameController.Move( DirectionExtensions.Parse(lowercaseCommand) );
+                    return gameController.Move(DirectionExtensions.Parse(lowercaseCommand));
                 }
                 catch (Exception e)
                 {
                     return e.Message;
                 }
             }
+        }
+
+        /// <summary>
+        /// Helper method to display list of names of saved game files
+        /// and get user input for name of file
+        /// </summary>
+        /// <param name="command">Description of action to be performed with file</param>
+        /// <returns>User input for name of file</returns>
+        /// <exception cref="InvalidOperationException">Exception thrown if no saved game files found</exception>
+        private static string DisplayListOfSavedGamesAndGetInput(string command)
+        {
+            // Get list of names of SavedGame files available
+            IEnumerable<string> allSavedGameFileNames = SavedGame.GetSavedGameFileNames();
+
+            // If no SavedGame files available
+            if (allSavedGameFileNames.Count() == 0)
+            {
+                throw new InvalidOperationException($"Cannot perform action because no saved game files are available"); // Throw exception
+            }
+
+            // Display list of names of SavedGame files available
+            Console.WriteLine("Here are the names of the saved game files available:");
+            foreach (string savedGameFileName in allSavedGameFileNames)
+            {
+                Console.WriteLine($" - {savedGameFileName}"); // Print name of each SavedGame file
+            }
+
+            // Get name of SavedGame file to load from user
+            Console.Write($"Enter the name of the saved game file to {command}: "); // Prompt
+            return Console.ReadLine().Trim(); // Set file name to trimmed user input
         }
 
         /// <summary>
@@ -251,6 +329,13 @@ namespace HideAndSeek
 
             do
             {
+                // Display list of names of House layout files available
+                Console.WriteLine("Here are the names of the house layout files available:");
+                foreach(string fileName in House.GetHouseFileNames())
+                {
+                    Console.WriteLine($" - {fileName}"); // Print name of each House layout file
+                }
+
                 // Get House file name from user
                 Console.Write("Type a house layout file name or just press Enter to use the default house layout: "); // Prompt for House layout file name
                 string houseLayoutFileName = Console.ReadLine(); // Get user input for file name

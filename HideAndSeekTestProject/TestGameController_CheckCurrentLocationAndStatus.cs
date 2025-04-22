@@ -164,7 +164,7 @@ namespace HideAndSeek
         {
             // Set static House file system to mock file system (not changed in any tests)
             House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
-                "DefaultHouse.json", DefaultHouse_Serialized);
+                "DefaultHouse.house.json", DefaultHouse_Serialized);
 
             // Set static House Random number generator property to mock random number generator
             House.Random = new MockRandomWithValueList([

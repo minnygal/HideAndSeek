@@ -23,10 +23,17 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("FileExtensions GetFullFileNameForJson Success")]
-        public void Test_FileExtensions_GetFullFileNameForJson_WithValidFileName()
+        [Category("FileExtensions GetFullFileNameForJson ExtensionMethod Success")]
+        public void Test_FileExtensions_GetFullFileNameForJson_ExtensionMethod_WithValidFileName()
         {
             Assert.That(fileSystem.GetFullFileNameForJson("myFile"), Is.EqualTo("myFile.json"));
+        }
+
+        [Test]
+        [Category("FileExtensions GetFullFileNameForJson ClassMethod Success")]
+        public void Test_FileExtensions_GetFullFileNameForJson_ClassMethod_WithValidFileName()
+        {
+            Assert.That(FileExtensions.GetFullFileNameForJson("myFile"), Is.EqualTo("myFile.json"));
         }
 
         [TestCase("")]
@@ -42,8 +49,8 @@ namespace HideAndSeek
         [TestCase("/myFile")]
         [TestCase("myFile/")]
         [TestCase("my/File")]
-        [Category("FileExtensions GetFullFileNameForJson ArgumentException Failure")]
-        public void Test_FileExtensions_GetFullFileNameForJson_AndCheckErrorMessage_ForInvalidFileName(string fileName)
+        [Category("FileExtensions GetFullFileNameForJson ExtensionMethod ArgumentException Failure")]
+        public void Test_FileExtensions_GetFullFileNameForJson_ExtensionMethod_AndCheckErrorMessage_ForInvalidFileName(string fileName)
         {
             Assert.Multiple(() =>
             {
@@ -58,12 +65,49 @@ namespace HideAndSeek
             });
         }
 
+        [TestCase("")]
+        [TestCase(" ")]
+        [TestCase("my file")]
+        [TestCase(" myFile")]
+        [TestCase("myFile ")]
+        [TestCase("\\")]
+        [TestCase("\\myFile")]
+        [TestCase("myFile\\")]
+        [TestCase("my\\File")]
+        [TestCase("/")]
+        [TestCase("/myFile")]
+        [TestCase("myFile/")]
+        [TestCase("my/File")]
+        [Category("FileExtensions GetFullFileNameForJson ClassMethod ArgumentException Failure")]
+        public void Test_FileExtensions_GetFullFileNameForJson_ClassMethod_AndCheckErrorMessage_ForInvalidFileName(string fileName)
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that getting full file name with invalid file name raises exception
+                var exception = Assert.Throws<ArgumentException>(() =>
+                {
+                    FileExtensions.GetFullFileNameForJson(fileName);
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith($"Cannot perform action because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+            });
+        }
+
         [TestCase("myFile")]
         [TestCase("123")]
-        [Category("FileExtensions IsValidName Success")]
-        public void Test_FileExtensions_IsValidName_ReturnsTrue(string fileName)
+        [Category("FileExtensions IsValidName ExtensionMethod Success")]
+        public void Test_FileExtensions_IsValidName_ExtensionMethod_ReturnsTrue(string fileName)
         {
             Assert.That(fileSystem.IsValidName(fileName), Is.True);
+        }
+
+        [TestCase("myFile")]
+        [TestCase("123")]
+        [Category("FileExtensions IsValidName ClassMethod Success")]
+        public void Test_FileExtensions_IsValidName_ClassMethod_ReturnsTrue(string fileName)
+        {
+            Assert.That(FileExtensions.IsValidName(fileName), Is.True);
         }
 
         [TestCase("")]
@@ -79,10 +123,29 @@ namespace HideAndSeek
         [TestCase("/myFile")]
         [TestCase("myFile/")]
         [TestCase("my/File")]
-        [Category("FileExtensions IsValidName Failure")]
-        public void Test_FileExtensions_IsValidName_ReturnsFalse(string fileName)
+        [Category("FileExtensions IsValidName ExtensionMethod Failure")]
+        public void Test_FileExtensions_IsValidName_ExtensionMethod_ReturnsFalse(string fileName)
         {
             Assert.That(fileSystem.IsValidName(fileName), Is.False);
+        }
+
+        [TestCase("")]
+        [TestCase(" ")]
+        [TestCase("my file")]
+        [TestCase(" myFile")]
+        [TestCase("myFile ")]
+        [TestCase("\\")]
+        [TestCase("\\myFile")]
+        [TestCase("myFile\\")]
+        [TestCase("my\\File")]
+        [TestCase("/")]
+        [TestCase("/myFile")]
+        [TestCase("myFile/")]
+        [TestCase("my/File")]
+        [Category("FileExtensions IsValidName ClassMethod Failure")]
+        public void Test_FileExtensions_IsValidName_ClassMethod__ReturnsFalse(string fileName)
+        {
+            Assert.That(FileExtensions.IsValidName(fileName), Is.False);
         }
     }
 }

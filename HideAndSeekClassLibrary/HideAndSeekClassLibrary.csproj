@@ -13,11 +13,11 @@
   </ItemGroup>
 
   <ItemGroup>
-    <None Update="DefaultHouse.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Update="DefaultHouse.house.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
-    <None Update="FriendHouse.json">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    <None Update="FriendHouse.house.json">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
     </None>
   </ItemGroup>
 

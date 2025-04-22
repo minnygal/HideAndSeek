@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
 using System.IO.Abstractions;
 using System.Linq;
+using System.Reflection;
 using System.Text;
 using System.Text.Json;
 using System.Text.Json.Serialization;
@@ -40,6 +41,64 @@ namespace HideAndSeek
 
     public class SavedGame
     {
+        /// <summary>
+        /// File system to use when getting names of SavedGame files
+        /// (should only be changed for testing purposes)
+        /// </summary>
+        public static IFileSystem FileSystem { get; set; } = new FileSystem();
+
+        /// <summary>
+        /// Ending text for SavedGame file
+        /// </summary>
+        public static string SavedGameFileEnding
+        {
+            get
+            {
+                return ".game";
+            }
+        }
+
+        /// <summary>
+        /// Get full file name for a saved game file
+        /// </summary>
+        /// <param name="fileNameWithoutEnding">Name of saved game file without ending</param>
+        /// <returns>Name of saved game file with ending and extension</returns>
+        /// <exception cref="ArgumentException">Exception thrown if file name is invalid</exception>
+        public static string GetFullSavedGameFileName(string fileNameWithoutEnding)
+        {
+            // If file name without ending is invalid
+            if ( !(FileExtensions.IsValidName(fileNameWithoutEnding)) )
+            {
+                throw new ArgumentException($"Cannot perform action because file name \"{fileNameWithoutEnding}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)", nameof(fileNameWithoutEnding)); // Throw new exception with custom error message
+            }
+
+            // Return full file name including ending and extension
+            return FileExtensions.GetFullFileNameForJson(fileNameWithoutEnding + SavedGameFileEnding);
+        }
+
+        /// <summary>
+        /// Get names of all saved game files in directory (without saved game file ending or extension)
+        /// </summary>
+        /// <param name="directoryFullName">Full name of directory</param>
+        /// <returns>Enumerable of saved game file names (without saved game file ending or extension)</returns>
+        public static IEnumerable<string> GetSavedGameFileNames(string directoryFullName = null)
+        {
+            // If directory name has not been set
+            if (directoryFullName == null)
+            {
+                directoryFullName = FileSystem.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location); // Set to current directory
+            }
+
+            // Return names of saved game files (without saved game file ending or extension) in directory
+            return FileSystem.Directory.GetFiles(directoryFullName)
+                .Where((n) => n.EndsWith($"{SavedGameFileEnding}{FileExtensions.JsonFileExtension}"))
+                .Select((n) =>
+                {
+                    string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(n); // Get file name without extension
+                    return fileNameWithoutExtension.Substring(0, fileNameWithoutExtension.Length - SavedGameFileEnding.Length); // Return file name without saved game file ending or extension
+                });
+        }
+
         private House _house;
 
         /// <summary>
