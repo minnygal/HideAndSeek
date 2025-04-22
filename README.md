@@ -1,4 +1,4 @@
-# Hide And Seek Game Console App Version 4.2.0
+# Hide And Seek Game Console App Version 4.3.0
 
 
 ## Table of Contents
@@ -22,7 +22,9 @@
 	- [Set house layout](#usage-new-house)
   - [Save game](#usage-save)
   - [Load game](#usage-load)
+    - [View list of saved games](#usage-load-list)
   - [Delete game](#usage-delete)
+    - [View list of saved games](#usage-delete-list)
 - [Support](#support)
 - [Roadmap](#roadmap)
 - [Contributing](#contributing)
@@ -40,8 +42,8 @@ The Hide and Seek Game Console app allows a user (playing the role of the seeker
 
 <a name="whats-new"></a>
 ## What's new
-- Attempting to move in a direction in which there is no exit does not increment the move number.
-- Attempting to check a location in which there is no hiding place does not increment the move number.
+- A list of available house layout files is displayed when the user is prompted to enter a house layout file name.
+- A list of saved game files is displayed when the user enters the load or delete command not followed by a file name.
 
 
 
@@ -222,17 +224,20 @@ How many opponents would you like?  Enter a number between 1 and 10, or a comma-
 
 <a name="usage-new-house"></a>
 #### Set house layout
-At the beginning of a new game, after you enter the number or names of opponents, you will see a prompt to type a house layout name or just press enter.  **To use the default house layout, don't type anything** and press the Enter key on your keyboard.
+After you enter the number or names of opponents, you will see a list of available house layout files followed by a prompt to type a house layout name or just press enter.  **To use the default house layout, don't type anything** and press the Enter key on your keyboard.
 
-If you want **to use a specific house layout (contained in the application folder), type the name of the file** (without the .json file extension) and press the Enter key on your keyboard.  For example, to use the built-in FriendHouse layout:
+**To use a specific house layout, type the name of the file** (as written in the list) and press the Enter key on your keyboard.  For example, to use the built-in FriendHouse layout:
 ```
+Here are the names of the house layout files available:
+ - DefaultHouse
+ - FriendHouse
 Type a house layout file name or just press Enter to use the default house layout: FriendHouse
 ```
 
 If the house layout was loaded successfully, you will see a greeting and a game play prompt such as:
 ```
-Welcome to your friend's house!
 New game started
+Welcome to your friend's house!
 
 You are in the Landing. You see the following exit:
  - the Hallway is to the North
@@ -274,7 +279,7 @@ If the game was not saved successfully, try again with a valid file name not cur
 <a name="usage-load"></a>
 ### Load game*
 
-**You may load a saved game** when the app first opens or anytime before the current game ends **using the ```load``` command followed by a space and the name of the game to load.**  (*Careful because you will lose your progress in your current game after successfully running the load command!*) 
+**You may load a saved game using the ```load``` command followed by a space and the name of the game to load.**  (*Careful because you will lose your progress in your current game after successfully running the load command!*) 
 
 For example, if you are playing a game but would rather play a previously saved game called MyGameName instead:
 ```
@@ -301,10 +306,24 @@ If the game was not successfully loaded because the saved game file or the house
 If the game was not loaded successfully, try again with the name of an existing, non-corrupt saved game or keep playing the current game - no harm done.
 
 
+<a name="usage-load-list"></a>
+#### View list of saved games
+To **view the list of saved games and then enter the name of the saved game to load, enter the ```load``` command alone.**  You'll see something like this:
+
+```
+1: Which direction do you want to go: load
+
+Here are the names of the saved game files available:
+ - MyFirstGame
+ - AnotherCoolGame
+Enter the name of the saved game file to load:
+```
+
+
 <a name="usage-delete"></a>
 ### Delete game*
 
-**You may delete a saved game** anytime before the current game ends **using the ```delete``` command followed by a space and the name of the game to delete.**  (*Careful because this is a permanent, irreversible action!*)  This does not count as a move or affect your current game in any way.
+**You may delete a saved game using the ```delete``` command followed by a space and the name of the game to delete.**  (*Careful because this is a permanent, irreversible action!*)  This does not count as a move or affect your current game in any way.
 
 For example, if you want to delete a game previously saved as MyGameName:
 ```
@@ -324,6 +343,20 @@ Could not delete game because file MyGameName does not exist
 If the game was not deleted successfully, try again with the name of an existing saved game or keep playing the current game - no harm done.
 
 
+<a name="usage-delete-list"></a>
+#### View list of saved games
+To **view the list of saved games and then enter the name of the saved game to delete, enter the ```delete``` command alone.**  You'll see something like this:
+
+```
+1: Which direction do you want to go: delete
+
+Here are the names of the saved game files available:
+ - MyFirstGame
+ - AnotherCoolGame
+Enter the name of the saved game file to delete:
+```
+
+
 <a name="support"></a>
 ## Support
 
@@ -333,15 +366,6 @@ Please message me via the [contact form here](https://minnystuff.com/contact/) w
 
 <a name="roadmap"></a>
 ## Roadmap
-
-### Version 4.3 - list saved games and houses
-- Make GameController method to list saved games.
-- Display list of saved games when exception caught when user tries to load a saved game.
-- Display list of available saved games on command.
-- Make GameController method to list house layouts.
-- Display list of house layouts when exception caught when user tries to load a house layout.
-- Display list of available house layouts on command.
-
 
 ### Version 5.0 - location tracking, saved game list
 - Add a feature for tracking the places the user has already checked during the current game.  The user can request this list at any point during the game.  (Should viewing the list count as a move?)  The list will be saved/restored when a game is saved/restored.

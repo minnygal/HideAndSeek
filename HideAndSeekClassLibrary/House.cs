@@ -4,6 +4,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.IO.Abstractions;
 using System.Linq;
 using System.Linq.Expressions;
+using System.Reflection;
 using System.Runtime.ExceptionServices;
 using System.Security.Cryptography;
 using System.Text;
@@ -92,6 +93,29 @@ namespace HideAndSeek
 
             // Return full file name including ending and extension
             return FileSystem.GetFullFileNameForJson(fileNameWithoutEnding + HouseFileEnding);
+        }
+
+        /// <summary>
+        /// Get names of all house layout files in directory (without house file ending or extension)
+        /// </summary>
+        /// <param name="directoryFullName">Full name of directory</param>
+        /// <returns>Enumerable of house layout file names (without House file ending or extension)</returns>
+        public static IEnumerable<string> GetHouseFileNames(string directoryFullName = null)
+        {
+            // If directory name has not been set
+            if (directoryFullName == null)
+            {
+                directoryFullName = FileSystem.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location); // Set to current directory
+            }
+
+            // Return names of House layout files (without House file ending or extension) in directory
+            return FileSystem.Directory.GetFiles(directoryFullName)
+                    .Where((n) => n.EndsWith($"{HouseFileEnding}{FileExtensions.JsonFileExtension}"))
+                    .Select((n) =>
+                    {
+                        string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(n); // Get file name without extension
+                        return fileNameWithoutExtension.Substring(0, fileNameWithoutExtension.Length - HouseFileEnding.Length); // Return file name without house file ending or extension
+                    });
         }
 
         /// <summary>
