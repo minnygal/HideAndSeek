@@ -464,7 +464,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="name">Name of Location</param>
         /// <returns>True if Location exists</returns>
-        public bool DoesLocationExist(string name)
+        public virtual bool DoesLocationExist(string name)
         {
             return Locations.Select((l) => l.Name).ToList().Contains(name);
         }
@@ -474,7 +474,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="name">Name of LocationWithHidingPlace</param>
         /// <returns>True if LocationWithHidingPlace exists</returns>
-        public bool DoesLocationWithHidingPlaceExist(string name)
+        public virtual bool DoesLocationWithHidingPlaceExist(string name)
         {
             return LocationsWithHidingPlaces.Select((l) => l.Name).ToList().Contains(name);
         }

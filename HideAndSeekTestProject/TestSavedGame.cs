@@ -142,16 +142,17 @@ namespace HideAndSeek
         [Category("SavedGame Constructor Success")]
         public void Test_SavedGame_Constructor_WithHouse_AndHouseFileName()
         {
-            // Create new House
-            House house = GetDefaultHouse();
+            Mock<House> houseMock = new Mock<House>();
+            houseMock.Setup((h) => h.DoesLocationExist(It.IsAny<string>())).Returns(true); // Set up mock to return true for any location
+            houseMock.Setup((h) => h.DoesLocationWithHidingPlaceExist(It.IsAny<string>())).Returns(true); // Set up mock to return true for any location
 
             // Create SavedGame using parameterized constructor
-            savedGame = new SavedGame(house, "TestHouse", "Entry", 1, opponentsAndHidingPlaces, new List<string>());
+            savedGame = new SavedGame(houseMock.Object, "TestHouse", "Entry", 1, opponentsAndHidingPlaces, new List<string>());
 
             // Assert that SavedGame properties are as expected
             Assert.Multiple(() =>
             {
-                Assert.That(savedGame.House, Is.SameAs(house), "House object is same");
+                Assert.That(savedGame.House, Is.SameAs(houseMock.Object), "House object is same");
                 Assert.That(savedGame.HouseFileName, Is.EqualTo("TestHouse"), "House file name");
                 Assert.That(savedGame.PlayerLocation, Is.EqualTo("Entry"), "player location");
                 Assert.That(savedGame.MoveNumber, Is.EqualTo(1), "move number");
