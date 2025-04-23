@@ -142,17 +142,15 @@ namespace HideAndSeek
         [Category("SavedGame Constructor Success")]
         public void Test_SavedGame_Constructor_WithHouse_AndHouseFileName()
         {
-            Mock<House> houseMock = new Mock<House>();
-            houseMock.Setup((h) => h.DoesLocationExist(It.IsAny<string>())).Returns(true); // Set up mock to return true for any location
-            houseMock.Setup((h) => h.DoesLocationWithHidingPlaceExist(It.IsAny<string>())).Returns(true); // Set up mock to return true for any location
+            House house = GetMockedHouse(); // Get mocked House
 
             // Create SavedGame using parameterized constructor
-            savedGame = new SavedGame(houseMock.Object, "TestHouse", "Entry", 1, opponentsAndHidingPlaces, new List<string>());
+            savedGame = new SavedGame(house, "TestHouse", "Entry", 1, opponentsAndHidingPlaces, new List<string>());
 
             // Assert that SavedGame properties are as expected
             Assert.Multiple(() =>
             {
-                Assert.That(savedGame.House, Is.SameAs(houseMock.Object), "House object is same");
+                Assert.That(savedGame.House, Is.SameAs(house), "House object is same");
                 Assert.That(savedGame.HouseFileName, Is.EqualTo("TestHouse"), "House file name");
                 Assert.That(savedGame.PlayerLocation, Is.EqualTo("Entry"), "player location");
                 Assert.That(savedGame.MoveNumber, Is.EqualTo(1), "move number");
@@ -183,7 +181,7 @@ namespace HideAndSeek
                 // Assert that creating a SavedGame object with an invalid file name raises an exception
                 var exception = Assert.Throws<ArgumentException>(() =>
                 {
-                    savedGame = new SavedGame(GetDefaultHouse(), fileName, "Entry", 1, opponentsAndHidingPlaces, new List<string>());
+                    savedGame = new SavedGame(GetMockedHouse(), fileName, "Entry", 1, opponentsAndHidingPlaces, new List<string>());
                 });
 
                 // Assert that exception message is as expected
@@ -197,7 +195,7 @@ namespace HideAndSeek
         public void Test_SavedGame_Set_House_AndCheckErrorMessage_ForAlreadyHasValue()
         {
             // Create new SavedGame (giving House property's backing field a value)
-            savedGame = new SavedGame(GetDefaultHouse(), "DefaultHouse", "Entry", 1, opponentsAndHidingPlaces, new List<string>()); ;
+            savedGame = new SavedGame(GetMockedHouse(), "DefaultHouse", "Entry", 1, opponentsAndHidingPlaces, new List<string>()); ;
 
             Assert.Multiple(() =>
             {
@@ -217,7 +215,7 @@ namespace HideAndSeek
         public void Test_SavedGame_Set_HouseFileName_AndCheckErrorMessage_ForAlreadyHasValue()
         {
             // Create new SavedGame (giving HouseFileName property's backing field a value)
-            savedGame = new SavedGame(GetDefaultHouse(), "DefaultHouse", "Entry", 1, opponentsAndHidingPlaces, new List<string>()); ;
+            savedGame = new SavedGame(GetMockedHouse(), "DefaultHouse", "Entry", 1, opponentsAndHidingPlaces, new List<string>()); ;
 
             Assert.Multiple(() =>
             {
@@ -237,7 +235,7 @@ namespace HideAndSeek
         public void Test_SavedGame_Set_PlayerLocation()
         {
             // Create SavedGame object with initial valid player location
-            savedGame = new SavedGame(GetDefaultHouse(), "TestHouse", "Entry", 1, opponentsAndHidingPlaces, new List<string>());
+            savedGame = new SavedGame(GetMockedHouse(), "TestHouse", "Entry", 1, opponentsAndHidingPlaces, new List<string>());
 
             Assert.Multiple(() =>
             {
@@ -255,12 +253,16 @@ namespace HideAndSeek
         [Category("SavedGame PlayerLocation InvalidOperationException Failure")]
         public void Test_SavedGame_Set_PlayerLocation_AndCheckErrorMessage_ForInvalidValue()
         {
+            Mock<House> houseMock = new Mock<House>();
+            houseMock.Setup((h) => h.DoesLocationWithHidingPlaceExist(It.IsAny<string>())).Returns(true);
+            houseMock.Setup((h) => h.DoesLocationExist("Alaska")).Returns(false);
+
             Assert.Multiple(() =>
             {
                 // Assert that creating a SavedGame object with invalid player location raises an exception
                 var exception = Assert.Throws<InvalidOperationException>(() =>
                 {
-                    savedGame = new SavedGame(GetDefaultHouse(), "TestHouse", "Alaska", 1, opponentsAndHidingPlaces, new List<string>());
+                    savedGame = new SavedGame(houseMock.Object, "TestHouse", "Alaska", 1, opponentsAndHidingPlaces, new List<string>());
                 });
 
                 // Assert that exception message is as expected
@@ -273,7 +275,7 @@ namespace HideAndSeek
         public void Test_SavedGame_Set_MoveNumber()
         {
             // Create SavedGame object with valid move number
-            savedGame = new SavedGame(GetDefaultHouse(), "TestHouse", "Entry", 1, opponentsAndHidingPlaces, new List<string>());
+            savedGame = new SavedGame(GetMockedHouse(), "TestHouse", "Entry", 1, opponentsAndHidingPlaces, new List<string>());
 
             Assert.Multiple(() =>
             {
@@ -297,7 +299,7 @@ namespace HideAndSeek
                 // Assert that creating a SavedGame object with invalid move number raises an exception
                 var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
                 {
-                    savedGame = new SavedGame(GetDefaultHouse(), "TestHouse", "Entry", moveNumber, opponentsAndHidingPlaces, new List<string>());
+                    savedGame = new SavedGame(GetMockedHouse(), "TestHouse", "Entry", moveNumber, opponentsAndHidingPlaces, new List<string>());
                 });
 
                 // Assert that exception message is as expected
@@ -326,7 +328,7 @@ namespace HideAndSeek
             changedOpponentsAndHidingPlaces.Add("Jimmy", "Attic");
 
             // Create SavedGame object with valid opponents and initial hiding places dictionary
-            savedGame = new SavedGame(GetDefaultHouse(), "TestHouse", "Entry", 1, initialOpponentsAndHidingPlaces, new List<string>());
+            savedGame = new SavedGame(GetMockedHouse(), "TestHouse", "Entry", 1, initialOpponentsAndHidingPlaces, new List<string>());
 
             Assert.Multiple(() =>
             {
@@ -348,7 +350,7 @@ namespace HideAndSeek
                 // Assert that creating a SavedGame object with empty dictionary for OpponentsAndHidingLocations raises an exception
                 var exception = Assert.Throws<ArgumentException>(() =>
                 {
-                    savedGame = new SavedGame(GetDefaultHouse(), "TestHouse", "Entry", 1, 
+                    savedGame = new SavedGame(GetMockedHouse(), "TestHouse", "Entry", 1, 
                                               new Dictionary<string, string>(), new List<string>());
                 });
 
@@ -367,6 +369,11 @@ namespace HideAndSeek
         public void Test_SavedGame_Set_OpponentsAndHidingPlaces_AndCheckErrorMessage_ForNonexistentLocation
             (string location1, string location2, string location3, string location4, string location5)
         {
+            Mock<House> houseMock = new Mock<House>();
+            houseMock.Setup((h) => h.DoesLocationExist(It.IsAny<string>())).Returns(true);
+            houseMock.Setup((h) => h.DoesLocationWithHidingPlaceExist(It.IsAny<string>())).Returns(true);
+            houseMock.Setup((h) => h.DoesLocationWithHidingPlaceExist("Dungeon")).Returns(false);
+
             // Create dictionary of opponents with at least one with an invalid hiding place (nonexistent location)
             Dictionary<string, string> invalidOpponentsAndHidingPlaces = new Dictionary<string, string>();
             invalidOpponentsAndHidingPlaces.Add("Joe", location1);
@@ -380,7 +387,7 @@ namespace HideAndSeek
                 // Assert that creating a SavedGame object with nonexistent (invalid) opponent hiding place/s raises an exception
                 var exception = Assert.Throws<InvalidOperationException>(() =>
                 {
-                    savedGame = new SavedGame(GetDefaultHouse(), "TestHouse", "Entry", 1, invalidOpponentsAndHidingPlaces, new List<string>());
+                    savedGame = new SavedGame(houseMock.Object, "TestHouse", "Entry", 1, invalidOpponentsAndHidingPlaces, new List<string>());
                 });
 
                 // Assert that exception message is as expected
@@ -392,6 +399,10 @@ namespace HideAndSeek
         [Category("SavedGame OpponentsAndHidingLocations InvalidOperationException Failure")]
         public void Test_SavedGame_Set_OpponentsAndHidingPlaces_AndCheckErrorMessage_ForLocationWithoutHidingPlace()
         {
+            Mock<House> houseMock = new Mock<House>();
+            houseMock.Setup((h) => h.DoesLocationExist(It.IsAny<string>())).Returns(true);
+            houseMock.Setup((h) => h.DoesLocationWithHidingPlaceExist("Entry")).Returns(false);
+
             // Create dictionary of opponents with invalid hiding places (locations without hiding places)
             Dictionary<string, string> invalidOpponentsAndHidingPlaces = new Dictionary<string, string>();
             invalidOpponentsAndHidingPlaces.Add("Joe", "Entry");
@@ -405,7 +416,7 @@ namespace HideAndSeek
                 // Assert that creating a SavedGame object with opponent hiding locations that don't have hiding places raises an exception
                 var exception = Assert.Throws<InvalidOperationException>(() =>
                 {
-                    savedGame = new SavedGame(GetDefaultHouse(), "TestHouse", "Entry", 1, invalidOpponentsAndHidingPlaces, new List<string>());
+                    savedGame = new SavedGame(houseMock.Object, "TestHouse", "Entry", 1, invalidOpponentsAndHidingPlaces, new List<string>());
                 });
 
                 // Assert that exception message is as expected
@@ -418,7 +429,7 @@ namespace HideAndSeek
         public void Test_SavedGame_Set_FoundOpponents_ToEmptyList()
         {
             // Create SavedGame object with valid empty list for FoundOpponents
-            savedGame = new SavedGame(GetDefaultHouse(), "TestHouse", "Entry", 1, opponentsAndHidingPlaces, new List<string>());
+            savedGame = new SavedGame(GetMockedHouse(), "TestHouse", "Entry", 1, opponentsAndHidingPlaces, new List<string>());
 
             Assert.Multiple(() =>
             {
@@ -458,7 +469,7 @@ namespace HideAndSeek
             validOpponentsAndHidingPlaces.Add("Jimmy", "Garage");
 
             // Create SavedGame object with valid found opponents list
-            savedGame = new SavedGame(GetDefaultHouse(), "TestHouse", "Entry", 1, validOpponentsAndHidingPlaces, initialFoundOpponentsAsList);
+            savedGame = new SavedGame(GetMockedHouse(), "TestHouse", "Entry", 1, validOpponentsAndHidingPlaces, initialFoundOpponentsAsList);
 
             Assert.Multiple(() =>
             {
@@ -508,7 +519,7 @@ namespace HideAndSeek
                 // Assert that creating a SavedGame object with nonexistent found opponent raises an exception
                 var exception = Assert.Throws<InvalidOperationException>(() =>
                 {
-                    savedGame = new SavedGame(GetDefaultHouse(), "TestHouse", "Entry", 1, validOpponentsAndHidingPlaces, foundOpponentsAsList);
+                    savedGame = new SavedGame(GetMockedHouse(), "TestHouse", "Entry", 1, validOpponentsAndHidingPlaces, foundOpponentsAsList);
                 });
 
                 // Assert that exception message is as expected
@@ -517,57 +528,16 @@ namespace HideAndSeek
         }
 
         /// <summary>
-        /// Get new House object for testing purposes
+        /// Helper method to get mocked House object
+        /// (DoesLocationExist and DoesLocationWithHidingPlaceExist always return true)
         /// </summary>
-        /// <returns>House object for testing purposes</returns>
-        public static House GetDefaultHouse()
+        /// <returns>Mocked House object</returns>
+        private static House GetMockedHouse()
         {
-            // Create Entry and connect to new locations: Garage, Hallway
-            Location entry = new Location("Entry");
-            LocationWithHidingPlace garage = entry.AddExit(Direction.Out, "Garage", "behind the car");
-            Location hallway = entry.AddExit(Direction.East, "Hallway");
-
-            // Connect Hallway to new locations: Kitchen, Bathroom, Living Room, Landing
-            LocationWithHidingPlace kitchen = hallway.AddExit(Direction.Northwest, "Kitchen", "next to the stove");
-            LocationWithHidingPlace bathroom = hallway.AddExit(Direction.North, "Bathroom", "behind the door");
-            LocationWithHidingPlace livingRoom = hallway.AddExit(Direction.South, "Living Room", "behind the sofa");
-            Location landing = hallway.AddExit(Direction.Up, "Landing");
-
-            // Connect Landing to new locations: Attic, Kids Room, Master Bedroom, Nursery, Pantry, Second Bathroom
-            LocationWithHidingPlace attic = landing.AddExit(Direction.Up, "Attic", "in a trunk");
-            LocationWithHidingPlace kidsRoom = landing.AddExit(Direction.Southeast, "Kids Room", "in the bunk beds");
-            LocationWithHidingPlace masterBedroom = landing.AddExit(Direction.Northwest, "Master Bedroom", "under the bed");
-            LocationWithHidingPlace nursery = landing.AddExit(Direction.Southwest, "Nursery", "behind the changing table");
-            LocationWithHidingPlace pantry = landing.AddExit(Direction.South, "Pantry", "inside a cabinet");
-            LocationWithHidingPlace secondBathroom = landing.AddExit(Direction.West, "Second Bathroom", "in the shower");
-
-            // Connect Master Bedroom to new location: Master Bath
-            LocationWithHidingPlace masterBath = masterBedroom.AddExit(Direction.East, "Master Bath", "in the tub");
-
-            // Create list of Location objects (no hiding places)
-            IEnumerable<Location> locationsWithoutHidingPlaces = new List<Location>()
-            {
-                hallway, landing, entry
-            };
-
-            // Create list of LocationWithHidingPlace objects
-            IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces = new List<LocationWithHidingPlace>()
-            {
-                attic,
-                bathroom,
-                kidsRoom,
-                masterBedroom,
-                nursery,
-                pantry,
-                secondBathroom,
-                kitchen,
-                masterBath,
-                garage,
-                livingRoom
-            };
-
-            // Create and return new House
-            return new House("my house", "DefaultHouse", "Entry", locationsWithoutHidingPlaces, locationsWithHidingPlaces);
+            Mock<House> houseMock = new Mock<House>();
+            houseMock.Setup((h) => h.DoesLocationExist(It.IsAny<string>())).Returns(true); // Set up mock to return true for any location
+            houseMock.Setup((h) => h.DoesLocationWithHidingPlaceExist(It.IsAny<string>())).Returns(true); // Set up mock to return true for any location
+            return houseMock.Object;
         }
     }
 }
