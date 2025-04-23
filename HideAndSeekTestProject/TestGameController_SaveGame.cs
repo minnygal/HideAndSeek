@@ -7,6 +7,7 @@ namespace HideAndSeek
 {
     /// <summary>
     /// GameController tests for SavedGame method to save game to file
+    /// (integration tests using SavedGame, House, Opponent, Location, and LocationWithHidingPlace)
     /// </summary>
     [TestFixture]
     public class TestGameController_SaveGame

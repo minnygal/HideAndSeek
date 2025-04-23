@@ -7,6 +7,7 @@ namespace HideAndSeek
 {
     /// <summary>
     /// GameController tests for RestartGame and RehideAllOpponents methods
+    /// (integration tests using House, Opponent, Location, and LocationWithHidingPlace)
     /// </summary>
     [TestFixture]
     public class TestGameController_RestartRehide

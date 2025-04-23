@@ -8,10 +8,14 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// GameController tests for CheckCurrentLocation method called in default House,
-    /// checking FoundOpponents, Status, CurrentLocation, Move, and GameOver properties along the way; 
-    /// tests for Status singular/pluralized "exit/s"; and
-    /// automatically testing GameController constructor with default House file name passed in
+    /// GameController tests for:
+    /// -CheckCurrentLocation method called in default House
+    ///  (checking FoundOpponents, Status, CurrentLocation, Move, and GameOver properties along the way); 
+    /// -Status singular/pluralized "exit/s"
+    /// 
+    /// Automatically tests GameController constructor with default House file name passed in
+    /// 
+    /// These are integration tests using House, Opponent, Location, and LocationWithHidingPlace
     /// </summary>
     public class TestGameController_CheckCurrentLocationAndStatus
     {

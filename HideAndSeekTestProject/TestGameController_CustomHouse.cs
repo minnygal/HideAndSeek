@@ -12,8 +12,10 @@ namespace HideAndSeek
     /// <summary>
     /// GameController tests for:
     /// -layout of non-default House set using GameController constructor or RestartGame method
-    /// -playing full game in custom House,
+    /// -playing full game in custom House
     /// -GameController constructor called with file name but error
+    /// 
+    /// These are integration tests using House, Opponent, Location, and LocationWithHidingPlace
     /// </summary>
     [TestFixture]
     public class TestGameController_CustomHouse

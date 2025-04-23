@@ -9,6 +9,7 @@ namespace HideAndSeek
 {
     /// <summary>
     /// GameController tests for custom Opponents
+    /// (integration tests using House, Opponent, Location, and LocationWithHidingPlace)
     /// </summary>
     [TestFixture]
     public class TestGameController_CustomOpponents

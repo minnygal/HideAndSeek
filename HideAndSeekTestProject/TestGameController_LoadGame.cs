@@ -12,6 +12,7 @@ namespace HideAndSeek
     /// <summary>
     /// GameController tests for LoadGame method to load saved game from file
     /// (not including tests with corrupt House file)
+    /// (integration tests using SavedGame, House, Opponent, Location, and LocationWithHidingPlace)
     /// </summary>
     [TestFixture]
     public class TestGameController_LoadGame
