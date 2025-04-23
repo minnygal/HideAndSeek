@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Moq;
+using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
@@ -9,7 +10,8 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// SavedGame tests for test serialization and deserialization
+    /// SavedGame tests for test serialization (unit tests) 
+    /// and deserialization (success cases are integration tests because they check House properties)
     /// </summary>
     [TestFixture]
     public class TestSavedGame_SerializationAndDeserialization
@@ -34,8 +36,7 @@ namespace HideAndSeek
         [Category("SavedGame Serialize Success")]
         public void Test_SavedGame_Serialize_NoFoundOpponents()
         {
-            SavedGame savedGame = new SavedGame(TestSavedGame_SerializationAndDeserialization_TestData.GetDefaultHouse(), 
-                                                "DefaultHouse", "Entry", 1, 
+            SavedGame savedGame = new SavedGame(GetMockedHouse(), "DefaultHouse", "Entry", 1, 
                                                 TestSavedGame_SerializationAndDeserialization_TestData.SavedGame_OpponentsAndHidingPlaces, 
                                                 new List<string>());
             string serializedGame = JsonSerializer.Serialize(savedGame);
@@ -58,7 +59,7 @@ namespace HideAndSeek
                 "}";
             
             // Create SavedGame object
-            SavedGame savedGame = new SavedGame(TestSavedGame_SerializationAndDeserialization_TestData.GetDefaultHouse(), 
+            SavedGame savedGame = new SavedGame(GetMockedHouse(), 
                                                 "DefaultHouse", "Bathroom", 7, 
                                                 TestSavedGame_SerializationAndDeserialization_TestData.SavedGame_OpponentsAndHidingPlaces,
                                                 new List<string>() { "Joe", "Owen", "Ana" });
@@ -414,6 +415,19 @@ namespace HideAndSeek
                 Assert.That(exception.Message, Does.StartWith("Cannot process because data in house layout file DefaultHouse is corrupt - " +
                                                               "The JSON value could not be converted to HideAndSeek.Direction."));
             });
+        }
+
+        /// <summary>
+        /// Helper method to get mocked House object
+        /// (DoesLocationExist and DoesLocationWithHidingPlaceExist always return true)
+        /// </summary>
+        /// <returns>Mocked House object</returns>
+        private static House GetMockedHouse()
+        {
+            Mock<House> houseMock = new Mock<House>();
+            houseMock.Setup((h) => h.DoesLocationExist(It.IsAny<string>())).Returns(true); // Set up mock to return true for any location
+            houseMock.Setup((h) => h.DoesLocationWithHidingPlaceExist(It.IsAny<string>())).Returns(true); // Set up mock to return true for any location
+            return houseMock.Object;
         }
     }
 }
