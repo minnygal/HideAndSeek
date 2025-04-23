@@ -1,4 +1,5 @@
 ﻿using HideAndSeek;
+using Moq;
 using NUnit.Framework;
 using System.Collections.Generic;
 using System.Linq;
@@ -218,12 +219,10 @@ namespace HideAndSeek
         /// <returns>LocationWithHidingPlace for serialization test</returns>
         private LocationWithHidingPlace GetLocationForSerializationTests()
         {
-            // Initialize variables to new Locations/LocationWithHidingPlaces
+            // Initialize variables to new LocationWithHidingPlace objects
             LocationWithHidingPlace center = new LocationWithHidingPlace("living room", "behind the piano");
             LocationWithHidingPlace in_closet = new LocationWithHidingPlace("closet", "between the coats");
             LocationWithHidingPlace up_attic = new LocationWithHidingPlace("attic", "behind a trunk");
-            Location southeast_study = new Location("study");
-            Location northeast_pantry = new Location("pantry");
             LocationWithHidingPlace east_gameRoom = new LocationWithHidingPlace("game room", "under the bean bags");
             LocationWithHidingPlace north_kitchen = new LocationWithHidingPlace("kitchen", "behind the refrigerator");
             LocationWithHidingPlace south_office = new LocationWithHidingPlace("office", "under the table");
@@ -232,6 +231,16 @@ namespace HideAndSeek
             LocationWithHidingPlace northwest_storageRoom = new LocationWithHidingPlace("storage room", "behind the boxes");
             LocationWithHidingPlace down_basement = new LocationWithHidingPlace("basement", "behind the pipes");
             LocationWithHidingPlace out_yard = new LocationWithHidingPlace("yard", "is the shed");
+
+            // Initialize variable to mocked Location for study
+            Mock<Location> southeast_study_mock = new Mock<Location>();
+            southeast_study_mock.SetupGet((l) => l.Name).Returns("study");
+            Location southeast_study = southeast_study_mock.Object;
+
+            // Initialize variable to mocked Location for pantry
+            Mock<Location> northeast_pantry_mock = new Mock<Location>();
+            northeast_pantry_mock.SetupGet((l) => l.Name).Returns("pantry");
+            Location northeast_pantry = northeast_pantry_mock.Object;
 
             // Add non-center locations to center location out of order
             center.AddExit(Direction.North, north_kitchen);
