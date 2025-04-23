@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// Test data for some SavedGame tests for serialization and deserialization
+    /// Test data for some SavedGame tests for deserialization
     /// </summary>
-    public static class TestSavedGame_SerializationAndDeserialization_TestData
+    public static class TestSavedGame_Deserialize_TestData
     {
         /// <summary>
         /// Dictionary of Opponents and associated LocationWithHidingPlace names for SavedGame for tests

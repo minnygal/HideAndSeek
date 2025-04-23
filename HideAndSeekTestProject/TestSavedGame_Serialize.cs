@@ -1,0 +1,118 @@
+﻿using Moq;
+using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Text.Json;
+using System.Threading.Tasks;
+
+namespace HideAndSeek
+{
+    /// <summary>
+    /// SavedGame tests for serialization
+    /// </summary>
+    [TestFixture]
+    public class TestSavedGame_Serialize
+    {
+        private SavedGame savedGame;
+
+        [SetUp]
+        public void SetUp()
+        {
+            savedGame = null;
+        }
+
+        // Tests all properties' getters
+        [Test]
+        [Category("SavedGame Serialize Success")]
+        public void Test_SavedGame_Serialize_NoFoundOpponents()
+        {
+            // Create SavedGame object
+            SavedGame savedGame = new SavedGame(GetMockedHouse(), "DefaultHouse", "Entry", 1,
+                                                new Dictionary<string, string>()
+                                                {
+                                                    { "Joe", "Kitchen" },
+                                                    { "Bob", "Pantry" },
+                                                    { "Ana", "Bathroom" },
+                                                    { "Owen", "Kitchen" },
+                                                    { "Jimmy", "Pantry" }
+                                                },
+                                                new List<string>());
+
+            // Serialize SavedGame object
+            string serializedGame = JsonSerializer.Serialize(savedGame);
+
+            // Assert that serialized SavedGame object is as expected
+            Assert.That(serializedGame, Is.EqualTo(
+                "{" +
+                    "\"HouseFileName\":\"DefaultHouse\"" + "," +
+                    "\"PlayerLocation\":\"Entry\"" + "," +
+                    "\"MoveNumber\":1" + "," +
+                    "\"OpponentsAndHidingLocations\":" +
+                    "{" +
+                        "\"Joe\":\"Kitchen\"," +
+                        "\"Bob\":\"Pantry\"," +
+                        "\"Ana\":\"Bathroom\"," +
+                        "\"Owen\":\"Kitchen\"," +
+                        "\"Jimmy\":\"Pantry\"" +
+                    "}" + "," +
+                    "\"FoundOpponents\":[]" +
+                "}"));
+        }
+
+        // Tests all properties' getters
+        [Test]
+        [Category("SavedGame Serialize Success")]
+        public void Test_SavedGame_Serialize_3FoundOpponents()
+        {
+            // Initialize variable to expected text for serialized SavedGame
+            string expectedSavedGameText =
+                "{" +
+                    "\"HouseFileName\":\"DefaultHouse\"" + "," +
+                    "\"PlayerLocation\":\"Bathroom\"" + "," +
+                    "\"MoveNumber\":7" + "," +
+                    "\"OpponentsAndHidingLocations\":" +
+                    "{" +
+                        "\"Joe\":\"Kitchen\"," +
+                        "\"Bob\":\"Pantry\"," +
+                        "\"Ana\":\"Bathroom\"," +
+                        "\"Owen\":\"Kitchen\"," +
+                        "\"Jimmy\":\"Pantry\"" +
+                    "}" + "," +
+                    "\"FoundOpponents\":[\"Joe\",\"Owen\",\"Ana\"]" +
+                "}";
+
+            // Create SavedGame object
+            SavedGame savedGame = new SavedGame(GetMockedHouse(),
+                                                "DefaultHouse", "Bathroom", 7,
+                                                new Dictionary<string, string>()
+                                                {
+                                                    { "Joe", "Kitchen" },
+                                                    { "Bob", "Pantry" },
+                                                    { "Ana", "Bathroom" },
+                                                    { "Owen", "Kitchen" },
+                                                    { "Jimmy", "Pantry" }
+                                                },
+                                                new List<string>() { "Joe", "Owen", "Ana" });
+
+            // Serialize SavedGame object
+            string serializedGame = JsonSerializer.Serialize(savedGame);
+
+            // Assert that serialized SavedGame text is as expected
+            Assert.That(serializedGame, Is.EqualTo(expectedSavedGameText));
+        }
+
+        /// <summary>
+        /// Helper method to get mocked House object
+        /// (DoesLocationExist and DoesLocationWithHidingPlaceExist always return true)
+        /// </summary>
+        /// <returns>Mocked House object</returns>
+        private static House GetMockedHouse()
+        {
+            Mock<House> houseMock = new Mock<House>();
+            houseMock.Setup((h) => h.DoesLocationExist(It.IsAny<string>())).Returns(true); // Set up mock to return true for any location
+            houseMock.Setup((h) => h.DoesLocationWithHidingPlaceExist(It.IsAny<string>())).Returns(true); // Set up mock to return true for any location
+            return houseMock.Object;
+        }
+    }
+}
