@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// Test data for some House tests for creating House objects with CreateHouse method
+    /// Test data for some House tests
     /// </summary>
     public static class TestHouse_TestData
     {
