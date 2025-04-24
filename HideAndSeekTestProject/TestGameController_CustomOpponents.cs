@@ -9,7 +9,14 @@ namespace HideAndSeek
 {
     /// <summary>
     /// GameController tests for custom Opponents
-    /// (integration tests using House, Opponent, Location, and LocationWithHidingPlace)
+    /// 
+    /// The success tests for constructors accepting the number or names of opponents
+    /// are integration tests using House, Opponent, Location, and LocationWithHidingPlace.
+    /// 
+    /// The success tests for the constructor accepting Opponent objects
+    /// are integration tests using House, Location, and LocationWithHidingPlace.
+    /// 
+    /// Failure tests are not integration tests.
     /// </summary>
     [TestFixture]
     public class TestGameController_CustomOpponents

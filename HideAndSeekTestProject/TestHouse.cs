@@ -13,7 +13,11 @@ namespace HideAndSeek
 {
     /// <summary>
     /// House tests for layout, properties, and methods
-    /// (integration tests using Location and LocationWithHidingPlace)
+    /// 
+    /// -The tests for static House methods (not including CreateHouse) are not integration tests.
+    /// -The failure tests for CreateHouse are not integration tests.
+    /// -The success tests for CreateHouse are integration tests using Location and LocationWithHidingPlace.
+    /// -The constructor and setter tests are integration tests using Location and LocationWithHidingPlace.
     /// </summary>
     [TestFixture]
     public class TestHouse
