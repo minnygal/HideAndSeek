@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Moq;
+using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
@@ -9,6 +10,7 @@ namespace HideAndSeek
 {
     /// <summary>
     /// GameController tests for Prompt property
+    /// (integration tests using House, Location, and LocationWithHidingPlace)
     /// </summary>
     public class TestGameController_Prompt
     {
@@ -166,7 +168,7 @@ namespace HideAndSeek
         [SetUp]
         public void SetUp()
         {
-            gameController = new GameController("DefaultHouse"); // Create new GameController with default House layout
+            gameController = new GameController(new Opponent[] { new Mock<Opponent>().Object }, "DefaultHouse"); // Create new GameController with mocked Opponent and default House layout
         }
 
         [OneTimeTearDown]

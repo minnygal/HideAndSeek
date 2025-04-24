@@ -10,6 +10,8 @@ namespace HideAndSeek
 {
     /// <summary>
     /// GameController tests for DeleteGame method to delete saved game file
+    /// (creates new GameController with unmocked House, Location, and LocationWithHidingPlace objects,
+    ///  but does not test these objects)
     /// </summary>
     [TestFixture]
     public class TestGameController_DeleteGame
@@ -21,7 +23,7 @@ namespace HideAndSeek
         [SetUp]
         public void Setup()
         {
-            gameController = null;
+            gameController = new GameController(new Opponent[] { new Mock<Opponent>().Object }, "DefaultHouse"); // Create new GameController with mocked Opponent and default House
             message = null;
             exception = null;
             House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
@@ -41,7 +43,7 @@ namespace HideAndSeek
         public void Test_GameController_DeleteGame_AndCheckErrorMessage_ForInvalidFileName(
             [Values("", " ", "my saved game", "my\\saved\\game", "my/saved/game", "my/saved\\ game")] string fileName)
         {
-            gameController = new GameController("DefaultHouse");
+            
             exception = Assert.Throws<ArgumentException>(() => gameController.DeleteGame(fileName));
             Assert.That(exception.Message, Does.StartWith($"Cannot perform action because file name \"{fileName}\" " +
                                                        "is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
@@ -58,9 +60,6 @@ namespace HideAndSeek
             mockFileSystemForGameController.Setup(manager => manager.File.Exists("my_nonexistent.game.json")).Returns(false); // Mock that file does not exist
             GameController.FileSystem = mockFileSystemForGameController.Object;
 
-            // Create new game controller
-            gameController = new GameController("DefaultHouse");
-
             // Assert that attempt to delete nonexistent game raises exception
             exception = Assert.Throws<FileNotFoundException>(() => gameController.DeleteGame("my_nonexistent_game"));
 
@@ -76,9 +75,6 @@ namespace HideAndSeek
             Mock<IFileSystem> mockFileSystemForGameController = new Mock<IFileSystem>();
             mockFileSystemForGameController.Setup(manager => manager.File.Exists("my_saved_game.game.json")).Returns(true); // Mock that file exists
             GameController.FileSystem = mockFileSystemForGameController.Object;
-
-            // Create new game controller
-            gameController = new GameController("DefaultHouse");
 
             // Have game controller delete game
             message = gameController.DeleteGame("my_saved_game");

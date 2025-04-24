@@ -5,13 +5,17 @@ using Castle.Components.DictionaryAdapter.Xml;
 using NUnit.Framework.Internal;
 using static System.Runtime.InteropServices.JavaScript.JSType;
 using System.Runtime.Intrinsics.X86;
+using Moq;
 
 namespace HideAndSeek
 {
     /// <summary>
     /// GameController tests for Move and Teleport methods called in default House,
-    /// checking CurrentLocation, Move, and GameOver properties along the way; and
-    /// automatically testing GameController constructor with default House file name passed in
+    /// checking CurrentLocation, Move, and GameOver properties along the way
+    /// 
+    /// Automatically tests GameController constructor with default House file name passed in
+    /// 
+    /// (integration tests using House, Location, and LocationWithHidingPlace)
     /// </summary>
     public class TestGameController_MoveAndTeleport
     {
@@ -29,7 +33,7 @@ namespace HideAndSeek
         public void SetUp()
         {
             House.Random = new Random(); // Set static House Random property to new Random number generator
-            gameController = new GameController("DefaultHouse"); // Create new GameController with default House layout
+            gameController = new GameController(new Opponent[] { new Mock<Opponent>().Object }, "DefaultHouse"); // Create new GameController with mocked Opponent and default House layout
 
             // Assert that properties are as expected
             Assert.Multiple(() =>
@@ -38,7 +42,6 @@ namespace HideAndSeek
                 Assert.That(gameController.MoveNumber, Is.EqualTo(1));
                 Assert.That(gameController.GameOver, Is.False, "game not over when started");
             });
-
         }
 
         [OneTimeTearDown]

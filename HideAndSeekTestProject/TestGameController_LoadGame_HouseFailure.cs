@@ -12,6 +12,7 @@ namespace HideAndSeek
 {
     /// <summary>
     /// GameController tests for LoadGame with nonexistent or corrupt House file
+    /// (integration tests using SavedGame, House, Location, and LocationWithHidingPlace)
     /// </summary>
     [TestFixture]
     public class TestGameController_LoadGame_HouseFailure
@@ -59,7 +60,7 @@ namespace HideAndSeek
             House.FileSystem = houseMockFileSystem.Object; // Set House file system to mock file system
 
             // Create new game controller
-            gameController = new GameController("DefaultHouse");
+            gameController = new GameController(new Opponent[] { new Mock<Opponent>().Object }, "DefaultHouse");
 
             // Assert that loading game with nonexistent House file raises exception
             exception = Assert.Throws<FileNotFoundException>(() => gameController.LoadGame("my_saved_game"));
@@ -154,7 +155,7 @@ namespace HideAndSeek
             House.FileSystem = houseMockFileSystem.Object; // Set House file system to mock file system
 
             // Load game from SavedGame with corrupt House file
-            new GameController("DefaultHouse").LoadGame("my_saved_game"); // Should throw exception
+            new GameController(new Opponent[] { new Mock<Opponent>().Object }, "DefaultHouse").LoadGame("my_saved_game"); // Should throw exception
 
             // If exception not thrown, fail test
             Assert.Fail();
