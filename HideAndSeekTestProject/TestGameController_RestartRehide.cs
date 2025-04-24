@@ -7,7 +7,7 @@ namespace HideAndSeek
 {
     /// <summary>
     /// GameController tests for RestartGame and RehideAllOpponents methods
-    /// (integration tests using House, Opponent, Location, and LocationWithHidingPlace)
+    /// (integration tests using House, Location, and LocationWithHidingPlace)
     /// </summary>
     [TestFixture]
     public class TestGameController_RestartRehide
@@ -17,10 +17,31 @@ namespace HideAndSeek
         [SetUp]
         public void SetUp()
         {
+            // Set static House properties
             House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
                                 "DefaultHouse.house.json", TestGameController_RestartRehide_TestData.DefaultHouse_Serialized); // Set static House file system to mock file system
             House.Random = new Random(); // Set static House Random property to new Random number generator
-            gameController = new GameController("DefaultHouse"); // Create new GameController
+
+            // Create Opponent mocks
+            Mock<Opponent> opponent1 = new Mock<Opponent>();
+            opponent1.Setup((o) => o.Name).Returns("Joe");
+
+            Mock<Opponent> opponent2 = new Mock<Opponent>();
+            opponent2.Setup((o) => o.Name).Returns("Bob");
+
+            Mock<Opponent> opponent3 = new Mock<Opponent>();
+            opponent3.Setup((o) => o.Name).Returns("Ana");
+
+            Mock<Opponent> opponent4 = new Mock<Opponent>();
+            opponent4.Setup((o) => o.Name).Returns("Owen");
+
+            Mock<Opponent> opponent5 = new Mock<Opponent>();
+            opponent5.Setup((o) => o.Name).Returns("Jimmy");
+
+            // Create new GameController with mocked Opponents and default House layout
+            gameController = new GameController(
+                new Opponent[] { opponent1.Object, opponent2.Object, opponent3.Object, opponent4.Object, opponent5.Object },
+                "DefaultHouse");
         }
 
         [OneTimeTearDown]
