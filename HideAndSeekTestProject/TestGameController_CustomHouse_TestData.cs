@@ -320,7 +320,7 @@ namespace HideAndSeek
             "}";
         #endregion
 
-        public static IEnumerable TestCases_For_Test_GameController_CustomHouse_Constructor_AndCheckErrorMessage_ForInvalidHouseFileName
+        public static IEnumerable TestCases_For_Test_GameController_SpecifyHouseFileName_AndCheckErrorMessage_ForInvalidHouseFileName
         {
             get
             {
@@ -328,15 +328,15 @@ namespace HideAndSeek
                 {
                     new GameController("@eou]} {(/"); // Call GameController constructor
                 })
-                    .SetName("Test_GameController_CustomHouse_Constructor_AndCheckErrorMessage_ForInvalidHouseFileName - constructor")
-                    .SetCategory("GameController Constructor Failure");
+                    .SetName("Test_GameController_SpecifyHouseFileName_AndCheckErrorMessage_ForInvalidHouseFileName - constructor")
+                    .SetCategory("GameController Constructor SpecifyHouseFileName ArgumentException Failure");
 
                 yield return new TestCaseData(() =>
                 {
                     new GameController(MockedOpponents, "DefaultHouse").RestartGame("@eou]} {(/"); // Create new GameController and call RestartGame
                 })
-                    .SetName("Test_GameController_CustomHouse_Constructor_AndCheckErrorMessage_ForInvalidHouseFileName - RestartGame")
-                    .SetCategory("GameController RestartGame Failure");
+                    .SetName("Test_GameController_SpecifyHouseFileName_AndCheckErrorMessage_ForInvalidHouseFileName - RestartGame")
+                    .SetCategory("GameController RestartGame SpecifyHouseFileName ArgumentException Failure");
             }
         }
 
@@ -350,7 +350,7 @@ namespace HideAndSeek
             House.FileSystem = fileSystem.Object;
         }
         
-        public static IEnumerable TestCases_For_Test_GameController_CheckErrorMessage_WhenHouseFileDoesNotExist
+        public static IEnumerable TestCases_For_Test_GameController_SpecifyHouseFileName_AndCheckErrorMessage_WhenHouseFileDoesNotExist
         {
             get
             {
@@ -359,8 +359,8 @@ namespace HideAndSeek
                     SetUpMockFileSystemForNonexistentHouseFile(); // Set up mock file system
                     new GameController("MyNonexistentFile"); // Call GameController constructor
                 })
-                    .SetName("Test_GameController_Constructor_AndCheckErrorMessage_WhenHouseFileDoesNotExist - constructor")
-                    .SetCategory("GameController CustomHouse Constructor FileNotFoundException Failure");
+                    .SetName("Test_GameController_SpecifyHouseFileName_AndCheckErrorMessage_WhenHouseFileDoesNotExist - constructor")
+                    .SetCategory("GameController Constructor SpecifyHouseFileName FileNotFoundException Failure");
 
                 yield return new TestCaseData(() =>
                 {
@@ -368,8 +368,8 @@ namespace HideAndSeek
                     SetUpMockFileSystemForNonexistentHouseFile(); // Set up mock file system
                     gameController.RestartGame("MyNonexistentFile"); // Call RestartGame
                 })
-                    .SetName("Test_GameController_Constructor_AndCheckErrorMessage_WhenHouseFileDoesNotExist - RestartGame")
-                    .SetCategory("GameController CustomHouse RestartGame FileNotFoundException Failure");
+                    .SetName("Test_GameController_SpecifyHouseFileName_AndCheckErrorMessage_WhenHouseFileDoesNotExist - RestartGame")
+                    .SetCategory("GameController RestartGame SpecifyHouseFileName FileNotFoundException Failure");
             }
         }
 
@@ -402,67 +402,67 @@ namespace HideAndSeek
                        .RestartGame("TestHouse"); // Restart game with custom House
         }
 
-        public static IEnumerable TestCases_For_Test_GameController_CustomHouse_NameAndFileNameProperties
+        public static IEnumerable TestCases_For_Test_GameController_SpecifyHouseFileName_CheckNameAndFileNameProperties
         {
             get
             {
                 // Set custom House using GameController constructor
                 yield return new TestCaseData(GetGameController_WithCustomHouseSetViaConstructor())
-                    .SetName("Test_GameController_CustomHouse_NameAndFileNameProperties - constructor")
-                    .SetCategory("GameController CustomHouse Constructor");
+                    .SetName("Test_GameController_SpecifyHouseFileName_CheckNameAndFileNameProperties - constructor")
+                    .SetCategory("GameController Constructor SpecifyHouseFileName Name FileName Success");
 
                 // Set custom House using GameController RestartGame method
                 yield return new TestCaseData(GetGameController_WithCustomHouseSetViaRestartGame())
-                    .SetName("Test_GameController_CustomHouse_NameAndFileNameProperties - RestartGame")
-                    .SetCategory("GameController CustomHouse RestartGame");
+                    .SetName("Test_GameController_SpecifyHouseFileName_CheckNameAndFileNameProperties - RestartGame")
+                    .SetCategory("GameController RestartGame SpecifyHouseFileName Name FileName Success");
             }
         }
 
-        public static IEnumerable TestCases_For_Test_GameController_CustomHouse_LocationNames_AndExits
+        public static IEnumerable TestCases_For_Test_GameController_SpecifyHouseFileName_CheckLocationNamesAndExits
         {
             get
             {
                 // Set custom House using GameController constructor
                 yield return new TestCaseData(GetGameController_WithCustomHouseSetViaConstructor())
-                    .SetName("Test_GameController_CustomHouse_LocationNames_AndExits - constructor")
-                    .SetCategory("GameController CustomHouse Constructor");
+                    .SetName("Test_GameController_SpecifyHouseFileName_CheckLocationNamesAndExits - constructor")
+                    .SetCategory("GameController Constructor SpecifyHouseFileName LocationsWithoutHidingPlaces LocationsWithHidingPlaces Exits Success");
                 
                 // Set custom House using GameController RestartGame method
                 yield return new TestCaseData(GetGameController_WithCustomHouseSetViaRestartGame())
-                    .SetName("Test_GameController_CustomHouse_LocationNames_AndExits - RestartGame")
-                    .SetCategory("GameController CustomHouse RestartGame");
+                    .SetName("Test_GameController_SpecifyHouseFileName_CheckLocationNamesAndExits - RestartGame")
+                    .SetCategory("GameController RestartGame SpecifyHouseFileName LocationsWithoutHidingPlaces LocationsWithHidingPlaces Exits Success");
             }
         }
 
-        public static IEnumerable TestCases_For_Test_GameController_CustomHouse_LocationsWithHidingPlaces_Names_And_HidingPlaces
+        public static IEnumerable TestCases_For_Test_GameController_SpecifyHouseFileName_CheckLocationsWithHidingPlaces_NamesAndHidingPlaces
         {
             get
             {
                 // Set custom House using GameController constructor
                 yield return new TestCaseData(GetGameController_WithCustomHouseSetViaConstructor())
-                    .SetName("Test_GameController_CustomHouse_LocationsWithHidingPlaces_Names_And_HidingPlaces - constructor")
-                    .SetCategory("GameController CustomHouse Constructor");
+                    .SetName("Test_GameController_SpecifyHouseFileName_CheckLocationsWithHidingPlaces_NamesAndHidingPlaces - constructor")
+                    .SetCategory("GameController Constructorb SpecifyHouseFileName LocationsWithHidingPlaces Name HidingPlace Success");
 
                 // Set custom House using GameController RestartGame method
                 yield return new TestCaseData(GetGameController_WithCustomHouseSetViaRestartGame())
-                    .SetName("Test_GameController_CustomHouse_LocationsWithHidingPlaces_Names_And_HidingPlaces - RestartGame")
-                    .SetCategory("GameController CustomHouse RestartGame");
+                    .SetName("Test_GameController_SpecifyHouseFileName_CheckLocationsWithHidingPlaces_NamesAndHidingPlaces - RestartGame")
+                    .SetCategory("GameController RestartGame SpecifyHouseFileName LocationsWithHidingPlaces Name HidingPlace Success");
             }
         }
 
-        public static IEnumerable TestCases_For_Test_GameController_CustomHouse_FullGame_AndCheckMessageAndProperties
+        public static IEnumerable TestCases_For_Test_GameController_SpecifyHouseFileName_FullGame_AndCheckMessageAndProperties
         {
             get
             {
                 // Set custom House using GameController constructor
                 yield return new TestCaseData(GetGameController_WithCustomHouseSetViaConstructor())
-                    .SetName("Test_GameController_CustomHouse_FullGame_AndCheckMessageAndProperties - constructor")
-                    .SetCategory("GameController CustomHouse Constructor Move Check Message Prompt Status MoveNumber GameOver InvalidOperationException Success");
+                    .SetName("Test_GameController_SpecifyHouseFileName_FullGame_AndCheckMessageAndProperties - constructor")
+                    .SetCategory("GameController Constructor SpecifyHouseFileName Move Check Message Prompt Status MoveNumber GameOver InvalidOperationException Success");
 
                 // Set custom House using GameController RestartGame method
                 yield return new TestCaseData(GetGameController_WithCustomHouseSetViaRestartGame())
-                    .SetName("Test_GameController_CustomHouse_FullGame_AndCheckMessageAndProperties - RestartGame")
-                    .SetCategory("GameController CustomHouse RestartGame Move Check Message Prompt Status MoveNumber GameOver InvalidOperationException Success");
+                    .SetName("Test_GameController_SpecifyHouseFileName_FullGame_AndCheckMessageAndProperties - RestartGame")
+                    .SetCategory("GameController RestartGame SpecifyHouseFileName Move Check Message Prompt Status MoveNumber GameOver InvalidOperationException Success");
             }
         }
     }

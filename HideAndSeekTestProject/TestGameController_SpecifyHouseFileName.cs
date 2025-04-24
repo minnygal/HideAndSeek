@@ -11,14 +11,15 @@ namespace HideAndSeek
 {
     /// <summary>
     /// GameController tests for:
-    /// -layout of non-default House set using GameController constructor or RestartGame method
-    /// -playing full game in custom House
-    /// -GameController constructor called with file name but error
+    /// -constructor specifying House file name OR RestartGame method specifying House file name
+    ///     -testing layout of non-default House set using GameController constructor
+    ///     -testing playing full game in non-default House
+    ///     -testing GameController constructor called with file name but error
     /// 
     /// These are integration tests using House, Location, and LocationWithHidingPlace
     /// </summary>
     [TestFixture]
-    public class TestGameController_CustomHouse
+    public class TestGameController_SpecifyHouseFileName
     {
         [SetUp]
         public void SetUp()
@@ -34,9 +35,8 @@ namespace HideAndSeek
         }
 
         [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), 
-            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CustomHouse_Constructor_AndCheckErrorMessage_ForInvalidHouseFileName))]
-        [Category("GameController Constructor ArgumentException Failure")]
-        public void Test_GameController_CustomHouse_Constructor_AndCheckErrorMessage_ForInvalidHouseFileName(Action CallWithInvalidHouseFileName)
+            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_SpecifyHouseFileName_AndCheckErrorMessage_ForInvalidHouseFileName))]
+        public void Test_GameController_SpecifyHouseFileName_AndCheckErrorMessage_ForInvalidHouseFileName(Action CallWithInvalidHouseFileName)
         {
             Assert.Multiple(() =>
             {
@@ -52,8 +52,8 @@ namespace HideAndSeek
         }
 
         [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), 
-            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CheckErrorMessage_WhenHouseFileDoesNotExist))]
-        public void Test_GameController_Constructor_AndCheckErrorMessage_WhenHouseFileDoesNotExist(Action CallWithNonexistentFileName)
+            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_SpecifyHouseFileName_AndCheckErrorMessage_WhenHouseFileDoesNotExist))]
+        public void Test_GameController_SpecifyHouseFileName_AndCheckErrorMessage_WhenHouseFileDoesNotExist(Action CallWithNonexistentFileName)
         {
             Assert.Multiple(() =>
             {
@@ -69,8 +69,8 @@ namespace HideAndSeek
         }
 
         [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), 
-            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CustomHouse_NameAndFileNameProperties))]
-        public void Test_GameController_CustomHouse_NameAndFileNameProperties(GameController gameController)
+            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_SpecifyHouseFileName_CheckNameAndFileNameProperties))]
+        public void Test_GameController_SpecifyHouseFileName_CheckNameAndFileNameProperties(GameController gameController)
         {
             Assert.Multiple(() =>
             {
@@ -80,8 +80,8 @@ namespace HideAndSeek
         }
 
         [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), 
-            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CustomHouse_LocationNames_AndExits))]
-        public void Test_GameController_CustomHouse_LocationNames_AndExits(GameController gameController)
+            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_SpecifyHouseFileName_CheckLocationNamesAndExits))]
+        public void Test_GameController_SpecifyHouseFileName_CheckLocationNamesAndExits(GameController gameController)
         {
             // Initialize variables to Location objects by names
             Location landing = gameController.House.LocationsWithoutHidingPlaces.Where((l) => l.Name == "Landing").First();
@@ -218,8 +218,8 @@ namespace HideAndSeek
         }
 
         [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), 
-            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CustomHouse_LocationsWithHidingPlaces_Names_And_HidingPlaces))]
-        public void Test_GameController_CustomHouse_LocationsWithHidingPlaces_Names_And_HidingPlaces(GameController gameController)
+            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_SpecifyHouseFileName_CheckLocationsWithHidingPlaces_NamesAndHidingPlaces))]
+        public void Test_GameController_SpecifyHouseFileName_CheckLocationsWithHidingPlaces_NamesAndHidingPlaces(GameController gameController)
         {
             // Initialize variables to LocationWithHidingPlace objects by names
             LocationWithHidingPlace bedroom = gameController.House.LocationsWithHidingPlaces.Where((l) => l.Name == "Bedroom").First();
@@ -276,8 +276,8 @@ namespace HideAndSeek
         /// -I added messages to the assertions to make them easier to debug.
         /// </summary>
         [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), 
-            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CustomHouse_FullGame_AndCheckMessageAndProperties))]
-        public void Test_GameController_CustomHouse_FullGame_AndCheckMessageAndProperties(GameController gameController)
+            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_SpecifyHouseFileName_FullGame_AndCheckMessageAndProperties))]
+        public void Test_GameController_SpecifyHouseFileName_FullGame_AndCheckMessageAndProperties(GameController gameController)
         {
             // Hide Opponents is specific hiding places
             gameController.RehideAllOpponents(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" });
