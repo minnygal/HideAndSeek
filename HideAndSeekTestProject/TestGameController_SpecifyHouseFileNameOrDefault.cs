@@ -11,15 +11,28 @@ namespace HideAndSeek
 {
     /// <summary>
     /// GameController tests for:
-    /// -constructor specifying House file name OR RestartGame method specifying House file name
-    ///     -testing layout of non-default House set using GameController constructor
-    ///     -testing playing full game in non-default House
-    ///     -testing GameController constructor called with file name but error
+    /// -parameterless constructor
+    ///     -House Name and FileName properties, GameController OpponentsAndHidingLocations keys
+    ///     -file does not exist error
+    /// -constructor accepting House file name
+    ///     -House Name and FileName properties
+    ///     -layout of House
+    ///     -playing full game
+    ///     -invalid file name error
+    ///     -file does not exist error
+    /// -constructor accepting RestartGame method specifying House file name
+    ///     -House Name and FileName properties
+    ///     -layout of House
+    ///     -playing full game
+    ///     -invalid file name error
+    ///     -file does not exist error
     /// 
-    /// These are integration tests using House, Location, and LocationWithHidingPlace
+    /// Parameterless constructor tests and invalid file name passed into constructor tests
+    /// are integration tests using Opponent, House, Location, and LocationWithHidingPlace.
+    /// All other tests are integration tests using House, Location, and LocationWithHidingPlace
     /// </summary>
     [TestFixture]
-    public class TestGameController_SpecifyHouseFileName
+    public class TestGameController_SpecifyHouseFileNameOrDefault
     {
         [SetUp]
         public void SetUp()
@@ -52,8 +65,8 @@ namespace HideAndSeek
         }
 
         [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), 
-            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_SpecifyHouseFileName_AndCheckErrorMessage_WhenHouseFileDoesNotExist))]
-        public void Test_GameController_SpecifyHouseFileName_AndCheckErrorMessage_WhenHouseFileDoesNotExist(Action CallWithNonexistentFileName)
+            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_SpecifyHouseFileNameOrDefault_AndCheckErrorMessage_WhenHouseFileDoesNotExist))]
+        public void Test_GameController_SpecifyHouseFileNameOrDefault_AndCheckErrorMessage_WhenHouseFileDoesNotExist(string fileName, Action CallWithNonexistentFileName)
         {
             Assert.Multiple(() =>
             {
@@ -64,12 +77,12 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot load game because house layout file MyNonexistentFile does not exist"));
+                Assert.That(exception.Message, Is.EqualTo($"Cannot load game because house layout file {fileName} does not exist"));
             });
         }
 
         [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), 
-            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_SpecifyHouseFileName_CheckNameAndFileNameProperties))]
+            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_SpecifyHouseFileNameCheckNameAndFileNameProperties))]
         public void Test_GameController_SpecifyHouseFileName_CheckNameAndFileNameProperties(GameController gameController)
         {
             Assert.Multiple(() =>
@@ -79,8 +92,22 @@ namespace HideAndSeek
             });
         }
 
+        [Test]
+        [Category("GameController Constructor SpecifyHouseFileName Name FileName OpponentsAndHidingLocations Success")]
+        public void Test_GameController_Constructor_Parameterless_CheckProperties()
+        {
+            GameController gameController = new GameController();
+            Assert.Multiple(() =>
+            {
+            Assert.That(gameController.House.Name, Is.EqualTo("my house"), "House name");
+            Assert.That(gameController.House.HouseFileName, Is.EqualTo("DefaultHouse"), "House file name");
+            Assert.That(gameController.OpponentsAndHidingLocations.Keys.Select((o) => o.Name), 
+                Is.EquivalentTo(new List<string>() { "Joe", "Bob", "Jimmy", "Ana", "Owen" }), "Opponent names");
+            });
+        }
+
         [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), 
-            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_SpecifyHouseFileName_CheckLocationNamesAndExits))]
+            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_SpecifyHouseFileNameCheckLocationNamesAndExits))]
         public void Test_GameController_SpecifyHouseFileName_CheckLocationNamesAndExits(GameController gameController)
         {
             // Initialize variables to Location objects by names

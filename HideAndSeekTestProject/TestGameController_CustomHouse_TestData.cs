@@ -343,32 +343,46 @@ namespace HideAndSeek
         /// <summary>
         /// Helper method to set House file system to mock that file does not exist
         /// </summary>
-        private static void SetUpMockFileSystemForNonexistentHouseFile()
+        private static void SetUpMockFileSystemForNonexistentHouseFile(string name)
         {
             Mock<IFileSystem> fileSystem = new Mock<IFileSystem>();
-            fileSystem.Setup((manager) => manager.File.Exists("MyNonexistentFile.json")).Returns(false);
+            fileSystem.Setup((manager) => manager.File.Exists(name)).Returns(false);
             House.FileSystem = fileSystem.Object;
         }
         
-        public static IEnumerable TestCases_For_Test_GameController_SpecifyHouseFileName_AndCheckErrorMessage_WhenHouseFileDoesNotExist
+        public static IEnumerable TestCases_For_Test_GameController_SpecifyHouseFileNameOrDefault_AndCheckErrorMessage_WhenHouseFileDoesNotExist
         {
             get
             {
-                yield return new TestCaseData(() =>
-                {
-                    SetUpMockFileSystemForNonexistentHouseFile(); // Set up mock file system
-                    new GameController("MyNonexistentFile"); // Call GameController constructor
-                })
-                    .SetName("Test_GameController_SpecifyHouseFileName_AndCheckErrorMessage_WhenHouseFileDoesNotExist - constructor")
+                // Parameterless constructor
+                yield return new TestCaseData(
+                    "DefaultHouse",
+                    () => {
+                        SetUpMockFileSystemForNonexistentHouseFile("DefaultHouse.house.json"); // Set up mock file system
+                        new GameController(); // Call GameController parameterless constructor
+                    })
+                    .SetName("Test_GameController_SpecifyHouseFileNameOrDefault_AndCheckErrorMessage_WhenHouseFileDoesNotExist - constructor - parameterless")
+                    .SetCategory("GameController Constructor Parameterless FileNotFoundException Failure");
+
+                // Parameterized constructor
+                yield return new TestCaseData(
+                    "MyNonexistentFile",
+                    () => {
+                        SetUpMockFileSystemForNonexistentHouseFile("MyNonexistentFile.house.json"); // Set up mock file system
+                        new GameController("MyNonexistentFile"); // Call GameController parameterized constructor
+                    })
+                    .SetName("Test_GameController_SpecifyHouseFileNameOrDefault_AndCheckErrorMessage_WhenHouseFileDoesNotExist - constructor - parameterized")
                     .SetCategory("GameController Constructor SpecifyHouseFileName FileNotFoundException Failure");
 
-                yield return new TestCaseData(() =>
-                {
-                    GameController gameController = new GameController(MockedOpponents, "DefaultHouse"); // Create new GameController
-                    SetUpMockFileSystemForNonexistentHouseFile(); // Set up mock file system
-                    gameController.RestartGame("MyNonexistentFile"); // Call RestartGame
-                })
-                    .SetName("Test_GameController_SpecifyHouseFileName_AndCheckErrorMessage_WhenHouseFileDoesNotExist - RestartGame")
+                // RestartGame method
+                yield return new TestCaseData(
+                    "MyNonexistentFile",
+                    () =>{
+                        GameController gameController = new GameController(MockedOpponents, "DefaultHouse"); // Create new GameController
+                        SetUpMockFileSystemForNonexistentHouseFile("MyNonexistentFile.house.json"); // Set up mock file system
+                        gameController.RestartGame("MyNonexistentFile"); // Call RestartGame
+                    })
+                    .SetName("Test_GameController_SpecifyHouseFileNameOrDefault_AndCheckErrorMessage_WhenHouseFileDoesNotExist - RestartGame")
                     .SetCategory("GameController RestartGame SpecifyHouseFileName FileNotFoundException Failure");
             }
         }
@@ -402,23 +416,23 @@ namespace HideAndSeek
                        .RestartGame("TestHouse"); // Restart game with custom House
         }
 
-        public static IEnumerable TestCases_For_Test_GameController_SpecifyHouseFileName_CheckNameAndFileNameProperties
+        public static IEnumerable TestCases_For_Test_GameController_SpecifyHouseFileNameCheckNameAndFileNameProperties
         {
             get
             {
-                // Set custom House using GameController constructor
+                // GameController parameterized constructor
                 yield return new TestCaseData(GetGameController_WithCustomHouseSetViaConstructor())
                     .SetName("Test_GameController_SpecifyHouseFileName_CheckNameAndFileNameProperties - constructor")
                     .SetCategory("GameController Constructor SpecifyHouseFileName Name FileName Success");
 
-                // Set custom House using GameController RestartGame method
+                // RestartGame method
                 yield return new TestCaseData(GetGameController_WithCustomHouseSetViaRestartGame())
                     .SetName("Test_GameController_SpecifyHouseFileName_CheckNameAndFileNameProperties - RestartGame")
                     .SetCategory("GameController RestartGame SpecifyHouseFileName Name FileName Success");
             }
         }
 
-        public static IEnumerable TestCases_For_Test_GameController_SpecifyHouseFileName_CheckLocationNamesAndExits
+        public static IEnumerable TestCases_For_Test_GameController_SpecifyHouseFileNameCheckLocationNamesAndExits
         {
             get
             {
