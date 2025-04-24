@@ -1,7 +1,9 @@
-﻿using System;
+﻿using Moq;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using System.Reflection.Metadata.Ecma335;
 using System.Text;
 using System.Threading.Tasks;
 using static System.Runtime.InteropServices.JavaScript.JSType;
@@ -1116,42 +1118,68 @@ namespace HideAndSeek
         {
             get
             {
-                yield return new TestCaseData(1, new string[] { "Kitchen" })
+                yield return new TestCaseData(new Opponent[] { new Mock<Opponent>().Object }, new string[] { "Kitchen" })
                 .SetName("Test_GameController_Constructor_WithSpecifiedOpponents - 1 opponent");
 
-                yield return new TestCaseData(2, new string[] { "Kitchen", "Pantry" })
+                yield return new TestCaseData(
+                    new Opponent[] { new Mock<Opponent>().Object, new Mock<Opponent>().Object }, 
+                    new string[] { "Kitchen", "Pantry" })
                 .SetName("Test_GameController_Constructor_WithSpecifiedOpponents - 2 opponents");
 
-                yield return new TestCaseData(3, new string[] { "Kitchen", "Pantry", "Bathroom" })
+                yield return new TestCaseData(
+                    new Opponent[] { new Mock<Opponent>().Object, new Mock<Opponent>().Object, new Mock<Opponent>().Object }, 
+                    new string[] { "Kitchen", "Pantry", "Bathroom" })
                 .SetName("Test_GameController_Constructor_WithSpecifiedOpponents - 3 opponents");
 
-                yield return new TestCaseData(4, new string[] { "Kitchen", "Pantry", "Bathroom", "Kitchen" })
+                yield return new TestCaseData(
+                    new Opponent[] { new Mock<Opponent>().Object, new Mock<Opponent>().Object, new Mock<Opponent>().Object, new Mock<Opponent>().Object }, 
+                    new string[] { "Kitchen", "Pantry", "Bathroom", "Kitchen" })
                 .SetName("Test_GameController_Constructor_WithSpecifiedOpponents - 4 opponents");
 
-                yield return new TestCaseData(5, new string[] { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry" })
+                yield return new TestCaseData(
+                    new Opponent[] { new Mock<Opponent>().Object, new Mock<Opponent>().Object, new Mock<Opponent>().Object, 
+                        new Mock<Opponent>().Object, new Mock<Opponent>().Object }, 
+                    new string[] { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry" })
                 .SetName("Test_GameController_Constructor_WithSpecifiedOpponents - 5 opponents");
 
-                yield return new TestCaseData(6, new string[] { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry", "Kitchen" })
+                yield return new TestCaseData(
+                    new Opponent[] { new Mock<Opponent>().Object, new Mock<Opponent>().Object, new Mock<Opponent>().Object,
+                        new Mock<Opponent>().Object, new Mock<Opponent>().Object, new Mock<Opponent>().Object },
+                    new string[] { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry", "Kitchen" })
                 .SetName("Test_GameController_Constructor_WithSpecifiedOpponents - 6 opponents");
 
-                yield return new TestCaseData(7, new string[] { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry", "Kitchen", "Pantry" })
+                yield return new TestCaseData(
+                    new Opponent[] { new Mock<Opponent>().Object, new Mock<Opponent>().Object, new Mock<Opponent>().Object,
+                        new Mock<Opponent>().Object, new Mock<Opponent>().Object, new Mock<Opponent>().Object, new Mock<Opponent>().Object }
+                    , new string[] { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry", "Kitchen", "Pantry" })
                 .SetName("Test_GameController_Constructor_WithSpecifiedOpponents - 7 opponents");
 
-                yield return new TestCaseData(8, new string[] { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry", "Kitchen", "Pantry", "Bathroom" })
+                yield return new TestCaseData(
+                    new Opponent[] { new Mock<Opponent>().Object, new Mock<Opponent>().Object, new Mock<Opponent>().Object,
+                        new Mock<Opponent>().Object, new Mock<Opponent>().Object, new Mock<Opponent>().Object, new Mock<Opponent>().Object,
+                        new Mock<Opponent>().Object },
+                    new string[] { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry", "Kitchen", "Pantry", "Bathroom" })
                 .SetName("Test_GameController_Constructor_WithSpecifiedOpponents - 8 opponents");
 
                 yield return new TestCaseData(
-                    9, 
+                    new Opponent[] { new Mock<Opponent>().Object, new Mock<Opponent>().Object, new Mock<Opponent>().Object,
+                        new Mock<Opponent>().Object, new Mock<Opponent>().Object, new Mock<Opponent>().Object, new Mock<Opponent>().Object ,
+                        new Mock<Opponent>().Object, new Mock<Opponent>().Object }, 
                     new string[] { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry", "Kitchen", "Pantry", "Bathroom", "Kitchen" })
                 .SetName("Test_GameController_Constructor_WithSpecifiedOpponents - 9 opponents");
 
                 yield return new TestCaseData(
-                    10, 
+                    new Opponent[] { new Mock<Opponent>().Object, new Mock<Opponent>().Object, new Mock<Opponent>().Object,
+                        new Mock<Opponent>().Object, new Mock<Opponent>().Object, new Mock<Opponent>().Object, new Mock<Opponent>().Object ,
+                        new Mock<Opponent>().Object, new Mock<Opponent>().Object, new Mock<Opponent>().Object }, 
                     new string[] { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry", "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry" })
                 .SetName("Test_GameController_Constructor_WithSpecifiedOpponents - 10 opponents");
 
                 yield return new TestCaseData(
-                    15, 
+                    new Opponent[] { new Mock<Opponent>().Object, new Mock<Opponent>().Object, new Mock<Opponent>().Object,
+                        new Mock<Opponent>().Object, new Mock<Opponent>().Object, new Mock<Opponent>().Object, new Mock<Opponent>().Object ,
+                        new Mock<Opponent>().Object, new Mock<Opponent>().Object, new Mock<Opponent>().Object, new Mock<Opponent>().Object,
+                        new Mock<Opponent>().Object, new Mock<Opponent>().Object, new Mock<Opponent>().Object, new Mock<Opponent>().Object,}, 
                     new string[] { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry", "Kitchen", "Pantry", "Bathroom", 
                                    "Kitchen", "Pantry", "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry" })
                 .SetName("Test_GameController_Constructor_WithSpecifiedOpponents - 15 opponents");
