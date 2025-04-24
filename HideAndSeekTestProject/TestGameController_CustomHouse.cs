@@ -33,7 +33,8 @@ namespace HideAndSeek
             House.FileSystem = new FileSystem(); // Set House file system to new clean file system
         }
 
-        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CustomHouse_Constructor_AndCheckErrorMessage_ForInvalidHouseFileName))]
+        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), 
+            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CustomHouse_Constructor_AndCheckErrorMessage_ForInvalidHouseFileName))]
         [Category("GameController Constructor ArgumentException Failure")]
         public void Test_GameController_CustomHouse_Constructor_AndCheckErrorMessage_ForInvalidHouseFileName(Action CallWithInvalidHouseFileName)
         {
@@ -67,7 +68,8 @@ namespace HideAndSeek
             });
         }
 
-        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CustomHouse_NameAndFileNameProperties))]
+        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), 
+            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CustomHouse_NameAndFileNameProperties))]
         public void Test_GameController_CustomHouse_NameAndFileNameProperties(GameController gameController)
         {
             Assert.Multiple(() =>
@@ -77,7 +79,8 @@ namespace HideAndSeek
             });
         }
 
-        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CustomHouse_LocationNames_AndExits))]
+        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), 
+            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CustomHouse_LocationNames_AndExits))]
         public void Test_GameController_CustomHouse_LocationNames_AndExits(GameController gameController)
         {
             // Initialize variables to Location objects by names
@@ -214,7 +217,8 @@ namespace HideAndSeek
             });
         }
 
-        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CustomHouse_LocationsWithHidingPlaces_Names_And_HidingPlaces))]
+        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), 
+            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_CustomHouse_LocationsWithHidingPlaces_Names_And_HidingPlaces))]
         public void Test_GameController_CustomHouse_LocationsWithHidingPlaces_Names_And_HidingPlaces(GameController gameController)
         {
             // Initialize variables to LocationWithHidingPlace objects by names
