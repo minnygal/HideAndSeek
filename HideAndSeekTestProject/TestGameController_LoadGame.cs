@@ -12,7 +12,9 @@ namespace HideAndSeek
     /// <summary>
     /// GameController tests for LoadGame method to load saved game from file
     /// (not including tests with corrupt House file)
-    /// (integration tests using SavedGame, House, Opponent, Location, and LocationWithHidingPlace)
+    /// 
+    /// These are integration tests using SavedGame, House, Opponent, Location, and LocationWithHidingPlace.
+    /// Opponent object is mocked in initial GameController instantiation but real Opponents are created in LoadGame.
     /// </summary>
     [TestFixture]
     public class TestGameController_LoadGame
@@ -20,6 +22,7 @@ namespace HideAndSeek
         private GameController gameController;
         private string message; // Message returned by LoadGame
         private Exception exception; // Exception thrown by LoadGame
+        private Opponent[] mockedOpponent = new Opponent[] { new Mock<Opponent>().Object };
 
         [SetUp]
         public void Setup()
@@ -49,7 +52,7 @@ namespace HideAndSeek
                                             TestGameController_LoadGame_TestData.SavedGame_Serialized_NoFoundOpponents);
 
             // Create new GameController
-            gameController = new GameController("DefaultHouse");
+            gameController = new GameController(mockedOpponent, "DefaultHouse");
 
             // Have game controller load game
             message = gameController.LoadGame(fileName);
@@ -73,7 +76,7 @@ namespace HideAndSeek
             GameController.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("my_saved_game.game.json", savedGameFileText);
 
             // Create new GameController with specified House layout
-            gameController = new GameController(houseFileName);
+            gameController = new GameController(mockedOpponent, houseFileName);
 
             // ACT
             // Have game controller load game and store message
@@ -129,7 +132,7 @@ namespace HideAndSeek
             GameController.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("my_saved_game.game.json", savedGameFileText);
 
             // Create new GameController with specified House layout for starting game
-            gameController = new GameController(startHouseFileName);
+            gameController = new GameController(mockedOpponent, startHouseFileName);
 
             Assert.Multiple(() =>
             {
@@ -192,7 +195,7 @@ namespace HideAndSeek
             GameController.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("my_saved_game.game.json", savedGameFileText);
 
             // Create new game controller
-            gameController = new GameController("DefaultHouse");
+            gameController = new GameController(mockedOpponent, "DefaultHouse");
 
             // Load game from SavedGame file and get message
             message = gameController.LoadGame("my_saved_game");
@@ -259,7 +262,7 @@ namespace HideAndSeek
             GameController.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("my_saved_game.game.json", savedGameFileText);
 
             // Create new game controller
-            gameController = new GameController("TestHouse");
+            gameController = new GameController(mockedOpponent, "TestHouse");
 
             // Load game from SavedGame file and get message
             message = gameController.LoadGame("my_saved_game");
@@ -303,7 +306,7 @@ namespace HideAndSeek
         public void Test_GameController_LoadGame_AndCheckErrorMessage_ForInvalidFileName(
             [Values("", " ", "my saved game", "my\\saved\\game", "my/saved/game", "my/saved\\ game")] string fileName)
         {
-            gameController = new GameController("DefaultHouse");
+            gameController = new GameController(mockedOpponent, "DefaultHouse");
             exception = Assert.Throws<ArgumentException>(() => gameController.LoadGame(fileName));
             Assert.That(exception.Message, Does.StartWith($"Cannot perform action because file name \"{fileName}\" " +
                                                            "is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
@@ -319,7 +322,7 @@ namespace HideAndSeek
             GameController.FileSystem = mockFileSystemForGameController.Object;
 
             // Create new game controller
-            gameController = new GameController("DefaultHouse");
+            gameController = new GameController(mockedOpponent, "DefaultHouse");
 
             Assert.Multiple(() =>
             {
@@ -431,7 +434,7 @@ namespace HideAndSeek
             GameController.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("my_corrupt_game.game.json", savedGameFileText);
 
             // Create new game controller
-            gameController = new GameController("DefaultHouse");
+            gameController = new GameController(mockedOpponent, "DefaultHouse");
 
             // Load game from corrupt SavedGame file
             gameController.LoadGame("my_corrupt_game"); // Should throw exception
