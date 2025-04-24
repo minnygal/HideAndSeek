@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Moq;
+using System;
 using System.Collections.Generic;
 using System.IO.Abstractions;
 using System.Linq;
@@ -15,7 +16,7 @@ namespace HideAndSeek
     /// 
     /// Automatically tests GameController constructor with default House file name passed in
     /// 
-    /// These are integration tests using House, Opponent, Location, and LocationWithHidingPlace
+    /// These are integration tests using House, Location, and LocationWithHidingPlace
     /// </summary>
     public class TestGameController_CheckCurrentLocationAndStatus
     {
@@ -183,7 +184,26 @@ namespace HideAndSeek
         [SetUp]
         public void SetUp()
         {
-            gameController = new GameController(5, "DefaultHouse"); // Create new GameController with 5 opponents and default House layout
+            // Create Opponent mocks
+            Mock<Opponent> opponent1 = new Mock<Opponent>();
+            opponent1.Setup((o) => o.Name).Returns("Joe");
+
+            Mock<Opponent> opponent2 = new Mock<Opponent>();
+            opponent2.Setup((o) => o.Name).Returns("Bob");
+
+            Mock<Opponent> opponent3 = new Mock<Opponent>();
+            opponent3.Setup((o) => o.Name).Returns("Ana");
+
+            Mock<Opponent> opponent4 = new Mock<Opponent>();
+            opponent4.Setup((o) => o.Name).Returns("Owen");
+
+            Mock<Opponent> opponent5 = new Mock<Opponent>();
+            opponent5.Setup((o) => o.Name).Returns("Jimmy");
+
+            // Create new GameController with mocked Opponents and default House layout
+            gameController = new GameController(
+                new Opponent[] { opponent1.Object, opponent2.Object, opponent3.Object, opponent4.Object, opponent5.Object}, 
+                "DefaultHouse");
             
             // Assert that properties are as expected
             Assert.Multiple(() =>

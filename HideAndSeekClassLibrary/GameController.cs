@@ -107,7 +107,7 @@ namespace HideAndSeek
                 else // if Opponents have been opponentsFound
                 {
                     message += Environment.NewLine + $"You have found {FoundOpponents.Count} of {OpponentsAndHidingLocations.Count()} opponent{(OpponentsAndHidingLocations.Count() == 1 ? "" : "s")}"
-                            + ": " + String.Join(", ", FoundOpponents); // Add information about Opponents opponentsFound to message
+                            + ": " + String.Join(", ", FoundOpponents.Select((o) => o.Name)); // Add information about found Opponents to message
                 }
 
                 // Return status message
