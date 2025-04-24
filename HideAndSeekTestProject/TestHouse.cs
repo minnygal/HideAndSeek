@@ -13,7 +13,7 @@ namespace HideAndSeek
 {
     /// <summary>
     /// House tests for layout, properties, and methods
-    /// (integration tests using Opponent, Location, and LocationWithHidingPlace)
+    /// (integration tests using Location and LocationWithHidingPlace)
     /// </summary>
     [TestFixture]
     public class TestHouse
@@ -412,13 +412,13 @@ namespace HideAndSeek
             // ARRANGE
             // Hide opponent in Garage
             LocationWithHidingPlace garage = (LocationWithHidingPlace)house.Locations.Where((l) => l.Name == "Garage").First(); // Get Garage reference
-            garage.HideOpponent(new Opponent());
+            garage.HideOpponent(new Mock<Opponent>().Object);
 
             // Hide 3 more Opponents in Attic
             LocationWithHidingPlace attic = (LocationWithHidingPlace)house.Locations.Where((l) => l.Name == "Attic").First(); // Get Attic reference
-            attic.HideOpponent(new Opponent());
-            attic.HideOpponent(new Opponent());
-            attic.HideOpponent(new Opponent());
+            attic.HideOpponent(new Mock<Opponent>().Object);
+            attic.HideOpponent(new Mock<Opponent>().Object);
+            attic.HideOpponent(new Mock<Opponent>().Object);
 
             // ACT
             // Clear hiding places in House
