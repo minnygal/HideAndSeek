@@ -55,7 +55,8 @@ namespace HideAndSeek
             // Assert that properties are as expected
             Assert.Multiple(() =>
             {
-                Assert.That(gameController.OpponentsAndHidingLocations.Values.Select((l) => l.Name), Is.EquivalentTo(new List<string>() { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry" }), "opponent hiding places");
+                Assert.That(gameController.OpponentsAndHidingLocations.Values.Select((l) => l.Name), 
+                    Is.EquivalentTo(new List<string>() { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry" }), "opponent hiding places");
                 Assert.That(gameController.FoundOpponents, Is.Empty, "no found opponents");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(1), "move number");
                 Assert.That(gameController.CurrentLocation.Name, Is.EqualTo("Entry"), "current location");

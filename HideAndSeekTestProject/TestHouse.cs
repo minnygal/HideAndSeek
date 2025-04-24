@@ -221,7 +221,7 @@ namespace HideAndSeek
         [TestCase("Entry")]
         [TestCase("Hallway")]
         [TestCase("Landing")]
-        [Category("House LocationType")]
+        [Category("House Locations LocationType")]
         public void Test_House_Locations_AreNotOfType_LocationWithHidingPlace(string locationName)
         {
             Assert.That(house.Locations.Where((l) => l.Name == locationName).First(), Is.Not.InstanceOf<LocationWithHidingPlace>());
@@ -238,7 +238,7 @@ namespace HideAndSeek
         [TestCase("Nursery")]
         [TestCase("Pantry")]
         [TestCase("Attic")]
-        [Category("House LocationType")]
+        [Category("House Locations LocationWithHidingPlaceType")]
         public void Test_House_Locations_AreOfType_LocationWithHidingPlace(string locationName)
         {
             Assert.That(house.Locations.Where((l) => l.Name == locationName).First(), Is.InstanceOf<LocationWithHidingPlace>());
