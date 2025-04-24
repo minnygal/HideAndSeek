@@ -15,7 +15,7 @@ namespace HideAndSeek
     /// -playing full game in custom House
     /// -GameController constructor called with file name but error
     /// 
-    /// These are integration tests using House, Opponent, Location, and LocationWithHidingPlace
+    /// These are integration tests using House, Location, and LocationWithHidingPlace
     /// </summary>
     [TestFixture]
     public class TestGameController_CustomHouse
