@@ -1050,6 +1050,199 @@ namespace HideAndSeek
                     (GameController gameController) => FinishGame_SpecifiedNames_15Opponents(gameController))
                 .SetName("Test_GameController_FullGame_WithCustomOpponents_AndCheckMessageAndProperties - specify names - 15 opponents")
                 .SetCategory("GameController Move Check Message Prompt Status MoveNumber GameOver Constructor SpecifiedNamesOfOpponents Success");
+
+                // SPECIFIED OPPONENT OBJECTS
+                // Specified Opponent objects - 1
+                yield return new TestCaseData( // Amy in Kitchen
+                    new int[] { 1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4 }, // Hide Opponent in Kitchen
+                    () => {
+                        // Create mocked Opponent
+                        Mock<Opponent> opponent1 = new Mock<Opponent>();
+                        opponent1.Setup((o) => o.Name).Returns("Amy");
+
+                        // Return GameController with mocked Opponent passed in
+                        return new GameController(new Opponent[] { opponent1.Object }, "DefaultHouse");
+                    },
+                    (GameController gameController) => FinishGame_SpecifiedNames_1Opponent(gameController))
+                .SetName("Test_GameController_FullGame_WithCustomOpponents_AndCheckMessageAndProperties - specify objects - 1 opponent")
+                .SetCategory("GameController Move Check Message Prompt Status MoveNumber GameOver Constructor SpecifiedOpponentObjects Success");
+
+                // Specified Opponent objects - 3
+                yield return new TestCaseData( // Amy in Kitchen, John in Pantry
+                    new int[] {
+                        1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
+                        0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2 // Hide opponent in Pantry
+                    },
+                    () => {
+                        // Create mocked Opponents
+                        Mock<Opponent> opponent1 = new Mock<Opponent>();
+                        opponent1.Setup((o) => o.Name).Returns("Amy");
+
+                        Mock<Opponent> opponent2 = new Mock<Opponent>();
+                        opponent2.Setup((o) => o.Name).Returns("John");
+
+                        // Return GameController with mocked Opponent passed in
+                        return new GameController(new Opponent[] { opponent1.Object, opponent2.Object }, "DefaultHouse");
+                    },
+                    (GameController gameController) => FinishGame_SpecifiedNames_2Opponents(gameController))
+                .SetName("Test_GameController_FullGame_WithCustomOpponents_AndCheckMessageAndProperties - specify objects - 2 opponents")
+                .SetCategory("GameController Move Check Message Prompt Status MoveNumber GameOver Constructor SpecifiedOpponentObjects Success");
+
+                // Specified Opponent objects - 6
+                yield return new TestCaseData( // Amy, Robert, and Zelda in Kitchen; Wendy in Bathroom; John and Gina in Pantry
+                    new int[] {
+                        1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
+                        0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
+                        1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, // Hide opponent in Bathroom
+                        1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
+                        0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
+                    },
+                    () => {
+                        // Create mocked Opponents
+                        Mock<Opponent> opponent1 = new Mock<Opponent>();
+                        opponent1.Setup((o) => o.Name).Returns("Amy");
+
+                        Mock<Opponent> opponent2 = new Mock<Opponent>();
+                        opponent2.Setup((o) => o.Name).Returns("John");
+
+                        Mock<Opponent> opponent3 = new Mock<Opponent>();
+                        opponent3.Setup((o) => o.Name).Returns("Wendy");
+
+                        Mock<Opponent> opponent4 = new Mock<Opponent>();
+                        opponent4.Setup((o) => o.Name).Returns("Robert");
+
+                        Mock<Opponent> opponent5 = new Mock<Opponent>();
+                        opponent5.Setup((o) => o.Name).Returns("Gina");
+
+                        Mock<Opponent> opponent6 = new Mock<Opponent>();
+                        opponent6.Setup((o) => o.Name).Returns("Zelda");
+
+                        // Return GameController with mocked Opponent passed in
+                        return new GameController(
+                            new Opponent[] { opponent1.Object, opponent2.Object, opponent3.Object, opponent4.Object, opponent5.Object, opponent6.Object },
+                            "DefaultHouse");
+                    },
+                    (GameController gameController) => FinishGame_SpecifiedNames_6Opponents(gameController))
+                .SetName("Test_GameController_FullGame_WithCustomOpponents_AndCheckMessageAndProperties - specify objects - 6 opponents")
+                .SetCategory("GameController Move Check Message Prompt Status MoveNumber GameOver Constructor SpecifiedOpponentObjects Success");
+
+                // Specified Opponent objects - 10
+                yield return new TestCaseData( // Amy, Robert, Zelda, and Rose in Kitchen; Wendy and Benjamin in Bathroom; John, Gina, Paul, and Mike in Pantry
+                    new int[] {
+                        1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
+                        0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
+                        1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, // Hide opponent in Bathroom
+                        1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
+                        0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
+                    },
+                    () => {
+                        // Create mocked Opponents
+                        Mock<Opponent> opponent1 = new Mock<Opponent>();
+                        opponent1.Setup((o) => o.Name).Returns("Amy");
+
+                        Mock<Opponent> opponent2 = new Mock<Opponent>();
+                        opponent2.Setup((o) => o.Name).Returns("John");
+
+                        Mock<Opponent> opponent3 = new Mock<Opponent>();
+                        opponent3.Setup((o) => o.Name).Returns("Wendy");
+
+                        Mock<Opponent> opponent4 = new Mock<Opponent>();
+                        opponent4.Setup((o) => o.Name).Returns("Robert");
+
+                        Mock<Opponent> opponent5 = new Mock<Opponent>();
+                        opponent5.Setup((o) => o.Name).Returns("Gina");
+
+                        Mock<Opponent> opponent6 = new Mock<Opponent>();
+                        opponent6.Setup((o) => o.Name).Returns("Zelda");
+
+                        Mock<Opponent> opponent7 = new Mock<Opponent>();
+                        opponent7.Setup((o) => o.Name).Returns("Paul");
+
+                        Mock<Opponent> opponent8 = new Mock<Opponent>();
+                        opponent8.Setup((o) => o.Name).Returns("Benjamin");
+
+                        Mock<Opponent> opponent9 = new Mock<Opponent>();
+                        opponent9.Setup((o) => o.Name).Returns("Rose");
+
+                        Mock<Opponent> opponent10 = new Mock<Opponent>();
+                        opponent10.Setup((o) => o.Name).Returns("Mike");
+
+                        // Return GameController with mocked Opponent passed in
+                        return new GameController(
+                            new Opponent[] { opponent1.Object, opponent2.Object, opponent3.Object, opponent4.Object, opponent5.Object, 
+                                             opponent6.Object, opponent7.Object, opponent8.Object, opponent9.Object, opponent10.Object },
+                            "DefaultHouse");
+                    },
+                    (GameController gameController) => FinishGame_SpecifiedNames_10Opponents(gameController))
+                .SetName("Test_GameController_FullGame_WithCustomOpponents_AndCheckMessageAndProperties - specify objects - 10 opponents")
+                .SetCategory("GameController Move Check Message Prompt Status MoveNumber GameOver Constructor SpecifiedOpponentObjects Success");
+
+                // Specified Opponent objects - 15
+                yield return new TestCaseData( // Amy, Robert, Zelda, Rose, Patrick, and Sarah in Kitchen; Wendy, Benjamin, and Chris in Bathroom; John, Gina, Paul, Mike, Cassie, and Jonathan in Pantry
+                    new int[] {
+                        1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
+                        0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
+                        1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, // Hide opponent in Bathroom
+                        1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
+                        0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
+                    },
+                    () => {
+                        // Create mocked Opponents
+                        Mock<Opponent> opponent1 = new Mock<Opponent>();
+                        opponent1.Setup((o) => o.Name).Returns("Amy");
+
+                        Mock<Opponent> opponent2 = new Mock<Opponent>();
+                        opponent2.Setup((o) => o.Name).Returns("John");
+
+                        Mock<Opponent> opponent3 = new Mock<Opponent>();
+                        opponent3.Setup((o) => o.Name).Returns("Wendy");
+
+                        Mock<Opponent> opponent4 = new Mock<Opponent>();
+                        opponent4.Setup((o) => o.Name).Returns("Robert");
+
+                        Mock<Opponent> opponent5 = new Mock<Opponent>();
+                        opponent5.Setup((o) => o.Name).Returns("Gina");
+
+                        Mock<Opponent> opponent6 = new Mock<Opponent>();
+                        opponent6.Setup((o) => o.Name).Returns("Zelda");
+
+                        Mock<Opponent> opponent7 = new Mock<Opponent>();
+                        opponent7.Setup((o) => o.Name).Returns("Paul");
+
+                        Mock<Opponent> opponent8 = new Mock<Opponent>();
+                        opponent8.Setup((o) => o.Name).Returns("Benjamin");
+
+                        Mock<Opponent> opponent9 = new Mock<Opponent>();
+                        opponent9.Setup((o) => o.Name).Returns("Rose");
+
+                        Mock<Opponent> opponent10 = new Mock<Opponent>();
+                        opponent10.Setup((o) => o.Name).Returns("Mike");
+
+                        Mock<Opponent> opponent11 = new Mock<Opponent>();
+                        opponent11.Setup((o) => o.Name).Returns("Patrick");
+
+                        Mock<Opponent> opponent12 = new Mock<Opponent>();
+                        opponent12.Setup((o) => o.Name).Returns("Cassie");
+
+                        Mock<Opponent> opponent13 = new Mock<Opponent>();
+                        opponent13.Setup((o) => o.Name).Returns("Chris");
+
+                        Mock<Opponent> opponent14 = new Mock<Opponent>();
+                        opponent14.Setup((o) => o.Name).Returns("Sarah");
+
+                        Mock<Opponent> opponent15 = new Mock<Opponent>();
+                        opponent15.Setup((o) => o.Name).Returns("Jonathan");
+
+                        // Return GameController with mocked Opponent passed in
+                        return new GameController(
+                            new Opponent[] { opponent1.Object, opponent2.Object, opponent3.Object, opponent4.Object, opponent5.Object,
+                                             opponent6.Object, opponent7.Object, opponent8.Object, opponent9.Object, opponent10.Object,
+                                             opponent11.Object, opponent12.Object, opponent13.Object, opponent14.Object, opponent15.Object },
+                            "DefaultHouse");
+                    },
+                    (GameController gameController) => FinishGame_SpecifiedNames_15Opponents(gameController))
+                .SetName("Test_GameController_FullGame_WithCustomOpponents_AndCheckMessageAndProperties - specify objects - 15 opponents")
+                .SetCategory("GameController Move Check Message Prompt Status MoveNumber GameOver Constructor SpecifiedOpponentObjects Success");
             }
         }
 
