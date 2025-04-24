@@ -204,19 +204,53 @@ namespace HideAndSeek
         }
 
         /// <summary>
+        /// Create a GameController with specific Opponents and an optional specified House file name
+        /// </summary>
+        /// <param name="opponents">Opponents to hide in House</param>
+        /// <param name="houseFileNameWithoutEnding">Name of House layout file without ending or extension</param>
+        /// <exception cref="ArgumentException">Exception thrown when no names for Opponents were passed in</exception>"
+        public GameController(Opponent[] opponents, string houseFileNameWithoutEnding = "DefaultHouse")
+        {
+            // If no opponent names in array
+            if (opponents.Length == 0)
+            {
+                throw new ArgumentException("Cannot create a new instance of GameController because no Opponents were passed in", nameof(opponents)); // Throw exception
+            }
+
+            // Set up initial game with specific Opponent names and House file name
+            SetUpInitialGameWithSpecificOpponentsAndHouseFile(opponents, houseFileNameWithoutEnding);
+        }
+
+        /// <summary>
         /// Set up initial game with specific Opponent names and specific House file name
         /// </summary>
         /// <param name="opponentNames">Names of Opponents</param>
         /// <param name="houseFileName">Name of House layout file without ending or extension</param>
         private void SetUpInitialGameWithSpecificOpponentNamesAndHouseFile(string[] opponentNames, string houseFileName)
         {
+            List<Opponent> opponents = new List<Opponent>();
+            foreach(string name in opponentNames)
+            {
+                opponents.Add(new Opponent(name));
+            }
+
+            SetUpInitialGameWithSpecificOpponentsAndHouseFile(opponents.ToArray(), houseFileName);
+        }
+
+        /// <summary>
+        /// Set up initial game with specific Opponents and specific House file name
+        /// </summary>
+        /// <param name="opponentNames">Opponents</param>
+        /// <param name="houseFileName">Name of House layout file without ending or extension</param>
+        private void SetUpInitialGameWithSpecificOpponentsAndHouseFile(Opponent[] opponents, string houseFileName)
+        {
             // Set Opponents and hiding locations property to new Dictionary
             OpponentsAndHidingLocations = new Dictionary<Opponent, LocationWithHidingPlace>();
 
-            // Create Opponents with specified names and add them to dictionary as keys
-            foreach (string name in opponentNames)
+            // Add Opponents to dictionary as keys
+            foreach (Opponent opponent in opponents)
             {
-                OpponentsAndHidingLocations.Add(new Opponent(name), null);
+                OpponentsAndHidingLocations.Add(opponent, null);
             }
 
             // Start game with specified House file

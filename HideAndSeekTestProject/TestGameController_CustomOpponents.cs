@@ -200,5 +200,54 @@ namespace HideAndSeek
                 Assert.That(exception.Message, Does.StartWith($"opponent name \"{invalidName}\" is invalid (is empty or contains only whitespace)"));
             });
         }
+
+        [TestCaseSource(typeof(TestGameController_CustomOpponents_TestData),
+            nameof(TestGameController_CustomOpponents_TestData.TestCases_For_Test_GameController_Constructor_WithSpecifiedOpponents))]
+        [Category("GameController Constructor SpecifiedOpponents OpponentsAndHidingPlaces Success")]
+        public void Test_GameController_Constructor_WithSpecifiedOpponents(int numberOfOpponents, string[] expectedHidingPlaces)
+        {
+            // Create mock random values list for hiding opponents
+            int[] mockRandomValuesList = [
+                1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent 1 in Kitchen
+                0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent 2 in Pantry
+                1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, // Hide opponent 3 in Bathroom
+                1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent 4 in Kitchen
+                0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent 5 in Pantry
+            ];
+
+            // Set House random number generator to mock random
+            House.Random = new MockRandomWithValueList(mockRandomValuesList);
+
+            // Create array of Opponents
+            Opponent[] opponents = new Opponent[numberOfOpponents];
+            for(int i = 0; i < numberOfOpponents; i++)
+            {
+                opponents[i] = new Opponent();
+            }
+
+            // Create GameController with Opponents
+            gameController = new GameController(opponents, "DefaultHouse");
+
+            Assert.Multiple(() =>
+            {
+                Assert.That(gameController.OpponentsAndHidingLocations.Keys, Is.EquivalentTo(opponents), "Opponents");
+                Assert.That(gameController.OpponentsAndHidingLocations.Values.Select((l) => l.Name), Is.EquivalentTo(expectedHidingPlaces), "Opponents' hiding locations");
+            });
+        }
+
+        [Test]
+        [Category("GameController Constructor SpecifiedOpponents OpponentsAndHidingPlaces ArgumentException Failure")]
+        public void Test_GameController_Constructor_AndCheckErrorMessage_ForEmptyArrayOfOpponents()
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that calling constructor with empty array of Opponents raises an exception
+                var exception = Assert.Throws<ArgumentException>(() => {
+                    new GameController(Array.Empty<Opponent>(), "DefaultHouse");
+                });
+
+                Assert.That(exception.Message, Does.StartWith("Cannot create a new instance of GameController because no Opponents were passed in"));
+            });
+        }
     }
 }
