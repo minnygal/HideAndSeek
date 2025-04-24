@@ -7,7 +7,7 @@ namespace HideAndSeek
 {
     /// <summary>
     /// GameController tests for SavedGame method to save game to file
-    /// (integration tests using SavedGame, House, Opponent, Location, and LocationWithHidingPlace)
+    /// (integration tests using SavedGame, House, Location, and LocationWithHidingPlace)
     /// </summary>
     [TestFixture]
     public class TestGameController_SaveGame
@@ -45,7 +45,7 @@ namespace HideAndSeek
             GameController.FileSystem = mockFileSystemForGameController.Object;
 
             // Set up game cotroller
-            gameController = new GameController("DefaultHouse");
+            gameController = new GameController(TestGameController_SaveGame_TestData.MockedOpponents, "DefaultHouse");
 
             // Save game
             message = gameController.SaveGame(fileName);
@@ -90,7 +90,7 @@ namespace HideAndSeek
         public void Test_GameController_SaveGame_AndCheckErrorMessage_ForInvalidFileName(
             [Values("", " ", "my saved game", "my\\saved\\game", "my/saved/game", "my/saved\\ game")] string fileName)
         {
-            gameController = new GameController("DefaultHouse");
+            gameController = new GameController(TestGameController_SaveGame_TestData.MockedOpponents, "DefaultHouse");
             exception = Assert.Throws<ArgumentException>(() => gameController.SaveGame(fileName));
             Assert.That(exception.Message, Does.StartWith($"Cannot perform action because file name \"{fileName}\" " +
                                                            "is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
@@ -106,7 +106,7 @@ namespace HideAndSeek
             GameController.FileSystem = mockFileSystemForGameController.Object;
 
             // Set up game cotroller
-            gameController = new GameController("DefaultHouse");
+            gameController = new GameController(TestGameController_SaveGame_TestData.MockedOpponents, "DefaultHouse");
 
             // Assert that saving game with file name of already existing file raises exception
             exception = Assert.Throws<InvalidOperationException>(() => gameController.SaveGame("fileName"));

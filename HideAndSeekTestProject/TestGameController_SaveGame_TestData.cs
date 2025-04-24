@@ -10,6 +10,39 @@ namespace HideAndSeek
     public static class TestGameController_SaveGame_TestData
     {
         /// <summary>
+        /// Array with a mocked Opponents (named)
+        /// </summary>
+        public static Opponent[] MockedOpponents
+        {
+            get
+            {
+                // Create Opponent mocks
+                Mock<Opponent> opponent1 = new Mock<Opponent>();
+                opponent1.Setup((o) => o.Name).Returns("Joe");
+                opponent1.Setup((o) => o.ToString()).Returns("Joe");
+
+                Mock<Opponent> opponent2 = new Mock<Opponent>();
+                opponent2.Setup((o) => o.Name).Returns("Bob");
+                opponent2.Setup((o) => o.ToString()).Returns("Bob");
+
+                Mock<Opponent> opponent3 = new Mock<Opponent>();
+                opponent3.Setup((o) => o.Name).Returns("Ana");
+                opponent3.Setup((o) => o.ToString()).Returns("Ana");
+
+                Mock<Opponent> opponent4 = new Mock<Opponent>();
+                opponent4.Setup((o) => o.Name).Returns("Owen");
+                opponent4.Setup((o) => o.ToString()).Returns("Owen");
+
+                Mock<Opponent> opponent5 = new Mock<Opponent>();
+                opponent5.Setup((o) => o.Name).Returns("Jimmy");
+                opponent5.Setup((o) => o.ToString()).Returns("Jimmy");
+
+                // Return array of mocked Opponents
+                return new Opponent[] { opponent1.Object, opponent2.Object, opponent3.Object, opponent4.Object, opponent5.Object };
+            }
+        }
+
+        /// <summary>
         /// Dictionary of Opponents and associated LocationWithHidingPlace names
         /// for SavedGame for tests
         /// </summary>
@@ -469,7 +502,7 @@ namespace HideAndSeek
                         (Mock<IFileSystem> mockHouseFileSystem) =>
                         {
                             // Create GameController with specified file system, hide all Opponents in specified locations, and return GameController
-                            return new GameController("DefaultHouse")
+                            return new GameController(MockedOpponents, "DefaultHouse")
                                        .RehideAllOpponents(SavedGame_OpponentsAndHidingPlaces.Values);
                         }, 
                         SavedGame_Serialized_NoFoundOpponents)
@@ -483,7 +516,7 @@ namespace HideAndSeek
                         (Mock<IFileSystem> mockHouseFileSystem) => 
                         {
                             // Create GameController with specified file system and hide all Opponents in specified locations
-                            GameController gameController = new GameController("DefaultHouse")
+                            GameController gameController = new GameController(MockedOpponents, "DefaultHouse")
                                                                 .RehideAllOpponents(SavedGame_OpponentsAndHidingPlaces.Values);
 
                             // Go to Kitchen and check to find 2 Opponents
@@ -515,7 +548,7 @@ namespace HideAndSeek
                         SerializedCustomTestHouse,
                         (Mock<IFileSystem> mockHouseFileSystem) =>
                         {
-                            return new GameController("TestHouse") // Create GameController with specified file system and specific House
+                            return new GameController(MockedOpponents, "TestHouse") // Create GameController with specified file system and specific House
                                        .RehideAllOpponents(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" }); // and hide all Opponents in specified locations
                         },
                         "{" +
@@ -547,7 +580,7 @@ namespace HideAndSeek
                             House.FileSystem = mockHouseFileSystem.Object;
 
                             // Return GameController with restarted game and rehidden Opponents
-                            return new GameController("DefaultHouse") // Create GameController with specified file system
+                            return new GameController(MockedOpponents, "DefaultHouse") // Create GameController with specified file system
                                        .RestartGame("TestHouse") // and restart game with specific House
                                        .RehideAllOpponents(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" }); // and hide all Opponents in specified locations
                         },
@@ -580,7 +613,7 @@ namespace HideAndSeek
                             House.FileSystem = mockHouseFileSystem.Object;
 
                             // Initialize to GameController with restarted game and rehidden Opponents
-                            GameController gameController = new GameController("DefaultHouse") // Create GameController with specified file system and default House
+                            GameController gameController = new GameController(MockedOpponents, "DefaultHouse") // Create GameController with specified file system and default House
                                    .RestartGame("TestHouse") // and restart game with specific House
                                    .RehideAllOpponents(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" }); // and hide all Opponents in specified locations
 
@@ -622,7 +655,7 @@ namespace HideAndSeek
                         (Mock<IFileSystem> mockHouseFileSystem) =>
                         {
                             // Initialize GameController
-                            GameController gameController = new GameController("TestHouse") // Create GameController with specified file system and specific House
+                            GameController gameController = new GameController(MockedOpponents, "TestHouse") // Create GameController with specified file system and specific House
                                                                 .RehideAllOpponents(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" }); // and hide all Opponents in specified locations
 
                             // Go to Cellar and find 1 Opponent there
