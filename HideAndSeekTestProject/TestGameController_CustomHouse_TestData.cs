@@ -16,6 +16,35 @@ namespace HideAndSeek
     public static class TestGameController_CustomHouse_TestData
     {
         /// <summary>
+        /// Array of mocked Opponents (named)
+        /// </summary>
+        /// <returns>Array of mocked Opponents</returns>
+        private static Opponent[] MockedOpponents
+        {
+            get
+            {
+                // Create Opponent mocks
+                Mock<Opponent> opponent1 = new Mock<Opponent>();
+                opponent1.Setup((o) => o.Name).Returns("Joe");
+
+                Mock<Opponent> opponent2 = new Mock<Opponent>();
+                opponent2.Setup((o) => o.Name).Returns("Bob");
+
+                Mock<Opponent> opponent3 = new Mock<Opponent>();
+                opponent3.Setup((o) => o.Name).Returns("Ana");
+
+                Mock<Opponent> opponent4 = new Mock<Opponent>();
+                opponent4.Setup((o) => o.Name).Returns("Owen");
+
+                Mock<Opponent> opponent5 = new Mock<Opponent>();
+                opponent5.Setup((o) => o.Name).Returns("Jimmy");
+
+                // Return mocked Opponents
+                return new Opponent[] { opponent1.Object, opponent2.Object, opponent3.Object, opponent4.Object, opponent5.Object };
+            }
+        }
+
+        /// <summary>
         /// Text representing default House for tests serialized
         /// </summary>
         public static string DefaultHouse_Serialized
@@ -304,7 +333,7 @@ namespace HideAndSeek
 
                 yield return new TestCaseData(() =>
                 {
-                    new GameController().RestartGame("@eou]} {(/"); // Create new GameController and call RestartGame
+                    new GameController(MockedOpponents, "DefaultHouse").RestartGame("@eou]} {(/"); // Create new GameController and call RestartGame
                 })
                     .SetName("Test_GameController_CustomHouse_Constructor_AndCheckErrorMessage_ForInvalidHouseFileName - RestartGame")
                     .SetCategory("GameController RestartGame Failure");
@@ -335,39 +364,13 @@ namespace HideAndSeek
 
                 yield return new TestCaseData(() =>
                 {
-                    GameController gameController = new GameController("DefaultHouse"); // Create new GameController
+                    GameController gameController = new GameController(MockedOpponents, "DefaultHouse"); // Create new GameController
                     SetUpMockFileSystemForNonexistentHouseFile(); // Set up mock file system
                     gameController.RestartGame("MyNonexistentFile"); // Call RestartGame
                 })
                     .SetName("Test_GameController_Constructor_AndCheckErrorMessage_WhenHouseFileDoesNotExist - RestartGame")
                     .SetCategory("GameController CustomHouse RestartGame FileNotFoundException Failure");
             }
-        }
-
-        /// <summary>
-        /// Get array of mocked Opponents
-        /// </summary>
-        /// <returns>Array of mocked Opponents</returns>
-        private static Opponent[] GetMockedOpponents()
-        {
-            // Create Opponent mocks
-            Mock<Opponent> opponent1 = new Mock<Opponent>();
-            opponent1.Setup((o) => o.Name).Returns("Joe");
-
-            Mock<Opponent> opponent2 = new Mock<Opponent>();
-            opponent2.Setup((o) => o.Name).Returns("Bob");
-
-            Mock<Opponent> opponent3 = new Mock<Opponent>();
-            opponent3.Setup((o) => o.Name).Returns("Ana");
-
-            Mock<Opponent> opponent4 = new Mock<Opponent>();
-            opponent4.Setup((o) => o.Name).Returns("Owen");
-
-            Mock<Opponent> opponent5 = new Mock<Opponent>();
-            opponent5.Setup((o) => o.Name).Returns("Jimmy");
-
-            // Return mocked Opponents
-            return new Opponent[] { opponent1.Object, opponent2.Object, opponent3.Object, opponent4.Object, opponent5.Object };
         }
 
         /// <summary>
@@ -378,7 +381,7 @@ namespace HideAndSeek
         private static GameController GetGameController_WithCustomHouseSetViaConstructor()
         {
             House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("TestHouse.house.json", textInHouseFile); // Set House file system to mock
-            return new GameController(GetMockedOpponents(), "TestHouse"); // Return new GameController with custom House
+            return new GameController(MockedOpponents, "TestHouse"); // Return new GameController with custom House
         }
         
         /// <summary>
@@ -395,7 +398,7 @@ namespace HideAndSeek
             House.FileSystem = houseMockFileSystem.Object; // Set static House file system to mock file system 
             
             // Return GameController after RestartGame called
-            return new GameController(GetMockedOpponents(), "DefaultHouse") // Create new GameController with default House
+            return new GameController(MockedOpponents, "DefaultHouse") // Create new GameController with default House
                        .RestartGame("TestHouse"); // Restart game with custom House
         }
 
