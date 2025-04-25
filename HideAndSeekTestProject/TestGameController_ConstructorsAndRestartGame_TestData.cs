@@ -10,10 +10,9 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// Test data for GameController tests for testing layout of non-default House 
-    /// set using GameController constructor or RestartGame method
+    /// Test data for GameController tests for constructors and RestartGame
     /// </summary>
-    public static class TestGameController_CustomHouse_TestData
+    public static class TestGameController_ConstructorsAndRestartGame_TestData
     {
         /// <summary>
         /// Array of mocked Opponents (named)
@@ -407,7 +406,7 @@ namespace HideAndSeek
         {
             // Set up House file system
             Mock<IFileSystem> houseMockFileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText(
-                                                    "DefaultHouse.house.json", TestGameController_CustomHouse_TestData.DefaultHouse_Serialized); // Create mock file system to return default House file text
+                                                    "DefaultHouse.house.json", TestGameController_ConstructorsAndRestartGame_TestData.DefaultHouse_Serialized); // Create mock file system to return default House file text
             MockFileSystemHelper.SetMockOfFileSystem_ToReadAllText(houseMockFileSystem, "TestHouse.house.json", textInHouseFile); // Set up mock file system to return test House file text
             House.FileSystem = houseMockFileSystem.Object; // Set static House file system to mock file system 
             

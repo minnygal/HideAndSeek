@@ -10,35 +10,20 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// GameController tests for:
-    /// -parameterless constructor
-    ///     -House Name and FileName properties, GameController OpponentsAndHidingLocations keys
-    ///     -file does not exist error
-    /// -constructor accepting House file name
-    ///     -House Name and FileName properties
-    ///     -layout of House
-    ///     -playing full game
-    ///     -invalid file name error
-    ///     -file does not exist error
-    /// -constructor accepting RestartGame method specifying House file name
-    ///     -House Name and FileName properties
-    ///     -layout of House
-    ///     -playing full game
-    ///     -invalid file name error
-    ///     -file does not exist error
+    /// GameController tests for constructors and RestartGame
     /// 
-    /// Parameterless constructor tests and invalid file name passed into constructor tests
-    /// are integration tests using Opponent, House, Location, and LocationWithHidingPlace.
-    /// All other tests are integration tests using House, Location, and LocationWithHidingPlace
+    /// When possible, these are integration tests using House, Location, and LocationWithHidingPlace.
+    /// When Opponents are created within GameController, these are integration tests
+    /// using Opponent, House, Location, and LocationWithHidingPlace.
     /// </summary>
     [TestFixture]
-    public class TestGameController_SpecifyHouseFileNameOrDefault
+    public class TestGameController_ConstructorsAndRestartGame
     {
         [SetUp]
         public void SetUp()
         {
             House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
-                                "DefaultHouse.house.json", TestGameController_CustomHouse_TestData.DefaultHouse_Serialized); // Set static House file system to mock file system
+                                "DefaultHouse.house.json", TestGameController_ConstructorsAndRestartGame_TestData.DefaultHouse_Serialized); // Set static House file system to mock file system
         }
 
         [TearDown]
@@ -47,8 +32,8 @@ namespace HideAndSeek
             House.FileSystem = new FileSystem(); // Set House file system to new clean file system
         }
 
-        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), 
-            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_SpecifyHouseFileName_AndCheckErrorMessage_ForInvalidHouseFileName))]
+        [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData), 
+            nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_SpecifyHouseFileName_AndCheckErrorMessage_ForInvalidHouseFileName))]
         public void Test_GameController_SpecifyHouseFileName_AndCheckErrorMessage_ForInvalidHouseFileName(Action CallWithInvalidHouseFileName)
         {
             Assert.Multiple(() =>
@@ -64,8 +49,8 @@ namespace HideAndSeek
             });
         }
 
-        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), 
-            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_SpecifyHouseFileNameOrDefault_AndCheckErrorMessage_WhenHouseFileDoesNotExist))]
+        [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData), 
+            nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_SpecifyHouseFileNameOrDefault_AndCheckErrorMessage_WhenHouseFileDoesNotExist))]
         public void Test_GameController_SpecifyHouseFileNameOrDefault_AndCheckErrorMessage_WhenHouseFileDoesNotExist(string fileName, Action CallWithNonexistentFileName)
         {
             Assert.Multiple(() =>
@@ -81,8 +66,8 @@ namespace HideAndSeek
             });
         }
 
-        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), 
-            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_SpecifyHouseFileNameCheckNameAndFileNameProperties))]
+        [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData), 
+            nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_SpecifyHouseFileNameCheckNameAndFileNameProperties))]
         public void Test_GameController_SpecifyHouseFileName_CheckNameAndFileNameProperties(GameController gameController)
         {
             Assert.Multiple(() =>
@@ -106,8 +91,8 @@ namespace HideAndSeek
             });
         }
 
-        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), 
-            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_SpecifyHouseFileNameCheckLocationNamesAndExits))]
+        [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData), 
+            nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_SpecifyHouseFileNameCheckLocationNamesAndExits))]
         public void Test_GameController_SpecifyHouseFileName_CheckLocationNamesAndExits(GameController gameController)
         {
             // Initialize variables to Location objects by names
@@ -244,8 +229,8 @@ namespace HideAndSeek
             });
         }
 
-        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), 
-            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_SpecifyHouseFileName_CheckLocationsWithHidingPlaces_NamesAndHidingPlaces))]
+        [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData), 
+            nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_SpecifyHouseFileName_CheckLocationsWithHidingPlaces_NamesAndHidingPlaces))]
         public void Test_GameController_SpecifyHouseFileName_CheckLocationsWithHidingPlaces_NamesAndHidingPlaces(GameController gameController)
         {
             // Initialize variables to LocationWithHidingPlace objects by names
@@ -302,8 +287,8 @@ namespace HideAndSeek
         /// -I added/edited some comments for easier reading.
         /// -I added messages to the assertions to make them easier to debug.
         /// </summary>
-        [TestCaseSource(typeof(TestGameController_CustomHouse_TestData), 
-            nameof(TestGameController_CustomHouse_TestData.TestCases_For_Test_GameController_SpecifyHouseFileName_FullGame_AndCheckMessageAndProperties))]
+        [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData), 
+            nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_SpecifyHouseFileName_FullGame_AndCheckMessageAndProperties))]
         public void Test_GameController_SpecifyHouseFileName_FullGame_AndCheckMessageAndProperties(GameController gameController)
         {
             // Hide Opponents is specific hiding places
