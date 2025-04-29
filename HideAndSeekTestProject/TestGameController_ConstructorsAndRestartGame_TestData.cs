@@ -2,6 +2,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Diagnostics.Tracing;
 using System.IO.Abstractions;
 using System.IO.Abstractions.TestingHelpers;
 using System.Linq;
@@ -942,6 +943,70 @@ namespace HideAndSeek
                     new string[] { "Annie", "Paul" })
                     .SetName("Test_GameController_FullGame_InCustomHouse_With2Opponents_AndCheckMessageAndProperties - constructor - Opponents")
                     .SetCategory("GameController Constructor SpecifyOpponentsAndHouseFileName FullGame Move CheckCurrentLocation Message Prompt Status GameOver Success");
+            }
+        }
+
+        /// <summary>
+        /// Helper method to find all Opponents (using Move/Check methods)
+        /// for Test_GameController_RestartGame with initial game completed
+        /// </summary>
+        /// <param name="gameController">GameController at start of game</param>
+        /// <returns>GameController after all Opponents found</returns>
+        private static GameController FindAllOpponents()
+        {
+            GameController gameController = new GameController(MockedOpponents, "DefaultHouse"); // Create GameController
+            gameController.Move(Direction.East); // Move to Hallway
+            gameController.Move(Direction.Northwest); // Move to Kitchen
+            gameController.CheckCurrentLocation(); // Check Kitchen and find Bob and Owen
+            gameController.Move(Direction.Southeast); // Move to Hallway
+            gameController.Move(Direction.North); // Move to Bathroom
+            gameController.CheckCurrentLocation(); // Check Bathroom and find Ana
+            gameController.Move(Direction.South); // Move to Hallway
+            gameController.Move(Direction.Up); // Move to Landing
+            gameController.Move(Direction.South); // Move to Pantry
+            gameController.CheckCurrentLocation(); // Check Pantry and find Bob and Jimmy
+            return gameController;
+        }
+
+        public static IEnumerable TestCases_For_Test_GameController_RestartGame
+        {
+            get
+            {
+                // Initial game not completed before parameterless RestartGame called
+                yield return new TestCaseData(
+                    () =>
+                    {
+                        return new GameController(MockedOpponents, "DefaultHouse").RestartGame(); // Restart game and return GameController
+                    })
+                    .SetName("Test_GameController_RestartGame - parameterless - initial game not completed");
+
+                // Initial game not completed before parameterized RestartGame called
+                yield return new TestCaseData(
+                    () =>
+                    {
+                        GameController gameController = new GameController(MockedOpponents, "DefaultHouse"); // Create GameController
+                        gameController.RestartGame("DefaultHouse"); // Restart game with specific House layout
+                        return gameController.RestartGame(); // Restart game and return GameController
+                    })
+                    .SetName("Test_GameController_RestartGame - both - initial game not completed");
+
+                // Initial game completed before parameterless RestartGame called
+                yield return new TestCaseData(
+                    () =>
+                    {
+                        return FindAllOpponents().RestartGame(); // Find all Opponents, restart game and return GameController
+                    })
+                    .SetName("Test_GameController_RestartGame - parameterless - initial game completed");
+
+                // Initial game completed before parameterized RestartGame called
+                yield return new TestCaseData(
+                    () =>
+                    {
+                        GameController gameController = new GameController(MockedOpponents, "DefaultHouse"); // Create GameController
+                        gameController.RestartGame("DefaultHouse"); // Restart game with specific House layout
+                        return FindAllOpponents().RestartGame(); // Find all Opponents, restart game and return GameController
+                    })
+                    .SetName("Test_GameController_RestartGame - both - initial game completed");
             }
         }
     }

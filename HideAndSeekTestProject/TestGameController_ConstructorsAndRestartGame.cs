@@ -968,5 +968,40 @@ namespace HideAndSeek
                 Assert.That(gameController.GameOver, Is.True, "check game over after check in Attic");
             });
         }
+
+        [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData),
+            nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_RestartGame))]
+        [Category("GameController RestartGame HidingLocations Success")]
+        public void Test_GameController_RestartGame(Func<GameController> GetGameController)
+        {
+            // Create mock random values list for hiding opponents
+            int[] mockRandomValuesList = [
+                7, // Hide opponent in Kitchen
+                5, // Hide opponent in Pantry
+                1, // Hide opponent in Bathroom
+                7, // Hide opponent in Kitchen
+                5 // Hide opponent in Pantry
+            ];
+
+            // Create mock random number generator
+            Random mockRandomNumberGenerator = new MockRandomWithValueList(mockRandomValuesList);
+
+            // Set House random number generator to mock random
+            House.Random = mockRandomNumberGenerator;
+
+            // Set GameController
+            GameController gameController = GetGameController();
+
+            // Assert that properties are as expected
+            Assert.Multiple(() =>
+            {
+                Assert.That(gameController.OpponentsAndHidingLocations.Values.Select((l) => l.Name),
+                    Is.EquivalentTo(new List<string>() { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry" }), "opponent hiding places");
+                Assert.That(gameController.FoundOpponents, Is.Empty, "no found opponents");
+                Assert.That(gameController.MoveNumber, Is.EqualTo(1), "move number");
+                Assert.That(gameController.CurrentLocation.Name, Is.EqualTo("Entry"), "current location");
+                Assert.That(gameController.GameOver, Is.False, "game not over");
+            });
+        }
     }
 }

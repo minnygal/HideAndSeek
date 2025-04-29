@@ -1,24 +1,113 @@
 ﻿using Moq;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO.Abstractions;
-using System.Linq;
-using System.Security.Cryptography;
-using System.Text;
-using System.Threading.Tasks;
+using System.Runtime.CompilerServices;
+using System.Xml.Linq;
 
 namespace HideAndSeek
 {
     /// <summary>
-    /// Test data for RestartGame and RehideAllOpponents method
+    /// GameController tests for RehideAllOpponents method
+    /// (integration tests using House, Location, and LocationWithHidingPlace)
     /// </summary>
-    public static class TestGameController_RestartRehide_TestData
+    [TestFixture]
+    public class TestGameController_Rehide
     {
+        GameController gameController;
+
+        [SetUp]
+        public void SetUp()
+        {
+            // Set static House file system to mock file system
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.house.json", DefaultHouse_Serialized);
+
+            // Create Opponent mocks
+            Mock<Opponent> opponent1 = new Mock<Opponent>();
+            opponent1.Setup((o) => o.Name).Returns("Joe");
+
+            Mock<Opponent> opponent2 = new Mock<Opponent>();
+            opponent2.Setup((o) => o.Name).Returns("Bob");
+
+            Mock<Opponent> opponent3 = new Mock<Opponent>();
+            opponent3.Setup((o) => o.Name).Returns("Ana");
+
+            Mock<Opponent> opponent4 = new Mock<Opponent>();
+            opponent4.Setup((o) => o.Name).Returns("Owen");
+
+            Mock<Opponent> opponent5 = new Mock<Opponent>();
+            opponent5.Setup((o) => o.Name).Returns("Jimmy");
+
+            // Create new GameController with mocked Opponents and default House layout
+            gameController = new GameController(
+                new Opponent[] { opponent1.Object, opponent2.Object, opponent3.Object, opponent4.Object, opponent5.Object },
+                "DefaultHouse");
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            House.FileSystem = new FileSystem(); // Set static House file system to new file system
+        }
+
+        [Test]
+        [Category("GameController RehideAllOpponents HidingLocations Success")]
+        public void Test_GameController_RehideAllOpponents_InSpecificPlaces()
+        {
+            // Create enumerable of hiding places for opponents to hide
+            IEnumerable<string> hidingPlaces = new List<string>()
+            {
+                "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry"
+            };
+
+            // Hide all opponents in specified locations
+            gameController.RehideAllOpponents(hidingPlaces);
+
+            // Assert that hiding places (values) in OpponentsAndHidingLocations dictionary are set correctly
+            Assert.That(gameController.OpponentsAndHidingLocations.Values.Select((l) => l.Name), Is.EquivalentTo(hidingPlaces));
+        }
+
+        [Test]
+        [Category("GameController RehideAllOpponents InvalidOperationException Failure")]
+        public void Test_GameController_RehideAllOpponents_InSpecificPlaces_AndCheckErrorMessage_ForNonexistentLocation()
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that hiding an Opponent in a location with an invalid name raises an exception
+                var exception = Assert.Throws<InvalidOperationException>(() =>
+                {
+                    gameController.RehideAllOpponents(new List<string>() { "Dungeon", "Lavatory", "Eggshells", "Worm Hole", "Zoo" });
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo("location with hiding place \"Dungeon\" does not exist in House"));
+            });
+        }
+
+        [TestCase()]
+        [TestCase("Living Room")]
+        [TestCase("Living Room", "Kitchen")]
+        [TestCase("Living Room", "Kitchen", "Pantry")]
+        [TestCase("Living Room", "Kitchen", "Pantry", "Attic")]
+        [TestCase("Living Room", "Kitchen", "Pantry", "Attic", "Master Bedroom", "Kids Room")]
+        [Category("GameController RehideAllOpponents ArgumentOutOfRangeException Failure")]
+        public void Test_GameController_RehideAllOpponents_InSpecificPlaces_AndCheckErrorMessage_ForIncorrectNumberOfHidingPlaces(params string[] hidingPlaces)
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that calling method with an enumerable with an incorrect number of hiding places raises an exception
+                var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+                {
+                    gameController.RehideAllOpponents(hidingPlaces);
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo("The number of hiding places must equal the number of opponents. (Parameter 'hidingPlaces')"));
+            });
+        }
+
         /// <summary>
         /// Text representing default House for tests serialized
         /// </summary>
-        public static string DefaultHouse_Serialized
+        private static string DefaultHouse_Serialized
         {
             get
             {
@@ -154,67 +243,6 @@ namespace HideAndSeek
                             "}" +
                         "]" +
                     "}";
-            }
-        }
-
-        /// <summary>
-        /// Helper method to find all Opponents (using Move/Check methods)
-        /// for Test_GameController_RestartGame with initial game completed
-        /// </summary>
-        /// <param name="gameController">GameController at start of game</param>
-        /// <returns>GameController after all Opponents found</returns>
-        private static GameController FindAllOpponents(GameController gameController)
-        {
-            gameController.Move(Direction.East); // Move to Hallway
-            gameController.Move(Direction.Northwest); // Move to Kitchen
-            gameController.CheckCurrentLocation(); // Check Kitchen and find Bob and Owen
-            gameController.Move(Direction.Southeast); // Move to Hallway
-            gameController.Move(Direction.North); // Move to Bathroom
-            gameController.CheckCurrentLocation(); // Check Bathroom and find Ana
-            gameController.Move(Direction.South); // Move to Hallway
-            gameController.Move(Direction.Up); // Move to Landing
-            gameController.Move(Direction.South); // Move to Pantry
-            gameController.CheckCurrentLocation(); // Check Pantry and find Bob and Jimmy
-            return gameController;
-        }
-
-        public static IEnumerable TestCases_For_Test_GameController_RestartGame
-        {
-            get
-            {
-                // Initial game not completed before parameterless RestartGame called
-                yield return new TestCaseData(
-                    (GameController gameController) =>
-                    {
-                        return gameController.RestartGame(); // Restart game and return GameController
-                    })
-                    .SetName("Test_GameController_RestartGame - parameterless - initial game not completed");
-
-                // Initial game not completed before parameterized RestartGame called
-                yield return new TestCaseData(
-                    (GameController gameController) =>
-                    {
-                        gameController.RestartGame("DefaultHouse"); // Restart game with specific House layout
-                        return gameController.RestartGame(); // Restart game and return GameController
-                    })
-                    .SetName("Test_GameController_RestartGame - both - initial game not completed");
-
-                // Initial game completed before parameterless RestartGame called
-                yield return new TestCaseData(
-                    (GameController gameController) =>
-                    {
-                        return FindAllOpponents(gameController).RestartGame(); // Find all Opponents, restart game and return GameController
-                    })
-                    .SetName("Test_GameController_RestartGame - parameterless - initial game completed");
-
-                // Initial game completed before parameterized RestartGame called
-                yield return new TestCaseData(
-                    (GameController gameController) =>
-                    {
-                        gameController.RestartGame("DefaultHouse"); // Restart game with specific House layout
-                        return FindAllOpponents(gameController).RestartGame(); // Find all Opponents, restart game and return GameController
-                    })
-                    .SetName("Test_GameController_RestartGame - both - initial game completed");
             }
         }
     }
