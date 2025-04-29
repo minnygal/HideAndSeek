@@ -204,7 +204,8 @@ namespace HideAndSeek
                     new GameController(new string[] {invalidName}, "DefaultHouse");
                 });
 
-                Assert.That(exception.Message, Does.StartWith($"opponent name \"{invalidName}\" is invalid (is empty or contains only whitespace)"));
+                Assert.That(exception.Message, Does.StartWith("Cannot create a new instance of GameController because " +
+                                                             $"opponent name \"{invalidName}\" is invalid (is empty or contains only whitespace)"));
             });
         }
 

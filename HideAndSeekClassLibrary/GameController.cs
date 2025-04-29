@@ -195,12 +195,6 @@ namespace HideAndSeek
         /// <exception cref="ArgumentException">Exception thrown when no names for Opponents were passed in</exception>"
         public GameController(string[] opponentNames, string houseFileNameWithoutEnding = "DefaultHouse")
         {
-            // If no opponent names in array
-            if (opponentNames.Length == 0)
-            {
-                throw new ArgumentException("Cannot create a new instance of GameController because no names for Opponents were passed in", nameof(opponentNames)); // Throw exception
-            }
-
             // Set Opponents and start game with specified House file name
             SetUpOpponentsInitially(opponentNames); // Set Opponents
             RestartGame(houseFileNameWithoutEnding); // Start game with specified House file
@@ -214,12 +208,6 @@ namespace HideAndSeek
         /// <exception cref="ArgumentException">Exception thrown when no names for Opponents were passed in</exception>"
         public GameController(Opponent[] opponents, string houseFileNameWithoutEnding = "DefaultHouse")
         {
-            // If no opponent names in array
-            if (opponents.Length == 0)
-            {
-                throw new ArgumentException("Cannot create a new instance of GameController because no Opponents were passed in", nameof(opponents)); // Throw exception
-            }
-
             // Set up initial game with specific Opponent names and House file name
             SetUpOpponentsInitially(opponents.ToList()); // Set Opponents
             RestartGame(houseFileNameWithoutEnding); // Start game with specified House file
@@ -229,13 +217,27 @@ namespace HideAndSeek
         /// Set Opponents initially
         /// </summary>
         /// <param name="opponentNames">Names of Opponents</param>
+        /// <exception cref="ArgumentException">Exception thrown when no names or invalid name for Opponents were passed in</exception>
         private void SetUpOpponentsInitially(string[] opponentNames)
         {
+            // If no opponent names in array
+            if (opponentNames.Length == 0)
+            {
+                throw new ArgumentException("Cannot create a new instance of GameController because no names for Opponents were passed in", nameof(opponentNames)); // Throw exception
+            }
+
             // Create list of Opponents with specified names
             List<Opponent> opponents = new List<Opponent>();
-            foreach (string name in opponentNames)
+            try
             {
-                opponents.Add(new Opponent(name));
+                foreach (string name in opponentNames)
+                {
+                    opponents.Add(new Opponent(name));
+                }
+            }
+            catch (Exception e) // If exception thrown
+            {
+                throw new ArgumentException($"Cannot create a new instance of GameController because {e.Message}", nameof(opponentNames)); // Throw exception
             }
 
             // Set Opponents
@@ -248,6 +250,12 @@ namespace HideAndSeek
         /// <param name="opponents">Opponents</param>
         private void SetUpOpponentsInitially(List<Opponent> opponents)
         {
+            // If no opponent names in list
+            if (opponents.Count() == 0)
+            {
+                throw new ArgumentException("Cannot create a new instance of GameController because no Opponents were passed in", nameof(opponents)); // Throw exception
+            }
+
             // Set Opponents and hiding locations property to new Dictionary
             OpponentsAndHidingLocations = new Dictionary<Opponent, LocationWithHidingPlace>();
 
