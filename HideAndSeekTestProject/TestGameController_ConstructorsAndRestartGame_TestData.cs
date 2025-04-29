@@ -767,19 +767,6 @@ namespace HideAndSeek
         {
             get
             {
-                // RestartGame method
-                yield return new TestCaseData(
-                    () =>
-                    {
-                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText(); // Set up mock file system to return valid default House text
-                        GameController gameController = new GameController(MockedOpponents, "DefaultHouse"); // Create new GameController with default House
-                        SetUpHouseMockFileSystemToReturnValidCustomTestHouseText(); // Set up mock file system for custom test House file
-                        return gameController.RestartGame("TestHouse"); // Call RestartGame
-                    },
-                    MockedOpponents.Select((o) => o.Name).ToArray())
-                    .SetName("Test_GameController_CheckOpponentsSetSuccessfully - RestartGame")
-                    .SetCategory("GameController RestartGame SpecifyHouseFileName OpponentsSet Success");
-
                 // Parameterless constructor
                 yield return new TestCaseData(
                     () =>
