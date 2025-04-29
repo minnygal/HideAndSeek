@@ -283,6 +283,17 @@ namespace HideAndSeek
         }
 
         /// <summary>
+        /// Restart game from beginning in House passed in
+        /// </summary>
+        /// <param name="house">House in which to play game</param>
+        /// <returns>This GameController</returns>
+        public GameController RestartGame(House house)
+        {
+            House = house;
+            return RestartGame();
+        }
+
+        /// <summary>
         /// Restart game from beginning without changing House layout
         /// </summary>
         /// <returns>This GameController</returns>

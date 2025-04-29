@@ -164,8 +164,8 @@ namespace HideAndSeek
         }
 
         [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData), 
-            nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_CheckHouseSetSuccessfully))]
-        public void Test_GameController_CheckHouseSetSuccessfully(
+            nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault))]
+        public void Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault(
             Func<GameController> GetGameController, string houseName, string houseFileName, 
             IEnumerable<string> locationsWithoutHidingPlaces, IEnumerable<string> locationsWithHidingPlaces)
         {
@@ -177,6 +177,14 @@ namespace HideAndSeek
                 Assert.That(gameController.House.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(locationsWithoutHidingPlaces), "House locations without hiding places");
                 Assert.That(gameController.House.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(locationsWithHidingPlaces), "House locations with hiding places");
             });
+        }
+
+        [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData), 
+            nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_CheckHouseSetSuccessfully_ViaHouseObject))]
+        public void Test_GameController_CheckHouseSetSuccessfully_ViaHouseObject(House house, Func<GameController> GetGameController)
+        {
+            GameController gameController = GetGameController();
+            Assert.That(gameController.House, Is.SameAs(house));
         }
 
         [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData),
@@ -971,20 +979,10 @@ namespace HideAndSeek
 
         [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData),
             nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_RestartGame))]
-        [Category("GameController RestartGame HidingLocations Success")]
-        public void Test_GameController_RestartGame(Func<GameController> GetGameController)
+        public void Test_GameController_RestartGame(string startingLocation, IEnumerable<string> hidingPlaces, Func<GameController> GetGameController)
         {
-            // Create mock random values list for hiding opponents
-            int[] mockRandomValuesList = [
-                7, // Hide opponent in Kitchen
-                5, // Hide opponent in Pantry
-                1, // Hide opponent in Bathroom
-                7, // Hide opponent in Kitchen
-                5 // Hide opponent in Pantry
-            ];
-
             // Create mock random number generator
-            Random mockRandomNumberGenerator = new MockRandomWithValueList(mockRandomValuesList);
+            Random mockRandomNumberGenerator = new MockRandomWithValueList(new int[] { 0, 1, 2, 3, 0 });
 
             // Set House random number generator to mock random
             House.Random = mockRandomNumberGenerator;
@@ -995,11 +993,10 @@ namespace HideAndSeek
             // Assert that properties are as expected
             Assert.Multiple(() =>
             {
-                Assert.That(gameController.OpponentsAndHidingLocations.Values.Select((l) => l.Name),
-                    Is.EquivalentTo(new List<string>() { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry" }), "opponent hiding places");
+                Assert.That(gameController.OpponentsAndHidingLocations.Values.Select((l) => l.Name), Is.EquivalentTo(hidingPlaces), "opponent hiding places");
                 Assert.That(gameController.FoundOpponents, Is.Empty, "no found opponents");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(1), "move number");
-                Assert.That(gameController.CurrentLocation.Name, Is.EqualTo("Entry"), "current location");
+                Assert.That(gameController.CurrentLocation.Name, Is.EqualTo(startingLocation), "current location");
                 Assert.That(gameController.GameOver, Is.False, "game not over");
             });
         }

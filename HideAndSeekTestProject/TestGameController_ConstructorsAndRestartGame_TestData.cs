@@ -498,7 +498,7 @@ namespace HideAndSeek
         {
             get
             {
-                // RestartGame method
+                // RestartGame method with House file name
                 yield return new TestCaseData(
                     "MyNonexistentFile",
                     () => {
@@ -566,7 +566,7 @@ namespace HideAndSeek
         {
             get
             {
-                // RestartGame method
+                // RestartGame method with House file name
                 yield return new TestCaseData(
                     "MyCorruptFile",
                     (Mock<IFileSystem> mockFileSystem) => {
@@ -629,11 +629,11 @@ namespace HideAndSeek
             }
         }
 
-        public static IEnumerable TestCases_For_Test_GameController_CheckHouseSetSuccessfully
+        public static IEnumerable TestCases_For_Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault
         {
             get
             {
-                // RestartGame method
+                // RestartGame method with House file name
                 yield return new TestCaseData(
                     () =>
                     {
@@ -646,7 +646,7 @@ namespace HideAndSeek
                     "TestHouse",
                     CustomTestHouse_LocationsWithoutHidingPlaces,
                     CustomTestHouse_LocationsWithHidingPlaces)
-                    .SetName("Test_GameController_CheckHouseSetSuccessfully - RestartGame")
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault - RestartGame")
                     .SetCategory("GameController RestartGame SpecifyHouseFileName HouseSet Success");
 
                 // Parameterless constructor
@@ -660,7 +660,7 @@ namespace HideAndSeek
                     "DefaultHouse",
                     DefaultHouse_LocationsWithoutHidingPlaces,
                     DefaultHouse_LocationsWithHidingPlaces)
-                    .SetName("Test_GameController_CheckHouseSetSuccessfully - constructor - parameterless")
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault - constructor - parameterless")
                     .SetCategory("GameController Constructor Parameterless HouseSet Success");
 
                 // Constructor with House file name
@@ -674,7 +674,7 @@ namespace HideAndSeek
                     "TestHouse",
                     CustomTestHouse_LocationsWithoutHidingPlaces,
                     CustomTestHouse_LocationsWithHidingPlaces)
-                    .SetName("Test_GameController_CheckHouseSetSuccessfully - constructor - file name")
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault - constructor - file name")
                     .SetCategory("GameController Constructor SpecifyHouseFileName HouseSet Success");
 
                 // Constructor with number of opponents
@@ -688,7 +688,7 @@ namespace HideAndSeek
                     "DefaultHouse",
                     DefaultHouse_LocationsWithoutHidingPlaces,
                     DefaultHouse_LocationsWithHidingPlaces)
-                    .SetName("Test_GameController_CheckHouseSetSuccessfully - constructor - # opponents")
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault - constructor - # opponents")
                     .SetCategory("GameController Constructor SpecifyNumberOfOpponents HouseSet Success");
 
                 // Constructor with number of opponents and House file name
@@ -702,7 +702,7 @@ namespace HideAndSeek
                     "TestHouse",
                     CustomTestHouse_LocationsWithoutHidingPlaces,
                     CustomTestHouse_LocationsWithHidingPlaces)
-                    .SetName("Test_GameController_CheckHouseSetSuccessfully - constructor - # opponents - file name")
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault - constructor - # opponents - file name")
                     .SetCategory("GameController Constructor SpecifyNumberOfOpponentsAndHouseFileName HouseSet Success");
 
                 // Constructor with names of opponents and House file name
@@ -716,7 +716,7 @@ namespace HideAndSeek
                     "DefaultHouse",
                     DefaultHouse_LocationsWithoutHidingPlaces,
                     DefaultHouse_LocationsWithHidingPlaces)
-                    .SetName("Test_GameController_CheckHouseSetSuccessfully - constructor - opponent names")
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault - constructor - opponent names")
                     .SetCategory("GameController Constructor SpecifyOpponentNames HouseSet Success");
 
                 // Constructor with names of opponents and House file name
@@ -730,7 +730,7 @@ namespace HideAndSeek
                     "TestHouse",
                     CustomTestHouse_LocationsWithoutHidingPlaces,
                     CustomTestHouse_LocationsWithHidingPlaces)
-                    .SetName("Test_GameController_CheckHouseSetSuccessfully - constructor - opponent names - file name")
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault - constructor - opponent names - file name")
                     .SetCategory("GameController Constructor SpecifyOpponentNamesAndHouseFileName HouseSet Success");
 
                 // Constructor with Opponents
@@ -744,7 +744,7 @@ namespace HideAndSeek
                     "DefaultHouse",
                     DefaultHouse_LocationsWithoutHidingPlaces,
                     DefaultHouse_LocationsWithHidingPlaces)
-                    .SetName("Test_GameController_CheckHouseSetSuccessfully - constructor - Opponents")
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault - constructor - Opponents")
                     .SetCategory("GameController Constructor SpecifyOpponents HouseSet Success");
 
                 // Constructor with Opponents and House file name
@@ -758,8 +758,39 @@ namespace HideAndSeek
                     "TestHouse",
                     CustomTestHouse_LocationsWithoutHidingPlaces,
                     CustomTestHouse_LocationsWithHidingPlaces)
-                    .SetName("Test_GameController_CheckHouseSetSuccessfully - constructor - Opponents - file name")
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault - constructor - Opponents - file name")
                     .SetCategory("GameController Constructor SpecifyOpponentsAndHouseFileName HouseSet Success");
+            }
+        }
+
+        public static IEnumerable TestCases_For_Test_GameController_CheckHouseSetSuccessfully_ViaHouseObject
+        {
+            get
+            {
+                // Initial game not completed before RestartGame with House object called
+                yield return new TestCaseData(
+                    CustomHouse,
+                    () =>
+                    {
+                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText();
+                        GameController gameController = new GameController(MockedOpponents, "DefaultHouse"); // Create GameController
+                        return gameController.RestartGame(CustomHouse); // Restart game with House and return GameController
+                    })
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaHouseObject - RestartGame - initial game not completed")
+                    .SetCategory("GameController RestartGame SpecifyHouse Success");
+
+                // Initial game completed before RestartGame with House called
+                yield return new TestCaseData(
+                    CustomHouse,
+                    () =>
+                    {
+                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText();
+                        GameController gameController = new GameController(MockedOpponents, "DefaultHouse"); // Create GameController
+                        gameController = FindAllOpponentsInDefaultHouse(); // Find all Opponents
+                        return gameController.RestartGame(CustomHouse); // Restart game and return GameController
+                    })
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaHouseObject - RestartGame - initial game completed")
+                    .SetCategory("GameController RestartGame SpecifyHouse Success");
             }
         }
 
@@ -939,7 +970,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="gameController">GameController at start of game</param>
         /// <returns>GameController after all Opponents found</returns>
-        private static GameController FindAllOpponents()
+        private static GameController FindAllOpponentsInDefaultHouse()
         {
             GameController gameController = new GameController(MockedOpponents, "DefaultHouse"); // Create GameController
             gameController.Move(Direction.East); // Move to Hallway
@@ -955,45 +986,113 @@ namespace HideAndSeek
             return gameController;
         }
 
+        private static House CustomHouse = GetHouse();
+
+        /// <summary>
+        /// Helper method to get House object for tests
+        /// </summary>
+        /// <returns></returns>
+        private static House GetHouse()
+        {
+            Location entry = new Location("Start");
+            House house = new House(
+                "test house",
+                "TestHouse",
+                "Start",
+                new List<Location>() { entry, new Location("Hallway") },
+                new List<LocationWithHidingPlace>()
+                {
+                    new LocationWithHidingPlace("Kitchen", "beside the stove"),
+                    new LocationWithHidingPlace("Pantry", "behind the canned goods"),
+                    new LocationWithHidingPlace("Bedroom", "under the bed"),
+                    new LocationWithHidingPlace("Office", "under the table")
+                });
+            return house;
+        }
+
         public static IEnumerable TestCases_For_Test_GameController_RestartGame
         {
             get
             {
                 // Initial game not completed before parameterless RestartGame called
                 yield return new TestCaseData(
+                    "Entry",
+                    new List<string>() { "Attic", "Bathroom", "Kids Room", "Master Bedroom", "Attic" },
                     () =>
                     {
+                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText();
                         return new GameController(MockedOpponents, "DefaultHouse").RestartGame(); // Restart game and return GameController
                     })
-                    .SetName("Test_GameController_RestartGame - parameterless - initial game not completed");
+                    .SetName("Test_GameController_RestartGame - parameterless - initial game not completed")
+                    .SetCategory("GameController RestartGame Parameterless HidingLocations MoveNumber CurrentLocation GameOver Success");
 
-                // Initial game not completed before parameterized RestartGame called
+                // Initial game not completed before RestartGame with House file name called
                 yield return new TestCaseData(
+                    "Landing",
+                    new List<string>() { "Bedroom", "Closet", "Sensory Room", "Kitchen", "Bedroom" },
                     () =>
                     {
+                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText();
                         GameController gameController = new GameController(MockedOpponents, "DefaultHouse"); // Create GameController
-                        gameController.RestartGame("DefaultHouse"); // Restart game with specific House layout
-                        return gameController.RestartGame(); // Restart game and return GameController
+                        SetUpHouseMockFileSystemToReturnValidCustomTestHouseText();
+                        return gameController.RestartGame("TestHouse"); // Restart game with test House file name and return GameController
                     })
-                    .SetName("Test_GameController_RestartGame - both - initial game not completed");
+                    .SetName("Test_GameController_RestartGame - parameterized - file name - initial game not completed")
+                    .SetCategory("GameController RestartGame SpecifyHouseFileName HidingLocations MoveNumber CurrentLocation GameOver Success");
+
+                // Initial game not completed before RestartGame with House object called
+                yield return new TestCaseData(
+                    "Start",
+                    new List<string>() { "Kitchen", "Pantry", "Bedroom", "Office", "Kitchen" },
+                    () =>
+                    {
+                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText();
+                        GameController gameController = new GameController(MockedOpponents, "DefaultHouse"); // Create GameController
+                        return gameController.RestartGame(CustomHouse); // Restart game with House and return GameController
+                    })
+                    .SetName("Test_GameController_RestartGame - parameterized - House - initial game not completed")
+                    .SetCategory("GameController RestartGame SpecifyHouse HidingLocations MoveNumber CurrentLocation GameOver Success");
 
                 // Initial game completed before parameterless RestartGame called
                 yield return new TestCaseData(
+                    "Entry",
+                    new List<string>() { "Attic", "Bathroom", "Kids Room", "Master Bedroom", "Attic" },
                     () =>
                     {
-                        return FindAllOpponents().RestartGame(); // Find all Opponents, restart game and return GameController
+                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText();
+                        return FindAllOpponentsInDefaultHouse().RestartGame(); // Find all Opponents, restart game and return GameController
                     })
-                    .SetName("Test_GameController_RestartGame - parameterless - initial game completed");
+                    .SetName("Test_GameController_RestartGame - parameterless - initial game completed")
+                    .SetCategory("GameController RestartGame Parameterless HidingLocations MoveNumber CurrentLocation GameOver Success");
 
-                // Initial game completed before parameterized RestartGame called
+                // Initial game completed before RestartGame with House file name called
                 yield return new TestCaseData(
+                    "Landing",
+                    new List<string>() { "Bedroom", "Closet", "Sensory Room", "Kitchen", "Bedroom" },
                     () =>
                     {
+                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText();
                         GameController gameController = new GameController(MockedOpponents, "DefaultHouse"); // Create GameController
-                        gameController.RestartGame("DefaultHouse"); // Restart game with specific House layout
-                        return FindAllOpponents().RestartGame(); // Find all Opponents, restart game and return GameController
+                        gameController = FindAllOpponentsInDefaultHouse(); // Find all Opponents
+                        SetUpHouseMockFileSystemToReturnValidCustomTestHouseText();
+                        return gameController.RestartGame("TestHouse"); // Restart game and return GameController
                     })
-                    .SetName("Test_GameController_RestartGame - both - initial game completed");
+                    .SetName("Test_GameController_RestartGame - parameterized - file name - initial game completed")
+                    .SetCategory("GameController RestartGame SpecifyHouseFileName HidingLocations MoveNumber CurrentLocation GameOver Success");
+
+                // Initial game completed before RestartGame with House called
+                yield return new TestCaseData(
+                    "Start",
+                    new List<string>() { "Kitchen", "Pantry", "Bedroom", "Office", "Kitchen" },
+                    () =>
+                    {
+                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText();
+                        GameController gameController = new GameController(MockedOpponents, "DefaultHouse"); // Create GameController
+                        gameController = FindAllOpponentsInDefaultHouse(); // Find all Opponents
+                        return gameController.RestartGame(CustomHouse); // Restart game and return GameController
+                    })
+                    .SetName("Test_GameController_RestartGame - parameterized - House - initial game completed")
+                    .SetCategory("GameController RestartGame SpecifyHouse HidingLocations MoveNumber CurrentLocation GameOver Success");
             }
         }
     }
