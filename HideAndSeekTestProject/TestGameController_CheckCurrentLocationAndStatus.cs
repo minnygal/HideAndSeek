@@ -173,11 +173,11 @@ namespace HideAndSeek
 
             // Set static House Random number generator property to mock random number generator
             House.Random = new MockRandomWithValueList([
-                            1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
-                            0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
-                            1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, // Hide opponent in Bathroom
-                            1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
-                            0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2 // Hide opponent in Pantry
+                                7, // Hide opponent in Kitchen
+                                5, // Hide opponent in Pantry
+                                1, // Hide opponent in Bathroom
+                                7, // Hide opponent in Kitchen
+                                5 // Hide opponent in Pantry
                            ]);
         }
 

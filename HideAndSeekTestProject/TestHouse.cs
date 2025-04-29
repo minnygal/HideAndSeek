@@ -399,14 +399,16 @@ namespace HideAndSeek
             });
         }
 
-        [TestCase("Kitchen", 1, 0, 4, 0)] // no extra moves
-        [TestCase("Pantry", 0, 1, 2)] // 1 extra move
-        [TestCase("Bathroom", 1, 2, 3)] // 2 extra moves
+        [Test]
         [Category("House GetRandomLocationWithHidingPlace Success")]
-        public void Test_House_GetRandomLocationWithHidingPlace(string hidingLocationName, params int[] mockRandomValueList)
+        public void Test_House_GetRandomLocationWithHidingPlace()
         {
-            House.Random = new MockRandomWithValueList(mockRandomValueList); // Set House's Random number generator to mock
-            Assert.That(house.GetRandomLocationWithHidingPlace().Name, Is.EqualTo(hidingLocationName)); // Assert that name of LocationWithHidingPlace returned is as expected
+            House.Random = new MockRandomWithValueList(new List<int>() { 5, 1, 0, 9, 10}); // Set House's Random number generator to mock
+            Assert.That(house.GetRandomLocationWithHidingPlace().Name, Is.EqualTo("Pantry"), "1st random LocationWithHidingPlace");
+            Assert.That(house.GetRandomLocationWithHidingPlace().Name, Is.EqualTo("Bathroom"), "2nd random LocationWithHidingPlace");
+            Assert.That(house.GetRandomLocationWithHidingPlace().Name, Is.EqualTo("Attic"), "3rd random LocationWithHidingPlace");
+            Assert.That(house.GetRandomLocationWithHidingPlace().Name, Is.EqualTo("Garage"), "4th random LocationWithHidingPlace");
+            Assert.That(house.GetRandomLocationWithHidingPlace().Name, Is.EqualTo("Living Room"), "10th random LocationWithHidingPlace");
         }
 
         [Test]

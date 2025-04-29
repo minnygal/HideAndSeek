@@ -164,119 +164,61 @@ namespace HideAndSeek
                 yield return new TestCaseData(
                     1,
                     new string[] { "Joe" },
-                    new string[] { "Kitchen" },
-                    new int[] { 1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4 }) // Hide Opponent in Kitchen
+                    new string[] { "Kitchen" })
                 .SetName("Test_GameController_Constructor_WithSpecifiedNumberOfOpponents - 1 opponent");
 
                 yield return new TestCaseData(
                     2,
                     new string[] { "Joe", "Bob" },
-                    new string[] { "Kitchen", "Pantry" },
-                    new int[] {
-                        1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
-                        0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
-                    })
+                    new string[] { "Kitchen", "Pantry" })
                 .SetName("Test_GameController_Constructor_WithSpecifiedNumberOfOpponents - 2 opponents");
 
                 yield return new TestCaseData(
                     3,
                     new string[] { "Joe", "Bob", "Ana" },
-                    new string[] { "Kitchen", "Pantry", "Bathroom" },
-                    new int[] {
-                        1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
-                        0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
-                        1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, // Hide opponent in Bathroom
-                    })
+                    new string[] { "Kitchen", "Pantry", "Bathroom" })
                 .SetName("Test_GameController_Constructor_WithSpecifiedNumberOfOpponents - 3 opponents");
 
                 yield return new TestCaseData(
                     4,
                     new string[] { "Joe", "Bob", "Ana", "Owen" },
-                    new string[] { "Kitchen", "Pantry", "Bathroom", "Kitchen" },
-                    new int[] {
-                        1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
-                        0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
-                        1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, // Hide opponent in Bathroom
-                        1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
-                    })
+                    new string[] { "Kitchen", "Pantry", "Bathroom", "Kitchen" })
                 .SetName("Test_GameController_Constructor_WithSpecifiedNumberOfOpponents - 4 opponents");
 
                 yield return new TestCaseData(
                     5,
                     new string[] { "Joe", "Bob", "Ana", "Owen", "Jimmy" },
-                    new string[] { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry" },
-                    new int[] {
-                        1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
-                        0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
-                        1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, // Hide opponent in Bathroom
-                        1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
-                        0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
-                    })
+                    new string[] { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry" })
                 .SetName("Test_GameController_Constructor_WithSpecifiedNumberOfOpponents - 5 opponents");
 
                 yield return new TestCaseData(
                     6,
                     new string[] { "Joe", "Bob", "Ana", "Owen", "Jimmy", "Mary" },
-                    new string[] { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry", "Kitchen" },
-                    new int[] {
-                        1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
-                        0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
-                        1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, // Hide opponent in Bathroom
-                        1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
-                        0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
-                    })
+                    new string[] { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry", "Kitchen" })
                 .SetName("Test_GameController_Constructor_WithSpecifiedNumberOfOpponents - 6 opponents");
 
                 yield return new TestCaseData(
                     7,
                     new string[] { "Joe", "Bob", "Ana", "Owen", "Jimmy", "Mary", "Alice" },
-                    new string[] { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry", "Kitchen", "Pantry" },
-                    new int[] {
-                        1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
-                        0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
-                        1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, // Hide opponent in Bathroom
-                        1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
-                        0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
-                    })
+                    new string[] { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry", "Kitchen", "Pantry" })
                 .SetName("Test_GameController_Constructor_WithSpecifiedNumberOfOpponents - 7 opponents");
 
                 yield return new TestCaseData(
                     8,
                     new string[] { "Joe", "Bob", "Ana", "Owen", "Jimmy", "Mary", "Alice", "Tony" },
-                    new string[] { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry", "Kitchen", "Pantry", "Bathroom" },
-                    new int[] {
-                        1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
-                        0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
-                        1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, // Hide opponent in Bathroom
-                        1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
-                        0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
-                    })
+                    new string[] { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry", "Kitchen", "Pantry", "Bathroom" })
                 .SetName("Test_GameController_Constructor_WithSpecifiedNumberOfOpponents - 8 opponents");
 
                 yield return new TestCaseData(
                     9,
                     new string[] { "Joe", "Bob", "Ana", "Owen", "Jimmy", "Mary", "Alice", "Tony", "Andy" },
-                    new string[] { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry", "Kitchen", "Pantry", "Bathroom", "Kitchen" },
-                    new int[] {
-                        1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
-                        0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
-                        1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, // Hide opponent in Bathroom
-                        1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
-                        0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
-                    })
+                    new string[] { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry", "Kitchen", "Pantry", "Bathroom", "Kitchen" })
                 .SetName("Test_GameController_Constructor_WithSpecifiedNumberOfOpponents - 9 opponents");
 
                 yield return new TestCaseData(
                     10,
                     new string[] { "Joe", "Bob", "Ana", "Owen", "Jimmy", "Mary", "Alice", "Tony", "Andy", "Jill" },
-                    new string[] { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry", "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry" },
-                    new int[] {
-                        1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
-                        0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
-                        1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, // Hide opponent in Bathroom
-                        1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
-                        0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
-                    })
+                    new string[] { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry", "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry" })
                 .SetName("Test_GameController_Constructor_WithSpecifiedNumberOfOpponents - 10 opponents");
             }
         }

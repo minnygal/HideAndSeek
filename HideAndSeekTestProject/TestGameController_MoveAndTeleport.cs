@@ -260,9 +260,9 @@ namespace HideAndSeek
         {
             // Set House Random number generator to mock random
             House.Random = new MockRandomWithValueList([
-                1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // First random location with hiding place is Kitchen
-                0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2 // Second random location with hiding place is Pantry
-            ]);
+                                7, // Hide opponent in Kitchen
+                                5 // Hide opponent in Pantry
+                           ]);
 
             Assert.Multiple(() =>
             {

@@ -57,11 +57,11 @@ namespace HideAndSeek
         {
             // Create mock random values list for hiding opponents
             int[] mockRandomValuesList = [
-                1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent 1 in Kitchen
-                0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent 2 in Pantry
-                1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, // Hide opponent 3 in Bathroom
-                1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent 4 in Kitchen
-                0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent 5 in Pantry
+                7, // Hide opponent in Kitchen
+                5, // Hide opponent in Pantry
+                1, // Hide opponent in Bathroom
+                7, // Hide opponent in Kitchen
+                5 // Hide opponent in Pantry
             ];
 
             // Create mock random number generator

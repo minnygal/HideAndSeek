@@ -33,8 +33,7 @@ namespace HideAndSeek
      * -I added a method to get a LocationWithHidingPlace by name.
      * -I renamed a method to GetRandomExit to follow project method naming convention.
      * -I used ElementAt instead of Skip in GetRandomExit.
-     * -I added a method to get a random hiding place using logic from 
-     *  Andrew Stellman and Jennifer Greene's HideAndSeek project's Opponent class's Hide method.
+     * -I added a method to get a random hiding place.
      * -I added methods to hide all opponents to ensure hiding places are cleared before
      *  opponents are rehidden.
      * -I selected LocationWithHidingPlace objects in foreach header instead of using if statement in body
@@ -540,43 +539,10 @@ namespace HideAndSeek
 
         /// <summary>
         /// Get a random location with hiding place
-        /// 
-        /// CREDIT: adapted from HideAndSeek project's Opponent class's Hide method
-        ///         © 2023 Andrew Stellman and Jennifer Greene
-        ///         Published under the MIT License
-        ///         https://github.com/head-first-csharp/fourth-edition/blob/master/Code/Chapter_10/HideAndSeek_part_3/HideAndSeek/Opponent.cs
-        ///         Link valid as of 02-25-2025
-        ///         
-        /// CHANGES:
-        /// -I renamed variables and made them type specific for easier comprehension.
-        /// -I used GetType and typeof instead of "is" in while loop (just my approach).
-        /// -I removed the diagnostic debug line of code because it's unnecessary right now.
-        /// -I removed House class specifiers before method calls (unnecessary in House class).
-        /// -I added comments for easier reading.
-        /// </summary>
         /// <returns>Random location with hiding place</returns>
         public LocationWithHidingPlace GetRandomLocationWithHidingPlace()
         {
-            // Current Location of Opponent moving through House to find hiding place
-            Location opponentCurrentLocation = StartingPoint;
-
-            // Minimum number of moves Opponent must make through House to find a LocationWithHidingPlace
-            int minNumberOfMoves = Random.Next(10, 51);
-
-            // Move through Locations in House via random exits between 10 and 50 times (inclusive)
-            for (int currentMove = 0; currentMove < minNumberOfMoves; currentMove++)
-            {
-                opponentCurrentLocation = GetRandomExit(opponentCurrentLocation);
-            }
-
-            // Keep moving until Opponent is in LocationWithHidingPlace
-            while (opponentCurrentLocation.GetType() != typeof(LocationWithHidingPlace))
-            {
-                opponentCurrentLocation = GetRandomExit(opponentCurrentLocation);
-            }
-
-            // Return LocationWithHidingPlace
-            return (LocationWithHidingPlace)opponentCurrentLocation;
+            return LocationsWithHidingPlaces.ElementAt(Random.Next(LocationsWithHidingPlaces.Count()));
         }
     }
 }

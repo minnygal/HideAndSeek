@@ -197,8 +197,8 @@ namespace HideAndSeek
 
             // Set static House Random number generator property to mock random number generator
             House.Random = new MockRandomWithValueList([
-                                1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
-                                0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
+                                7, // Hide opponent in Kitchen
+                                5 // Hide opponent in Pantry
                            ]);
 
             // Get game controller
@@ -373,11 +373,11 @@ namespace HideAndSeek
 
             // Set static House Random number generator property to mock random number generator
             House.Random = new MockRandomWithValueList([
-                                1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
-                                0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Pantry
-                                1, 2, 3, 1, 2, 3, 1, 2, 3, 1, 2, 3, 1, // Hide opponent in Bathroom
-                                1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Kitchen
-                                0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2 // Hide opponent in Pantry
+                                7, // Hide opponent in Kitchen
+                                5, // Hide opponent in Pantry
+                                1, // Hide opponent in Bathroom
+                                7, // Hide opponent in Kitchen
+                                5 // Hide opponent in Pantry
                            ]);
 
             // Initialize game controller
@@ -589,8 +589,8 @@ namespace HideAndSeek
 
             // Set static House Random number generator property to mock random number generator
             House.Random = new MockRandomWithValueList([
-                                1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Attic
-                                0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Sensory Room
+                                10, // Hide opponent in Attic
+                                2 // Hide opponent in Sensory Room
                            ]);
 
             // Get game controller
@@ -761,11 +761,11 @@ namespace HideAndSeek
 
             // Set static House Random number generator property to mock random number generator
             House.Random = new MockRandomWithValueList([
-                                1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Attic
-                                0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Sensory Room
-                                0, 3, 4, 0, 3, 4, 0, 3, 4, 0, 3, 4, // Hide opponent in Bedroom
-                                1, 0, 4, 0, 1, 0, 4, 0, 1, 0, 4, // Hide opponent in Attic
-                                0, 1, 2, 0, 1, 2, 0, 1, 2, 0, 1, 2, // Hide opponent in Sensory Room
+                                10, // Hide opponent in Attic
+                                2, // Hide opponent in Sensory Room
+                                0, // Hide opponent in Bedroom
+                                10, // Hide opponent in Attic
+                                2 // Hide opponent in Sensory Room
                            ]);
 
             // Create game controller
