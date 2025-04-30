@@ -179,6 +179,23 @@ namespace HideAndSeek
         }
 
         [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData),
+            nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_Constructor_SpecifyNamesOfOpponents_AndCheckErrorMessage_ForNullName))]
+        public void Test_GameController_Constructor_SpecifyNamesOfOpponents_AndCheckErrorMessage_ForNullName(Action CallWithEmptyListWithNullName)
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that calling constructor with list with null name raises exception
+                var exception = Assert.Throws<ArgumentNullException>(() =>
+                {
+                    CallWithEmptyListWithNullName();
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith("Cannot create a new instance of GameController because opponent name passed in was null"));
+            });
+        }
+
+        [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData),
             nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_Constructor_SpecifyOpponents_AndCheckErrorMessage_ForEmptyListOfOpponents))]
         public void Test_GameController_Constructor_SpecifyOpponents_AndCheckErrorMessage_ForEmptyListOfOpponents(Action CallWithEmptyListOfOpponents)
         {

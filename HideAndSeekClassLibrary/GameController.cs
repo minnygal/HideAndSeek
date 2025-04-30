@@ -293,12 +293,27 @@ namespace HideAndSeek
             {
                 foreach (string name in opponentNames)
                 {
+                    // If name is null
+                    if(name == null)
+                    {
+                        throw new ArgumentNullException(nameof(opponentNames), "Cannot create a new instance of GameController because opponent name passed in was null");
+                    }
+
+                    // Create new Opponent and add to list
                     opponents.Add(new Opponent(name));
                 }
             }
-            catch (Exception e) // If exception thrown
+            catch(ArgumentNullException e)
+            {
+                throw; // Rethrow exception
+            }
+            catch(ArgumentException e)
             {
                 throw new ArgumentException($"Cannot create a new instance of GameController because {e.Message}", nameof(opponentNames)); // Throw exception
+            }
+            catch(Exception e)
+            {
+                throw new Exception($"Cannot create a new instance of GameController because {e.Message}"); // Throw exception
             }
 
             // Set Opponents
