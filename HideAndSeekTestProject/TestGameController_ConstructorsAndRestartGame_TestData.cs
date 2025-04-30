@@ -400,6 +400,34 @@ namespace HideAndSeek
             }
         }
 
+        private static House CustomHouse = GetHouse();
+
+        /// <summary>
+        /// Helper method to get House object for tests
+        /// </summary>
+        /// <returns></returns>
+        private static House GetHouse()
+        {
+            // Create and connect Location and LocationWithHidingPlace objects
+            Location startingPlace = new Location("Start");
+            LocationWithHidingPlace bedroom = startingPlace.AddExit(Direction.West, "Bedroom", "under the bed");
+            LocationWithHidingPlace office = bedroom.AddExit(Direction.North, "Office", "under the desk");
+            Location hallway = office.AddExit(Direction.East, "Hallway");
+            LocationWithHidingPlace kitchen = hallway.AddExit(Direction.South, "Kitchen", "beside the stove");
+            LocationWithHidingPlace pantry = kitchen.AddExit(Direction.East, "Pantry", "behind the canned goods");
+
+            // Create House
+            House house = new House(
+                "test house",
+                "TestHouse",
+                "Start",
+                new List<Location>() { startingPlace, hallway },
+                new List<LocationWithHidingPlace>() { bedroom, office, kitchen, pantry });
+
+            // Return House
+            return house;
+        }
+
         /// <summary>
         /// Helper method to set House mock file system to return valid default House text
         /// </summary>
@@ -435,6 +463,321 @@ namespace HideAndSeek
             Mock<IFileSystem> houseMockFileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText("TestHouse.house.json", CustomTestHouse_Serialized);
             House.FileSystem = houseMockFileSystem.Object; // Set static House file system to mock file system
             return houseMockFileSystem; // Return mock object
+        }
+
+        public static IEnumerable TestCases_For_Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault
+        {
+            get
+            {
+                // RestartGame method with House file name
+                yield return new TestCaseData(
+                    () =>
+                    {
+                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText(); // Set up mock file system to return valid default House text
+                        GameController gameController = new GameController(MockedOpponents, "DefaultHouse"); // Create new GameController with default House
+                        SetUpHouseMockFileSystemToReturnValidCustomTestHouseText(); // Set up mock file system for custom test House file
+                        return gameController.RestartGame("TestHouse"); // Call RestartGame
+                    },
+                    "test house",
+                    "TestHouse",
+                    CustomTestHouse_LocationsWithoutHidingPlaces,
+                    CustomTestHouse_LocationsWithHidingPlaces)
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault - RestartGame")
+                    .SetCategory("GameController RestartGame SpecifyHouseFileName HouseSet Success");
+
+                // Parameterless constructor
+                yield return new TestCaseData(
+                    () =>
+                    {
+                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText(); // Set up mock file system to return valid default House text
+                        return new GameController(); // Return GameController
+                    },
+                    "my house",
+                    "DefaultHouse",
+                    DefaultHouse_LocationsWithoutHidingPlaces,
+                    DefaultHouse_LocationsWithHidingPlaces)
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault - constructor - parameterless")
+                    .SetCategory("GameController Constructor Parameterless HouseSet Success");
+
+                // Constructor with House file name
+                yield return new TestCaseData(
+                    () =>
+                    {
+                        SetUpHouseMockFileSystemToReturnValidCustomTestHouseText(); // Set up mock file system to return valid test House text
+                        return new GameController("TestHouse"); // Return GameController
+                    },
+                    "test house",
+                    "TestHouse",
+                    CustomTestHouse_LocationsWithoutHidingPlaces,
+                    CustomTestHouse_LocationsWithHidingPlaces)
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault - constructor - file name")
+                    .SetCategory("GameController Constructor SpecifyHouseFileName HouseSet Success");
+
+                // Constructor with number of opponents
+                yield return new TestCaseData(
+                    () =>
+                    {
+                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText(); // Set up mock file system to return valid default House text
+                        return new GameController(1); // Return GameController
+                    },
+                    "my house",
+                    "DefaultHouse",
+                    DefaultHouse_LocationsWithoutHidingPlaces,
+                    DefaultHouse_LocationsWithHidingPlaces)
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault - constructor - # opponents")
+                    .SetCategory("GameController Constructor SpecifyNumberOfOpponents HouseSet Success");
+
+                // Constructor with number of opponents and House file name
+                yield return new TestCaseData(
+                    () =>
+                    {
+                        SetUpHouseMockFileSystemToReturnValidCustomTestHouseText(); // Set up mock file system to return valid test House text
+                        return new GameController(1, "TestHouse"); // Return GameController
+                    },
+                    "test house",
+                    "TestHouse",
+                    CustomTestHouse_LocationsWithoutHidingPlaces,
+                    CustomTestHouse_LocationsWithHidingPlaces)
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault - constructor - # opponents - file name")
+                    .SetCategory("GameController Constructor SpecifyNumberOfOpponentsAndHouseFileName HouseSet Success");
+
+                // Constructor with names of opponents and House file name
+                yield return new TestCaseData(
+                    () =>
+                    {
+                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText(); // Set up mock file system to return valid default House text
+                        return new GameController(new string[] { "Lisa" }); // Return GameController
+                    },
+                    "my house",
+                    "DefaultHouse",
+                    DefaultHouse_LocationsWithoutHidingPlaces,
+                    DefaultHouse_LocationsWithHidingPlaces)
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault - constructor - opponent names")
+                    .SetCategory("GameController Constructor SpecifyOpponentNames HouseSet Success");
+
+                // Constructor with names of opponents and House file name
+                yield return new TestCaseData(
+                    () =>
+                    {
+                        SetUpHouseMockFileSystemToReturnValidCustomTestHouseText(); // Set up mock file system to return valid test House text
+                        return new GameController(new string[] { "Lisa" }, "TestHouse"); // Return GameController
+                    },
+                    "test house",
+                    "TestHouse",
+                    CustomTestHouse_LocationsWithoutHidingPlaces,
+                    CustomTestHouse_LocationsWithHidingPlaces)
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault - constructor - opponent names - file name")
+                    .SetCategory("GameController Constructor SpecifyOpponentNamesAndHouseFileName HouseSet Success");
+
+                // Constructor with Opponents
+                yield return new TestCaseData(
+                    () =>
+                    {
+                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText(); // Set up mock file system to return valid default House text
+                        return new GameController(MockedOpponents); // Return GameController
+                    },
+                    "my house",
+                    "DefaultHouse",
+                    DefaultHouse_LocationsWithoutHidingPlaces,
+                    DefaultHouse_LocationsWithHidingPlaces)
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault - constructor - Opponents")
+                    .SetCategory("GameController Constructor SpecifyOpponents HouseSet Success");
+
+                // Constructor with Opponents and House file name
+                yield return new TestCaseData(
+                    () =>
+                    {
+                        SetUpHouseMockFileSystemToReturnValidCustomTestHouseText(); // Set up mock file system to return valid test House text
+                        return new GameController(MockedOpponents, "TestHouse"); // Return GameController
+                    },
+                    "test house",
+                    "TestHouse",
+                    CustomTestHouse_LocationsWithoutHidingPlaces,
+                    CustomTestHouse_LocationsWithHidingPlaces)
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault - constructor - Opponents - file name")
+                    .SetCategory("GameController Constructor SpecifyOpponentsAndHouseFileName HouseSet Success");
+            }
+        }
+
+        public static IEnumerable TestCases_For_Test_GameController_CheckHouseSetSuccessfully_ViaHouseObject
+        {
+            get
+            {
+                // Initial game not completed before RestartGame with House object called
+                yield return new TestCaseData(
+                    CustomHouse,
+                    () =>
+                    {
+                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText();
+                        GameController gameController = new GameController(MockedOpponents, "DefaultHouse"); // Create GameController
+                        return gameController.RestartGame(CustomHouse); // Restart game with House and return GameController
+                    })
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaHouseObject - RestartGame - initial game not completed")
+                    .SetCategory("GameController RestartGame SpecifyHouse Success");
+
+                // Initial game completed before RestartGame with House called
+                yield return new TestCaseData(
+                    CustomHouse,
+                    () =>
+                    {
+                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText();
+                        GameController gameController = new GameController(MockedOpponents, "DefaultHouse"); // Create GameController
+                        gameController = FindAllOpponentsInDefaultHouse(); // Find all Opponents
+                        return gameController.RestartGame(CustomHouse); // Restart game and return GameController
+                    })
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaHouseObject - RestartGame - initial game completed")
+                    .SetCategory("GameController RestartGame SpecifyHouse Success");
+
+                // Constructor with House object
+                yield return new TestCaseData(
+                    CustomHouse,
+                    () => new GameController(MockedOpponents, CustomHouse))
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaHouseObject - constructor - House")
+                    .SetCategory("GameController Constructor SpecifyHouse Success");
+
+                // Constructor with number of opponents and House object
+                yield return new TestCaseData(
+                    CustomHouse,
+                    () => new GameController(2, CustomHouse))
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaHouseObject - constructor - # opponents and House")
+                    .SetCategory("GameController Constructor SpecifyNumberOfOpponentsAndHouse Success");
+
+                // Constructor with names of opponents and House object
+                yield return new TestCaseData(
+                    CustomHouse,
+                    () => new GameController(new string[] { "Nancy", "Steve" }, CustomHouse))
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaHouseObject - constructor - opponent names and House")
+                    .SetCategory("GameController Constructor SpecifyOpponentNamesAndHouse Success");
+
+                // Constructor with Opponents and House object
+                yield return new TestCaseData(
+                    CustomHouse,
+                    () => new GameController(new Opponent[] { new Mock<Opponent>().Object, new Mock<Opponent>().Object }, CustomHouse))
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaHouseObject - constructor - Opponents and House")
+                    .SetCategory("GameController Constructor SpecifyOpponentsAndHouse Success");
+            }
+        }
+
+        public static IEnumerable TestCases_For_Test_GameController_CheckOpponentsSetSuccessfully
+        {
+            get
+            {
+                // Parameterless constructor
+                yield return new TestCaseData(
+                    () =>
+                    {
+                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText(); // Set up mock file system to return valid default House text
+                        return new GameController(); // Return GameController
+                    },
+                    new string[] { "Joe", "Bob", "Ana", "Owen", "Jimmy" })
+                    .SetName("Test_GameController_CheckOpponentsSetSuccessfully - constructor - parameterless")
+                    .SetCategory("GameController Constructor Parameterless OpponentsSet Success");
+
+                // Constructor with House file name
+                yield return new TestCaseData(
+                    () =>
+                    {
+                        SetUpHouseMockFileSystemToReturnValidCustomTestHouseText(); // Set up mock file system to return valid test House text
+                        return new GameController("TestHouse"); // Return GameController
+                    },
+                    new string[] { "Joe", "Bob", "Ana", "Owen", "Jimmy" })
+                    .SetName("Test_GameController_CheckOpponentsSetSuccessfully - constructor - file name")
+                    .SetCategory("GameController Constructor SpecifyHouseFileName OpponentsSet Success");
+
+                // Constructor with House object
+                yield return new TestCaseData(
+                    () => new GameController(CustomHouse),
+                    new string[] { "Joe", "Bob", "Ana", "Owen", "Jimmy" })
+                    .SetName("Test_GameController_CheckOpponentsSetSuccessfully - constructor - House")
+                    .SetCategory("GameController Constructor SpecifyHouse OpponentsSet Success");
+
+                // Constructor with number of opponents
+                yield return new TestCaseData(
+                    () =>
+                    {
+                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText(); // Set up mock file system to return valid default House text
+                        return new GameController(3); // Return GameController
+                    },
+                    new string[] { "Joe", "Bob", "Ana" })
+                    .SetName("Test_GameController_CheckOpponentsSetSuccessfully - constructor - # opponents")
+                    .SetCategory("GameController Constructor SpecifyNumberOfOpponents OpponentsSet Success");
+
+                // Constructor with number of opponents and House file name
+                yield return new TestCaseData(
+                    () =>
+                    {
+                        SetUpHouseMockFileSystemToReturnValidCustomTestHouseText(); // Set up mock file system to return valid test House text
+                        return new GameController(2, "TestHouse"); // Return GameController
+                    },
+                    new string[] { "Joe", "Bob" })
+                    .SetName("Test_GameController_CheckOpponentsSetSuccessfully - constructor - # opponents - file name")
+                    .SetCategory("GameController Constructor SpecifyNumberOfOpponentsAndHouseFileName OpponentsSet Success");
+
+                // Constructor with number of opponents and House object
+                yield return new TestCaseData(
+                    () => new GameController(2, CustomHouse),
+                    new string[] { "Joe", "Bob" })
+                    .SetName("Test_GameController_CheckOpponentsSetSuccessfully - constructor - # opponents - House")
+                    .SetCategory("GameController Constructor SpecifyNumberOfOpponentsAndHouse OpponentsSet Success");
+
+                // Constructor with names of opponents
+                yield return new TestCaseData(
+                    () =>
+                    {
+                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText(); // Set up mock file system to return valid default House text
+                        return new GameController(new string[] { "Lisa", "Steve", "Mindy", "Andy", "Patrick", "Marcy", "Anne" }); // Return GameController
+                    },
+                    new string[] { "Lisa", "Steve", "Mindy", "Andy", "Patrick", "Marcy", "Anne" })
+                    .SetName("Test_GameController_CheckOpponentsSetSuccessfully - constructor - opponent names")
+                    .SetCategory("GameController Constructor SpecifyOpponentNames OpponentsSet Success");
+
+                // Constructor with names of opponents and House file name
+                yield return new TestCaseData(
+                    () =>
+                    {
+                        SetUpHouseMockFileSystemToReturnValidCustomTestHouseText(); // Set up mock file system to return valid test House text
+                        return new GameController(new string[] { "George", "Georgina" }, "TestHouse"); // Return GameController
+                    },
+                    new string[] { "George", "Georgina" })
+                    .SetName("Test_GameController_CheckOpponentsSetSuccessfully - constructor - opponent names - file name")
+                    .SetCategory("GameController Constructor SpecifyOpponentNamesAndHouseFileName OpponentsSet Success");
+
+                // Constructor with names of opponents and House object
+                yield return new TestCaseData(
+                    () => new GameController(new string[] { "George", "Georgina" }, CustomHouse),
+                    new string[] { "George", "Georgina" })
+                    .SetName("Test_GameController_CheckOpponentsSetSuccessfully - constructor - opponent names - House")
+                    .SetCategory("GameController Constructor SpecifyOpponentNamesAndHouse OpponentsSet Success");
+
+                // Constructor with Opponents
+                yield return new TestCaseData(
+                    () =>
+                    {
+                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText(); // Set up mock file system to return valid default House text
+                        return new GameController(MockedOpponents); // Return GameController
+                    },
+                    MockedOpponents.Select((o) => o.Name).ToArray())
+                    .SetName("Test_GameController_CheckOpponentsSetSuccessfully - constructor - Opponents")
+                    .SetCategory("GameController Constructor SpecifyOpponents OpponentsSet Success");
+
+                // Constructor with Opponents and House file name
+                yield return new TestCaseData(
+                    () =>
+                    {
+                        SetUpHouseMockFileSystemToReturnValidCustomTestHouseText(); // Set up mock file system to return valid test House text
+                        return new GameController(MockedOpponents, "TestHouse"); // Return GameController
+                    },
+                    MockedOpponents.Select((o) => o.Name).ToArray())
+                    .SetName("Test_GameController_CheckOpponentsSetSuccessfully - constructor - Opponents - file name")
+                    .SetCategory("GameController Constructor SpecifyOpponentsAndHouseFileName OpponentsSet Success");
+
+                // Constructor with Opponents and House object
+                yield return new TestCaseData(
+                    () => new GameController(MockedOpponents, CustomHouse),
+                    MockedOpponents.Select((o) => o.Name).ToArray())
+                    .SetName("Test_GameController_CheckOpponentsSetSuccessfully - constructor - Opponents - House")
+                    .SetCategory("GameController Constructor SpecifyOpponentsAndHouse OpponentsSet Success");
+            }
         }
 
         public static IEnumerable TestCases_For_Test_GameController_SpecifyHouseFileName_AndCheckErrorMessage_ForInvalidHouseFileName
@@ -629,266 +972,91 @@ namespace HideAndSeek
             }
         }
 
-        public static IEnumerable TestCases_For_Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault
+        public static IEnumerable TestCases_For_Test_GameController_Constructor_SpecifyNumberOfOpponents_AndCheckErrorMessage_ForInvalidNumber
         {
             get
             {
-                // RestartGame method with House file name
-                yield return new TestCaseData(
-                    () =>
-                    {
-                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText(); // Set up mock file system to return valid default House text
-                        GameController gameController = new GameController(MockedOpponents, "DefaultHouse"); // Create new GameController with default House
-                        SetUpHouseMockFileSystemToReturnValidCustomTestHouseText(); // Set up mock file system for custom test House file
-                        return gameController.RestartGame("TestHouse"); // Call RestartGame
-                    },
-                    "test house",
-                    "TestHouse",
-                    CustomTestHouse_LocationsWithoutHidingPlaces,
-                    CustomTestHouse_LocationsWithHidingPlaces)
-                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault - RestartGame")
-                    .SetCategory("GameController RestartGame SpecifyHouseFileName HouseSet Success");
-
-                // Parameterless constructor
-                yield return new TestCaseData(
-                    () =>
-                    {
-                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText(); // Set up mock file system to return valid default House text
-                        return new GameController(); // Return GameController
-                    },
-                    "my house",
-                    "DefaultHouse",
-                    DefaultHouse_LocationsWithoutHidingPlaces,
-                    DefaultHouse_LocationsWithHidingPlaces)
-                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault - constructor - parameterless")
-                    .SetCategory("GameController Constructor Parameterless HouseSet Success");
-
-                // Constructor with House file name
-                yield return new TestCaseData(
-                    () =>
-                    {
-                        SetUpHouseMockFileSystemToReturnValidCustomTestHouseText(); // Set up mock file system to return valid test House text
-                        return new GameController("TestHouse"); // Return GameController
-                    },
-                    "test house",
-                    "TestHouse",
-                    CustomTestHouse_LocationsWithoutHidingPlaces,
-                    CustomTestHouse_LocationsWithHidingPlaces)
-                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault - constructor - file name")
-                    .SetCategory("GameController Constructor SpecifyHouseFileName HouseSet Success");
-
                 // Constructor with number of opponents
-                yield return new TestCaseData(
-                    () =>
-                    {
-                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText(); // Set up mock file system to return valid default House text
-                        return new GameController(1); // Return GameController
-                    },
-                    "my house",
-                    "DefaultHouse",
-                    DefaultHouse_LocationsWithoutHidingPlaces,
-                    DefaultHouse_LocationsWithHidingPlaces)
-                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault - constructor - # opponents")
-                    .SetCategory("GameController Constructor SpecifyNumberOfOpponents HouseSet Success");
+                yield return new TestCaseData(() => { new GameController(0); })
+                    .SetName("Test_GameController_Constructor_SpecifyNumberOfOpponents_AndCheckErrorMessage_ForInvalidNumber - only number")
+                    .SetCategory("GameController Constructor SpecifyNumberOfOpponents ArgumentException Failure");
 
                 // Constructor with number of opponents and House file name
-                yield return new TestCaseData(
-                    () =>
-                    {
-                        SetUpHouseMockFileSystemToReturnValidCustomTestHouseText(); // Set up mock file system to return valid test House text
-                        return new GameController(1, "TestHouse"); // Return GameController
-                    },
-                    "test house",
-                    "TestHouse",
-                    CustomTestHouse_LocationsWithoutHidingPlaces,
-                    CustomTestHouse_LocationsWithHidingPlaces)
-                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault - constructor - # opponents - file name")
-                    .SetCategory("GameController Constructor SpecifyNumberOfOpponentsAndHouseFileName HouseSet Success");
+                yield return new TestCaseData(() => { new GameController(0, "TestHouse"); })
+                    .SetName("Test_GameController_Constructor_SpecifyNumberOfOpponents_AndCheckErrorMessage_ForInvalidNumber - and file name")
+                    .SetCategory("GameController Constructor SpecifyNumberOfOpponentsAndHouseFileName ArgumentException Failure");
 
-                // Constructor with names of opponents and House file name
-                yield return new TestCaseData(
-                    () =>
-                    {
-                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText(); // Set up mock file system to return valid default House text
-                        return new GameController(new string[] { "Lisa" }); // Return GameController
-                    },
-                    "my house",
-                    "DefaultHouse",
-                    DefaultHouse_LocationsWithoutHidingPlaces,
-                    DefaultHouse_LocationsWithHidingPlaces)
-                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault - constructor - opponent names")
-                    .SetCategory("GameController Constructor SpecifyOpponentNames HouseSet Success");
-
-                // Constructor with names of opponents and House file name
-                yield return new TestCaseData(
-                    () =>
-                    {
-                        SetUpHouseMockFileSystemToReturnValidCustomTestHouseText(); // Set up mock file system to return valid test House text
-                        return new GameController(new string[] { "Lisa" }, "TestHouse"); // Return GameController
-                    },
-                    "test house",
-                    "TestHouse",
-                    CustomTestHouse_LocationsWithoutHidingPlaces,
-                    CustomTestHouse_LocationsWithHidingPlaces)
-                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault - constructor - opponent names - file name")
-                    .SetCategory("GameController Constructor SpecifyOpponentNamesAndHouseFileName HouseSet Success");
-
-                // Constructor with Opponents
-                yield return new TestCaseData(
-                    () =>
-                    {
-                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText(); // Set up mock file system to return valid default House text
-                        return new GameController(MockedOpponents); // Return GameController
-                    },
-                    "my house",
-                    "DefaultHouse",
-                    DefaultHouse_LocationsWithoutHidingPlaces,
-                    DefaultHouse_LocationsWithHidingPlaces)
-                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault - constructor - Opponents")
-                    .SetCategory("GameController Constructor SpecifyOpponents HouseSet Success");
-
-                // Constructor with Opponents and House file name
-                yield return new TestCaseData(
-                    () =>
-                    {
-                        SetUpHouseMockFileSystemToReturnValidCustomTestHouseText(); // Set up mock file system to return valid test House text
-                        return new GameController(MockedOpponents, "TestHouse"); // Return GameController
-                    },
-                    "test house",
-                    "TestHouse",
-                    CustomTestHouse_LocationsWithoutHidingPlaces,
-                    CustomTestHouse_LocationsWithHidingPlaces)
-                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault - constructor - Opponents - file name")
-                    .SetCategory("GameController Constructor SpecifyOpponentsAndHouseFileName HouseSet Success");
+                // Constructor with number of opponents and House object
+                yield return new TestCaseData(() => { new GameController(0, CustomHouse); })
+                    .SetName("Test_GameController_Constructor_SpecifyNumberOfOpponents_AndCheckErrorMessage_ForInvalidNumber - and House object")
+                    .SetCategory("GameController Constructor SpecifyNumberOfOpponentsAndHouse ArgumentException Failure");
             }
         }
 
-        public static IEnumerable TestCases_For_Test_GameController_CheckHouseSetSuccessfully_ViaHouseObject
+        public static IEnumerable TestCases_For_Test_GameController_Constructor_SpecifyNamesOfOpponents_AndCheckErrorMessage_ForInvalidName
         {
             get
             {
-                // Initial game not completed before RestartGame with House object called
-                yield return new TestCaseData(
-                    CustomHouse,
-                    () =>
-                    {
-                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText();
-                        GameController gameController = new GameController(MockedOpponents, "DefaultHouse"); // Create GameController
-                        return gameController.RestartGame(CustomHouse); // Restart game with House and return GameController
-                    })
-                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaHouseObject - RestartGame - initial game not completed")
-                    .SetCategory("GameController RestartGame SpecifyHouse Success");
-
-                // Initial game completed before RestartGame with House called
-                yield return new TestCaseData(
-                    CustomHouse,
-                    () =>
-                    {
-                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText();
-                        GameController gameController = new GameController(MockedOpponents, "DefaultHouse"); // Create GameController
-                        gameController = FindAllOpponentsInDefaultHouse(); // Find all Opponents
-                        return gameController.RestartGame(CustomHouse); // Restart game and return GameController
-                    })
-                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaHouseObject - RestartGame - initial game completed")
-                    .SetCategory("GameController RestartGame SpecifyHouse Success");
-            }
-        }
-
-        public static IEnumerable TestCases_For_Test_GameController_CheckOpponentsSetSuccessfully
-        {
-            get
-            {
-                // Parameterless constructor
-                yield return new TestCaseData(
-                    () =>
-                    {
-                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText(); // Set up mock file system to return valid default House text
-                        return new GameController(); // Return GameController
-                    },
-                    new string[] { "Joe", "Bob", "Ana", "Owen", "Jimmy" })
-                    .SetName("Test_GameController_CheckOpponentsSetSuccessfully - constructor - parameterless")
-                    .SetCategory("GameController Constructor Parameterless OpponentsSet Success");
-
-                // Constructor with House file name
-                yield return new TestCaseData(
-                    () =>
-                    {
-                        SetUpHouseMockFileSystemToReturnValidCustomTestHouseText(); // Set up mock file system to return valid test House text
-                        return new GameController("TestHouse"); // Return GameController
-                    },
-                    new string[] { "Joe", "Bob", "Ana", "Owen", "Jimmy" })
-                    .SetName("Test_GameController_CheckOpponentsSetSuccessfully - constructor - file name")
-                    .SetCategory("GameController Constructor SpecifyHouseFileName OpponentsSet Success");
-
-                // Constructor with number of opponents
-                yield return new TestCaseData(
-                    () =>
-                    {
-                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText(); // Set up mock file system to return valid default House text
-                        return new GameController(3); // Return GameController
-                    },
-                    new string[] { "Joe", "Bob", "Ana" })
-                    .SetName("Test_GameController_CheckOpponentsSetSuccessfully - constructor - # opponents")
-                    .SetCategory("GameController Constructor SpecifyNumberOfOpponents OpponentsSet Success");
-
-                // Constructor with number of opponents and House file name
-                yield return new TestCaseData(
-                    () =>
-                    {
-                        SetUpHouseMockFileSystemToReturnValidCustomTestHouseText(); // Set up mock file system to return valid test House text
-                        return new GameController(2, "TestHouse"); // Return GameController
-                    },
-                    new string[] { "Joe", "Bob" })
-                    .SetName("Test_GameController_CheckOpponentsSetSuccessfully - constructor - # opponents - file name")
-                    .SetCategory("GameController Constructor SpecifyNumberOfOpponentsAndHouseFileName OpponentsSet Success");
-
                 // Constructor with names of opponents
-                yield return new TestCaseData(
-                    () =>
-                    {
-                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText(); // Set up mock file system to return valid default House text
-                        return new GameController(new string[] { "Lisa", "Steve", "Mindy", "Andy", "Patrick", "Marcy", "Anne" }); // Return GameController
-                    },
-                    new string[] { "Lisa", "Steve", "Mindy", "Andy", "Patrick", "Marcy", "Anne" })
-                    .SetName("Test_GameController_CheckOpponentsSetSuccessfully - constructor - opponent names")
-                    .SetCategory("GameController Constructor SpecifyOpponentNames OpponentsSet Success");
+                yield return new TestCaseData(() => { new GameController(new string[] { "Jenny", " " }); })
+                    .SetName("Test_GameController_Constructor_SpecifyOpponentNames_AndCheckErrorMessage_ForInvalidName - only names")
+                    .SetCategory("GameController Constructor SpecifyOpponentNames ArgumentException Failure");
 
                 // Constructor with names of opponents and House file name
-                yield return new TestCaseData(
-                    () =>
-                    {
-                        SetUpHouseMockFileSystemToReturnValidCustomTestHouseText(); // Set up mock file system to return valid test House text
-                        return new GameController(new string[] { "George", "Georgina" }, "TestHouse"); // Return GameController
-                    },
-                    new string[] { "George", "Georgina" })
-                    .SetName("Test_GameController_CheckOpponentsSetSuccessfully - constructor - opponent names - file name")
-                    .SetCategory("GameController Constructor SpecifyOpponentNamesAndHouseFileName OpponentsSet Success");
+                yield return new TestCaseData(() => { new GameController(new string[] { "Jenny", " " }, "TestHouse"); })
+                    .SetName("Test_GameController_Constructor_SpecifyOpponentNames_AndCheckErrorMessage_ForInvalidName - and file name")
+                    .SetCategory("GameController Constructor SpecifyOpponentNamesAndHouseFileName ArgumentException Failure");
 
-                // Constructor with Opponents
-                yield return new TestCaseData(
-                    () =>
-                    {
-                        SetUpHouseMockFileSystemToReturnValidDefaultHouseText(); // Set up mock file system to return valid default House text
-                        return new GameController(MockedOpponents); // Return GameController
-                    },
-                    MockedOpponents.Select((o) => o.Name).ToArray())
-                    .SetName("Test_GameController_CheckOpponentsSetSuccessfully - constructor - Opponents")
-                    .SetCategory("GameController Constructor SpecifyOpponents OpponentsSet Success");
-
-                // Constructor with Opponents and House file name
-                yield return new TestCaseData(
-                    () =>
-                    {
-                        SetUpHouseMockFileSystemToReturnValidCustomTestHouseText(); // Set up mock file system to return valid test House text
-                        return new GameController(MockedOpponents, "TestHouse"); // Return GameController
-                    },
-                    MockedOpponents.Select((o) => o.Name).ToArray())
-                    .SetName("Test_GameController_CheckOpponentsSetSuccessfully - constructor - Opponents - file name")
-                    .SetCategory("GameController Constructor SpecifyOpponentsAndHouseFileName OpponentsSet Success");
+                // Constructor with names of opponents and House object
+                yield return new TestCaseData(() => { new GameController(new string[] { "Jenny", " " }, CustomHouse); })
+                    .SetName("Test_GameController_Constructor_SpecifyOpponentNames_AndCheckErrorMessage_ForInvalidName - and House object")
+                    .SetCategory("GameController Constructor SpecifyOpponentNamesAndHouse ArgumentException Failure");
             }
         }
 
-        public static IEnumerable TestCases_For_Test_GameController_FullGame_InDefaultHouse_With2Opponents_AndCheckMessageAndProperties
+        public static IEnumerable TestCases_For_Test_GameController_Constructor_SpecifyNamesOfOpponents_AndCheckErrorMessage_ForEmptyListOfNames
+        {
+            get
+            {
+                // Constructor with empty string list
+                yield return new TestCaseData(() => { new GameController(Array.Empty<string>()); })
+                    .SetName("Test_GameController_Constructor_SpecifyNamesOfOpponents_AndCheckErrorMessage_ForEmptyListOfNames - only names")
+                    .SetCategory("GameController Constructor SpecifyOpponentNames ArgumentException Failure");
+
+                // Constructor with empty string list and House file name
+                yield return new TestCaseData(() => { new GameController(Array.Empty<string>(), "TestHouse"); })
+                    .SetName("Test_GameController_Constructor_SpecifyNamesOfOpponents_AndCheckErrorMessage_ForEmptyListOfNames - and file name")
+                    .SetCategory("GameController Constructor SpecifyOpponentNamesAndHouseFileName ArgumentException Failure");
+
+                // Constructor with empty string list and House object
+                yield return new TestCaseData(() => { new GameController(Array.Empty<string>(), CustomHouse); })
+                    .SetName("Test_GameController_Constructor_SpecifyNamesOfOpponents_AndCheckErrorMessage_ForEmptyListOfNames - and House object")
+                    .SetCategory("GameController Constructor SpecifyOpponentNamesAndHouse ArgumentException Failure");
+            }
+        }
+
+        public static IEnumerable TestCases_For_Test_GameController_Constructor_SpecifyOpponents_AndCheckErrorMessage_ForEmptyListOfOpponents
+        {
+            get
+            {
+                // Constructor with empty Opponent list
+                yield return new TestCaseData(() => { new GameController(Array.Empty<Opponent>()); })
+                    .SetName("Test_GameController_Constructor_SpecifyOpponents_AndCheckErrorMessage_ForEmptyListOfOpponents - only names")
+                    .SetCategory("GameController Constructor SpecifyOpponents ArgumentException Failure");
+
+                // Constructor with empty Opponent list and House file name
+                yield return new TestCaseData(() => { new GameController(Array.Empty<Opponent>(), "TestHouse"); })
+                    .SetName("Test_GameController_Constructor_SpecifyOpponents_AndCheckErrorMessage_ForEmptyListOfOpponents - and file name")
+                    .SetCategory("GameController Constructor SpecifyOpponentsAndHouseFileName ArgumentException Failure");
+
+                // Constructor with empty Opponent list and House object
+                yield return new TestCaseData(() => { new GameController(Array.Empty<Opponent>(), CustomHouse); })
+                    .SetName("Test_GameController_Constructor_SpecifyOpponents_AndCheckErrorMessage_ForEmptyListOfOpponents - and House object")
+                    .SetCategory("GameController Constructor SpecifyOpponentsAndHouse ArgumentException Failure");
+            }
+        }
+
+        public static IEnumerable TestCases_For_Test_GameController_Constructor_FullGame_InDefaultHouse_With2Opponents
         {
             get
             {
@@ -896,14 +1064,14 @@ namespace HideAndSeek
                 yield return new TestCaseData(
                     () => new GameController(2), // Return GameController
                     new string[] { "Joe", "Bob" })
-                    .SetName("Test_GameController_FullGame_InDefaultHouse_With2Opponents_AndCheckMessageAndProperties - constructor - # opponents")
+                    .SetName("Test_GameController_Constructor_FullGame_InDefaultHouse_With2Opponents - constructor - # opponents")
                     .SetCategory("GameController Constructor SpecifyNumberOfOpponents FullGame Move CheckCurrentLocation Message Prompt Status GameOver Success");
 
                 // Constructor with names of opponents
                 yield return new TestCaseData(
                     () => new GameController(new string[] { "Lisa", "Steve"  }),
                     new string[] { "Lisa", "Steve" })
-                    .SetName("Test_GameController_FullGame_InDefaultHouse_With2Opponents_AndCheckMessageAndProperties - constructor - opponent names")
+                    .SetName("Test_GameController_Constructor_FullGame_InDefaultHouse_With2Opponents - constructor - opponent names")
                     .SetCategory("GameController Constructor SpecifyOpponentNames FullGame Move CheckCurrentLocation Message Prompt Status GameOver Success");
 
                 // Constructor with Opponents
@@ -921,27 +1089,27 @@ namespace HideAndSeek
                         return new GameController(new Opponent[] { opponent1.Object, opponent2.Object }); 
                     },
                     new string[] { "Annie", "Paul" })
-                    .SetName("Test_GameController_FullGame_InDefaultHouse_With2Opponents_AndCheckMessageAndProperties - constructor - Opponents")
+                    .SetName("Test_GameController_Constructor_FullGame_InDefaultHouse_With2Opponents - constructor - Opponents")
                     .SetCategory("GameController Constructor SpecifyOpponents FullGame Move CheckCurrentLocation Message Prompt Status GameOver Success");
             }
         }
 
-        public static IEnumerable TestCases_For_Test_GameController_FullGame_InCustomHouse_With2Opponents_AndCheckMessageAndProperties
+        public static IEnumerable TestCases_For_Test_GameController_Constructor_FullGame_InCustomHouse_With2Opponents
         {
             get
             {
                 // Constructor with number of opponents
                 yield return new TestCaseData(
-                    () => new GameController(2, "TestHouse"), // Return GameController
+                    () => new GameController(2, "TestHouse"),
                     new string[] { "Joe", "Bob" })
-                    .SetName("Test_GameController_FullGame_InCustomHouse_With2Opponents_AndCheckMessageAndProperties - constructor - # opponents")
+                    .SetName("Test_GameController_Constructor_FullGame_InCustomHouse_SpecifiedByFileName_With2Opponents - # opponents")
                     .SetCategory("GameController Constructor SpecifyNumberOfOpponentsAndHouseFileName FullGame Move CheckCurrentLocation Message Prompt Status GameOver Success");
 
                 // Constructor with names of opponents
                 yield return new TestCaseData(
                     () => new GameController(new string[] { "Lisa", "Steve" }, "TestHouse"),
                     new string[] { "Lisa", "Steve" })
-                    .SetName("Test_GameController_FullGame_InCustomHouse_With2Opponents_AndCheckMessageAndProperties - constructor - opponent names")
+                    .SetName("Test_GameController_Constructor_FullGame_InCustomHouse_SpecifiedByFileName_With2Opponents - opponent names")
                     .SetCategory("GameController Constructor SpecifyOpponentNamesAndHouseFileName FullGame Move CheckCurrentLocation Message Prompt Status GameOver Success");
 
                 // Constructor with Opponents
@@ -959,7 +1127,45 @@ namespace HideAndSeek
                         return new GameController(new Opponent[] { opponent1.Object, opponent2.Object }, "TestHouse");
                     },
                     new string[] { "Annie", "Paul" })
-                    .SetName("Test_GameController_FullGame_InCustomHouse_With2Opponents_AndCheckMessageAndProperties - constructor - Opponents")
+                    .SetName("Test_GameController_Constructor_FullGame_InCustomHouse_SpecifiedByFileName_With2Opponents - Opponents")
+                    .SetCategory("GameController Constructor SpecifyOpponentsAndHouseFileName FullGame Move CheckCurrentLocation Message Prompt Status GameOver Success");
+            }
+        }
+
+        public static IEnumerable TestCases_For_Test_GameController_Constructor_FullGame_InCustomHouse_SpecifiedByObject_With2Opponents
+        {
+            get
+            {
+                // Constructor with number of opponents and House object
+                yield return new TestCaseData(
+                    () => new GameController(2, CustomHouse), // Return GameController
+                    new string[] { "Joe", "Bob" })
+                    .SetName("Test_GameController_Constructor_FullGame_InCustomHouse_SpecifiedByObject_With2Opponents - # opponents")
+                    .SetCategory("GameController Constructor SpecifyNumberOfOpponentsAndHouseFileName FullGame Move CheckCurrentLocation Message Prompt Status GameOver Success");
+
+                // Constructor with names of opponents and House object
+                yield return new TestCaseData(
+                    () => new GameController(new string[] { "Lisa", "Steve" }, CustomHouse),
+                    new string[] { "Lisa", "Steve" })
+                    .SetName("Test_GameController_Constructor_FullGame_InCustomHouse_SpecifiedByObject_With2Opponents - opponent names")
+                    .SetCategory("GameController Constructor SpecifyOpponentNamesAndHouseFileName FullGame Move CheckCurrentLocation Message Prompt Status GameOver Success");
+
+                // Constructor with Opponents and House object
+                yield return new TestCaseData(
+                    () =>
+                    {
+                        // Create Opponent mocks
+                        Mock<Opponent> opponent1 = new Mock<Opponent>();
+                        opponent1.Setup((o) => o.Name).Returns("Annie");
+
+                        Mock<Opponent> opponent2 = new Mock<Opponent>();
+                        opponent2.Setup((o) => o.Name).Returns("Paul");
+
+                        // Return GameController
+                        return new GameController(new Opponent[] { opponent1.Object, opponent2.Object }, CustomHouse);
+                    },
+                    new string[] { "Annie", "Paul" })
+                    .SetName("Test_GameController_Constructor_FullGame_InCustomHouse_SpecifiedByObject_With2Opponents - Opponents")
                     .SetCategory("GameController Constructor SpecifyOpponentsAndHouseFileName FullGame Move CheckCurrentLocation Message Prompt Status GameOver Success");
             }
         }
@@ -984,30 +1190,6 @@ namespace HideAndSeek
             gameController.Move(Direction.South); // Move to Pantry
             gameController.CheckCurrentLocation(); // Check Pantry and find Bob and Jimmy
             return gameController;
-        }
-
-        private static House CustomHouse = GetHouse();
-
-        /// <summary>
-        /// Helper method to get House object for tests
-        /// </summary>
-        /// <returns></returns>
-        private static House GetHouse()
-        {
-            Location entry = new Location("Start");
-            House house = new House(
-                "test house",
-                "TestHouse",
-                "Start",
-                new List<Location>() { entry, new Location("Hallway") },
-                new List<LocationWithHidingPlace>()
-                {
-                    new LocationWithHidingPlace("Kitchen", "beside the stove"),
-                    new LocationWithHidingPlace("Pantry", "behind the canned goods"),
-                    new LocationWithHidingPlace("Bedroom", "under the bed"),
-                    new LocationWithHidingPlace("Office", "under the table")
-                });
-            return house;
         }
 
         public static IEnumerable TestCases_For_Test_GameController_RestartGame
@@ -1043,7 +1225,7 @@ namespace HideAndSeek
                 // Initial game not completed before RestartGame with House object called
                 yield return new TestCaseData(
                     "Start",
-                    new List<string>() { "Kitchen", "Pantry", "Bedroom", "Office", "Kitchen" },
+                    new List<string>() { "Bedroom", "Office", "Kitchen", "Pantry", "Bedroom" },
                     () =>
                     {
                         SetUpHouseMockFileSystemToReturnValidDefaultHouseText();
@@ -1083,7 +1265,7 @@ namespace HideAndSeek
                 // Initial game completed before RestartGame with House called
                 yield return new TestCaseData(
                     "Start",
-                    new List<string>() { "Kitchen", "Pantry", "Bedroom", "Office", "Kitchen" },
+                    new List<string>() { "Bedroom", "Office", "Kitchen", "Pantry", "Bedroom" },
                     () =>
                     {
                         SetUpHouseMockFileSystemToReturnValidDefaultHouseText();

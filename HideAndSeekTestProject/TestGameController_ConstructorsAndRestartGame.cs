@@ -20,9 +20,9 @@ namespace HideAndSeek
     /// <summary>
     /// GameController tests for constructors and RestartGame
     /// 
-    /// When possible, these are integration tests using House, Location, and LocationWithHidingPlace.
-    /// When Opponents are created within GameController, these are integration tests
-    /// using Opponent, House, Location, and LocationWithHidingPlace.
+    /// When House is passed in, these are integration tests using Location, LocationWithHidingPlace, and sometimes Opponent.
+    /// When Opponents are passed in, these are integration tests using Location, LocationWithHidingPlace, and sometimes House.
+    /// Otherwise, these are integration tests using Opponents, House, Location, and LocationWithHidingPlace.
     /// </summary>
     [TestFixture]
     public class TestGameController_ConstructorsAndRestartGame
@@ -37,6 +37,38 @@ namespace HideAndSeek
         public void OneTimeTearDown()
         {
             House.FileSystem = new FileSystem(); // Set House file system to new clean file system
+        }
+
+        [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData),
+            nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault))]
+        public void Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault(
+            Func<GameController> GetGameController, string houseName, string houseFileName,
+            IEnumerable<string> locationsWithoutHidingPlaces, IEnumerable<string> locationsWithHidingPlaces)
+        {
+            GameController gameController = GetGameController(); // Get game controller
+            Assert.Multiple(() =>
+            {
+                Assert.That(gameController.House.Name, Is.EqualTo(houseName), "House name");
+                Assert.That(gameController.House.HouseFileName, Is.EqualTo(houseFileName), "House file name");
+                Assert.That(gameController.House.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(locationsWithoutHidingPlaces), "House locations without hiding places");
+                Assert.That(gameController.House.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(locationsWithHidingPlaces), "House locations with hiding places");
+            });
+        }
+
+        [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData),
+            nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_CheckHouseSetSuccessfully_ViaHouseObject))]
+        public void Test_GameController_CheckHouseSetSuccessfully_ViaHouseObject(House house, Func<GameController> GetGameController)
+        {
+            GameController gameController = GetGameController();
+            Assert.That(gameController.House, Is.SameAs(house));
+        }
+
+        [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData),
+            nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_CheckOpponentsSetSuccessfully))]
+        public void Test_GameController_CheckOpponentsSetSuccessfully(
+            Func<GameController> GetGameController, string[] opponentNames)
+        {
+            Assert.That(GetGameController().OpponentsAndHidingLocations.Keys.Select((o) => o.Name), Is.EquivalentTo(opponentNames));
         }
 
         [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData), 
@@ -93,16 +125,16 @@ namespace HideAndSeek
             Assert.That(exception.Message, Does.StartWith($"Cannot process because data in house layout file {corruptHouseFileName} is corrupt - "));
         }
 
-        [Test]
-        [Category("GameController Constructor SpecifyNumberOfOpponentsAndHouseFileName ArgumentException Failure")]
-        public void Test_GameController_SpecifyNumberOfOpponents_AndCheckErrorMessage_ForInvalidNumber()
+        [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData),
+            nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_Constructor_SpecifyNumberOfOpponents_AndCheckErrorMessage_ForInvalidNumber))]
+        public void Test_GameController_Constructor_SpecifyNumberOfOpponents_AndCheckErrorMessage_ForInvalidNumber(Action CallWithInvalidNumberOfOpponents)
         {
             Assert.Multiple(() =>
             {
                 // Assert that calling constructor with invalid number of opponents raises an exception
                 var exception = Assert.Throws<ArgumentException>(() =>
                 {
-                    new GameController(0, "DefaultHouse");
+                    CallWithInvalidNumberOfOpponents();
                 });
 
                 // Assert that exception message is as expected
@@ -111,16 +143,16 @@ namespace HideAndSeek
             });
         }
 
-        [Test]
-        [Category("GameController Constructor SpecifyOpponentNamesAndHouseFileName ArgumentException Failure")]
-        public void Test_GameController_SpecifyNumberOfOpponents_AndCheckErrorMessage_ForInvalidName()
+        [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData),
+            nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_Constructor_SpecifyNamesOfOpponents_AndCheckErrorMessage_ForInvalidName))]
+        public void Test_GameController_Constructor_SpecifyOpponentNames_AndCheckErrorMessage_ForInvalidName(Action CallWithInvalidOpponentName)
         {
             Assert.Multiple(() =>
             {
                 // Assert that calling constructor with list with invalid name for opponent raises an exception
                 var exception = Assert.Throws<ArgumentException>(() =>
                 {
-                    new GameController(new string[] { "Anna", "George", " " }, "DefaultHouse");
+                    CallWithInvalidOpponentName();
                 });
 
                 // Assert that exception message is as expected
@@ -129,16 +161,16 @@ namespace HideAndSeek
             });
         }
 
-        [Test]
-        [Category("GameController Constructor SpecifyOpponentNamesAndHouseFileName ArgumentException Failure")]
-        public void Test_GameController_SpecifyNumberOfOpponents_AndCheckErrorMessage_ForEmptyListOfNames()
+        [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData),
+            nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_Constructor_SpecifyNamesOfOpponents_AndCheckErrorMessage_ForEmptyListOfNames))]
+        public void Test_GameController_Constructor_SpecifyNamesOfOpponents_AndCheckErrorMessage_ForEmptyListOfNames(Action CallWithEmptyListOfNames)
         {
             Assert.Multiple(() =>
             {
                 // Assert that calling constructor with empty list for names
                 var exception = Assert.Throws<ArgumentException>(() =>
                 {
-                    new GameController(Array.Empty<string>(), "DefaultHouse");
+                    CallWithEmptyListOfNames();
                 });
 
                 // Assert that exception message is as expected
@@ -146,16 +178,16 @@ namespace HideAndSeek
             });
         }
 
-        [Test]
-        [Category("GameController Constructor SpecifyOpponentsAndHouseFileName ArgumentException Failure")]
-        public void Test_GameController_SpecifyOpponents_AndCheckErrorMessage_ForEmptyListOfOpponents()
+        [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData),
+            nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_Constructor_SpecifyOpponents_AndCheckErrorMessage_ForEmptyListOfOpponents))]
+        public void Test_GameController_Constructor_SpecifyOpponents_AndCheckErrorMessage_ForEmptyListOfOpponents(Action CallWithEmptyListOfOpponents)
         {
             Assert.Multiple(() =>
             {
                 // Assert that calling constructor with empty list for Opponents
                 var exception = Assert.Throws<ArgumentException>(() =>
                 {
-                    new GameController(Array.Empty<Opponent>(), "DefaultHouse");
+                    CallWithEmptyListOfOpponents();
                 });
 
                 // Assert that exception message is as expected
@@ -164,40 +196,8 @@ namespace HideAndSeek
         }
 
         [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData), 
-            nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault))]
-        public void Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault(
-            Func<GameController> GetGameController, string houseName, string houseFileName, 
-            IEnumerable<string> locationsWithoutHidingPlaces, IEnumerable<string> locationsWithHidingPlaces)
-        {
-            GameController gameController = GetGameController(); // Get game controller
-            Assert.Multiple(() =>
-            {
-                Assert.That(gameController.House.Name, Is.EqualTo(houseName), "House name");
-                Assert.That(gameController.House.HouseFileName, Is.EqualTo(houseFileName), "House file name");
-                Assert.That(gameController.House.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(locationsWithoutHidingPlaces), "House locations without hiding places");
-                Assert.That(gameController.House.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(locationsWithHidingPlaces), "House locations with hiding places");
-            });
-        }
-
-        [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData), 
-            nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_CheckHouseSetSuccessfully_ViaHouseObject))]
-        public void Test_GameController_CheckHouseSetSuccessfully_ViaHouseObject(House house, Func<GameController> GetGameController)
-        {
-            GameController gameController = GetGameController();
-            Assert.That(gameController.House, Is.SameAs(house));
-        }
-
-        [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData),
-            nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_CheckOpponentsSetSuccessfully))]
-        public void Test_GameController_CheckOpponentsSetSuccessfully(
-            Func<GameController> GetGameController, string[] opponentNames)
-        {
-            Assert.That(GetGameController().OpponentsAndHidingLocations.Keys.Select((o) => o.Name), Is.EquivalentTo(opponentNames));
-        }
-
-        [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData), 
-            nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_FullGame_InDefaultHouse_With2Opponents_AndCheckMessageAndProperties))]
-        public void Test_GameController_FullGame_InDefaultHouse_With2Opponents_AndCheckMessageAndProperties(
+            nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_Constructor_FullGame_InDefaultHouse_With2Opponents))]
+        public void Test_GameController_Constructor_FullGame_InDefaultHouse_With2Opponents(
             Func<GameController> GetGameController, string[] opponentNames)
         {
             // Set up mock file system to return valid default House text
@@ -374,7 +374,7 @@ namespace HideAndSeek
 
         [Test]
         [Category("GameController Constructor Parameterless FullGame Move CheckCurrentLocation Message Prompt Status GameOver Success")]
-        public void Test_GameController_FullGame_InDefaultHouse_WithDefaultNumberOfOpponents_AndCheckMessageAndProperties()
+        public void Test_GameController_Constructor_FullGame_InDefaultHouse_WithDefaultNumberOfOpponents()
         {
             // Set up mock file system to return valid default House text
             TestGameController_ConstructorsAndRestartGame_TestData.SetUpHouseMockFileSystemToReturnValidDefaultHouseText();
@@ -588,8 +588,8 @@ namespace HideAndSeek
         }
 
         [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData),
-            nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_FullGame_InCustomHouse_With2Opponents_AndCheckMessageAndProperties))]
-        public void Test_GameController_FullGame_InCustomHouse_With2Opponents_AndCheckMessageAndProperties(
+            nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_Constructor_FullGame_InCustomHouse_With2Opponents))]
+        public void Test_GameController_Constructor_FullGame_InCustomHouse_SpecifiedByFileName_With2Opponents(
             Func<GameController> GetGameController, string[] opponentNames)
         {
             // Set up mock file system to return valid custom test House text
@@ -760,9 +760,134 @@ namespace HideAndSeek
             });
         }
 
+        [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData),
+            nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_Constructor_FullGame_InCustomHouse_SpecifiedByObject_With2Opponents))]
+        public void Test_GameController_Constructor_FullGame_InCustomHouse_SpecifiedByObject_With2Opponents(
+            Func<GameController> GetGameController, string[] opponentNames)
+        {
+            // Set static House Random number generator property to mock random number generator
+            House.Random = new MockRandomWithValueList([
+                                3, // Hide opponent in Pantry
+                                1 // Hide opponent in Office
+                           ]);
+
+            // Get game controller
+            GameController gameController = GetGameController();
+
+            // Play game and assert that messages and properties are as expected
+            Assert.Multiple(() =>
+            {
+                // Assert that properties are as expected when game started
+                Assert.That(gameController.House.Name, Is.EqualTo("test house"), "check house name");
+                Assert.That(gameController.OpponentsAndHidingLocations.Keys.Select((o) => o.Name), Is.EquivalentTo(opponentNames), "check opponent names");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Start. You see the following exit:" + Environment.NewLine +
+                    " - the Bedroom is to the West" + Environment.NewLine +
+                    "You have not found any opponents"), "check status when game started");
+                Assert.That(gameController.Prompt, Is.EqualTo("1: Which direction do you want to go: "), "check prompt when game started");
+                Assert.That(gameController.GameOver, Is.False, "check game not over at beginning");
+
+                // Move to the Bedroom
+                Assert.That(gameController.Move(Direction.West), Is.EqualTo("Moving West"), "check string returned when move West to Bedroom");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Bedroom. You see the following exits:" + Environment.NewLine +
+                    " - the Start is to the East" + Environment.NewLine +
+                    " - the Office is to the North" + Environment.NewLine +
+                    "Someone could hide under the bed" + Environment.NewLine +
+                    "You have not found any opponents"), "check status when move West to Bedroom");
+                Assert.That(gameController.Prompt, Is.EqualTo("2: Which direction do you want to go (or type 'check'): "), "check prompt after move West to Bedroom");
+                Assert.That(gameController.GameOver, Is.False, "check game not over after move West to Bedroom");
+
+                // Check the Bedroom - no opponents hiding there
+                Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("Nobody was hiding under the bed"), "check string returned when check in Bedroom");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Bedroom. You see the following exits:" + Environment.NewLine +
+                    " - the Start is to the East" + Environment.NewLine +
+                    " - the Office is to the North" + Environment.NewLine +
+                    "Someone could hide under the bed" + Environment.NewLine +
+                    "You have not found any opponents"), "check status after check in Bedroom");
+                Assert.That(gameController.Prompt, Is.EqualTo("3: Which direction do you want to go (or type 'check'): "), "check prompt after check in Bedroom");
+                Assert.That(gameController.GameOver, Is.False, "check game not over after check in Bedroom");
+
+                // Move to the Office
+                Assert.That(gameController.Move(Direction.North), Is.EqualTo("Moving North"), "check string returned when move North to Office");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Office. You see the following exits:" + Environment.NewLine +
+                    " - the Hallway is to the East" + Environment.NewLine +
+                    " - the Bedroom is to the South" + Environment.NewLine +
+                    "Someone could hide under the desk" + Environment.NewLine +
+                    "You have not found any opponents"), "check status when move North to Office");
+                Assert.That(gameController.Prompt, Is.EqualTo("4: Which direction do you want to go (or type 'check'): "), "check prompt after move North to Office");
+                Assert.That(gameController.GameOver, Is.False, "check game not over after move North to Office");
+
+                // Check the Office - opponent 2 hiding there
+                Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 1 opponent hiding under the desk"), "check string returned when check in Office");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Office. You see the following exits:" + Environment.NewLine +
+                    " - the Hallway is to the East" + Environment.NewLine +
+                    " - the Bedroom is to the South" + Environment.NewLine +
+                    "Someone could hide under the desk" + Environment.NewLine +
+                    $"You have found 1 of 2 opponents: {opponentNames[1]}"), "check status after check in Office");
+                Assert.That(gameController.Prompt, Is.EqualTo("5: Which direction do you want to go (or type 'check'): "), "check prompt after check in Office");
+                Assert.That(gameController.GameOver, Is.False, "check game not over after check in Office");
+
+                // Move to the Hallway
+                Assert.That(gameController.Move(Direction.East), Is.EqualTo("Moving East"), "check string returned when move East to Hallway");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Hallway. You see the following exits:" + Environment.NewLine +
+                    " - the Kitchen is to the South" + Environment.NewLine +
+                    " - the Office is to the West" + Environment.NewLine +
+                    $"You have found 1 of 2 opponents: {opponentNames[1]}"), "check status when move East to Hallway");
+                Assert.That(gameController.Prompt, Is.EqualTo("6: Which direction do you want to go: "), "check prompt after move East to Hallway");
+                Assert.That(gameController.GameOver, Is.False, "check game not over after move East to Hallway");
+
+                // Move to the Kitchen
+                Assert.That(gameController.Move(Direction.South), Is.EqualTo("Moving South"), "check string returned when move South to Kitchen");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Kitchen. You see the following exits:" + Environment.NewLine +
+                    " - the Pantry is to the East" + Environment.NewLine +
+                    " - the Hallway is to the North" + Environment.NewLine +
+                    "Someone could hide beside the stove" + Environment.NewLine +
+                    $"You have found 1 of 2 opponents: {opponentNames[1]}"), "check status when move South to Kitchen");
+                Assert.That(gameController.Prompt, Is.EqualTo("7: Which direction do you want to go (or type 'check'): "), "check prompt after move South to Kitchen");
+                Assert.That(gameController.GameOver, Is.False, "check game not over after move South to Kitchen");
+
+                // Check the Kitchen - no opponents hiding there
+                Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("Nobody was hiding beside the stove"), "check string returned when check in Kitchen");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Kitchen. You see the following exits:" + Environment.NewLine +
+                    " - the Pantry is to the East" + Environment.NewLine +
+                    " - the Hallway is to the North" + Environment.NewLine +
+                    "Someone could hide beside the stove" + Environment.NewLine +
+                    $"You have found 1 of 2 opponents: {opponentNames[1]}"), "check status after check in Kitchen");
+                Assert.That(gameController.Prompt, Is.EqualTo("8: Which direction do you want to go (or type 'check'): "), "check prompt after check in Kitchen");
+                Assert.That(gameController.GameOver, Is.False, "check game not over after check in Kitchen");
+
+                // Move to the Pantry
+                Assert.That(gameController.Move(Direction.East), Is.EqualTo("Moving East"), "check string returned when move East to Pantry");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Pantry. You see the following exit:" + Environment.NewLine +
+                    " - the Kitchen is to the West" + Environment.NewLine +
+                    "Someone could hide behind the canned goods" + Environment.NewLine +
+                    $"You have found 1 of 2 opponents: {opponentNames[1]}"), "check status when move East to Pantry");
+                Assert.That(gameController.Prompt, Is.EqualTo("9: Which direction do you want to go (or type 'check'): "), "check prompt after move East to Pantry");
+                Assert.That(gameController.GameOver, Is.False, "check game not over after move East to Pantry");
+
+                // Check the Pantry - opponent 1 hiding there
+                Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 1 opponent hiding behind the canned goods"), "check string returned when check in Pantry");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Pantry. You see the following exit:" + Environment.NewLine +
+                    " - the Kitchen is to the West" + Environment.NewLine +
+                    "Someone could hide behind the canned goods" + Environment.NewLine +
+                    $"You have found 2 of 2 opponents: {opponentNames[1]}, {opponentNames[0]}"), "check status after check in Pantry");
+                Assert.That(gameController.Prompt, Is.EqualTo("10: Which direction do you want to go (or type 'check'): "), "check prompt after check in Pantry");
+                Assert.That(gameController.GameOver, Is.True, "check game over after check in Pantry");
+            });
+        }
+
         [Test]
         [Category("GameController Constructor SpecifyHouseFileName FullGame Move CheckCurrentLocation Message Prompt Status GameOver Success")]
-        public void Test_GameController_FullGame_InCustomHouse_WithDefaultNumberOfOpponents_AndCheckMessageAndProperties()
+        public void Test_GameController_Constructor_FullGame_InCustomHouse_WithDefaultNumberOfOpponents()
         {
             // Set up mock file system to return valid custom test House text
             TestGameController_ConstructorsAndRestartGame_TestData.SetUpHouseMockFileSystemToReturnValidCustomTestHouseText();

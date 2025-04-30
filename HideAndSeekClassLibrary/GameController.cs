@@ -163,7 +163,7 @@ namespace HideAndSeek
         public GameController(string houseFileNameWithoutEnding = "DefaultHouse")
         {
             // Set Opponents and start game with specified House file name
-            SetUpOpponentsInitially(DefaultOpponentNames.Take(5).ToArray()); // Set Opponents
+            SetUpOpponentsInitially(); // Set Opponents
             RestartGame(houseFileNameWithoutEnding); // Start game with specified House file
         }
 
@@ -175,15 +175,8 @@ namespace HideAndSeek
         /// <exception cref="ArgumentException">Exception thrown when number of Opponents is invalid</exception>
         public GameController(int numberOfOpponents, string houseFileNameWithoutEnding = "DefaultHouse")
         {
-            // If number of Opponents invalid
-            if (numberOfOpponents < 1 || numberOfOpponents > DefaultOpponentNames.Length)
-            {
-                throw new ArgumentException("Cannot create a new instance of GameController " +
-                                            "because the number of Opponents specified is invalid (must be between 1 and 10)", nameof(numberOfOpponents)); // Throw exception
-            }
-
             // Set Opponents and start game with specified House file name
-            SetUpOpponentsInitially(DefaultOpponentNames.Take(numberOfOpponents).ToArray()); // Set Opponents
+            SetUpOpponentsInitially(numberOfOpponents); // Set Opponents
             RestartGame(houseFileNameWithoutEnding); // Start game with specified House file
         }
 
@@ -192,7 +185,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="opponentNames">Names of Opponents to hide in House</param>
         /// <param name="houseFileNameWithoutEnding">Name of House layout file without ending or extension</param>
-        /// <exception cref="ArgumentException">Exception thrown when no names for Opponents were passed in</exception>"
+        /// <exception cref="ArgumentException">Exception thrown when no names for Opponents were passed in</exception>
         public GameController(string[] opponentNames, string houseFileNameWithoutEnding = "DefaultHouse")
         {
             // Set Opponents and start game with specified House file name
@@ -211,6 +204,74 @@ namespace HideAndSeek
             // Set up initial game with specific Opponent names and House file name
             SetUpOpponentsInitially(opponents.ToList()); // Set Opponents
             RestartGame(houseFileNameWithoutEnding); // Start game with specified House file
+        }
+
+        /// <summary>
+        /// Create a GameController with an optional specified House file name and 5 Opponents with default names
+        /// </summary>
+        /// <param name="house">House in which to play game</param>
+        public GameController(House house)
+        {
+            // Set Opponents and start game with specified House file name
+            SetUpOpponentsInitially(); // Set Opponents
+            RestartGame(house); // Start game with specified House file
+        }
+
+        /// <summary>
+        /// Create a GameController with a specific number of Opponents and a specific House
+        /// </summary>
+        /// <param name="numberOfOpponents">Number of Opponents to hide in House</param>
+        /// <param name="house">House in which to play game</param>
+        /// <exception cref="ArgumentException">Exception thrown when number of Opponents is invalid</exception>
+        public GameController(int numberOfOpponents, House house)
+        {
+            // Set Opponents and start game with specified House
+            SetUpOpponentsInitially(numberOfOpponents); // Set Opponents
+            RestartGame(house); // Start game with House passed in
+        }
+
+        /// <summary>
+        /// Create a GameController with Opponents with specific names and a specific House
+        /// </summary>
+        /// <param name="opponentNames">Names of Opponents to hide in House</param>
+        /// <param name="house">House in which to play game</param>
+        /// <exception cref="ArgumentException">Exception thrown when no names for Opponents were passed in</exception>
+        public GameController(string[] opponentNames, House house)
+        {
+            // Set Opponents and start game with specified House
+            SetUpOpponentsInitially(opponentNames); // Set Opponents
+            RestartGame(house); // Start game with House passed in
+        }
+
+        /// <summary>
+        /// Create a GameController with specific Opponents and a specific House
+        /// </summary>
+        /// <param name="opponents">Opponents to hide in House</param>
+        /// <param name="house">House in which to play game</param>
+        /// <exception cref="ArgumentException">Exception thrown when no names for Opponents were passed in</exception>"
+        public GameController(Opponent[] opponents, House house)
+        {
+            // Set up initial game with specific Opponent names and specified House
+            SetUpOpponentsInitially(opponents.ToList()); // Set Opponents
+            RestartGame(house); // Start game with House passed in
+        }
+
+        /// <summary>
+        /// Set Opponents initially
+        /// </summary>
+        /// <param name="numberOfOpponents">Number of Opponents</param>
+        /// <exception cref="ArgumentException">Exception thrown if number of opponents is invalid</exception>
+        private void SetUpOpponentsInitially(int numberOfOpponents = 5)
+        {
+            // If number of Opponents invalid
+            if (numberOfOpponents < 1 || numberOfOpponents > DefaultOpponentNames.Length)
+            {
+                throw new ArgumentException("Cannot create a new instance of GameController " +
+                                            "because the number of Opponents specified is invalid (must be between 1 and 10)", nameof(numberOfOpponents)); // Throw exception
+            }
+
+            // Set Opponents and start game with specified House file name
+            SetUpOpponentsInitially(DefaultOpponentNames.Take(numberOfOpponents).ToArray()); // Set Opponents
         }
 
         /// <summary>
