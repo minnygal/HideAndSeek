@@ -1056,6 +1056,27 @@ namespace HideAndSeek
             }
         }
 
+        public static IEnumerable TestCases_For_Test_GameController_Constructor_SpecifyOpponents_AndCheckErrorMessage_ForNullOpponent
+        {
+            get
+            {
+                // Constructor with Opponent list with null value
+                yield return new TestCaseData(() => { new GameController(new Opponent[] { null }); })
+                    .SetName("Test_GameController_Constructor_SpecifyOpponents_AndCheckErrorMessage_ForNullOpponent - only names")
+                    .SetCategory("GameController Constructor SpecifyOpponents ArgumentNullException Failure");
+
+                // Constructor with Opponent list with null value and House file name
+                yield return new TestCaseData(() => { new GameController(new Opponent[] { null }, "TestHouse"); })
+                    .SetName("Test_GameController_Constructor_SpecifyOpponents_AndCheckErrorMessage_ForNullOpponent - and file name")
+                    .SetCategory("GameController Constructor SpecifyOpponentsAndHouseFileName ArgumentNullException Failure");
+
+                // Constructor with Opponent list with null value and House object
+                yield return new TestCaseData(() => { new GameController(new Opponent[] { null }, CustomHouse); })
+                    .SetName("Test_GameController_Constructor_SpecifyOpponents_AndCheckErrorMessage_ForNullOpponent - and House object")
+                    .SetCategory("GameController Constructor SpecifyOpponentsAndHouse ArgumentNullException Failure");
+            }
+        }
+
         public static IEnumerable TestCases_For_Test_GameController_Constructor_FullGame_InDefaultHouse_With2Opponents
         {
             get

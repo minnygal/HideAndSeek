@@ -167,7 +167,7 @@ namespace HideAndSeek
         {
             Assert.Multiple(() =>
             {
-                // Assert that calling constructor with empty list for names
+                // Assert that calling constructor with empty list for names raises exception
                 var exception = Assert.Throws<ArgumentException>(() =>
                 {
                     CallWithEmptyListOfNames();
@@ -184,7 +184,7 @@ namespace HideAndSeek
         {
             Assert.Multiple(() =>
             {
-                // Assert that calling constructor with empty list for Opponents
+                // Assert that calling constructor with empty list for Opponents raises exception
                 var exception = Assert.Throws<ArgumentException>(() =>
                 {
                     CallWithEmptyListOfOpponents();
@@ -192,6 +192,23 @@ namespace HideAndSeek
 
                 // Assert that exception message is as expected
                 Assert.That(exception.Message, Does.StartWith("Cannot create a new instance of GameController because no Opponents were passed in"));
+            });
+        }
+
+        [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData),
+            nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_Constructor_SpecifyOpponents_AndCheckErrorMessage_ForNullOpponent))]
+        public void Test_GameController_Constructor_SpecifyOpponents_AndCheckErrorMessage_ForNullOpponent(Action CallWithListWithNullOpponent)
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that calling constructor with null Opponent raises exception
+                var exception = Assert.Throws<ArgumentNullException>(() =>
+                {
+                    CallWithListWithNullOpponent();
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith("Cannot create a new instance of GameController because null Opponent was passed in"));
             });
         }
 

@@ -311,7 +311,7 @@ namespace HideAndSeek
         /// <param name="opponents">Opponents</param>
         private void SetUpOpponentsInitially(List<Opponent> opponents)
         {
-            // If no opponent names in list
+            // If no Opponents in list
             if (opponents.Count() == 0)
             {
                 throw new ArgumentException("Cannot create a new instance of GameController because no Opponents were passed in", nameof(opponents)); // Throw exception
@@ -323,6 +323,13 @@ namespace HideAndSeek
             // Add Opponents to dictionary as keys
             foreach (Opponent opponent in opponents)
             {
+                // If Opponent is null
+                if(opponent == null)
+                {
+                    throw new ArgumentNullException(nameof(opponents), "Cannot create a new instance of GameController because null Opponent was passed in"); // Throw exception
+                }
+
+                // Add Opponent to dictionary with null hiding location
                 OpponentsAndHidingLocations.Add(opponent, null);
             }
         }
