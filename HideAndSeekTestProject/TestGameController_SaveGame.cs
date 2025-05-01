@@ -13,24 +13,17 @@ namespace HideAndSeek
     public class TestGameController_SaveGame
     {
         private GameController gameController;
-        private string message; // Message returned by LoadGame
-        private Exception exception; // Exception thrown by LoadGame
 
         [SetUp]
         public void Setup()
         {
             gameController = null;
-            message = null;
-            exception = null;
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
-                               "DefaultHouse.house.json", TestGameController_SaveGame_TestData.DefaultHouse_Serialized); // Set mock file system for House property to return default House file text
             GameController.FileSystem = new FileSystem(); // Set static GameController file system to new file system
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            House.FileSystem = new FileSystem(); // Set static House file system to new file system
             GameController.FileSystem = new FileSystem(); // Set static GameController file system to new file system
         }
 
@@ -44,26 +37,19 @@ namespace HideAndSeek
             mockFileSystemForGameController.Setup(system => system.File.WriteAllText($"{fileName}.json", It.IsAny<string>())); // Accept any text written to file
             GameController.FileSystem = mockFileSystemForGameController.Object;
 
-            // Set up game cotroller
-            gameController = new GameController(TestGameController_SaveGame_TestData.MockedOpponents, "DefaultHouse");
+            // Set up game controller
+            gameController = new GameController(TestGameController_SaveGame_TestData.MockedOpponents, 
+                                                TestGameController_SaveGame_TestData.GetDefaultHouse());
 
-            // Save game
-            message = gameController.SaveGame(fileName);
-
-            // Assert that success message is correct
-            Assert.That(message, Is.EqualTo(expected));
+            // Save game and assert that return message is correct
+            Assert.That(gameController.SaveGame(fileName), Is.EqualTo(expected));
         }
 
         // Tests default House, and tests custom House set via constructor and via ReloadGame
         [TestCaseSource(typeof(TestGameController_SaveGame_TestData),
                         nameof(TestGameController_SaveGame_TestData.TestCases_For_Test_GameController_SaveGame_AndCheckTextSavedToFile))]
-        public void Test_GameController_SaveGame_AndCheckTextSavedToFile(string houseFileName, string houseFileText,
-                    Func<Mock<IFileSystem>, GameController> StartNewGame, string expectedTextInSavedGameFile)
+        public void Test_GameController_SaveGame_AndCheckTextSavedToFile(Func<GameController> StartNewGame, string expectedTextInSavedGameFile)
         {
-            // Set House file system
-            Mock<IFileSystem> mockHouseFileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText(houseFileName, houseFileText);
-            House.FileSystem = mockHouseFileSystem.Object;
-
             // Create variable to store text written to SavedGame file
             string? actualTextInSavedGameFile = null;
 
@@ -77,7 +63,7 @@ namespace HideAndSeek
             GameController.FileSystem = mockFileSystemForGameController.Object;
 
             // Start and attempt to save game
-            gameController = StartNewGame(mockHouseFileSystem); // Mock House file system is used in test cases calling RestartGame
+            gameController = StartNewGame();
             gameController.SaveGame("my_saved_game");
 
             // Assume no exception was thrown
@@ -90,10 +76,22 @@ namespace HideAndSeek
         public void Test_GameController_SaveGame_AndCheckErrorMessage_ForInvalidFileName(
             [Values("", " ", "my saved game", "my\\saved\\game", "my/saved/game", "my/saved\\ game")] string fileName)
         {
-            gameController = new GameController(TestGameController_SaveGame_TestData.MockedOpponents, "DefaultHouse");
-            exception = Assert.Throws<ArgumentException>(() => gameController.SaveGame(fileName));
-            Assert.That(exception.Message, Does.StartWith($"Cannot perform action because file name \"{fileName}\" " +
-                                                           "is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+            // Set game controller
+            gameController = new GameController(TestGameController_SaveGame_TestData.MockedOpponents,
+                                                TestGameController_SaveGame_TestData.GetDefaultHouse());
+
+            Assert.Multiple(() =>
+            {
+                // Assert that saving game with invalid file name raises exception
+                Exception exception = Assert.Throws<ArgumentException>(() =>
+                {
+                    gameController.SaveGame(fileName);
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith($"Cannot perform action because file name \"{fileName}\" " +
+                                                               "is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+            });
         }
 
         [Test]
@@ -106,13 +104,20 @@ namespace HideAndSeek
             GameController.FileSystem = mockFileSystemForGameController.Object;
 
             // Set up game cotroller
-            gameController = new GameController(TestGameController_SaveGame_TestData.MockedOpponents, "DefaultHouse");
+            gameController = new GameController(TestGameController_SaveGame_TestData.MockedOpponents,
+                                                TestGameController_SaveGame_TestData.GetDefaultHouse());
 
-            // Assert that saving game with file name of already existing file raises exception
-            exception = Assert.Throws<InvalidOperationException>(() => gameController.SaveGame("fileName"));
+            Assert.Multiple(() =>
+            {
+                // Assert that saving game with file name of already existing file raises exception
+                Exception exception = Assert.Throws<InvalidOperationException>(() =>
+                {
+                    gameController.SaveGame("fileName");
+                });
 
-            // Assert that exception message is correct
-            Assert.That(exception.Message, Is.EqualTo("Cannot perform action because a file named fileName already exists"));
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo("Cannot perform action because a file named fileName already exists"));
+            });
         }
     }
 }
