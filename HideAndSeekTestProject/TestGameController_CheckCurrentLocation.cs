@@ -9,14 +9,12 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// GameController tests for:
-    /// -Status property
-    /// -CheckCurrentLocation method
+    /// GameController tests for CheckCurrentLocation method
     ///  (checking FoundOpponents, Status, CurrentLocation, MoveNumber, and GameOver properties along the way)
     /// 
     /// These are integration tests using House, Location, and LocationWithHidingPlace
     /// </summary>
-    public class TestGameController_CheckCurrentLocationAndStatus
+    public class TestGameController_CheckCurrentLocation
     {
         GameController gameController;
         House house;
@@ -56,88 +54,6 @@ namespace HideAndSeek
 
                 return new Opponent[] { opponent1.Object, opponent2.Object, opponent3.Object, opponent4.Object, opponent5.Object };
             }
-        }
-
-        [Test]
-        [Category("GameController Status Location AddExit House")]
-        public void Test_GameController_Status_InLocation_WithSingleExit()
-        {
-            // Set up GameController
-            Location entryLocation = new Location("Entry"); // Create entry
-            LocationWithHidingPlace locationWithHidingPlace = entryLocation.AddExit(Direction.East, "Office", "under the table"); // Add new connecting location with hiding place
-            house = new House("test house", "TestHouse", "Entry", 
-                              new List<Location>() { entryLocation }, 
-                              new List<LocationWithHidingPlace>() { locationWithHidingPlace }); // Create House
-            gameController = new GameController(MockedOpponents, house); // Create GameController with House
-
-            // Assert that Status is as expected
-            Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Entry. You see the following exit:" + Environment.NewLine +
-                    " - the Office is to the East" + Environment.NewLine +
-                    "You have not found any opponents"));
-        }
-
-        [Test]
-        [Category("GameController Status Location AddExit House")]
-        public void Test_GameController_Status_InLocationWithHidingPlace_WithSingleExit()
-        {
-            // Set up GameController
-            LocationWithHidingPlace entryLocationWithHidingPlace = new LocationWithHidingPlace("Entry", "behind the coat rack"); // Create entry
-            Location location = entryLocationWithHidingPlace.AddExit(Direction.West, "Hallway"); // Add new connecting location
-            house = new House("test house", "TestHouse", "Entry",
-                              new List<Location>() { location },
-                              new List<LocationWithHidingPlace>() { entryLocationWithHidingPlace }); // Create House
-            gameController = new GameController(MockedOpponents, house); // Create GameController with House
-
-            // Assert that Status is as expected
-            Assert.That(gameController.Status, Is.EqualTo(
-                "You are in the Entry. You see the following exit:" + Environment.NewLine +
-                " - the Hallway is to the West" + Environment.NewLine +
-                "Someone could hide behind the coat rack" + Environment.NewLine +
-                "You have not found any opponents"));
-        }
-
-        [Test]
-        [Category("GameController Status Location AddExit House")]
-        public void Test_GameController_Status_InLocation_WithMultipleExits()
-        {
-            // Set up GameController
-            Location entryLocation = new Location("Entry"); // Create entry
-            Location otherLocation = entryLocation.AddExit(Direction.Out, "Yard"); // Add new connecting location
-            LocationWithHidingPlace locationWithHidingPlace = entryLocation.AddExit(Direction.East, "Office", "under the table"); // Add new connecting location with hiding place
-            house = new House("test house", "TestHouse", "Entry",
-                              new List<Location>() { entryLocation, otherLocation },
-                              new List<LocationWithHidingPlace>() { locationWithHidingPlace }); // Create House
-            gameController = new GameController(MockedOpponents, house); // Create GameController with House
-
-            // Assert that Status is as expected
-            Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Entry. You see the following exits:" + Environment.NewLine +
-                    " - the Office is to the East" + Environment.NewLine +
-                    " - the Yard is Out" + Environment.NewLine +
-                    "You have not found any opponents"));
-        }
-
-        [Test]
-        [Category("GameController Status Location AddExit House")]
-        public void Test_GameController_Status_InLocationWithHidingPlace_WithMultipleExits()
-        {
-            // Set up GameController
-            LocationWithHidingPlace entryLocationWithHidingPlace = new LocationWithHidingPlace("Entry", "behind the coat rack"); // Create entry
-            Location location = entryLocationWithHidingPlace.AddExit(Direction.Out, "Yard"); // Add new connecting location
-            LocationWithHidingPlace otherLocationWithHidingPlace = entryLocationWithHidingPlace.AddExit(Direction.East, "Office", "under the table"); // Add new connecting location with hiding place
-            house = new House("test house", "TestHouse", "Entry",
-                              new List<Location>() { location },
-                              new List<LocationWithHidingPlace>() { entryLocationWithHidingPlace, otherLocationWithHidingPlace }); // Create House
-            gameController = new GameController(MockedOpponents, house); // Create GameController with House
-
-            // Assert that Status is as expected
-            Assert.That(gameController.Status, Is.EqualTo(
-                    "You are in the Entry. You see the following exits:" + Environment.NewLine +
-                    " - the Office is to the East" + Environment.NewLine +
-                    " - the Yard is Out" + Environment.NewLine +
-                    "Someone could hide behind the coat rack" + Environment.NewLine +
-                    "You have not found any opponents"));
         }
 
         [Test]
