@@ -13,58 +13,6 @@ namespace HideAndSeek
     public static class TestGameController_LoadGame_HouseFailure_TestData
     {
         /// <summary>
-        /// Text for serialized PlayerLocation property for test SavedGame with no found opponents
-        /// </summary>
-        public static string SavedGame_Serialized_PlayerLocation_NoOpponentsGame
-        {
-            get
-            {
-                return "\"PlayerLocation\":\"Entry\"";
-            }
-        }
-
-        /// <summary>
-        /// Text for serialized MoveNumber property for test SavedGame with no found opponents
-        /// </summary>
-        public static string SavedGame_Serialized_MoveNumber_NoFoundOpponents
-        {
-            get
-            {
-                return "\"MoveNumber\":1";
-            }
-        }
-
-        /// <summary>
-        /// Text for serialized OpponentsAndHidingLocations property for test SavedGame
-        /// </summary>
-        public static string SavedGame_Serialized_OpponentsAndHidingLocations
-        {
-            get
-            {
-                return
-                    "\"OpponentsAndHidingLocations\":" +
-                    "{" +
-                        "\"Joe\":\"Kitchen\"," +
-                        "\"Bob\":\"Pantry\"," +
-                        "\"Ana\":\"Bathroom\"," +
-                        "\"Owen\":\"Kitchen\"," +
-                        "\"Jimmy\":\"Pantry\"" +
-                    "}";
-            }
-        }
-
-        /// <summary>
-        /// Text for serialized FoundOpponents property for test SavedGame with no found opponents
-        /// </summary>
-        public static string SavedGame_Serialized_FoundOpponents_NoFoundOpponents
-        {
-            get
-            {
-                return "\"FoundOpponents\":[]";
-            }
-        }
-
-        /// <summary>
         /// Text representing default House for tests serialized
         /// </summary>
         public static string DefaultHouse_Serialized
@@ -203,39 +151,6 @@ namespace HideAndSeek
                             "}" +
                         "]" +
                     "}";
-            }
-        }
-
-        /// <summary>
-        /// Text representing Name property of default House for tests serialized
-        /// </summary>
-        public static string DefaultHouse_Serialized_Name
-        {
-            get
-            {
-                return "\"Name\":\"my house\"";
-            }
-        }
-
-        /// <summary>
-        /// Text representing HouseFileName property of default House for tests serialized
-        /// </summary>
-        public static string DefaultHouse_Serialized_HouseFileName
-        {
-            get
-            {
-                return "\"HouseFileName\":\"DefaultHouse\"";
-            }
-        }
-
-        /// <summary>
-        /// Text representing PlayerStartingPoint property of default House for tests serialized
-        /// </summary>
-        public static string DefaultHouse_Serialized_PlayerStartingPoint
-        {
-            get
-            {
-                return "\"PlayerStartingPoint\":\"Entry\"";
             }
         }
 
@@ -413,8 +328,8 @@ namespace HideAndSeek
                 // File missing Name
                 yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.House' was missing required properties, including the following: Name",
                         "{" +
-                            DefaultHouse_Serialized_HouseFileName + "," +
-                            DefaultHouse_Serialized_PlayerStartingPoint + "," +
+                            "\"HouseFileName\":\"DefaultHouse\"" + "," +
+                            "\"PlayerStartingPoint\":\"Entry\"" + "," +
                             DefaultHouse_Serialized_LocationsWithoutHidingPlaces + "," +
                             DefaultHouse_Serialized_LocationsWithHidingPlaces +
                         "}")
@@ -423,8 +338,8 @@ namespace HideAndSeek
                 // File missing HouseFileName
                 yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.House' was missing required properties, including the following: HouseFileName",
                         "{" +
-                           DefaultHouse_Serialized_Name + "," +
-                           DefaultHouse_Serialized_PlayerStartingPoint + "," +
+                           "\"Name\":\"my house\"" + "," +
+                           "\"PlayerStartingPoint\":\"Entry\"" + "," +
                            DefaultHouse_Serialized_LocationsWithoutHidingPlaces + "," +
                            DefaultHouse_Serialized_LocationsWithHidingPlaces +
                        "}")
@@ -433,8 +348,8 @@ namespace HideAndSeek
                 // File missing PlayerStartingPoint
                 yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.House' was missing required properties, including the following: PlayerStartingPoint",
                         "{" +
-                           DefaultHouse_Serialized_Name + "," +
-                           DefaultHouse_Serialized_HouseFileName + "," +
+                           "\"Name\":\"my house\"" + "," +
+                           "\"HouseFileName\":\"DefaultHouse\"" + "," +
                            DefaultHouse_Serialized_LocationsWithoutHidingPlaces + "," +
                            DefaultHouse_Serialized_LocationsWithHidingPlaces +
                        "}")
@@ -443,9 +358,9 @@ namespace HideAndSeek
                 // File missing LocationsWithoutHidingPlaces
                 yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.House' was missing required properties, including the following: LocationsWithoutHidingPlaces",
                         "{" +
-                           DefaultHouse_Serialized_Name + "," +
-                           DefaultHouse_Serialized_HouseFileName + "," +
-                           DefaultHouse_Serialized_PlayerStartingPoint + "," +
+                           "\"Name\":\"my house\"" + "," +
+                           "\"HouseFileName\":\"DefaultHouse\"" + "," +
+                           "\"PlayerStartingPoint\":\"Entry\"" + "," +
                            DefaultHouse_Serialized_LocationsWithHidingPlaces +
                        "}")
                    .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileFormatIsInvalid - no LocationsWithoutHidingPlaces");
@@ -453,9 +368,9 @@ namespace HideAndSeek
                 // File missing LocationsWithHidingPlaces
                 yield return new TestCaseData("JSON deserialization for type 'HideAndSeek.House' was missing required properties, including the following: LocationsWithHidingPlaces",
                         "{" +
-                           DefaultHouse_Serialized_Name + "," +
-                           DefaultHouse_Serialized_HouseFileName + "," +
-                           DefaultHouse_Serialized_PlayerStartingPoint + "," +
+                           "\"Name\":\"my house\"" + "," +
+                           "\"HouseFileName\":\"DefaultHouse\"" + "," +
+                           "\"PlayerStartingPoint\":\"Entry\"" + "," +
                            DefaultHouse_Serialized_LocationsWithoutHidingPlaces +
                        "}")
                    .SetName("Test_GameController_LoadGame_AndCheckErrorMessage_WhenHouseFileFormatIsInvalid - no LocationsWithHidingPlaces");
@@ -470,8 +385,8 @@ namespace HideAndSeek
                 yield return new TestCaseData("house name \" \" is invalid (is empty or contains only whitespace)",
                         "{" +
                            "\"Name\":\" \"" + "," +
-                           DefaultHouse_Serialized_HouseFileName + "," +
-                           DefaultHouse_Serialized_PlayerStartingPoint + "," +
+                           "\"HouseFileName\":\"DefaultHouse\"" + "," +
+                           "\"PlayerStartingPoint\":\"Entry\"" + "," +
                            DefaultHouse_Serialized_LocationsWithoutHidingPlaces + "," +
                            DefaultHouse_Serialized_LocationsWithHidingPlaces +
                        "}")
@@ -480,9 +395,9 @@ namespace HideAndSeek
                 // Invalid HouseFileName (whitespace)
                 yield return new TestCaseData("house file name \" \" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)",
                         "{" +
-                           DefaultHouse_Serialized_Name + "," +
+                           "\"Name\":\"my house\"" + "," +
                            "\"HouseFileName\":\" \"" + "," +
-                           DefaultHouse_Serialized_PlayerStartingPoint + "," +
+                           "\"PlayerStartingPoint\":\"Entry\"" + "," +
                            DefaultHouse_Serialized_LocationsWithoutHidingPlaces + "," +
                            DefaultHouse_Serialized_LocationsWithHidingPlaces +
                        "}")
@@ -491,8 +406,8 @@ namespace HideAndSeek
                 // Invalid PlayerStartingPoint (whitespace)
                 yield return new TestCaseData("player starting point location name \" \" is invalid (is empty or contains only whitespace)",
                         "{" +
-                           DefaultHouse_Serialized_Name + "," +
-                           DefaultHouse_Serialized_HouseFileName + "," +
+                           "\"Name\":\"my house\"" + "," +
+                           "\"HouseFileName\":\"DefaultHouse\"" + "," +
                            "\"PlayerStartingPoint\":\" \"" + "," +
                            DefaultHouse_Serialized_LocationsWithoutHidingPlaces + "," +
                            DefaultHouse_Serialized_LocationsWithHidingPlaces +
@@ -502,9 +417,9 @@ namespace HideAndSeek
                 // Invalid LocationsWithoutHidingPlaces - Location name is invalid (whitespace)
                 yield return new TestCaseData("location name \" \" is invalid (is empty or contains only whitespace)",
                         "{" +
-                           DefaultHouse_Serialized_Name + "," +
-                           DefaultHouse_Serialized_HouseFileName + "," +
-                           DefaultHouse_Serialized_PlayerStartingPoint + "," +
+                           "\"Name\":\"my house\"" + "," +
+                           "\"HouseFileName\":\"DefaultHouse\"" + "," +
+                           "\"PlayerStartingPoint\":\"Entry\"" + "," +
                            "\"LocationsWithoutHidingPlaces\":" +
                            "[" +
                                 "{" +
@@ -526,9 +441,9 @@ namespace HideAndSeek
                 // Invalid LocationsWithHidingPlaces - LocationWithHidingPlace name in invalid (whitespace)
                 yield return new TestCaseData("location name \" \" is invalid (is empty or contains only whitespace)",
                         "{" +
-                           DefaultHouse_Serialized_Name + "," +
-                           DefaultHouse_Serialized_HouseFileName + "," +
-                           DefaultHouse_Serialized_PlayerStartingPoint + "," +
+                           "\"Name\":\"my house\"" + "," +
+                           "\"HouseFileName\":\"DefaultHouse\"" + "," +
+                           "\"PlayerStartingPoint\":\"Entry\"" + "," +
                            DefaultHouse_Serialized_LocationsWithoutHidingPlaces + "," +
                            "\"LocationsWithHidingPlaces\":" +
                             "[" +
@@ -547,9 +462,9 @@ namespace HideAndSeek
                 // Invalid LocationsWithHidingPlaces - LocationWithHidingPlace description is invalid (whitespace)
                 yield return new TestCaseData("hiding place \" \" is invalid (is empty or contains only whitespace)",
                         "{" +
-                           DefaultHouse_Serialized_Name + "," +
-                           DefaultHouse_Serialized_HouseFileName + "," +
-                           DefaultHouse_Serialized_PlayerStartingPoint + "," +
+                           "\"Name\":\"my house\"" + "," +
+                           "\"HouseFileName\":\"DefaultHouse\"" + "," +
+                           "\"PlayerStartingPoint\":\"Entry\"" + "," +
                            DefaultHouse_Serialized_LocationsWithoutHidingPlaces + "," +
                            "\"LocationsWithHidingPlaces\":" +
                             "[" +
@@ -573,9 +488,9 @@ namespace HideAndSeek
             {
                 // Invalid LocationsWithoutHidingPlaces - exit Direction is invalid
                 yield return new TestCaseData("{" +
-                           DefaultHouse_Serialized_Name + "," +
-                           DefaultHouse_Serialized_HouseFileName + "," +
-                           DefaultHouse_Serialized_PlayerStartingPoint + "," +
+                           "\"Name\":\"my house\"" + "," +
+                           "\"HouseFileName\":\"DefaultHouse\"" + "," +
+                           "\"PlayerStartingPoint\":\"Entry\"" + "," +
                            "\"LocationsWithoutHidingPlaces\":" +
                            "[" +
                                 "{" +
@@ -610,8 +525,8 @@ namespace HideAndSeek
 
                 // Invalid LocationsWithHidingPlaces - exit Direction is invalid
                 yield return new TestCaseData("{" +
-                            DefaultHouse_Serialized_Name + "," +
-                            DefaultHouse_Serialized_HouseFileName + "," +
+                            "\"Name\":\"my house\"" + "," +
+                            "\"HouseFileName\":\"DefaultHouse\"" + "," +
                             "\"PlayerStartingPoint\":\"Master Bedroom\"" + "," +
                             "\"LocationsWithoutHidingPlaces\":" +
                             "[" +
@@ -647,9 +562,9 @@ namespace HideAndSeek
                 // Invalid LocationsWithHidingPlaces - empty list
                 yield return new TestCaseData("locations with hiding places list is empty",
                         "{" +
-                           DefaultHouse_Serialized_Name + "," +
-                           DefaultHouse_Serialized_HouseFileName + "," +
-                           DefaultHouse_Serialized_PlayerStartingPoint + "," +
+                           "\"Name\":\"my house\"" + "," +
+                           "\"HouseFileName\":\"DefaultHouse\"" + "," +
+                           "\"PlayerStartingPoint\":\"Entry\"" + "," +
                            "\"LocationsWithoutHidingPlaces\":" +
                            "[" +
                                 "{" +
@@ -676,9 +591,9 @@ namespace HideAndSeek
                 // Invalid LocationsWithoutHidingPlaces - Location has no exits
                 yield return new TestCaseData("location \"Hallway\" must be assigned at least one exit",
                         "{" +
-                           DefaultHouse_Serialized_Name + "," +
-                           DefaultHouse_Serialized_HouseFileName + "," +
-                           DefaultHouse_Serialized_PlayerStartingPoint + "," +
+                           "\"Name\":\"my house\"" + "," +
+                           "\"HouseFileName\":\"DefaultHouse\"" + "," +
+                           "\"PlayerStartingPoint\":\"Entry\"" + "," +
                            "\"LocationsWithoutHidingPlaces\":" +
                            "[" +
                                 "{" +
@@ -716,9 +631,9 @@ namespace HideAndSeek
                 // Invalid LocationsWithHidingPlaces - LocationWithHidingPlace has no exits
                 yield return new TestCaseData("location \"Attic\" must be assigned at least one exit",
                         "{" +
-                           DefaultHouse_Serialized_Name + "," +
-                           DefaultHouse_Serialized_HouseFileName + "," +
-                           DefaultHouse_Serialized_PlayerStartingPoint + "," +
+                           "\"Name\":\"my house\"" + "," +
+                           "\"HouseFileName\":\"DefaultHouse\"" + "," +
+                           "\"PlayerStartingPoint\":\"Entry\"" + "," +
                            DefaultHouse_Serialized_LocationsWithoutHidingPlaces + "," +
                            "\"LocationsWithHidingPlaces\":" +
                            "[" +
@@ -742,8 +657,8 @@ namespace HideAndSeek
                 // Invalid PlayerStartingPoint - not a Location
                 yield return new TestCaseData("player starting point location \"Dungeon\" does not exist in House",
                         "{" +
-                           DefaultHouse_Serialized_Name + "," +
-                           DefaultHouse_Serialized_HouseFileName + "," +
+                           "\"Name\":\"my house\"" + "," +
+                           "\"HouseFileName\":\"DefaultHouse\"" + "," +
                            "\"PlayerStartingPoint\":\"Dungeon\"" + "," +
                            DefaultHouse_Serialized_LocationsWithoutHidingPlaces + "," +
                            DefaultHouse_Serialized_LocationsWithHidingPlaces +
@@ -753,9 +668,9 @@ namespace HideAndSeek
                 // Invalid LocationsWithoutHidingPlaces - Location has nonexistent exit
                 yield return new TestCaseData("\"Hallway\" exit location \"Dungeon\" in direction \"Down\" does not exist",
                         "{" +
-                           DefaultHouse_Serialized_Name + "," +
-                           DefaultHouse_Serialized_HouseFileName + "," +
-                           DefaultHouse_Serialized_PlayerStartingPoint + "," +
+                           "\"Name\":\"my house\"" + "," +
+                           "\"HouseFileName\":\"DefaultHouse\"" + "," +
+                           "\"PlayerStartingPoint\":\"Entry\"" + "," +
                            "\"LocationsWithoutHidingPlaces\":" +
                            "[" +
                                 "{" +
@@ -799,9 +714,9 @@ namespace HideAndSeek
                 // Invalid LocationsWithHidingPlaces - LocationWithHidingPlace has nonexistent exit
                 yield return new TestCaseData("\"Bathroom\" exit location \"Dungeon\" in direction \"Down\" does not exist",
                         "{" +
-                           DefaultHouse_Serialized_Name + "," +
-                           DefaultHouse_Serialized_HouseFileName + "," +
-                           DefaultHouse_Serialized_PlayerStartingPoint + "," +
+                           "\"Name\":\"my house\"" + "," +
+                           "\"HouseFileName\":\"DefaultHouse\"" + "," +
+                           "\"PlayerStartingPoint\":\"Entry\"" + "," +
                            DefaultHouse_Serialized_LocationsWithoutHidingPlaces + "," +
                            "\"LocationsWithHidingPlaces\":" +
                            "[" +
