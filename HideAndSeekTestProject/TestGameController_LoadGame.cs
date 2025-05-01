@@ -23,11 +23,10 @@ namespace HideAndSeek
         private static readonly Opponent[] mockedOpponent = new Opponent[] { new Mock<Opponent>().Object };
 
         [SetUp]
-        public void Setup()
+        public void SetUp()
         {
             gameController = null;
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
-                               "DefaultHouse.house.json", TestGameController_LoadGame_TestData.DefaultHouse_Serialized); // Set mock file system for House property to return default House file text
+            House.FileSystem = new FileSystem(); // Set static House file system to new file system
             GameController.FileSystem = new FileSystem(); // Set static GameController file system to new file system
         }
 
@@ -175,8 +174,12 @@ namespace HideAndSeek
                    $"\"FoundOpponents\":[{string.Join(",", foundOpponents.Select((o) => $"\"{o}\""))}]" +
                 "}";
             
-            // Set up mock for file system for GameController
+            // Set up mock for file system for GameController to return SavedGame file text
             GameController.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("my_saved_game.game.json", savedGameFileText);
+
+            // Set up mock file system for House property to return default House file text
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
+                               "DefaultHouse.house.json", TestGameController_LoadGame_TestData.DefaultHouse_Serialized);
 
             // Get game controller
             gameController = GetMinimalGameController();
