@@ -25,7 +25,7 @@ namespace HideAndSeek
         {
             // Set House variable
             Location entryLocation = new Location("Entry"); // Create entry
-            LocationWithHidingPlace locationWithHidingPlace = entryLocation.AddExit(Direction.East, "Office", "under the table"); // Add new connecting location with hiding place
+            LocationWithHidingPlace locationWithHidingPlace = new LocationWithHidingPlace("Office", "under the table"); // Create a location with hiding place
             house = new House("test house", "TestHouse", "Entry",
                               new List<Location>() { entryLocation },
                               new List<LocationWithHidingPlace>() { locationWithHidingPlace }); // Create House
