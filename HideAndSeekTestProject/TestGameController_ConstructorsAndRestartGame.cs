@@ -84,7 +84,8 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Does.StartWith("Cannot perform action because file name \"@eou]} {(/\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+                Assert.That(exception.Message, Does.StartWith("Cannot perform action because file name \"@eou]} {(/\" is invalid " +
+                                                              "(is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
             });
         }
 
@@ -1006,7 +1007,7 @@ namespace HideAndSeek
                     " - the Living Room is to the West" + Environment.NewLine +
                     " - the Bathroom is to the Southwest" + Environment.NewLine +
                     " - the Office is to the Northwest" + Environment.NewLine +
-                    $"You have not found any opponents"), "check status when move East to Hallway");
+                    "You have not found any opponents"), "check status when move East to Hallway");
                 Assert.That(gameController.Prompt, Is.EqualTo("5: Which direction do you want to go: "), "check prompt after move East to Hallway");
                 Assert.That(gameController.GameOver, Is.False, "check game not over after move East to Hallway");
 
@@ -1140,11 +1141,8 @@ namespace HideAndSeek
             nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_RestartGame))]
         public void Test_GameController_RestartGame(string startingLocation, IEnumerable<string> hidingPlaces, Func<GameController> GetGameController)
         {
-            // Create mock random number generator
-            Random mockRandomNumberGenerator = new MockRandomWithValueList(new int[] { 0, 1, 2, 3, 0 });
-
             // Set House random number generator to mock random
-            House.Random = mockRandomNumberGenerator;
+            House.Random = new MockRandomWithValueList(new int[] { 0, 1, 2, 3, 0 });
 
             // Set GameController
             GameController gameController = GetGameController();
