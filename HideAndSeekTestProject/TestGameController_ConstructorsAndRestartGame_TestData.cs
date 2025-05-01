@@ -270,7 +270,8 @@ namespace HideAndSeek
                             "\"ExitsForSerialization\":" +
                             "{" +
                                 "\"North\":\"Closet\"," +
-                                "\"East\":\"Sensory Room\"" +
+                                "\"East\":\"Sensory Room\"," +
+                                "\"South\":\"Hallway\"" +
                             "}" +
                         "}," +
                         "{\"HidingPlace\":\"between the coats\"," +

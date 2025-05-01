@@ -675,6 +675,7 @@ namespace HideAndSeek
                     "You are in the Bedroom. You see the following exits:" + Environment.NewLine +
                     " - the Sensory Room is to the East" + Environment.NewLine +
                     " - the Closet is to the North" + Environment.NewLine +
+                    " - the Hallway is to the South" + Environment.NewLine +
                     "Someone could hide under the bed" + Environment.NewLine +
                     "You have not found any opponents"), "check status when move North to Bedroom");
                 Assert.That(gameController.Prompt, Is.EqualTo("3: Which direction do you want to go (or type 'check'): "), "check prompt after move North to Bedroom");
@@ -686,6 +687,7 @@ namespace HideAndSeek
                     "You are in the Bedroom. You see the following exits:" + Environment.NewLine +
                     " - the Sensory Room is to the East" + Environment.NewLine +
                     " - the Closet is to the North" + Environment.NewLine +
+                    " - the Hallway is to the South" + Environment.NewLine +
                     "Someone could hide under the bed" + Environment.NewLine +
                     "You have not found any opponents"), "check status after check in Bedroom");
                 Assert.That(gameController.Prompt, Is.EqualTo("4: Which direction do you want to go (or type 'check'): "), "check prompt after check in Bedroom");
@@ -1017,6 +1019,7 @@ namespace HideAndSeek
                     "You are in the Bedroom. You see the following exits:" + Environment.NewLine +
                     " - the Sensory Room is to the East" + Environment.NewLine +
                     " - the Closet is to the North" + Environment.NewLine +
+                    " - the Hallway is to the South" + Environment.NewLine +
                     "Someone could hide under the bed" + Environment.NewLine +
                     "You have not found any opponents"), "check status when move North to Bedroom");
                 Assert.That(gameController.Prompt, Is.EqualTo("6: Which direction do you want to go (or type 'check'): "), "check prompt after move North to Bedroom");
@@ -1028,6 +1031,7 @@ namespace HideAndSeek
                     "You are in the Bedroom. You see the following exits:" + Environment.NewLine +
                     " - the Sensory Room is to the East" + Environment.NewLine +
                     " - the Closet is to the North" + Environment.NewLine +
+                    " - the Hallway is to the South" + Environment.NewLine +
                     "Someone could hide under the bed" + Environment.NewLine +
                     "You have found 1 of 5 opponents: Ana"), "check status after check in Bedroom");
                 Assert.That(gameController.Prompt, Is.EqualTo("7: Which direction do you want to go (or type 'check'): "), "check prompt after check in Bedroom");
