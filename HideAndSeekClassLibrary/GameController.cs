@@ -400,7 +400,7 @@ namespace HideAndSeek
             // If the number of hiding places is not equal to the number of Opponents
             if (hidingPlaces.Count() != OpponentsAndHidingLocations.Count())
             {
-                throw new ArgumentOutOfRangeException("hidingPlaces", "The number of hiding places must equal the number of opponents."); // Throw exception
+                throw new ArgumentOutOfRangeException("hidingPlaces", "The number of hiding places must equal the number of opponents"); // Throw exception
             }
 
             // Clear hiding places

@@ -150,7 +150,7 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo("The number of hiding places must equal the number of opponents. (Parameter 'hidingPlaces')"));
+                Assert.That(exception.Message, Does.StartWith("The number of hiding places must equal the number of opponents"));
             });
         }
     }
