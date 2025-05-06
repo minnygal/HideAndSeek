@@ -269,7 +269,7 @@ namespace HideAndSeek
                 // If Location is null or does not exist in House
                 if ( value == null || !(DoesLocationExist(value.Name)) )
                 {
-                    throw new InvalidOperationException($"player starting point location \"{value}\" does not exist in House"); // Throw exception
+                    throw new InvalidOperationException($"starting point location \"{value}\" does not exist in House"); // Throw exception
                 }
 
                 // Set backing field and property for JSON serialization

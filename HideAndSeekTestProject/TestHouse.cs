@@ -249,7 +249,7 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo("player starting point location \"not in house\" does not exist in House"));
+                Assert.That(exception.Message, Is.EqualTo("starting point location \"not in house\" does not exist in House"));
             });  
         }
 
