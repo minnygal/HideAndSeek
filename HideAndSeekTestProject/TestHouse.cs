@@ -143,7 +143,7 @@ namespace HideAndSeek
 
         [Test]
         [Category("House Constructor LocationsWithHidingPlaces ArgumentException Failure")]
-        public void Test_House_Constructor_Parameterized_AndCheckErrorMessage_ForInvalidLocationsWithHidingPlaces_Empty()
+        public void Test_House_Constructor_Parameterized_AndCheckErrorMessage_ForEmptyLocationsWithHidingPlaces()
         {
             Assert.Multiple(() =>
             {
@@ -157,6 +157,15 @@ namespace HideAndSeek
                 // Assert that exception message is as expected
                 Assert.That(exception.Message, Does.StartWith("locations with hiding places list is empty"));
             });
+        }
+
+        [Test]
+        [Category("House Name Success")]
+        public void Test_House_Set_Name()
+        {
+            house = GetBasicHouse(); // Set House
+            house.Name = "new name"; // Set House name to new value
+            Assert.That(house.Name, Is.EqualTo("new name")); // Assert that House name property is set correctly
         }
 
         [TestCase("")]
@@ -178,6 +187,15 @@ namespace HideAndSeek
                 // Assert that exception message is as expected
                 Assert.That(exception.Message, Does.StartWith($"house name \"{name}\" is invalid (is empty or contains only whitespace)"));
             });
+        }
+
+        [Test]
+        [Category("House HouseFileName Success")]
+        public void Test_House_Set_HouseFileName()
+        {
+            house = GetBasicHouse(); // Set House
+            house.HouseFileName = "NewName"; // Set House file name to new value
+            Assert.That(house.HouseFileName, Is.EqualTo("NewName")); // Assert that House file name property is set correctly
         }
 
         [TestCase("")]
@@ -212,6 +230,15 @@ namespace HideAndSeek
             });
         }
 
+        [Test]
+        [Category("House PlayerStartingPoint Success")]
+        public void Test_House_Set_PlayerStartingPoint()
+        {
+            house = GetBasicHouse(); // Set House
+            house.PlayerStartingPoint = "NewName"; // Set House player starting point to new value
+            Assert.That(house.PlayerStartingPoint, Is.EqualTo("NewName")); // Assert that House player starting point property is set correctly
+        }
+
         [TestCase("")]
         [TestCase(" ")]
         [Category("House PlayerStartingPoint ArgumentException Failure")]
@@ -231,6 +258,23 @@ namespace HideAndSeek
                 // Assert that exception message is as expected
                 Assert.That(exception.Message, Does.StartWith($"player starting point location name \"{locationName}\" is invalid (is empty or contains only whitespace)"));
             });
+        }
+
+        [Test]
+        [Category("House StartingPoint Success")]
+        public void Test_House_Set_StartingPoint()
+        {
+            // Create locations for House
+            LocationWithHidingPlace bedroom = new LocationWithHidingPlace("Bedroom", "under the bed");
+            LocationWithHidingPlace kitchen = new LocationWithHidingPlace("Kitchen", "beside the stove");
+
+            // Set House
+            house = new House("my house", "DefaultHouse", "Bedroom",
+                              Enumerable.Empty<Location>(), new List<LocationWithHidingPlace>() { bedroom, kitchen });
+
+            // Set House starting point to new value
+            house.StartingPoint = kitchen;
+            Assert.That(house.StartingPoint, Is.SameAs(kitchen)); // Assert that House starting point property is set correctly
         }
 
         [Test]
@@ -254,6 +298,35 @@ namespace HideAndSeek
         }
 
         [Test]
+        [Category("House LocationsWithoutHidingPlaces Success")]
+        public void Test_House_Set_LocationsWithHidingPlaces_ToListWithLocation()
+        {
+            house = GetBasicHouse(); // Set House
+            Location location = new Mock<Location>().Object; // Create location
+            house.LocationsWithoutHidingPlaces = new List<Location>() { location }; // Set House locations without hiding places to new value
+            Assert.That(house.LocationsWithoutHidingPlaces, Is.EquivalentTo(new List<Location>() { location })); // Assert that House locations without hiding places property is set correctly
+        }
+
+        [Test]
+        [Category("House LocationsWithoutHidingPlaces Success")]
+        public void Test_House_Set_LocationsWithHidingPlaces_ToEmptyList()
+        {
+            house = GetBasicHouse(); // Set House
+            house.LocationsWithoutHidingPlaces = Enumerable.Empty<Location>(); // Set House locations without hiding places to new value
+            Assert.That(house.LocationsWithoutHidingPlaces, Is.Empty); // Assert that House locations without hiding places property is set correctly
+        }
+
+        [Test]
+        [Category("House LocationsWithHidingPlaces Success")]
+        public void Test_House_Set_LocationsWithHidingPlaces()
+        {
+            house = GetBasicHouse(); // Set House
+            LocationWithHidingPlace locationWithHidingPlace = new Mock<LocationWithHidingPlace>().Object; // Create location with hiding place
+            house.LocationsWithHidingPlaces = new List<LocationWithHidingPlace>() { locationWithHidingPlace }; // Set House locations with hiding places to new value
+            Assert.That(house.LocationsWithHidingPlaces, Is.EquivalentTo(new List<LocationWithHidingPlace>() { locationWithHidingPlace })); // Assert that House locations with hiding places property is set correctly
+        }
+
+        [Test]
         [Category("House LocationsWithHidingPlaces ArgumentException Failure")]
         public void Test_House_Set_LocationsWithHidingPlaces_AndCheckErrorMessage_ForEmptyEnumerable()
         {
@@ -271,6 +344,16 @@ namespace HideAndSeek
                 // Assert that exception message is as expected
                 Assert.That(exception.Message, Does.StartWith("locations with hiding places list is empty"));
             });
+        }
+
+        [Test]
+        [Category("House Locations Success")]
+        public void Test_House_Set_Locations()
+        {
+            house = GetBasicHouse(); // Set House
+            Location location = new Mock<Location>().Object; // Create location
+            house.Locations = new List<Location>() { location }; // Set House locations to new value
+            Assert.That(house.Locations, Is.EquivalentTo(new List<Location>() { location })); // Assert that House locations property is set correctly
         }
 
         [Test]
