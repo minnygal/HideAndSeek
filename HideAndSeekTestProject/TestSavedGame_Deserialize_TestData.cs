@@ -895,7 +895,16 @@ namespace HideAndSeek
                            DefaultHouse_Serialized_Name + "," +
                            DefaultHouse_Serialized_HouseFileName + "," +
                            DefaultHouse_Serialized_PlayerStartingPoint + "," +
-                           DefaultHouse_Serialized_LocationsWithoutHidingPlaces + "," +
+                           "\"LocationsWithoutHidingPlaces\":" +
+                           "[" +
+                                "{" +
+                                    "\"Name\":\"Entry\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                        "\"Up\":\"Attic\"" +
+                                    "}" +
+                                "}" +
+                           "]" + "," +
                            "\"LocationsWithHidingPlaces\":" +
                            "[" +
                                 "{" +

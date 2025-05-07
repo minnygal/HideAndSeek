@@ -352,36 +352,6 @@ namespace HideAndSeek
             });
         }
 
-        [Test]
-        [Category("House Locations Success")]
-        public void Test_House_Set_Locations()
-        {
-            house = GetBasicHouse(); // Set House
-            Location location = new Mock<Location>().Object; // Create location
-            house.Locations = new List<Location>() { location }; // Set House locations to new value
-            Assert.That(house.Locations, Is.EquivalentTo(new List<Location>() { location })); // Assert that House locations property is set correctly
-        }
-
-        [Test]
-        [Category("House Locations ArgumentException Failure")]
-        public void Test_House_Set_Locations_AndCheckErrorMessage_ForEmptyEnumerable()
-        {
-            // Set House
-            house = GetBasicHouse();
-
-            Assert.Multiple(() =>
-            {
-                // Assert that setting the locations property to an empty list raises an exception
-                var exception = Assert.Throws<ArgumentException>(() =>
-                {
-                    house.Locations = new List<Location>();
-                });
-
-                // Assert that exception message is as expected
-                Assert.That(exception.Message, Does.StartWith("locations list is empty"));
-            });
-        }
-
         /// <summary>
         /// Get basic House (used to set House in failing setter tests)
         /// </summary>

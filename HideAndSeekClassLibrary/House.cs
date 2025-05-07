@@ -315,27 +315,9 @@ namespace HideAndSeek
         /// <summary>
         /// List of all Locations in House
         /// </summary>
-        /// <exception cref="ArgumentException">Exception thrown if value passed to setter is empty list</exception>
         [JsonIgnore]
-        public IEnumerable<Location> Locations
-        {
-            get
-            {
-                return _locations;
-            }
-            set
-            {
-                // If enumerable is empty
-                if(value.Count() == 0)
-                {
-                    throw new ArgumentException("locations list is empty", "value"); // Throw exception
-                }
-
-                // Set backing field
-                _locations = value;
-            }
-        }
-
+        public IEnumerable<Location> Locations => LocationsWithoutHidingPlaces.Concat(LocationsWithHidingPlaces);
+        
         [JsonIgnore]
         /// <summary>
         /// Random number generator (used for returning random hiding place)
@@ -367,9 +349,6 @@ namespace HideAndSeek
             LocationsWithoutHidingPlaces = locationsWithoutHidingPlaces;
             LocationsWithHidingPlaces = locationsWithHidingPlaces;
 
-            // Set Locations property (relied upon by StartingPoint setter)
-            Locations = LocationsWithHidingPlaces.Concat(LocationsWithoutHidingPlaces).ToList();
-
             // Set StartingPoint (requiring Locations to be set) and PlayerStartingPoint properties
             StartingPoint = startingPoint;
             PlayerStartingPoint = StartingPoint.Name;
@@ -382,9 +361,6 @@ namespace HideAndSeek
         /// <exception cref="InvalidOperationException">Exception thrown if a Location does not exist in House</exception>
         private void SetUpHouseAfterDeserialization()
         {
-            // Set Locations property (relied upon by StartingPoint setter)
-            Locations = LocationsWithHidingPlaces.Concat(LocationsWithoutHidingPlaces).ToList();
-
             // Set StartingPoint property (requiring Locations to be set)
             Location startingPoint; // Declare variable to store starting point as Location
             try

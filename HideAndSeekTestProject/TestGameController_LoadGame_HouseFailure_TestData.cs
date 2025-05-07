@@ -634,7 +634,16 @@ namespace HideAndSeek
                            "\"Name\":\"my house\"" + "," +
                            "\"HouseFileName\":\"DefaultHouse\"" + "," +
                            "\"PlayerStartingPoint\":\"Entry\"" + "," +
-                           DefaultHouse_Serialized_LocationsWithoutHidingPlaces + "," +
+                           "\"LocationsWithoutHidingPlaces\":" +
+                           "[" +
+                                "{" +
+                                    "\"Name\":\"Entry\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                        "\"Up\":\"Attic\"" +
+                                    "}" +
+                                "}" +
+                           "]" + "," +
                            "\"LocationsWithHidingPlaces\":" +
                            "[" +
                                 "{" +
