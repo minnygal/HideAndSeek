@@ -227,7 +227,7 @@ namespace HideAndSeek
         private string _playerStartingPoint;
 
         /// <summary>
-        /// Player starting point in House as string
+        /// Player starting point in House as string - DO NOT SET MANUALLY - for serialization/deserialization use only
         /// </summary>
         /// <exception cref="ArgumentException">Exception thrown if value passed to setter is invalid (empty of contains whitespace)</exception>
         [JsonRequired]
@@ -280,6 +280,8 @@ namespace HideAndSeek
 
         /// <summary>
         /// List of all Locations without hiding places in House
+        /// Setter does NOT check that all Locations are not LocationWithHidingPlace objects
+        /// Setter does NOT check that StartingPoint is still in House
         /// </summary>
         [JsonRequired]
         public IEnumerable<Location> LocationsWithoutHidingPlaces { get; set; }
@@ -288,6 +290,7 @@ namespace HideAndSeek
 
         /// <summary>
         /// List of all LocationWithHidingPlace objects in House
+        /// Setter does NOT check that StartingPoint is still in House
         /// </summary>
         /// <exception cref="ArgumentException">Exception thrown if value passed to setter is empty list</exception>
         [JsonRequired]
@@ -349,9 +352,8 @@ namespace HideAndSeek
             LocationsWithoutHidingPlaces = locationsWithoutHidingPlaces;
             LocationsWithHidingPlaces = locationsWithHidingPlaces;
 
-            // Set StartingPoint (requiring Locations to be set) and PlayerStartingPoint properties
+            // Set StartingPoint (requiring Locations to be set)
             StartingPoint = startingPoint;
-            PlayerStartingPoint = StartingPoint.Name;
         }
 
         /// <summary>
