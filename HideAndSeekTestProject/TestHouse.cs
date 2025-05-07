@@ -305,7 +305,7 @@ namespace HideAndSeek
 
         [Test]
         [Category("House LocationsWithoutHidingPlaces Success")]
-        public void Test_House_Set_LocationsWithHidingPlaces_ToListWithLocation()
+        public void Test_House_Set_LocationsWithoutHidingPlaces_ToListWithLocation()
         {
             house = GetBasicHouse(); // Set House
             Location location = new Mock<Location>().Object; // Create location
@@ -315,7 +315,7 @@ namespace HideAndSeek
 
         [Test]
         [Category("House LocationsWithoutHidingPlaces Success")]
-        public void Test_House_Set_LocationsWithHidingPlaces_ToEmptyList()
+        public void Test_House_Set_LocationsWithoutHidingPlaces_ToEmptyList()
         {
             house = GetBasicHouse(); // Set House
             house.LocationsWithoutHidingPlaces = Enumerable.Empty<Location>(); // Set House locations without hiding places to new value
