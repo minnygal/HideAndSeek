@@ -313,8 +313,6 @@ namespace HideAndSeek
             }
         }
 
-        private IEnumerable<Location> _locations;
-
         /// <summary>
         /// List of all Locations in House
         /// </summary>
