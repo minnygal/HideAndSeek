@@ -147,6 +147,27 @@ namespace HideAndSeek
         }
 
         [Test]
+        [Category("House Constructor LocationsWithoutHidingPlaces ArgumentException Failure")]
+        public void Test_House_Constructor_Parameterized_AndCheckErrorMessage_ForLocationsWithoutHidingPlaces_IncludingLocationWithHidingPlaceObject()
+        {
+            house = GetBasicHouse(); // Set House
+            Assert.Multiple(() =>
+            {
+                // Assert that calling House constructor with list including LocationWithHidingPlace for LocationsWithoutHidingPlaces raises exception
+                Exception exception = Assert.Throws<ArgumentException>(() =>
+                {
+                    // Call House constructor and set House
+                    house = new House("my house", "DefaultHouse", new Mock<Location>().Object,
+                                      new List<Location>() { new LocationWithHidingPlace("Closet", "between the clothes") },
+                                      new List<LocationWithHidingPlace>() { new Mock<LocationWithHidingPlace>().Object });
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith("LocationWithHidingPlace \"Closet\" passed to LocationsWithoutHidingPlaces setter"));
+            });
+        }
+
+        [Test]
         [Category("House Constructor LocationsWithHidingPlaces ArgumentException Failure")]
         public void Test_House_Constructor_Parameterized_AndCheckErrorMessage_ForEmptyLocationsWithHidingPlaces()
         {
@@ -320,6 +341,24 @@ namespace HideAndSeek
             house = GetBasicHouse(); // Set House
             house.LocationsWithoutHidingPlaces = Enumerable.Empty<Location>(); // Set House locations without hiding places to new value
             Assert.That(house.LocationsWithoutHidingPlaces, Is.Empty); // Assert that House locations without hiding places property is set correctly
+        }
+
+        [Test]
+        [Category("House LocationsWithoutHidingPlaces ArgumentException Failure")]
+        public void Test_House_Set_LocationsWithoutHidingPlaces_AndCheckErrorMessage_ForLocationWithHidingPlaceObject()
+        {
+            house = GetBasicHouse(); // Set House
+            Assert.Multiple(() =>
+            {
+                // Assert that setting LocationsWithoutHidingPlaces property to list including LocationWithHidingPlace raises exception
+                Exception exception = Assert.Throws<ArgumentException>(() =>
+                {
+                    house.LocationsWithoutHidingPlaces = new List<Location>() { new LocationWithHidingPlace("Closet", "between the clothes") };
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith("LocationWithHidingPlace \"Closet\" passed to LocationsWithoutHidingPlaces setter"));
+            });
         }
 
         [Test]

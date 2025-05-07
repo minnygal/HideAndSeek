@@ -278,13 +278,34 @@ namespace HideAndSeek
             }
         }
 
+        private IEnumerable<Location> _locationsWithoutHidingPlaces;
+
         /// <summary>
         /// List of all Locations without hiding places in House
-        /// Setter does NOT check that all Locations are not LocationWithHidingPlace objects
         /// Setter does NOT check that StartingPoint is still in House
         /// </summary>
         [JsonRequired]
-        public IEnumerable<Location> LocationsWithoutHidingPlaces { get; set; }
+        public IEnumerable<Location> LocationsWithoutHidingPlaces
+        {
+            get
+            {
+                return _locationsWithoutHidingPlaces;
+            }
+            set
+            {
+                // If any object passed in is a LocationWithHidingPlace
+                foreach(Location location in value)
+                {
+                    if(location.GetType() == typeof(LocationWithHidingPlace))
+                    {
+                        throw new ArgumentException($"LocationWithHidingPlace \"{location.Name}\" passed to LocationsWithoutHidingPlaces setter", nameof(value)); // Throw exception
+                    }
+                }
+
+                // Set backing field
+                _locationsWithoutHidingPlaces = value;
+            }
+        }
 
         private IEnumerable<LocationWithHidingPlace> _locationsWithHidingPlaces;
 
