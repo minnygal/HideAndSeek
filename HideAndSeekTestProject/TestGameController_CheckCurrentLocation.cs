@@ -64,7 +64,7 @@ namespace HideAndSeek
             // Set up GameController
             Location entryLocation = new Location("Entry"); // Create entry
             LocationWithHidingPlace locationWithHidingPlace = entryLocation.AddExit(Direction.East, "Office", "under the table"); // Add new connecting location with hiding place
-            house = new House("test house", "TestHouse", "Entry",
+            house = new House("test house", "TestHouse", entryLocation,
                               new List<Location>() { entryLocation },
                               new List<LocationWithHidingPlace>() { locationWithHidingPlace }); // Create House
             gameController = new GameController(MockedOpponents, house); // Create GameController with House
@@ -98,7 +98,7 @@ namespace HideAndSeek
             // Set up GameController
             LocationWithHidingPlace entryLocationWithHidingPlace = new LocationWithHidingPlace("Entry", "behind the coat rack"); // Create entry
             LocationWithHidingPlace otherLocationWithHidingPlace = entryLocationWithHidingPlace.AddExit(Direction.East, "Office", "under the table"); // Add new connecting location with hiding place
-            house = new House("test house", "TestHouse", "Entry",
+            house = new House("test house", "TestHouse", entryLocationWithHidingPlace,
                               Enumerable.Empty<Location>(),
                               new List<LocationWithHidingPlace>() { entryLocationWithHidingPlace, otherLocationWithHidingPlace }); // Create House
             House.Random = new MockRandomWithValueList(new List<int>() { 1 }); // Set House random number generator so Opponents will be hidden in second location with hiding place
@@ -134,7 +134,7 @@ namespace HideAndSeek
             // Set up GameController
             LocationWithHidingPlace entryLocationWithHidingPlace = new LocationWithHidingPlace("Entry", "behind the coat rack"); // Create entry
             LocationWithHidingPlace otherLocationWithHidingPlace = entryLocationWithHidingPlace.AddExit(Direction.East, "Office", "under the table"); // Add new connecting location with hiding place
-            house = new House("test house", "TestHouse", "Entry",
+            house = new House("test house", "TestHouse", entryLocationWithHidingPlace,
                               Enumerable.Empty<Location>(),
                               new List<LocationWithHidingPlace>() { entryLocationWithHidingPlace, otherLocationWithHidingPlace }); // Create House
             House.Random = new MockRandomWithValueList(new List<int>() { 0, 1, 1, 1, 1 }); // Set House random number generator so only first Opponent will be hidden in entry location with hiding place
@@ -170,7 +170,7 @@ namespace HideAndSeek
             // Set up GameController
             LocationWithHidingPlace entryLocationWithHidingPlace = new LocationWithHidingPlace("Entry", "behind the coat rack"); // Create entry
             LocationWithHidingPlace otherLocationWithHidingPlace = entryLocationWithHidingPlace.AddExit(Direction.East, "Office", "under the table"); // Add new connecting location with hiding place
-            house = new House("test house", "TestHouse", "Entry",
+            house = new House("test house", "TestHouse", entryLocationWithHidingPlace,
                               Enumerable.Empty<Location>(),
                               new List<LocationWithHidingPlace>() { entryLocationWithHidingPlace, otherLocationWithHidingPlace }); // Create House
             House.Random = new MockRandomWithValueList(new List<int>() { 0, 0, 1, 1, 1 }); // Set House random number generator so only first two Opponents will be hidden in entry location with hiding place
@@ -206,7 +206,7 @@ namespace HideAndSeek
             // Set up GameController
             LocationWithHidingPlace entryLocationWithHidingPlace = new LocationWithHidingPlace("Entry", "behind the coat rack"); // Create entry
             Location location = entryLocationWithHidingPlace.AddExit(Direction.West, "Hallway"); // Add new connecting location
-            house = new House("test house", "TestHouse", "Entry",
+            house = new House("test house", "TestHouse", entryLocationWithHidingPlace,
                               new List<Location>() { location  },
                               new List<LocationWithHidingPlace>() { entryLocationWithHidingPlace }); // Create House
             gameController = new GameController(MockedOpponents, house); // Create GameController with House

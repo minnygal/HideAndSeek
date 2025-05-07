@@ -82,7 +82,7 @@ namespace HideAndSeek
             };
 
             // Create and return new House
-            return new House("my house", "DefaultHouse", "Entry", locationsWithoutHidingPlaces, locationsWithHidingPlaces);
+            return new House("my house", "DefaultHouse", entry, locationsWithoutHidingPlaces, locationsWithHidingPlaces);
         }
 
         /// <summary>
@@ -161,7 +161,7 @@ namespace HideAndSeek
             // Set House
             LocationWithHidingPlace garage = new LocationWithHidingPlace("Garage", "behind the car");
             LocationWithHidingPlace attic = new LocationWithHidingPlace("Attic", "behind the trunks");
-            house = new House("test house", "TestHouse", "Garage",
+            house = new House("test house", "TestHouse", garage,
                               Enumerable.Empty<LocationWithHidingPlace>(), new List<LocationWithHidingPlace>() { garage, attic });
 
             // Hide opponent in Garage
@@ -190,13 +190,13 @@ namespace HideAndSeek
         public void Test_House_GetLocationByName_OfLocation_ReturnsLocation()
         {
             // Set House
-            Location location = new Location("Entry");
+            Location entryLocation = new Location("Entry");
             LocationWithHidingPlace locationWithHidingPlace = new LocationWithHidingPlace("Pantry", "behind the shelves");
-            house = new House("test house", "TestHouse", "Entry",
-                              new List<Location>() { location }, new List<LocationWithHidingPlace>() { locationWithHidingPlace });
+            house = new House("test house", "TestHouse", entryLocation,
+                              new List<Location>() { entryLocation }, new List<LocationWithHidingPlace>() { locationWithHidingPlace });
 
             // Assert that GetLocationByName method returns the correct Location
-            Assert.That(house.GetLocationByName("Entry"), Is.SameAs(location), "same object");
+            Assert.That(house.GetLocationByName("Entry"), Is.SameAs(entryLocation), "same object");
         }
 
         [Test]
@@ -204,12 +204,12 @@ namespace HideAndSeek
         public void Test_House_GetLocationByName_OfLocationWithHidingPlace_ReturnsLocation()
         {
             // Set House
-            LocationWithHidingPlace locationWithHidingPlace = new LocationWithHidingPlace("Entry", "behind the coat rack");
-            house = new House("test house", "TestHouse", "Entry",
-                              Enumerable.Empty<LocationWithHidingPlace>(), new List<LocationWithHidingPlace>() { locationWithHidingPlace });
+            LocationWithHidingPlace entryLocationWithHidingPlace = new LocationWithHidingPlace("Entry", "behind the coat rack");
+            house = new House("test house", "TestHouse", entryLocationWithHidingPlace,
+                              Enumerable.Empty<LocationWithHidingPlace>(), new List<LocationWithHidingPlace>() { entryLocationWithHidingPlace });
 
             // Assert that GetLocationByName method returns the correct Location
-            Assert.That(house.GetLocationByName("Entry"), Is.SameAs(locationWithHidingPlace));
+            Assert.That(house.GetLocationByName("Entry"), Is.SameAs(entryLocationWithHidingPlace));
         }
 
         [TestCase("Secret Library")]
@@ -221,9 +221,9 @@ namespace HideAndSeek
         public void Test_House_GetLocationByName_AndCheckErrorMessage_WhenLocationWithName_DoesNotExist(string locationName)
         {
             // Set House
-            LocationWithHidingPlace locationWithHidingPlace = new LocationWithHidingPlace("Master Bedroom", "under the bed");
-            house = new House("test house", "TestHouse", "Master Bedroom",
-                              Enumerable.Empty<LocationWithHidingPlace>(), new List<LocationWithHidingPlace>() { locationWithHidingPlace });
+            LocationWithHidingPlace startingLocationWithHidingPlace = new LocationWithHidingPlace("Master Bedroom", "under the bed");
+            house = new House("test house", "TestHouse", startingLocationWithHidingPlace,
+                              Enumerable.Empty<LocationWithHidingPlace>(), new List<LocationWithHidingPlace>() { startingLocationWithHidingPlace });
 
             Assert.Multiple(() =>
             {
@@ -243,12 +243,12 @@ namespace HideAndSeek
         public void Test_House_GetLocationWithHidingPlaceByName_ReturnsLocation()
         {
             // Set House
-            LocationWithHidingPlace locationWithHidingPlace = new LocationWithHidingPlace("Entry", "behind the coat rack");
-            house = new House("test house", "TestHouse", "Entry",
-                              Enumerable.Empty<LocationWithHidingPlace>(), new List<LocationWithHidingPlace>() { locationWithHidingPlace });
+            LocationWithHidingPlace entryLocationWithHidingPlace = new LocationWithHidingPlace("Entry", "behind the coat rack");
+            house = new House("test house", "TestHouse", entryLocationWithHidingPlace,
+                              Enumerable.Empty<LocationWithHidingPlace>(), new List<LocationWithHidingPlace>() { entryLocationWithHidingPlace });
 
             // Assert that GetLocationByName method returns the correct Location
-            Assert.That(house.GetLocationWithHidingPlaceByName("Entry"), Is.SameAs(locationWithHidingPlace));
+            Assert.That(house.GetLocationWithHidingPlaceByName("Entry"), Is.SameAs(entryLocationWithHidingPlace));
         }
 
         [Test]
@@ -256,10 +256,10 @@ namespace HideAndSeek
         public void Test_House_GetLocationWithHidingPlaceByName_AndCheckErrorMessage_WhenLocationDoesNotHaveHidingPlace()
         {
             // Set House
-            Location location = new Location("Entry");
+            Location entryLocation = new Location("Entry");
             LocationWithHidingPlace locationWithHidingPlace = new LocationWithHidingPlace("Pantry", "behind the shelves");
-            house = new House("test house", "TestHouse", "Entry",
-                              new List<Location>() { location }, new List<LocationWithHidingPlace>() { locationWithHidingPlace });
+            house = new House("test house", "TestHouse", entryLocation,
+                              new List<Location>() { entryLocation }, new List<LocationWithHidingPlace>() { locationWithHidingPlace });
 
             Assert.Multiple(() =>
             {
@@ -283,9 +283,9 @@ namespace HideAndSeek
         public void Test_House_GetLocationWithHidingPlaceByName_AndCheckErrorMessage_WhenNoLocationWithNameExistsInHouse(string locationName)
         {
             // Set House
-            LocationWithHidingPlace locationWithHidingPlace = new LocationWithHidingPlace("Master Bedroom", "under the bed");
-            house = new House("test house", "TestHouse", "Master Bedroom",
-                              Enumerable.Empty<LocationWithHidingPlace>(), new List<LocationWithHidingPlace>() { locationWithHidingPlace });
+            LocationWithHidingPlace startingLocationWithHidingPlace = new LocationWithHidingPlace("Master Bedroom", "under the bed");
+            house = new House("test house", "TestHouse", startingLocationWithHidingPlace,
+                              Enumerable.Empty<LocationWithHidingPlace>(), new List<LocationWithHidingPlace>() { startingLocationWithHidingPlace });
 
             Assert.Multiple(() =>
             {
@@ -305,9 +305,9 @@ namespace HideAndSeek
         public void Test_House_DoesLocationExist_ReturnsTrue()
         {
             // Set House
-            LocationWithHidingPlace locationWithHidingPlace = new LocationWithHidingPlace("Entry", "behind the coat rack");
-            house = new House("test house", "TestHouse", "Entry",
-                              Enumerable.Empty<LocationWithHidingPlace>(), new List<LocationWithHidingPlace>() { locationWithHidingPlace });
+            LocationWithHidingPlace entryLocationWithHidingPlace = new LocationWithHidingPlace("Entry", "behind the coat rack");
+            house = new House("test house", "TestHouse", entryLocationWithHidingPlace,
+                              Enumerable.Empty<LocationWithHidingPlace>(), new List<LocationWithHidingPlace>() { entryLocationWithHidingPlace });
 
             // Assert that method returns true
             Assert.That(house.DoesLocationExist("Entry"), Is.True);
@@ -318,9 +318,9 @@ namespace HideAndSeek
         public void Test_House_DoesLocationExist_ReturnsFalse()
         {
             // Set House
-            LocationWithHidingPlace locationWithHidingPlace = new LocationWithHidingPlace("Entry", "behind the coat rack");
-            house = new House("test house", "TestHouse", "Entry",
-                              Enumerable.Empty<LocationWithHidingPlace>(), new List<LocationWithHidingPlace>() { locationWithHidingPlace });
+            LocationWithHidingPlace entryLocationWithHidingPlace = new LocationWithHidingPlace("Entry", "behind the coat rack");
+            house = new House("test house", "TestHouse", entryLocationWithHidingPlace,
+                              Enumerable.Empty<LocationWithHidingPlace>(), new List<LocationWithHidingPlace>() { entryLocationWithHidingPlace });
 
             // Assert that method returns false
             Assert.That(house.DoesLocationExist("Dungeon"), Is.False);
@@ -331,9 +331,9 @@ namespace HideAndSeek
         public void Test_House_DoesLocationWithHidingPlaceExist_ReturnsTrue()
         {
             // Set House
-            LocationWithHidingPlace locationWithHidingPlace = new LocationWithHidingPlace("Pantry", "behind the food");
-            house = new House("test house", "TestHouse", "Pantry",
-                              Enumerable.Empty<LocationWithHidingPlace>(), new List<LocationWithHidingPlace>() { locationWithHidingPlace });
+            LocationWithHidingPlace startingLocationWithHidingPlace = new LocationWithHidingPlace("Pantry", "behind the food");
+            house = new House("test house", "TestHouse", startingLocationWithHidingPlace,
+                              Enumerable.Empty<LocationWithHidingPlace>(), new List<LocationWithHidingPlace>() { startingLocationWithHidingPlace });
 
             Assert.That(house.DoesLocationWithHidingPlaceExist("Pantry"), Is.True);
         }
@@ -343,9 +343,9 @@ namespace HideAndSeek
         public void Test_House_DoesLocationWithHidingPlaceExist_ReturnsFalse_WhenLocationDoesNotExist()
         {
             // Set House
-            LocationWithHidingPlace locationWithHidingPlace = new LocationWithHidingPlace("Entry", "behind the coat rack");
-            house = new House("test house", "TestHouse", "Entry",
-                              Enumerable.Empty<LocationWithHidingPlace>(), new List<LocationWithHidingPlace>() { locationWithHidingPlace });
+            LocationWithHidingPlace entryLocationWithHidingPlace = new LocationWithHidingPlace("Entry", "behind the coat rack");
+            house = new House("test house", "TestHouse", entryLocationWithHidingPlace,
+                              Enumerable.Empty<LocationWithHidingPlace>(), new List<LocationWithHidingPlace>() { entryLocationWithHidingPlace });
 
             // Assert that method retruns false
             Assert.That(house.DoesLocationWithHidingPlaceExist("Dungeon"), Is.False);
@@ -356,10 +356,10 @@ namespace HideAndSeek
         public void Test_House_DoesLocationWithHidingPlaceExist_ReturnsFalse_WhenLocationIsNotLocationWithHidingPlace()
         {
             // Set House
-            Location location = new Location("Entry");
+            Location entryLocation = new Location("Entry");
             LocationWithHidingPlace locationWithHidingPlace = new LocationWithHidingPlace("Pantry", "behind the shelves");
-            house = new House("test house", "TestHouse", "Entry",
-                              new List<Location>() { location }, new List<LocationWithHidingPlace>() { locationWithHidingPlace });
+            house = new House("test house", "TestHouse", entryLocation,
+                              new List<Location>() { entryLocation }, new List<LocationWithHidingPlace>() { locationWithHidingPlace });
 
             // Assert that method returns false
             Assert.That(house.DoesLocationWithHidingPlaceExist("Entry"), Is.False);

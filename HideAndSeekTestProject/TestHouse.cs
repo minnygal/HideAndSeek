@@ -46,7 +46,7 @@ namespace HideAndSeek
             LocationWithHidingPlace office = new LocationWithHidingPlace("Office", "under the desk");
 
             // Call House constructor and set House
-            house = new House("my house", "DefaultHouse", "Entry",
+            house = new House("my house", "DefaultHouse", entry,
                 new List<Location>() { entry, hallway }, new List<LocationWithHidingPlace>() { bedroom, kitchen, office });
             
             // Assume no exceptions were thrown
@@ -70,13 +70,15 @@ namespace HideAndSeek
         [Category("House Constructor Name ArgumentException Failure")]
         public void Test_House_Constructor_Parameterized_AndCheckErrorMessage_ForInvalidName()
         {
+            LocationWithHidingPlace entryWithHidingPlace = new Mock<LocationWithHidingPlace>().Object;
             Assert.Multiple(() =>
             {
                 // Assert that calling House constructor with an invalid name raises an exception
                 var exception = Assert.Throws<ArgumentException>(() =>
                 {
                     // Call House constructor and set House
-                    house = new House(" ", "DefaultHouse", "Entry", Enumerable.Empty<Location>(), Enumerable.Empty<LocationWithHidingPlace>());
+                    house = new House(" ", "DefaultHouse", entryWithHidingPlace, 
+                                      Enumerable.Empty<Location>(), new List<LocationWithHidingPlace>() { entryWithHidingPlace });
                 });
 
                 // Assert that exception message is as expected
@@ -88,13 +90,15 @@ namespace HideAndSeek
         [Category("House Constructor HouseFileName ArgumentException Failure")]
         public void Test_House_Constructor_Parameterized_AndCheckErrorMessage_ForInvalidHouseFileName()
         {
+            LocationWithHidingPlace entryWithHidingPlace = new Mock<LocationWithHidingPlace>().Object;
             Assert.Multiple(() =>
             {
                 // Assert that calling House constructor with an invalid House file name raises an exception
                 var exception = Assert.Throws<ArgumentException>(() =>
                 {
                     // Call House constructor and set House
-                    house = new House("my house", " ", "Entry", Enumerable.Empty<Location>(), Enumerable.Empty<LocationWithHidingPlace>());
+                    house = new House("my house", " ", entryWithHidingPlace, 
+                                      Enumerable.Empty<Location>(), new List<LocationWithHidingPlace>() { entryWithHidingPlace });
                 });
 
                 // Assert that exception message is as expected
@@ -104,40 +108,41 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("House Constructor PlayerStartingPoint ArgumentException Failure")]
-        public void Test_House_Constructor_Parameterized_AndCheckErrorMessage_ForInvalidPlayerStartingPoint_InvalidName()
+        [Category("House Constructor PlayerStartingPoint InvalidOperationException Failure")]
+        public void Test_House_Constructor_Parameterized_AndCheckErrorMessage_ForInvalidStartingPoint_NullValue()
         {
             Assert.Multiple(() =>
             {
-                // Assert that calling House constructor with an invalid player starting point name raises an exception
-                var exception = Assert.Throws<ArgumentException>(() =>
+                // Assert that calling House constructor with an invalid starting point name raises an exception
+                var exception = Assert.Throws<InvalidOperationException>(() =>
                 {
                     // Call House constructor and set House
-                    house = new House("my house", "DefaultHouse", " ", Enumerable.Empty<Location>(), Enumerable.Empty<LocationWithHidingPlace>());
+                    house = new House("my house", "DefaultHouse", null, Enumerable.Empty<Location>(), 
+                                      new List<LocationWithHidingPlace>() { new Mock<LocationWithHidingPlace>().Object });
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Does.StartWith($"player starting point location name \" \" is invalid " +
-                                                               "(is empty or contains only whitespace)"));
+                Assert.That(exception.Message, Does.StartWith($"starting point location \"\" does not exist in House"));
             });
         }
 
         [Test]
         [Category("House Constructor PlayerStartingPoint InvalidOperationException Failure")]
-        public void Test_House_Constructor_Parameterized_AndCheckErrorMessage_ForInvalidPlayerStartingPoint_NotInHouse()
+        public void Test_House_Constructor_Parameterized_AndCheckErrorMessage_ForInvalidStartingPoint_NotInHouse()
         {
+            Location notInHouse = new Location("not in house");
             Assert.Multiple(() =>
             {
-                // Assert that calling House constructor with an invalid player starting point (not in house) raises an exception
+                // Assert that calling House constructor with an invalid starting point (not in house) raises an exception
                 var exception = Assert.Throws<InvalidOperationException>(() =>
                 {
                     // Call House constructor and set House
-                    house = new House("my house", "DefaultHouse", "not in house", Enumerable.Empty<Location>(), 
+                    house = new House("my house", "DefaultHouse", notInHouse, Enumerable.Empty<Location>(), 
                                       new List<LocationWithHidingPlace>() { new Mock<LocationWithHidingPlace>().Object });
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo("player starting point location \"not in house\" does not exist in House"));
+                Assert.That(exception.Message, Is.EqualTo("starting point location \"not in house\" does not exist in House"));
             });
         }
 
@@ -151,7 +156,8 @@ namespace HideAndSeek
                 var exception = Assert.Throws<ArgumentException>(() =>
                 {
                     // Call House constructor and set House
-                    house = new House("my house", "DefaultHouse", "Entry", Enumerable.Empty<Location>(), Enumerable.Empty<LocationWithHidingPlace>());
+                    house = new House("my house", "DefaultHouse", new Mock<Location>().Object, 
+                                      Enumerable.Empty<Location>(), Enumerable.Empty<LocationWithHidingPlace>());
                 });
 
                 // Assert that exception message is as expected
@@ -269,7 +275,7 @@ namespace HideAndSeek
             LocationWithHidingPlace kitchen = new LocationWithHidingPlace("Kitchen", "beside the stove");
 
             // Set House
-            house = new House("my house", "DefaultHouse", "Bedroom",
+            house = new House("my house", "DefaultHouse", bedroom,
                               Enumerable.Empty<Location>(), new List<LocationWithHidingPlace>() { bedroom, kitchen });
 
             // Set House starting point to new value
@@ -389,7 +395,7 @@ namespace HideAndSeek
             LocationWithHidingPlace office = new LocationWithHidingPlace("Office", "under the desk");
 
             // Call House constructor and return House object
-            return new House("my house", "DefaultHouse", "Entry",
+            return new House("my house", "DefaultHouse", entry,
                 new List<Location>() { entry, hallway }, new List<LocationWithHidingPlace>() { bedroom, kitchen, office });
         }
 
@@ -520,7 +526,7 @@ namespace HideAndSeek
             };
 
             // Create House
-            house = new House("dream house", "DreamHouse", "Kitchen", locationsWithoutHidingPlaces, locationsWithHidingPlaces);
+            house = new House("dream house", "DreamHouse", kitchen, locationsWithoutHidingPlaces, locationsWithHidingPlaces);
             #endregion
 
             // ACT
@@ -646,7 +652,7 @@ namespace HideAndSeek
             };
 
             // Create House
-            house = new House("dream house", "DreamHouse", "Kitchen", new List<Location>(), locationsWithHidingPlaces);
+            house = new House("dream house", "DreamHouse", kitchen, new List<Location>(), locationsWithHidingPlaces);
             #endregion
 
             // ACT

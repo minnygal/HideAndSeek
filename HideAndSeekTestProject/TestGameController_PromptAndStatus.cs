@@ -32,7 +32,7 @@ namespace HideAndSeek
             // Create GameController with new House object
             Location entryLocation = new Location("Entry"); // Create entry without hiding place
             LocationWithHidingPlace locationWithHidingPlace = entryLocation.AddExit(Direction.East, "Office", "under the table"); // Add new connecting location with hiding place
-            house = new House("test house", "TestHouse", "Entry",
+            house = new House("test house", "TestHouse", entryLocation,
                               new List<Location>() { entryLocation },
                               new List<LocationWithHidingPlace>() { locationWithHidingPlace }); // Create House
             gameController = new GameController(mockedOpponentArray, house); // Set GameController
@@ -47,7 +47,7 @@ namespace HideAndSeek
         {
             // Create GameController with new House object
             LocationWithHidingPlace entryLocationWithHidingPlace = new LocationWithHidingPlace("Entry", "behind the coat rack"); // Create entry with hiding place
-            house = new House("test house", "TestHouse", "Entry",
+            house = new House("test house", "TestHouse", entryLocationWithHidingPlace,
                               Enumerable.Empty<Location>(),
                               new List<LocationWithHidingPlace>() { entryLocationWithHidingPlace }); // Create House
             gameController = new GameController(mockedOpponentArray, house); // Set GameController
@@ -63,7 +63,7 @@ namespace HideAndSeek
             // Set up GameController
             Location entryLocation = new Location("Entry"); // Create entry
             LocationWithHidingPlace locationWithHidingPlace = entryLocation.AddExit(Direction.East, "Office", "under the table"); // Add new connecting location with hiding place
-            house = new House("test house", "TestHouse", "Entry",
+            house = new House("test house", "TestHouse", entryLocation,
                               new List<Location>() { entryLocation },
                               new List<LocationWithHidingPlace>() { locationWithHidingPlace }); // Create House
             gameController = new GameController(mockedOpponentArray, house); // Create GameController with House
@@ -82,7 +82,7 @@ namespace HideAndSeek
             // Set up GameController
             LocationWithHidingPlace entryLocationWithHidingPlace = new LocationWithHidingPlace("Entry", "behind the coat rack"); // Create entry
             Location location = entryLocationWithHidingPlace.AddExit(Direction.West, "Hallway"); // Add new connecting location
-            house = new House("test house", "TestHouse", "Entry",
+            house = new House("test house", "TestHouse", entryLocationWithHidingPlace,
                               new List<Location>() { location },
                               new List<LocationWithHidingPlace>() { entryLocationWithHidingPlace }); // Create House
             gameController = new GameController(mockedOpponentArray, house); // Create GameController with House
@@ -103,7 +103,7 @@ namespace HideAndSeek
             Location entryLocation = new Location("Entry"); // Create entry
             Location otherLocation = entryLocation.AddExit(Direction.Out, "Yard"); // Add new connecting location
             LocationWithHidingPlace locationWithHidingPlace = entryLocation.AddExit(Direction.East, "Office", "under the table"); // Add new connecting location with hiding place
-            house = new House("test house", "TestHouse", "Entry",
+            house = new House("test house", "TestHouse", entryLocation,
                               new List<Location>() { entryLocation, otherLocation },
                               new List<LocationWithHidingPlace>() { locationWithHidingPlace }); // Create House
             gameController = new GameController(mockedOpponentArray, house); // Create GameController with House
@@ -124,7 +124,7 @@ namespace HideAndSeek
             LocationWithHidingPlace entryLocationWithHidingPlace = new LocationWithHidingPlace("Entry", "behind the coat rack"); // Create entry
             Location location = entryLocationWithHidingPlace.AddExit(Direction.Out, "Yard"); // Add new connecting location
             LocationWithHidingPlace otherLocationWithHidingPlace = entryLocationWithHidingPlace.AddExit(Direction.East, "Office", "under the table"); // Add new connecting location with hiding place
-            house = new House("test house", "TestHouse", "Entry",
+            house = new House("test house", "TestHouse", entryLocationWithHidingPlace,
                               new List<Location>() { location },
                               new List<LocationWithHidingPlace>() { entryLocationWithHidingPlace, otherLocationWithHidingPlace }); // Create House
             gameController = new GameController(mockedOpponentArray, house); // Create GameController with House

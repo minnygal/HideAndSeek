@@ -64,7 +64,7 @@ namespace HideAndSeek
             };
 
             // Create and return new House
-            return new House("my house", "DefaultHouse", "Entry", locationsWithoutHidingPlaces, locationsWithHidingPlaces);
+            return new House("my house", "DefaultHouse", entry, locationsWithoutHidingPlaces, locationsWithHidingPlaces);
         }
 
         public static IEnumerable TestCases_For_Test_GameController_Move_InAllDirectionsAsStrings

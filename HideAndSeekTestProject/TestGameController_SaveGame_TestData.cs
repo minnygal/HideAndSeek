@@ -93,7 +93,7 @@ namespace HideAndSeek
             };
 
             // Create and return new House
-            return new House("my house", "DefaultHouse", "Entry", locationsWithoutHidingPlaces, locationsWithHidingPlaces);
+            return new House("my house", "DefaultHouse", entry, locationsWithoutHidingPlaces, locationsWithHidingPlaces);
         }
 
         /// <summary>
@@ -149,7 +149,7 @@ namespace HideAndSeek
             };
 
             // Create and return new House
-            return new House("test house", "TestHouse", "Landing", locationsWithoutHidingPlaces, locationsWithHidingPlaces);
+            return new House("test house", "TestHouse", landing, locationsWithoutHidingPlaces, locationsWithHidingPlaces);
         }
 
         public static IEnumerable TestCases_For_Test_GameController_SaveGame_AndCheckTextSavedToFile

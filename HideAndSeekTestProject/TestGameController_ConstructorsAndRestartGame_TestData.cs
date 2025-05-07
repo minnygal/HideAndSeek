@@ -421,7 +421,7 @@ namespace HideAndSeek
             House house = new House(
                 "test house",
                 "TestHouse",
-                "Start",
+                startingPlace,
                 new List<Location>() { startingPlace, hallway },
                 new List<LocationWithHidingPlace>() { bedroom, office, kitchen, pantry });
 

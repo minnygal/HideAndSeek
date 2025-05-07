@@ -352,39 +352,41 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="name">Name of House</param>
         /// <param name="houseFileName">Name of file in which House layout is stored</param>
-        /// <param name="playerStartingPoint">Name of Location where player should start a new game</param>
+        /// <param name="startingPoint">Location from which player should start a new game</param>
         /// <param name="locationsWithoutHidingPlaces">Enumerable of Location objects (without hiding places)</param>
         /// <param name="locationsWithHidingPlaces">Enumerable of LocationWithHidingPlace objects</param>
         /// <exception cref="InvalidOperationException">Exception thrown if player starting location is not in House</exception>
         [SetsRequiredMembers]
-        public House(string name, string houseFileName, string playerStartingPoint, 
-                     IEnumerable<Location> locationsWithoutHidingPlaces, 
+        public House(string name, string houseFileName, Location startingPoint,
+                     IEnumerable<Location> locationsWithoutHidingPlaces,
                      IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces)
         {
-            // Set all properties except Locations and StartingPoint
+            // Set properties which don't require other properties to be set
             Name = name;
             HouseFileName = houseFileName;
-            PlayerStartingPoint = playerStartingPoint;
             LocationsWithoutHidingPlaces = locationsWithoutHidingPlaces;
             LocationsWithHidingPlaces = locationsWithHidingPlaces;
 
-            // Set Locations and StartingPoint properties
-            SetLocationsAndStartingPoint();
+            // Set Locations property (relied upon by StartingPoint setter)
+            Locations = LocationsWithHidingPlaces.Concat(LocationsWithoutHidingPlaces).ToList();
+
+            // Set StartingPoint (requiring Locations to be set) and PlayerStartingPoint properties
+            StartingPoint = startingPoint;
+            PlayerStartingPoint = StartingPoint.Name;
         }
 
         /// <summary>
-        /// Helper method to set Locations and StartingPoint properties
-        /// after LocationsWithoutHidingPlaces and LocationsWithHidingPlaces are set
+        /// Set up House after deserialization
+        /// (set Locations, StartingPoint, and Exits property for each Location in House)
         /// </summary>
-        /// <exception cref="InvalidOperationException">Exception thrown if player starting location is not in House</exception>
-        private void SetLocationsAndStartingPoint()
+        /// <exception cref="InvalidOperationException">Exception thrown if a Location does not exist in House</exception>
+        private void SetUpHouseAfterDeserialization()
         {
-            // Set list of all Locations in House
+            // Set Locations property (relied upon by StartingPoint setter)
             Locations = LocationsWithHidingPlaces.Concat(LocationsWithoutHidingPlaces).ToList();
 
-            // Declare variable to store starting point
-            Location startingPoint;
-
+            // Set StartingPoint property (requiring Locations to be set)
+            Location startingPoint; // Declare variable to store starting point as Location
             try
             {
                 // Attempt to get player starting point location
@@ -397,17 +399,6 @@ namespace HideAndSeek
             {
                 throw new InvalidOperationException($"player starting point location \"{PlayerStartingPoint}\" does not exist in House"); // Throw exception
             }
-        }
-
-        /// <summary>
-        /// Set up House after deserialization
-        /// (set Locations, StartingPoint, and Exits property for each Location in House)
-        /// </summary>
-        /// <exception cref="InvalidOperationException">Exception thrown if a Location does not exist in House</exception>
-        private void SetUpHouseAfterDeserialization()
-        {
-            // Set Locations and StartingPoint properties
-            SetLocationsAndStartingPoint();
 
             // Set Exit list for each Location
             foreach (Location location in Locations)
