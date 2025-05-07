@@ -362,6 +362,83 @@ namespace HideAndSeek
         }
 
         [Test]
+        [Category("House SetLocationsWithoutHidingPlaces Success")]
+        public void Test_House_SetLocationsWithoutHidingPlacesMethod_ToListWithLocation()
+        {
+            // Set House with StartingPoint in LocationsWithHidingPlaces list
+            LocationWithHidingPlace entryLocationWithHidingPlace = new LocationWithHidingPlace("Entry", "behind the coat rack");
+            house = new House("my house", "TestHouse", entryLocationWithHidingPlace, Enumerable.Empty<Location>(),
+                              new List<LocationWithHidingPlace>() { entryLocationWithHidingPlace });
+
+            // Set House locations without hiding places to new value
+            Location location = new Mock<Location>().Object; // Create location
+            house.SetLocationsWithoutHidingPlaces(new List<Location>() { location }); // Set House locations without hiding places to new value
+
+            // Assert that House locations without hiding places property is set correctly// Assert that House locations without hiding places property is set correctly
+            Assert.That(house.LocationsWithoutHidingPlaces, Is.EquivalentTo(new List<Location>() { location }));
+        }
+
+        [Test]
+        [Category("House SetLocationsWithoutHidingPlaces Success")]
+        public void Test_House_SetLocationsWithoutHidingPlacesMethod_ToEmptyList()
+        {
+            // Set House with StartingPoint in LocationsWithHidingPlaces list
+            LocationWithHidingPlace entryLocationWithHidingPlace = new LocationWithHidingPlace("Entry", "behind the coat rack");
+            house = new House("my house", "TestHouse", entryLocationWithHidingPlace, Enumerable.Empty<Location>(),
+                              new List<LocationWithHidingPlace>() { entryLocationWithHidingPlace });
+
+            // Set House locations without hiding places to new value
+            house.SetLocationsWithoutHidingPlaces(Enumerable.Empty<Location>());
+
+            // Assert that House locations without hiding places property is set correctly
+            Assert.That(house.LocationsWithoutHidingPlaces, Is.Empty);
+        }
+
+        [Test]
+        [Category("House SetLocationsWithoutHidingPlaces ArgumentException Failure")]
+        public void Test_House_SetLocationsWithoutHidingPlacesMethod_AndCheckErrorMessage_ForLocationWithHidingPlaceObject()
+        {
+            // Set House with StartingPoint in LocationsWithHidingPlaces list
+            LocationWithHidingPlace entryLocationWithHidingPlace = new LocationWithHidingPlace("Entry", "behind the coat rack");
+            house = new House("my house", "TestHouse", entryLocationWithHidingPlace, Enumerable.Empty<Location>(),
+                              new List<LocationWithHidingPlace>() { entryLocationWithHidingPlace });
+
+            Assert.Multiple(() =>
+            {
+                // Assert that calling method with list including LocationWithHidingPlace raises exception
+                Exception exception = Assert.Throws<ArgumentException>(() =>
+                {
+                    house.SetLocationsWithoutHidingPlaces(new List<Location>() { new LocationWithHidingPlace("Closet", "between the clothes") });
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith("LocationWithHidingPlace \"Closet\" passed to LocationsWithoutHidingPlaces setter"));
+            });
+        }
+
+        [Test]
+        [Category("House SetLocationsWithoutHidingPlaces InvalidOperationException Failure")]
+        public void Test_House_SetLocationsWithoutHidingPlacesMethod_AndCheckErrorMessage_ForStartingPointWouldNotBeInHouse()
+        {
+            // Set House with StartingPoint in LocationsWithoutHidingPlaces list
+            Location entry = new Location("Entry");
+            house = new House("my house", "TestHouse", entry, new List<Location>() { entry }, 
+                              new List<LocationWithHidingPlace>() { new LocationWithHidingPlace("Kitchen", "beside the stove") });
+
+            Assert.Multiple(() =>
+            {
+                // Assert that calling method with list not including StartingPoint raises exception
+                Exception exception = Assert.Throws<InvalidOperationException>(() =>
+                {
+                    house.SetLocationsWithoutHidingPlaces(new List<Location>() { new Location("Foyer") });
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith("StartingPoint is not in LocationsWithHidingPlaces or the locations passed in"));
+            });
+        }
+
+        [Test]
         [Category("House LocationsWithHidingPlaces Success")]
         public void Test_House_Set_LocationsWithHidingPlaces()
         {
@@ -388,6 +465,68 @@ namespace HideAndSeek
 
                 // Assert that exception message is as expected
                 Assert.That(exception.Message, Does.StartWith("locations with hiding places list is empty"));
+            });
+        }
+
+        [Test]
+        [Category("House SetLocationsWithHidingPlaces Success")]
+        public void Test_House_SetLocationsWithHidingPlacesMethod()
+        {
+            // Set House with StartingPoint in LocationsWithoutHidingPlaces list
+            Location entryLocation = new Location("Entry");
+            house = new House("my house", "TestHouse", entryLocation, new List<Location>() { entryLocation },
+                              new List<LocationWithHidingPlace>() { new LocationWithHidingPlace("Closet", "between the coats") });
+
+            // Set House locations with hiding places to new value
+            LocationWithHidingPlace locationWithHidingPlace = new Mock<LocationWithHidingPlace>().Object; // Create location with hiding place
+            house.SetLocationsWithHidingPlaces(new List<LocationWithHidingPlace>() { locationWithHidingPlace }); // Set House locations with hiding places to new value
+
+            // Assert that House locations with hiding places property is set correctly
+            Assert.That(house.LocationsWithHidingPlaces, Is.EquivalentTo(new List<LocationWithHidingPlace>() { locationWithHidingPlace }));
+        }
+
+        [Test]
+        [Category("House SetLocationsWithHidingPlaces ArgumentException Failure")]
+        public void Test_House_SetLocationsWithHidingPlacesMethod_AndCheckErrorMessage_ForEmptyList()
+        {
+            // Set House with StartingPoint in LocationsWithoutHidingPlaces list
+            Location entryLocation = new Location("Entry");
+            house = new House("my house", "TestHouse", entryLocation, new List<Location>() { entryLocation },
+                              new List<LocationWithHidingPlace>() { new LocationWithHidingPlace("Closet", "between the coats") });
+
+
+            Assert.Multiple(() =>
+            {
+                // Assert that calling method with empty list raises exception
+                Exception exception = Assert.Throws<ArgumentException>(() =>
+                {
+                    house.SetLocationsWithHidingPlaces(Enumerable.Empty<LocationWithHidingPlace>());
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith("locations with hiding places list is empty"));
+            });
+        }
+
+        [Test]
+        [Category("House SetLocationsWithHidingPlaces InvalidOperationException Failure")]
+        public void Test_House_SetLocationsWithHidingPlacesMethod_AndCheckErrorMessage_ForStartingPointWouldNotBeInHouse()
+        {
+            // Set House with StartingPoint in LocationsWithHidingPlaces list
+            LocationWithHidingPlace entryWithHidingPlace = new LocationWithHidingPlace("Entry", "behind the coat rack");
+            house = new House("my house", "TestHouse", entryWithHidingPlace, Enumerable.Empty<Location>(),
+                              new List<LocationWithHidingPlace>() { entryWithHidingPlace });
+
+            Assert.Multiple(() =>
+            {
+                // Assert that calling method with list not including StartingPoint raises exception
+                Exception exception = Assert.Throws<InvalidOperationException>(() =>
+                {
+                    house.SetLocationsWithHidingPlaces(new List<LocationWithHidingPlace>() { new LocationWithHidingPlace("Foyer", "behind the chair") });
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith("StartingPoint is not in LocationsWithoutHidingPlaces or the locations passed in"));
             });
         }
 

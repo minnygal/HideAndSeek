@@ -282,8 +282,10 @@ namespace HideAndSeek
 
         /// <summary>
         /// List of all Locations without hiding places in House
-        /// Setter does NOT check that StartingPoint is still in House
+        /// DO NOT MANUALLY CALL SETTER - call SetLocationsWithoutHidingPlaces method instead
+        /// This setter does NOT check that StartingPoint is still in House
         /// </summary>
+        /// <exception cref="ArgumentException">Exception thrown if LocationWithHidingPlace passed in to setter</exception>
         [JsonRequired]
         public IEnumerable<Location> LocationsWithoutHidingPlaces
         {
@@ -307,11 +309,30 @@ namespace HideAndSeek
             }
         }
 
+        /// <summary>
+        /// Set LocationsWithoutHidingPlaces property, checking that StartingPoint is still in the House
+        /// </summary>
+        /// <param name="locations">Enumerable to set LocationsWithoutHidingPlaces property to</param>
+        /// <exception cref="InvalidOperationException">Exception thrown if StartingPoint is not in locations passed in or LocationsWithHidingPlaces</exception>
+        /// <exception cref="ArgumentException">Exception thrown if LocationWithHidingPlace passed in</exception>
+        public void SetLocationsWithoutHidingPlaces(IEnumerable<Location> locations)
+        {
+            // If StartingPoint is not in locations passed in or LocationsWithHidingPlaces
+            if( !(locations.Concat(LocationsWithHidingPlaces).Contains(StartingPoint)) )
+            {
+                throw new InvalidOperationException("StartingPoint is not in LocationsWithHidingPlaces or the locations passed in"); // Throw exception
+            }
+
+            // Set property (any exception thrown bubbles up)
+            LocationsWithoutHidingPlaces = locations;
+        }
+
         private IEnumerable<LocationWithHidingPlace> _locationsWithHidingPlaces;
 
         /// <summary>
         /// List of all LocationWithHidingPlace objects in House
-        /// Setter does NOT check that StartingPoint is still in House
+        /// DO NOT MANUALLY CALL SETTER - call SetLocationsWithHidingPlaces method instead
+        /// This setter does NOT check that StartingPoint is still in House
         /// </summary>
         /// <exception cref="ArgumentException">Exception thrown if value passed to setter is empty list</exception>
         [JsonRequired]
@@ -332,6 +353,24 @@ namespace HideAndSeek
                 // Set backing field
                 _locationsWithHidingPlaces = value;
             }
+        }
+
+        /// <summary>
+        /// Set LocationsWithHidingPlaces property, checking that StartingPoint is still in the House
+        /// </summary>
+        /// <param name="locationsWithHidingPlaces">Enumerable to set LocationsWithHidingPlaces property to</param>
+        /// <exception cref="InvalidOperationException">Exception thrown if StartingPoint is not in locations passed in or LocationsWithoutHidingPlaces</exception>
+        /// <exception cref="ArgumentException">Exception thrown if value passed in is empty list</exception>
+        public void SetLocationsWithHidingPlaces(IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces)
+        {
+            // If StartingPoint is not in locations passed in or LocationsWithoutHidingPlaces
+            if (!(locationsWithHidingPlaces.Concat(LocationsWithoutHidingPlaces).Contains(StartingPoint)))
+            {
+                throw new InvalidOperationException("StartingPoint is not in LocationsWithoutHidingPlaces or the locations passed in"); // Throw exception
+            }
+
+            // Set property (any exception thrown bubbles up)
+            LocationsWithHidingPlaces = locationsWithHidingPlaces;
         }
 
         /// <summary>
