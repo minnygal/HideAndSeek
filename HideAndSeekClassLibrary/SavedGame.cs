@@ -131,6 +131,12 @@ namespace HideAndSeek
                     throw new InvalidOperationException("House property already has a value"); // Throw exception
                 }
 
+                // If value passed in is null
+                if(value == null)
+                {
+                    throw new ArgumentNullException(nameof(value), "House cannot be null"); // Throw exception
+                }
+
                 // Set backing field to value
                 _house = value;
             }

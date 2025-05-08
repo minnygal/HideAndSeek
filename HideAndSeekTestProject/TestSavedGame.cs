@@ -91,6 +91,23 @@ namespace HideAndSeek
             });
         }
 
+        [Test]
+        [Category("SavedGame Constructor ArgumentNullException Failure")]
+        public void Test_SavedGame_Constructor_WithHouse_AndHouseFileName_AndCheckErrorMessage_ForNullHouse()
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that creating a SavedGame object with null House raises an exception
+                var exception = Assert.Throws<ArgumentNullException>(() =>
+                {
+                    savedGame = new SavedGame(null, "TestHouse", "Entry", 1, opponentsAndHidingPlaces, new List<string>());
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith("House cannot be null"));
+            });
+        }
+
         // Since HouseFileName property is required and its setter sets House,
         // House can never NOT be set when SavedGame object created.
         // Therefore, no independent House property setter test can be performed or is necessary.
