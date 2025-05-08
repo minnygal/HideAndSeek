@@ -40,7 +40,7 @@ namespace HideAndSeek
         /// Name of Opponent
         /// </summary>
         /// <exception cref="ArgumentException">Exception thrown if value passed to setter is invalid (empty or only whitespace)</exception>
-        public string Name
+        public virtual string Name
         {
             get
             {

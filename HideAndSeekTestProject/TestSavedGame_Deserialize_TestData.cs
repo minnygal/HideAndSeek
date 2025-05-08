@@ -9,9 +9,9 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// Test data for some SavedGame tests for serialization and deserialization
+    /// Test data for some SavedGame tests for deserialization
     /// </summary>
-    public static class TestSavedGame_SerializationAndDeserialization_TestData
+    public static class TestSavedGame_Deserialize_TestData
     {
         /// <summary>
         /// Dictionary of Opponents and associated LocationWithHidingPlace names for SavedGame for tests
@@ -110,60 +110,6 @@ namespace HideAndSeek
             {
                 return "\"FoundOpponents\":[]";
             }
-        }
-
-        /// <summary>
-        /// Get new House object for testing purposes
-        /// </summary>
-        /// <returns>House object for testing purposes</returns>
-        public static House GetDefaultHouse()
-        {
-            // Create Entry and connect to new locations: Garage, Hallway
-            Location entry = new Location("Entry");
-            LocationWithHidingPlace garage = entry.AddExit(Direction.Out, "Garage", "behind the car");
-            Location hallway = entry.AddExit(Direction.East, "Hallway");
-
-            // Connect Hallway to new locations: Kitchen, Bathroom, Living Room, Landing
-            LocationWithHidingPlace kitchen = hallway.AddExit(Direction.Northwest, "Kitchen", "next to the stove");
-            LocationWithHidingPlace bathroom = hallway.AddExit(Direction.North, "Bathroom", "behind the door");
-            LocationWithHidingPlace livingRoom = hallway.AddExit(Direction.South, "Living Room", "behind the sofa");
-            Location landing = hallway.AddExit(Direction.Up, "Landing");
-
-            // Connect Landing to new locations: Attic, Kids Room, Master Bedroom, Nursery, Pantry, Second Bathroom
-            LocationWithHidingPlace attic = landing.AddExit(Direction.Up, "Attic", "in a trunk");
-            LocationWithHidingPlace kidsRoom = landing.AddExit(Direction.Southeast, "Kids Room", "in the bunk beds");
-            LocationWithHidingPlace masterBedroom = landing.AddExit(Direction.Northwest, "Master Bedroom", "under the bed");
-            LocationWithHidingPlace nursery = landing.AddExit(Direction.Southwest, "Nursery", "behind the changing table");
-            LocationWithHidingPlace pantry = landing.AddExit(Direction.South, "Pantry", "inside a cabinet");
-            LocationWithHidingPlace secondBathroom = landing.AddExit(Direction.West, "Second Bathroom", "in the shower");
-
-            // Connect Master Bedroom to new location: Master Bath
-            LocationWithHidingPlace masterBath = masterBedroom.AddExit(Direction.East, "Master Bath", "in the tub");
-
-            // Create list of Location objects (no hiding places)
-            IEnumerable<Location> locationsWithoutHidingPlaces = new List<Location>()
-            {
-                hallway, landing, entry
-            };
-
-            // Create list of LocationWithHidingPlace objects
-            IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces = new List<LocationWithHidingPlace>()
-            {
-                attic,
-                bathroom,
-                kidsRoom,
-                masterBedroom,
-                nursery,
-                pantry,
-                secondBathroom,
-                kitchen,
-                masterBath,
-                garage,
-                livingRoom
-            };
-
-            // Create and return new House
-            return new House("my house", "DefaultHouse", "Entry", locationsWithoutHidingPlaces, locationsWithHidingPlaces);
         }
 
         /// <summary>
@@ -895,7 +841,16 @@ namespace HideAndSeek
                            DefaultHouse_Serialized_Name + "," +
                            DefaultHouse_Serialized_HouseFileName + "," +
                            DefaultHouse_Serialized_PlayerStartingPoint + "," +
-                           DefaultHouse_Serialized_LocationsWithoutHidingPlaces + "," +
+                           "\"LocationsWithoutHidingPlaces\":" +
+                           "[" +
+                                "{" +
+                                    "\"Name\":\"Entry\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                        "\"Up\":\"Attic\"" +
+                                    "}" +
+                                "}" +
+                           "]" + "," +
                            "\"LocationsWithHidingPlaces\":" +
                            "[" +
                                 "{" +

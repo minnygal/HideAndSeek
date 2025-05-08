@@ -7,18 +7,17 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// Opponent tests for setting Name property
+    /// Opponent unit tests for setting Name property
     /// </summary>
     [TestFixture]
     public class TestOpponent
     {
         [SetUp]
-        [TearDown]
-        public void SetUpAndTearDown()
+        [OneTimeTearDown]
+        public void SetUpAndOneTearDown()
         {
             Opponent.ResetDefaultNumbersForOpponentNames(); // Reset static default numbers for Opponent names
         }
-
 
         [Test]
         [Category("Opponent Constructor Name Success")]

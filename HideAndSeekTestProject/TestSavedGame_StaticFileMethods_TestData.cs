@@ -8,9 +8,9 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// Test data for SavedGame tests for constructors and public properties
+    /// Test data for SavedGame tests for static file methods
     /// </summary>
-    public static class TestSavedGame_TestData
+    public static class TestSavedGame_StaticFileMethods_TestData
     {
         public static IEnumerable TestCases_For_Test_SavedGame_GetSavedGameFileNames_SingleSavedGameFile
         {

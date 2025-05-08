@@ -5,6 +5,8 @@ using System.Linq;
 using System.Text;
 using System.Text.Json;
 using System.Threading.Tasks;
+using System.Xml.Linq;
+using Castle.Components.DictionaryAdapter.Xml;
 using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Moq;
 using Newtonsoft.Json.Linq;
@@ -12,10 +14,12 @@ using Newtonsoft.Json.Linq;
 namespace HideAndSeek
 {
     /// <summary>
-    /// House tests for layout and functions 
-    /// (get Location or LocationWithHidingPlace by name, get random exit, get random LocationWithHidingPlace, 
-    /// clear LocationWithHidingPlace, find out whether Location or LocationWithHidingPlace exists,
-    /// [de]serialization, property setters, etc.)
+    /// House tests for:
+    /// - parameterized constructor
+    /// - property getters and setters
+    /// - LocationsWithoutHidingPlaces and LocationsWithHidingPlaces setter methods
+    /// 
+    /// These are integration tests using Location and LocationWithHidingPlace
     /// </summary>
     [TestFixture]
     public class TestHouse
@@ -25,696 +29,179 @@ namespace HideAndSeek
         [SetUp]
         public void SetUp()
         {
-            House.FileSystem = new FileSystem(); // Set static House file system to new file system
-            House.Random = new Random(); // Set static House Random property to new Random number generator
-            house = TestHouse_TestData.GetDefaultHouse();
+            house = null;
         }
 
-        [OneTimeTearDown]
-        public void OneTimeTearDown()
-        {
-            House.FileSystem = new FileSystem(); // Set static House file system to new file system
-            House.Random = new Random(); // Set static House Random property to new Random number generator
-        }
-
+        // Calls properties' setters and getters successfully
         [Test]
-        [Category("House GetFullHouseFileName Success")]
-        public void Test_House_GetFullHouseFileName()
-        {
-            Assert.That(House.GetFullHouseFileName("my_house"), Is.EqualTo("my_house.house.json"));
-        }
-
-        [TestCase("")]
-        [TestCase(" ")]
-        [TestCase("my file")]
-        [TestCase(" myFile")]
-        [TestCase("myFile ")]
-        [TestCase("\\")]
-        [TestCase("\\myFile")]
-        [TestCase("myFile\\")]
-        [TestCase("my\\File")]
-        [TestCase("/")]
-        [TestCase("/myFile")]
-        [TestCase("myFile/")]
-        [TestCase("my/File")]
-        [Category("House GetFullHouseFileName ArgumentException Failure")]
-        public void Test_House_GetFullHouseFileName_AndCheckErrorMessage_ForInvalidFileName(string fileName)
-        {
-            Assert.Multiple(() =>
-            {
-                // Assert that getting full house file name with invalid file name raises exception
-                var exception = Assert.Throws<ArgumentException>(() =>
-                {
-                    House.GetFullHouseFileName(fileName);
-                });
-
-                // Assert that exception message is as expected
-                Assert.That(exception.Message, Does.StartWith($"Cannot perform action because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
-            });
-        }
-
-        [TestCaseSource(typeof(TestHouse_TestData), nameof(TestHouse_TestData.TestCases_For_Test_House_GetHouseFileNames_SingleHouseFile))]
-        [Category("House GetHouseFileNames Success")]
-        public void Test_House_GetHouseFileNames_SingleHouseFile(Func<IEnumerable<string>> GetHouseFileNames)
-        {
-            SetHouseFileSystemForGetHouseFileNamesTest(
-                new string[] { "AGame.game.json", "DefaultHouse.house.json", "NotAHouse.json", "HideAndSeekClassLibrary.dll", 
-                               "HideAndSeekClassLibrary.pdb", "HideAndSeekConsole.deps.json", "HideAndSeekConsole.dll", 
-                               "HideAndSeekConsole.exe", "HideAndSeekConsole.pdb", "HideAndSeekConsole.runtimeconfig.json",
-                               "OtherGame.game.json", "TestableIO.System.IO.Abstractions.dll", 
-                               "TestableIO.System.IO.Abstractions.Wrappers.dll"
-                              });
-            Assert.That(GetHouseFileNames(), Is.EquivalentTo(new List<string>() { "DefaultHouse" }));
-        }
-
-        [TestCaseSource(typeof(TestHouse_TestData), nameof(TestHouse_TestData.TestCases_For_Test_House_GetHouseFileNames_MultipleHouseFiles))]
-        [Category("House GetHouseFileNames Success")]
-        public void Test_House_GetHouseFileNames_MultipleHouseFiles(Func<IEnumerable<string>> GetHouseFileNames)
-        {
-            SetHouseFileSystemForGetHouseFileNamesTest(
-                new string[] { "1CoolHouse$$.house.json", "AGame.game.json", "DefaultHouse.house.json", "NotAHouse.json",
-                               "HideAndSeekClassLibrary.dll", "HideAndSeekClassLibrary.pdb", "HideAndSeekConsole.deps.json", 
-                               "HideAndSeekConsole.dll", "HideAndSeekConsole.exe", "HideAndSeekConsole.pdb", 
-                               "HideAndSeekConsole.runtimeconfig.json", "OtherGame.game.json", "SecretMansion.house.json", 
-                               "TestableIO.System.IO.Abstractions.dll", "TestableIO.System.IO.Abstractions.Wrappers.dll", 
-                               "TestHouse.house.json" 
-                             });
-            Assert.That(GetHouseFileNames(), Is.EquivalentTo(new List<string>() { "1CoolHouse$$", "DefaultHouse", "SecretMansion", "TestHouse" }));
-        }
-
-        [TestCaseSource(typeof(TestHouse_TestData), nameof(TestHouse_TestData.TestCases_For_Test_House_GetHouseFileNames_NoHouseFiles))]
-        [Category("House GetHouseFileNames Success")]
-        public void Test_House_GetHouseFileNames_NoHouseFiles(Func<IEnumerable<string>> GetHouseFileNames)
-        {
-            SetHouseFileSystemForGetHouseFileNamesTest(
-                new string[] { "AGame.game.json", "NotAHouse.json",
-                               "HideAndSeekClassLibrary.dll", "HideAndSeekClassLibrary.pdb", "HideAndSeekConsole.deps.json",
-                               "HideAndSeekConsole.dll", "HideAndSeekConsole.exe", "HideAndSeekConsole.pdb",
-                               "HideAndSeekConsole.runtimeconfig.json", "OtherGame.game.json",
-                               "TestableIO.System.IO.Abstractions.dll", "TestableIO.System.IO.Abstractions.Wrappers.dll"
-                             });
-            Assert.That(GetHouseFileNames(), Is.Empty);
-        }
-
-        [Test]
-        [Category("House GetHouseFileNames Failure")]
-        public void Test_House_GetHouseFileNames_AndCheckErrorMessage_ForInvalidDirectoryName()
-        {
-            Assert.Multiple(() =>
-            {
-                Exception exception = Assert.Throws<DirectoryNotFoundException>(() => House.GetHouseFileNames("C:\\Users\\Tester\\Desktop\\HideAndSeekConsole"));
-                Assert.That(exception.Message, Is.EqualTo("Could not find a part of the path 'C:\\Users\\Tester\\Desktop\\HideAndSeekConsole'."));
-            });
-        }
-
-        private static void SetHouseFileSystemForGetHouseFileNamesTest(string[] fileNames)
-        {
-            // Set up mock file system
-            Mock<IFileSystem> mockFileSystem = new Mock<IFileSystem>();
-            mockFileSystem.Setup((d) => d.Directory.GetFiles("C:\\Users\\Tester\\Desktop\\HideAndSeekConsole"))
-                          .Returns(fileNames); // Set up mock to return files
-            mockFileSystem.Setup((d) => d.Path.GetDirectoryName(It.IsAny<string>())).Returns("C:\\Users\\Tester\\Desktop\\HideAndSeekConsole"); // Mock default directory name assigned if no argument passed in
-            House.FileSystem = mockFileSystem.Object; // Set House file system
-        }
-
-        /// <summary>
-        /// Assert that layout of House is as expected using House's GetExit method and Location's Name property
-        /// 
-        /// CREDIT: adapted from HideAndSeek project's TestHouse class's TestLayout() test method
-        ///         © 2023 Andrew Stellman and Jennifer Greene
-        ///         Published under the MIT License
-        ///         https://github.com/head-first-csharp/fourth-edition/blob/master/Code/Chapter_10/HideAndSeek_part_3/HideAndSeekTests/TestHouse.cs
-        ///         Link valid as of 02-26-2025
-        ///         
-        /// CHANGES:
-        /// -I changed the method name to be consistent with the conventions I'm using in this test project.
-        /// -I put all the assertions in the body of a multiple assert so all assertions will be run.
-        /// -I changed the assertions to use the constraint model to stay up-to-date.
-        /// -I added some comments for easier reading.
-        /// -I added messages to the assertions to make them easier to debug.
-        /// </summary>
-        [Test]
-        [Category("House Layout GetExit")]
-        public void Test_House_Layout()
-        {
-            Assert.Multiple(() =>
-            {
-                // Assert that name of StartingPoint is correct
-                Assert.That(house.StartingPoint.Name, Is.EqualTo("Entry"), "name of starting point");
-
-                // Assert that Garage is located "Out" from StartingPoint
-                var garage = house.StartingPoint.GetExit(Direction.Out);
-                Assert.That(garage.Name, Is.EqualTo("Garage"), "Garage is Out from Entry");
-
-                // Assert that Hallway is located "East" of StartingPoint
-                var hallway = house.StartingPoint.GetExit(Direction.East);
-                Assert.That(hallway.Name, Is.EqualTo("Hallway"), "Hallway is East of Entry");
-
-                // Assert that Kitchen is located "Northwest" of Hallway
-                var kitchen = hallway.GetExit(Direction.Northwest);
-                Assert.That(kitchen.Name, Is.EqualTo("Kitchen"), "Kitchen is Northwest of Hallway");
-
-                // Assert that Bathroom is located "North" of Hallway
-                var bathroom = hallway.GetExit(Direction.North);
-                Assert.That(bathroom.Name, Is.EqualTo("Bathroom"), "Bathroom is North of Hallway");
-
-                // Assert that Living Room is located "South" of Hallway
-                var livingRoom = hallway.GetExit(Direction.South);
-                Assert.That(livingRoom.Name, Is.EqualTo("Living Room"), "Living Room is South of Hallway");
-
-                // Assert that Landing is located "Up" from Hallway
-                var landing = hallway.GetExit(Direction.Up);
-                Assert.That(landing.Name, Is.EqualTo("Landing"), "Landing is Up from Hallway");
-
-                // Assert that Master Bedroom is located "Northwest" of Landing
-                var masterBedroom = landing.GetExit(Direction.Northwest);
-                Assert.That(masterBedroom.Name, Is.EqualTo("Master Bedroom"), "Master Bedroom is Northwest of Landing");
-
-                // Assert that Master Bath is located "East" of Master Bedroom
-                var masterBath = masterBedroom.GetExit(Direction.East);
-                Assert.That(masterBath.Name, Is.EqualTo("Master Bath"), "Master Bath is East of Master Bedroom");
-
-                // Assert that Second Bathroom is located "West" of Landing
-                var secondBathroom = landing.GetExit(Direction.West);
-                Assert.That(secondBathroom.Name, Is.EqualTo("Second Bathroom"), "Second Bathroom is West of Landing");
-
-                // Assert that Nursery is located Southwest of Landing
-                var nursery = landing.GetExit(Direction.Southwest);
-                Assert.That(nursery.Name, Is.EqualTo("Nursery"), "Nursery is Southwest of Landing");
-
-                // Assert that Pantry is located South of Landing
-                var pantry = landing.GetExit(Direction.South);
-                Assert.That(pantry.Name, Is.EqualTo("Pantry"), "Pantry is South of Landing");
-
-                // Assert that Kids Room is located "Southeast" of Landing
-                var kidsRoom = landing.GetExit(Direction.Southeast);
-                Assert.That(kidsRoom.Name, Is.EqualTo("Kids Room"), "Kids Room is Southeast of Landing");
-
-                // Assert that Attic is located "Up" from Landing
-                var attic = landing.GetExit(Direction.Up);
-                Assert.That(attic.Name, Is.EqualTo("Attic"), "Attic is Up from Landing");
-            });
-        }
-
-        [TestCase("Entry")]
-        [TestCase("Hallway")]
-        [TestCase("Landing")]
-        [Category("House LocationType")]
-        public void Test_House_Locations_AreNotOfType_LocationWithHidingPlace(string locationName)
-        {
-            Assert.That(house.Locations.Where((l) => l.Name == locationName).First(), Is.Not.InstanceOf<LocationWithHidingPlace>());
-        }
-
-        [TestCase("Garage")]
-        [TestCase("Kitchen")]
-        [TestCase("Living Room")]
-        [TestCase("Bathroom")]
-        [TestCase("Master Bedroom")]
-        [TestCase("Master Bath")]
-        [TestCase("Second Bathroom")]
-        [TestCase("Kids Room")]
-        [TestCase("Nursery")]
-        [TestCase("Pantry")]
-        [TestCase("Attic")]
-        [Category("House LocationType")]
-        public void Test_House_Locations_AreOfType_LocationWithHidingPlace(string locationName)
-        {
-            Assert.That(house.Locations.Where((l) => l.Name == locationName).First(), Is.InstanceOf<LocationWithHidingPlace>());
-        }
-
-        [Category("House GetLocationByName Success")]
-        public void Test_House_GetLocationByName_ReturnsLocation()
-        {
-            Assert.Multiple(() =>
-            {
-                Assert.That(house.GetLocationByName("Entry").Name, Is.EqualTo("Entry"));
-            });
-        }
-
-        [TestCase("Secret Library")]
-        [TestCase("master bedroom")]
-        [TestCase("MasterBedroom")]
-        [TestCase(" ")]
-        [TestCase("")]
-        [Category("House GetLocationByName InvalidOperationException Failure")]
-        public void Test_House_GetLocationByName_AndCheckErrorMessage_WhenLocationWithName_DoesNotExist(string locationName)
-        {
-            Assert.Multiple(() =>
-            {
-                Exception exception = Assert.Throws<InvalidOperationException>(() => house.GetLocationByName(locationName));
-                Assert.That(exception.Message, Is.EqualTo("location \"" + locationName + "\" does not exist in House"));
-            });
-        }
-
-        [Test]
-        [Category("House GetLocationWithHidingPlaceByName Success")]
-        public void Test_House_GetLocationWithHidingPlaceByName_ReturnsLocation()
-        {
-            Assert.That(house.GetLocationWithHidingPlaceByName("Pantry").Name, Is.EqualTo("Pantry"));
-        }
-
-        [TestCase("Entry")]
-        [TestCase("Hallway")]
-        [TestCase("Landing")]
-        [Category("House GetLocationWithHidingPlaceByName InvalidOperationException Failure")]
-        public void Test_House_GetLocationWithHidingPlaceByName_AndCheckErrorMessage_WhenLocationDoesNotHaveHidingPlace(string locationName)
-        {
-            Assert.Multiple(() =>
-            {
-                Exception exception = Assert.Throws<InvalidOperationException>(() => house.GetLocationWithHidingPlaceByName(locationName));
-                Assert.That(exception.Message, Is.EqualTo($"location with hiding place \"{locationName}\" does not exist in House"));
-            });
-        }
-
-        [TestCase("Secret Library")]
-        [TestCase("master bedroom")]
-        [TestCase("MasterBedroom")]
-        [TestCase(" ")]
-        [TestCase("")]
-        [Category("House GetLocationWithHidingPlaceByName InvalidOperationException Failure")]
-        public void Test_House_GetLocationWithHidingPlaceByName_AndCheckErrorMessage_WhenNoLocationWithNameExistsInHouse(string locationName)
-        {
-            Assert.Multiple(() =>
-            {
-                Exception exception = Assert.Throws<InvalidOperationException>(() => house.GetLocationWithHidingPlaceByName(locationName));
-                Assert.That(exception.Message, Is.EqualTo($"location with hiding place \"{locationName}\" does not exist in House"));
-            });
-        }
-
-        [Test]
-        [Category("House DoesLocationExist Success")]
-        public void Test_House_DoesLocationExist_ReturnsTrue()
-        {
-            Assert.That(house.DoesLocationExist("Entry"), Is.True);
-        }
-
-        [Test]
-        [Category("House DoesLocationExist Failure")]
-        public void Test_House_DoesLocationExist_ReturnsFalse()
-        {
-            Assert.That(house.DoesLocationExist("Dungeon"), Is.False);
-        }
-
-        [Test]
-        [Category("House DoesLocationWithHidingPlaceExist Success")]
-        public void Test_House_DoesLocationWithHidingPlaceExist_ReturnsTrue()
-        {
-            Assert.That(house.DoesLocationWithHidingPlaceExist("Pantry"), Is.True);
-        }
-
-        [Test]
-        [Category("House DoesLocationWithHidingPlaceExist Failure")]
-        public void Test_House_DoesLocationWithHidingPlaceExist_ReturnsFalse_WhenLocationDoesNotExist()
-        {
-            Assert.That(house.DoesLocationWithHidingPlaceExist("Dungeon"), Is.False);
-        }
-
-        [Test]
-        [Category("House DoesLocationWithHidingPlaceExist Failure")]
-        public void Test_House_DoesLocationWithHidingPlaceExist_ReturnsFalse_WhenLocationIsNotLocationWithHidingPlace()
-        {
-            Assert.That(house.DoesLocationWithHidingPlaceExist("Landing"), Is.False);
-        }
-
-        /// <summary>
-        /// Assert that GetRandomExit method returns appropriate Location using mock of Random
-        /// 
-        /// CREDIT: adapted from HideAndSeek project's TestHouse class's TestRandomExit() test method
-        ///         © 2023 Andrew Stellman and Jennifer Greene
-        ///         Published under the MIT License
-        ///         https://github.com/head-first-csharp/fourth-edition/blob/master/Code/Chapter_10/HideAndSeek_part_3/HideAndSeekTests/TestHouse.cs
-        ///         Link valid as of 02-26-2025
-        /// 
-        /// CHANGES:
-        /// -I changed the method name to be consistent with the conventions I'm using in this test project.
-        /// -I put all the assertions in the body of a multiple assert so all assertions will be run.
-        /// -I changed the assertions to use the constraint model to stay up-to-date.
-        /// -I added some comments for easier reading.
-        /// -I added messages to the assertions to make them easier to debug.
-        /// -I moved the GetLocationByName method call for getting the Kitchen Location to the beginning of the test method.
-        /// </summary>
-        [Test]
-        [Category("House GetRandomExit Success")]
-        public void Test_House_GetRandomExit()
-        {
-            // Get locations
-            Location landing = house.Locations.Where((l) => l.Name == "Landing").First();
-            Location kitchen = house.Locations.Where((l) => l.Name == "Kitchen").First();
-
-            Assert.Multiple(() =>
-            {
-                // Assert Landing's random exit at index 0 is Attic
-                House.Random = new MockRandom() { ValueToReturn = 0 };
-                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Attic"), "Landing exit at index 0");
-
-                // Assert Landing's random exit at index 1 is Kids Room
-                House.Random = new MockRandom() { ValueToReturn = 1 };
-                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Kids Room"), "Landing exit at index 1");
-
-                // Assert Landing's random exit at index 2 is Pantry
-                House.Random = new MockRandom() { ValueToReturn = 2 };
-                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Pantry"), "Landing exit at index 2");
-
-                // Assert Landing's random exit at index 3 is Second Bathroom
-                House.Random = new MockRandom() { ValueToReturn = 3 };
-                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Second Bathroom"), "Landing exit at index 3");
-
-                // Assert Landing's random exit at index 4 is Nursery
-                House.Random = new MockRandom() { ValueToReturn = 4 };
-                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Nursery"), "Landing exit at index 4");
-
-                // Assert Landing's random exit at index 5 is Master Bedroom
-                House.Random = new MockRandom() { ValueToReturn = 5 };
-                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Master Bedroom"), "Landing exit at index 5");
-
-                // Assert Landing's random exit at index 6 is Hallway
-                House.Random = new MockRandom() { ValueToReturn = 6 };
-                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Hallway"), "Landing exit at index 6");
-
-                // Assert Kitchen's random exit at index 0 is Hallway
-                House.Random = new MockRandom() { ValueToReturn = 0 };
-                Assert.That(house.GetRandomExit(kitchen).Name, Is.EqualTo("Hallway"), "Kitchen exit at index 0");
-            });
-        }
-
-        [TestCase("Kitchen", 1, 0, 4, 0)] // no extra moves
-        [TestCase("Pantry", 0, 1, 2)] // 1 extra move
-        [TestCase("Bathroom", 1, 2, 3)] // 2 extra moves
-        [Category("House GetRandomLocationWithHidingPlace Success")]
-        public void Test_House_GetRandomLocationWithHidingPlace(string hidingLocationName, params int[] mockRandomValueList)
-        {
-            House.Random = new MockRandomWithValueList(mockRandomValueList); // Set House's Random number generator to mock
-            Assert.That(house.GetRandomLocationWithHidingPlace().Name, Is.EqualTo(hidingLocationName)); // Assert that name of LocationWithHidingPlace returned is as expected
-        }
-
-        [Test]
-        [Category("House ClearHidingPlaces CheckHidingPlace HideOpponent")]
-        public void Test_House_ClearHidingPlaces()
-        {
-            // ARRANGE
-            // Hide opponent in Garage
-            LocationWithHidingPlace garage = (LocationWithHidingPlace)house.Locations.Where((l) => l.Name == "Garage").First(); // Get Garage reference
-            garage.HideOpponent(new Opponent());
-
-            // Hide 3 more Opponents in Attic
-            LocationWithHidingPlace attic = (LocationWithHidingPlace)house.Locations.Where((l) => l.Name == "Attic").First(); // Get Attic reference
-            attic.HideOpponent(new Opponent());
-            attic.HideOpponent(new Opponent());
-            attic.HideOpponent(new Opponent());
-
-            // ACT
-            // Clear hiding places in House
-            house.ClearHidingPlaces();
-
-            // ASSERT
-            // Assert that no Opponents are in cleared hiding places
-            Assert.Multiple(() =>
-            {
-                Assert.That(garage.CheckHidingPlace(), Is.Empty, "no Opponents in Garage");
-                Assert.That(attic.CheckHidingPlace(), Is.Empty, "no Opponents in Attic");
-            });
-        }
-
-        [Test]
-        [Category("House CreateHouse Success")]
-        public void Test_House_CreateHouse_WithLocationsWithoutHidingPlaces()
-        {
-            // ARRANGE
-            // Assign mock file system to House property
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
-                               "DefaultHouse.house.json", TestHouse_TestData.DefaultHouse_Serialized);
-
-            // ACT
-            // Call method to create House
-            House house = House.CreateHouse("DefaultHouse");
-
-            // PRE-ASSERT ARRANGE
-            // Set variable for Landing from LocationsWithoutHidingPlaces
-            Location landingFromLocationsWithoutHidingPlaces = house.LocationsWithoutHidingPlaces.Where((l) => l.Name == "Landing").First();
-            
-            // Set variables for expected Exits for Landing (taking objects from House Locations property)
-            Location hallwayFromLocations = house.Locations.Where((l) => l.Name == "Hallway").First();
-            Location atticFromLocations = house.Locations.Where((l) => l.Name == "Attic").First();
-            Location kidsRoomFromLocations = house.Locations.Where((l) => l.Name == "Kids Room").First();
-            Location masterBedroomFromLocations = house.Locations.Where((l) => l.Name == "Master Bedroom").First();
-            Location nurseryFromLocations = house.Locations.Where((l) => l.Name == "Nursery").First();
-            Location pantryFromLocations = house.Locations.Where((l) => l.Name == "Pantry").First();
-            Location secondBathroomFromLocations = house.Locations.Where((l) => l.Name == "Second Bathroom").First();
-            
-            // Set variable for Master Bedroom from LocationsWithHidingPlaces
-            LocationWithHidingPlace masterBedroomFromLocationsWithHidingPlaces = house.LocationsWithHidingPlaces.Where((l) => l.Name == "Master Bedroom").First();
-            
-            // Set variables for expected Exits for Master Bedroom (taking objects from House Locations property)
-            Location landingFromLocations = house.Locations.Where((l) => l.Name == "Landing").First();
-            Location masterBathFromLocations = house.Locations.Where((l) => l.Name == "Master Bath").First();
-
-            // ASSERT
-            Assert.Multiple(() =>
-            {
-                // Assert that House properties are as expected
-                Assert.That(house.Name, Is.EqualTo("my house"), "Name property");
-                Assert.That(house.HouseFileName, Is.EqualTo("DefaultHouse"), "HouseFileName property");
-                Assert.That(house.PlayerStartingPoint, Is.EqualTo("Entry"), "PlayerStartingPoint property");
-                Assert.That(house.StartingPoint.Name, Is.EqualTo("Entry"), "StartingPoint property Location Name");
-                Assert.That(house.Locations.Select((l) => l.Name), Is.EquivalentTo(TestHouse_TestData.DefaultHouse_Locations), "Locations property (check each Location Name)");
-                Assert.That(house.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestHouse_TestData.DefaultHouse_LocationsWithoutHidingPlaces), "LocationsWithoutHidingPlaces property (check each Location Name)");
-                Assert.That(house.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestHouse_TestData.DefaultHouse_LocationsWithHidingPlaces), "LocationsWithHidingPlaces property (check each LocationWithHidingPlace Name");
-
-                //Assert that Landing Location Name property is as expected
-                Assert.That(landingFromLocationsWithoutHidingPlaces.Name, Is.EqualTo("Landing"), "Landing Location Name property");
-                
-                // Assert that Landing Location Exits properties' keys and values are as expected
-                // (and values are the same objects as those stored in the House Locations property)
-                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(0).Key, Is.EqualTo(Direction.Down), "1st Landing Exits key is Down");
-                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(0).Value, Is.SameAs(hallwayFromLocations), "1st Landing Exits value same as Hallway from Locations");
-                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(1).Key, Is.EqualTo(Direction.Up), "2nd Landing Exits key is Up");
-                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(1).Value, Is.SameAs(atticFromLocations), "2nd Landing Exits value same as Attic from Locations");
-                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(2).Key, Is.EqualTo(Direction.Southeast), "3rd Landing Exits Key is Southeast");
-                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(2).Value, Is.SameAs(kidsRoomFromLocations), "3rd Landing Exits value same as Kids Room from Locations");
-                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(3).Key, Is.EqualTo(Direction.Northwest), "4th Landing Exits Key is Northwest");
-                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(3).Value, Is.SameAs(masterBedroomFromLocations), "4th Landing Exits value same as Master Bedroom from Locations");
-                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(4).Key, Is.EqualTo(Direction.Southwest), "5th Landing Exits Key is Southwest");
-                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(4).Value, Is.SameAs(nurseryFromLocations), "5th Landing Exits value same as Nursery from Locations");
-                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(5).Key, Is.EqualTo(Direction.South), "6th Landing Exits Key is South");
-                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(5).Value, Is.SameAs(pantryFromLocations), "6th Landing Exits value same as Pantry from Locations");
-                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(6).Key, Is.EqualTo(Direction.West), "6th Landing Exits Key is West");
-                Assert.That(landingFromLocationsWithoutHidingPlaces.Exits.ElementAt(6).Value, Is.SameAs(secondBathroomFromLocations), "6th Landing Exits value same as Second Bathroom from Locations");
-
-                //Assert that Master Bedroom LocationWithHidingPlace Name and HidingPlace properties are as expected
-                Assert.That(masterBedroomFromLocationsWithHidingPlaces.Name, Is.EqualTo("Master Bedroom"), "Master Bedroom LocationWithHidingPlace Name property");
-                Assert.That(masterBedroomFromLocationsWithHidingPlaces.HidingPlace, Is.EqualTo("under the bed"), "Master Bedroom LocationWithHidingPlace property");
-
-                // Assert that Master Bedroom LocationWithHidingPlace Exits properties' keys and values are as expected
-                // (and values are the same objects as those stored in the House Locations property)
-                Assert.That(masterBedroomFromLocationsWithHidingPlaces.Exits.ElementAt(0).Key, Is.EqualTo(Direction.Southeast), "1st Master Bedroom Exits key is Southeast");
-                Assert.That(masterBedroomFromLocationsWithHidingPlaces.Exits.ElementAt(0).Value, Is.SameAs(landingFromLocationsWithoutHidingPlaces), "1st Master Bedroom Exits value same as Landing from Locations");
-                Assert.That(masterBedroomFromLocationsWithHidingPlaces.Exits.ElementAt(1).Key, Is.EqualTo(Direction.East), "2nd Master Bedroom Exits key is Southeast");
-                Assert.That(masterBedroomFromLocationsWithHidingPlaces.Exits.ElementAt(1).Value, Is.SameAs(masterBathFromLocations), "2nd Master Bedroom Exits value same as Landing from Locations");
-            });
-        }
-
-        [Test]
-        [Category("House CreateHouse Success")]
-        public void Test_House_CreateHouse_WithNoLocationsWithoutHidingPlaces()
-        {
-            // ARRANGE
-            // Initialize variable to string representing text in House file (with empty LocationsWithoutHidingPlaces)
-            string textInHouseFile = 
-                "{" +
-                    TestHouse_TestData.DefaultHouse_Serialized_Name + "," +
-                    TestHouse_TestData.DefaultHouse_Serialized_HouseFileName + "," +
-                    "\"PlayerStartingPoint\":\"Master Bedroom\"" + "," +
-                    "\"LocationsWithoutHidingPlaces\":[]" + "," +
-                    "\"LocationsWithHidingPlaces\":" +
-                    "[" +
-                        "{" +
-                            "\"HidingPlace\":\"under the bed\"," +
-                            "\"Name\":\"Master Bedroom\"," +
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"East\":\"Master Bath\"" +
-                            "}" +
-                        "}," +
-                        "{" +
-                            "\"HidingPlace\":\"in the tub\"," +
-                            "\"Name\":\"Master Bath\"," +
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"West\":\"Master Bedroom\"" +
-                            "}" +
-                        "}" +
-                    "]" +
-                "}";
-
-            // Assign mock file system to House property
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("DefaultHouse.house.json", textInHouseFile);
-
-            // ACT
-            // Call method to create House
-            House house = House.CreateHouse("DefaultHouse");
-
-            // ASSERT
-            // Assume no exceptions were thrown
-            // Assert that there are no Locations in LocationsWithoutHidingPlaces
-            Assert.That(house.LocationsWithoutHidingPlaces.Count(), Is.EqualTo(0));
-        }
-
-        [Test]
-        [Category("House CreateHouse FileNotFoundException Failure")]
-        public void Test_House_CreateHouse_AndCheckErrorMessage_WhenFileDoesNotExist()
-        {
-            // Set up mock file system and assign to House property
-            Mock<IFileSystem> fileSystemMock = new Mock<IFileSystem>();
-            fileSystemMock.Setup((s) => s.File.Exists("MyNonexistentFile.json")).Returns(false);
-            House.FileSystem = fileSystemMock.Object;
-
-            Assert.Multiple(() =>
-            {
-                // Assert that creating a SavedGame object with a name of a file that does not exist raises an exception
-                var exception = Assert.Throws<FileNotFoundException>(() =>
-                {
-                    House.CreateHouse("MyNonexistentFile");
-                });
-
-                // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo("Cannot load game because house layout file MyNonexistentFile does not exist"));
-            });
-        }
-
-        [TestCaseSource(typeof(TestHouse_TestData), 
-            nameof(TestHouse_TestData.TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_WhenFileFormatIsInvalid))]
-        [Category("House CreateHouse JsonException Failure")]
-        public void Test_House_CreateHouse_AndCheckErrorMessage_WhenFileFormatIsInvalid(
-            string exceptionMessageEnding, string fileText)
-        {
-            // Assign mock file system to House property
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("MyCorruptFile.house.json", fileText);
-
-            Assert.Multiple(() =>
-            {
-                // Assert that creating a SavedGame object with a file with an invalid format throws an exception
-                var exception = Assert.Throws<JsonException>(() =>
-                {
-                    House.CreateHouse("MyCorruptFile");
-                });
-                
-                // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot process because data in house layout file MyCorruptFile is corrupt - {exceptionMessageEnding}"));
-            });
-        }
-
-        [TestCaseSource(typeof(TestHouse_TestData), 
-            nameof(TestHouse_TestData.TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_WhenFileDataHasInvalidDirection))]
-        [Category("House CreateHouse JsonException Failure")]
-        public void Test_House_CreateHouse_AndCheckErrorMessage_WhenFileDataHasInvalidDirection(string fileText)
-        {
-            // Assign mock file system to House property
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("MyCorruptFile.house.json", fileText);
-
-            Assert.Multiple(() =>
-            {
-                // Assert that creating a SavedGame object with a file with an invalid Direction value throws an exception
-                var exception = Assert.Throws<JsonException>(() =>
-                {
-                    House.CreateHouse("MyCorruptFile");
-                });
-
-                // Assert that exception message starts with the expected string
-                Assert.That(exception.Message, Does.StartWith("Cannot process because data in house layout file MyCorruptFile is corrupt" +
-                                                              " - The JSON value could not be converted to HideAndSeek.Direction."));
-            });
-        }
-
-        [TestCaseSource(typeof(TestHouse_TestData), 
-            nameof(TestHouse_TestData.TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_WhenFileDataHasWhitespaceValue))]
-        [Category("House CreateHouse ArgumentException Failure")]
-        public void Test_House_CreateHouse_AndCheckErrorMessage_WhenFileDataHasWhitespaceValue(
-            string exceptionMessageEnding, string fileText)
-        {
-            // Assign mock file system to House property
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("MyInvalidDataFile.house.json", fileText);
-
-            Assert.Multiple(() =>
-            {
-                // Assert that creating a SavedGame object with a file with a whitespace value for a property throws an exception
-                var exception = Assert.Throws<ArgumentException>(() =>
-                {
-                    House.CreateHouse("MyInvalidDataFile");
-                });
-                
-                // Assert that exception message is as expected
-                Assert.That(exception.Message, Does.StartWith($"Cannot process because data in house layout file MyInvalidDataFile is invalid - {exceptionMessageEnding}"));
-            });
-        }
-
-        [TestCaseSource(typeof(TestHouse_TestData), 
-            nameof(TestHouse_TestData.TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_WhenFileDataHasInvalidValue))]
-        [Category("House CreateHouse ArgumentException Failure")]
-        public void Test_House_CreateHouse_AndCheckErrorMessage_WhenFileDataHasInvalidValue(
-            string exceptionMessageEnding, string fileText)
-        {
-            // Assign mock file system to House property
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("MyInvalidDataFile.house.json", fileText);
-
-            Assert.Multiple(() =>
-            {
-                // Assert that creating a SavedGame object with a file with an invalid value for a property throws an exception
-                var exception = Assert.Throws<ArgumentException>(() =>
-                {
-                    House.CreateHouse("MyInvalidDataFile");
-                });
-
-                // Assert that exception message is as expected
-                Assert.That(exception.Message, Does.StartWith($"Cannot process because data in house layout file MyInvalidDataFile is invalid - {exceptionMessageEnding}"));
-            });
-        }
-
-        [TestCaseSource(typeof(TestHouse_TestData),
-            nameof(TestHouse_TestData.TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_WhenFileDataHasInvalidValue_NonexistentLocation))]
-        [Category("House CreateHouse InvalidOperationException Failure")]
-        public void Test_House_CreateHouse_AndCheckErrorMessage_WhenFileDataHasInvalidValue_NonexistentLocation(
-            string exceptionMessageEnding, string fileText)
-        {
-            // Assign mock file system to House property
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("MyInvalidDataFile.house.json", fileText);
-
-            Assert.Multiple(() =>
-            {
-                // Assert that creating a SavedGame object with a file with an invalid value for a property throws an exception
-                var exception = Assert.Throws<InvalidOperationException>(() =>
-                {
-                    House.CreateHouse("MyInvalidDataFile");
-                });
-
-                // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo($"Cannot process because data in house layout file MyInvalidDataFile is corrupt - {exceptionMessageEnding}"));
-            });
-        }
-
-        // Calls properties' setters successfully
-        [Test]
-        [Category("House Constructor Success")]
+        [Category("House Constructor Name HouseFileName StartingPoint PlayerStartingPoint Locations LocationsWithoutHidingPlaces LocationsWithHidingPlaces Success")]
         public void Test_House_Constructor_Parameterized_SetsProperties()
         {
+            // Create locations for House
+            Location entry = new Location("Entry");
+            Location hallway = new Location("Hallway");
+            LocationWithHidingPlace bedroom = new LocationWithHidingPlace("Bedroom", "under the bed");
+            LocationWithHidingPlace kitchen = new LocationWithHidingPlace("Kitchen", "beside the stove");
+            LocationWithHidingPlace office = new LocationWithHidingPlace("Office", "under the desk");
+
+            // Call House constructor and set House
+            house = new House("my house", "DefaultHouse", entry,
+                new List<Location>() { entry, hallway }, new List<LocationWithHidingPlace>() { bedroom, kitchen, office });
+            
             // Assume no exceptions were thrown
             // Assert that properties are set correctly
             Assert.Multiple(() =>
             {
-                Assert.That(house.Name, Is.EqualTo("my house"));
-                Assert.That(house.HouseFileName, Is.EqualTo("DefaultHouse"));
-                Assert.That(house.StartingPoint.Name, Is.EqualTo("Entry"));
-                Assert.That(house.PlayerStartingPoint, Is.EqualTo("Entry"));
-                Assert.That(house.Locations.Select((l) => l.Name), Is.EquivalentTo(TestHouse_TestData.DefaultHouse_Locations));
-                Assert.That(house.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestHouse_TestData.DefaultHouse_LocationsWithoutHidingPlaces));
-                Assert.That(house.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestHouse_TestData.DefaultHouse_LocationsWithHidingPlaces));
+                Assert.That(house.Name, Is.EqualTo("my house"), "name property");
+                Assert.That(house.HouseFileName, Is.EqualTo("DefaultHouse"), "House file name property");
+                Assert.That(house.StartingPoint.Name, Is.EqualTo("Entry"), "starting point property");
+                Assert.That(house.PlayerStartingPoint, Is.EqualTo("Entry"), "player starting point property");
+                Assert.That(house.Locations, 
+                    Is.EquivalentTo(new List<Location>() { entry, hallway, bedroom, kitchen, office }), "locations property");
+                Assert.That(house.LocationsWithoutHidingPlaces, 
+                    Is.EquivalentTo(new List<Location>() { entry, hallway }), "locations without hiding places property");
+                Assert.That(house.LocationsWithHidingPlaces, 
+                    Is.EquivalentTo(new List<LocationWithHidingPlace>() { bedroom, kitchen, office }), "locations with hiding places property");
             });
         }
-        
+
+        [Test]
+        [Category("House Constructor Name ArgumentException Failure")]
+        public void Test_House_Constructor_Parameterized_AndCheckErrorMessage_ForInvalidName()
+        {
+            LocationWithHidingPlace entryWithHidingPlace = new Mock<LocationWithHidingPlace>().Object;
+            Assert.Multiple(() =>
+            {
+                // Assert that calling House constructor with an invalid name raises an exception
+                var exception = Assert.Throws<ArgumentException>(() =>
+                {
+                    // Call House constructor and set House
+                    house = new House(" ", "DefaultHouse", entryWithHidingPlace, 
+                                      Enumerable.Empty<Location>(), new List<LocationWithHidingPlace>() { entryWithHidingPlace });
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith($"house name \" \" is invalid (is empty or contains only whitespace)"));
+            });
+        }
+
+        [Test]
+        [Category("House Constructor HouseFileName ArgumentException Failure")]
+        public void Test_House_Constructor_Parameterized_AndCheckErrorMessage_ForInvalidHouseFileName()
+        {
+            LocationWithHidingPlace entryWithHidingPlace = new Mock<LocationWithHidingPlace>().Object;
+            Assert.Multiple(() =>
+            {
+                // Assert that calling House constructor with an invalid House file name raises an exception
+                var exception = Assert.Throws<ArgumentException>(() =>
+                {
+                    // Call House constructor and set House
+                    house = new House("my house", " ", entryWithHidingPlace, 
+                                      Enumerable.Empty<Location>(), new List<LocationWithHidingPlace>() { entryWithHidingPlace });
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith($"house file name \" \" is invalid " +
+                                                               "(is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+            });
+        }
+
+        [Test]
+        [Category("House Constructor PlayerStartingPoint InvalidOperationException Failure")]
+        public void Test_House_Constructor_Parameterized_AndCheckErrorMessage_ForInvalidStartingPoint_NullValue()
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that calling House constructor with an invalid starting point name raises an exception
+                var exception = Assert.Throws<InvalidOperationException>(() =>
+                {
+                    // Call House constructor and set House
+                    house = new House("my house", "DefaultHouse", null, Enumerable.Empty<Location>(), 
+                                      new List<LocationWithHidingPlace>() { new Mock<LocationWithHidingPlace>().Object });
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith($"starting point location \"\" does not exist in House"));
+            });
+        }
+
+        [Test]
+        [Category("House Constructor PlayerStartingPoint InvalidOperationException Failure")]
+        public void Test_House_Constructor_Parameterized_AndCheckErrorMessage_ForInvalidStartingPoint_NotInHouse()
+        {
+            Location notInHouse = new Location("not in house");
+            Assert.Multiple(() =>
+            {
+                // Assert that calling House constructor with an invalid starting point (not in house) raises an exception
+                var exception = Assert.Throws<InvalidOperationException>(() =>
+                {
+                    // Call House constructor and set House
+                    house = new House("my house", "DefaultHouse", notInHouse, Enumerable.Empty<Location>(), 
+                                      new List<LocationWithHidingPlace>() { new Mock<LocationWithHidingPlace>().Object });
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo("starting point location \"not in house\" does not exist in House"));
+            });
+        }
+
+        [Test]
+        [Category("House Constructor LocationsWithoutHidingPlaces ArgumentException Failure")]
+        public void Test_House_Constructor_Parameterized_AndCheckErrorMessage_ForLocationsWithoutHidingPlaces_IncludingLocationWithHidingPlaceObject()
+        {
+            house = GetBasicHouse(); // Set House
+            Assert.Multiple(() =>
+            {
+                // Assert that calling House constructor with list including LocationWithHidingPlace for LocationsWithoutHidingPlaces raises exception
+                Exception exception = Assert.Throws<ArgumentException>(() =>
+                {
+                    // Call House constructor and set House
+                    house = new House("my house", "DefaultHouse", new Mock<Location>().Object,
+                                      new List<Location>() { new LocationWithHidingPlace("Closet", "between the clothes") },
+                                      new List<LocationWithHidingPlace>() { new Mock<LocationWithHidingPlace>().Object });
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith("LocationWithHidingPlace \"Closet\" passed to LocationsWithoutHidingPlaces setter"));
+            });
+        }
+
+        [Test]
+        [Category("House Constructor LocationsWithHidingPlaces ArgumentException Failure")]
+        public void Test_House_Constructor_Parameterized_AndCheckErrorMessage_ForEmptyLocationsWithHidingPlaces()
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that calling House constructor with empty locations with hiding places raises an exception
+                var exception = Assert.Throws<ArgumentException>(() =>
+                {
+                    // Call House constructor and set House
+                    house = new House("my house", "DefaultHouse", new Mock<Location>().Object, 
+                                      Enumerable.Empty<Location>(), Enumerable.Empty<LocationWithHidingPlace>());
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith("locations with hiding places list is empty"));
+            });
+        }
+
+        [Test]
+        [Category("House Name Success")]
+        public void Test_House_Set_Name()
+        {
+            house = GetBasicHouse(); // Set House
+            house.Name = "new name"; // Set House name to new value
+            Assert.That(house.Name, Is.EqualTo("new name")); // Assert that House name property is set correctly
+        }
+
         [TestCase("")]
         [TestCase(" ")]
         [Category("House Name ArgumentException Failure")]
         public void Test_House_Set_Name_AndCheckErrorMessage_ForInvalidName(string name)
         {
+            // Set House
+            house = GetBasicHouse();
+
             Assert.Multiple(() =>
             {
                 // Assert that setting House name to an invalid name raises an exception
@@ -726,6 +213,15 @@ namespace HideAndSeek
                 // Assert that exception message is as expected
                 Assert.That(exception.Message, Does.StartWith($"house name \"{name}\" is invalid (is empty or contains only whitespace)"));
             });
+        }
+
+        [Test]
+        [Category("House HouseFileName Success")]
+        public void Test_House_Set_HouseFileName()
+        {
+            house = GetBasicHouse(); // Set House
+            house.HouseFileName = "NewName"; // Set House file name to new value
+            Assert.That(house.HouseFileName, Is.EqualTo("NewName")); // Assert that House file name property is set correctly
         }
 
         [TestCase("")]
@@ -744,6 +240,9 @@ namespace HideAndSeek
         [Category("House HouseFileName ArgumentException Failure")]
         public void Test_House_Set_HouseFileName_AndCheckErrorMessage_ForInvalidFileName(string houseFileName)
         {
+            // Set House
+            house = GetBasicHouse();
+
             Assert.Multiple(() =>
             {
                 // Assert that setting House file name to an invalid file name raises an exception
@@ -757,11 +256,23 @@ namespace HideAndSeek
             });
         }
 
+        [Test]
+        [Category("House PlayerStartingPoint Success")]
+        public void Test_House_Set_PlayerStartingPoint()
+        {
+            house = GetBasicHouse(); // Set House
+            house.PlayerStartingPoint = "NewName"; // Set House player starting point to new value
+            Assert.That(house.PlayerStartingPoint, Is.EqualTo("NewName")); // Assert that House player starting point property is set correctly
+        }
+
         [TestCase("")]
         [TestCase(" ")]
         [Category("House PlayerStartingPoint ArgumentException Failure")]
         public void Test_House_Set_PlayerStartingPoint_AndCheckErrorMessage_ForInvalidLocationName(string locationName)
         {
+            // Set House
+            house = GetBasicHouse();
+
             Assert.Multiple(() =>
             {
                 // Assert that setting player starting point location name to an invalid location name raises an exception
@@ -776,9 +287,29 @@ namespace HideAndSeek
         }
 
         [Test]
+        [Category("House StartingPoint Success")]
+        public void Test_House_Set_StartingPoint()
+        {
+            // Create locations for House
+            LocationWithHidingPlace bedroom = new LocationWithHidingPlace("Bedroom", "under the bed");
+            LocationWithHidingPlace kitchen = new LocationWithHidingPlace("Kitchen", "beside the stove");
+
+            // Set House
+            house = new House("my house", "DefaultHouse", bedroom,
+                              Enumerable.Empty<Location>(), new List<LocationWithHidingPlace>() { bedroom, kitchen });
+
+            // Set House starting point to new value
+            house.StartingPoint = kitchen;
+            Assert.That(house.StartingPoint, Is.SameAs(kitchen)); // Assert that House starting point property is set correctly
+        }
+
+        [Test]
         [Category("House StartingPoint InvalidOperationException Failure")]
         public void Test_House_Set_StartingPoint_AndCheckErrorMessage_ForLocationNotExistingInHouse()
         {
+            // Set House
+            house = GetBasicHouse();
+
             Assert.Multiple(() =>
             {
                 // Assert that setting starting point location to a Location not in the House raises an exception
@@ -788,14 +319,141 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Is.EqualTo("player starting point location \"not in house\" does not exist in House"));
+                Assert.That(exception.Message, Is.EqualTo("starting point location \"not in house\" does not exist in House"));
             });  
+        }
+
+        [Test]
+        [Category("House LocationsWithoutHidingPlaces Success")]
+        public void Test_House_Set_LocationsWithoutHidingPlaces_ToListWithLocation()
+        {
+            house = GetBasicHouse(); // Set House
+            Location location = new Mock<Location>().Object; // Create location
+            house.LocationsWithoutHidingPlaces = new List<Location>() { location }; // Set House locations without hiding places to new value
+            Assert.That(house.LocationsWithoutHidingPlaces, Is.EquivalentTo(new List<Location>() { location })); // Assert that House locations without hiding places property is set correctly
+        }
+
+        [Test]
+        [Category("House LocationsWithoutHidingPlaces Success")]
+        public void Test_House_Set_LocationsWithoutHidingPlaces_ToEmptyList()
+        {
+            house = GetBasicHouse(); // Set House
+            house.LocationsWithoutHidingPlaces = Enumerable.Empty<Location>(); // Set House locations without hiding places to new value
+            Assert.That(house.LocationsWithoutHidingPlaces, Is.Empty); // Assert that House locations without hiding places property is set correctly
+        }
+
+        [Test]
+        [Category("House LocationsWithoutHidingPlaces ArgumentException Failure")]
+        public void Test_House_Set_LocationsWithoutHidingPlaces_AndCheckErrorMessage_ForLocationWithHidingPlaceObject()
+        {
+            house = GetBasicHouse(); // Set House
+            Assert.Multiple(() =>
+            {
+                // Assert that setting LocationsWithoutHidingPlaces property to list including LocationWithHidingPlace raises exception
+                Exception exception = Assert.Throws<ArgumentException>(() =>
+                {
+                    house.LocationsWithoutHidingPlaces = new List<Location>() { new LocationWithHidingPlace("Closet", "between the clothes") };
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith("LocationWithHidingPlace \"Closet\" passed to LocationsWithoutHidingPlaces setter"));
+            });
+        }
+
+        [Test]
+        [Category("House SetLocationsWithoutHidingPlaces Success")]
+        public void Test_House_SetLocationsWithoutHidingPlacesMethod_ToListWithLocation()
+        {
+            // Set House with StartingPoint in LocationsWithHidingPlaces list
+            LocationWithHidingPlace entryLocationWithHidingPlace = new LocationWithHidingPlace("Entry", "behind the coat rack");
+            house = new House("my house", "TestHouse", entryLocationWithHidingPlace, Enumerable.Empty<Location>(),
+                              new List<LocationWithHidingPlace>() { entryLocationWithHidingPlace });
+
+            // Set House locations without hiding places to new value
+            Location location = new Mock<Location>().Object; // Create location
+            house.SetLocationsWithoutHidingPlaces(new List<Location>() { location }); // Set House locations without hiding places to new value
+
+            // Assert that House locations without hiding places property is set correctly// Assert that House locations without hiding places property is set correctly
+            Assert.That(house.LocationsWithoutHidingPlaces, Is.EquivalentTo(new List<Location>() { location }));
+        }
+
+        [Test]
+        [Category("House SetLocationsWithoutHidingPlaces Success")]
+        public void Test_House_SetLocationsWithoutHidingPlacesMethod_ToEmptyList()
+        {
+            // Set House with StartingPoint in LocationsWithHidingPlaces list
+            LocationWithHidingPlace entryLocationWithHidingPlace = new LocationWithHidingPlace("Entry", "behind the coat rack");
+            house = new House("my house", "TestHouse", entryLocationWithHidingPlace, Enumerable.Empty<Location>(),
+                              new List<LocationWithHidingPlace>() { entryLocationWithHidingPlace });
+
+            // Set House locations without hiding places to new value
+            house.SetLocationsWithoutHidingPlaces(Enumerable.Empty<Location>());
+
+            // Assert that House locations without hiding places property is set correctly
+            Assert.That(house.LocationsWithoutHidingPlaces, Is.Empty);
+        }
+
+        [Test]
+        [Category("House SetLocationsWithoutHidingPlaces ArgumentException Failure")]
+        public void Test_House_SetLocationsWithoutHidingPlacesMethod_AndCheckErrorMessage_ForLocationWithHidingPlaceObject()
+        {
+            // Set House with StartingPoint in LocationsWithHidingPlaces list
+            LocationWithHidingPlace entryLocationWithHidingPlace = new LocationWithHidingPlace("Entry", "behind the coat rack");
+            house = new House("my house", "TestHouse", entryLocationWithHidingPlace, Enumerable.Empty<Location>(),
+                              new List<LocationWithHidingPlace>() { entryLocationWithHidingPlace });
+
+            Assert.Multiple(() =>
+            {
+                // Assert that calling method with list including LocationWithHidingPlace raises exception
+                Exception exception = Assert.Throws<ArgumentException>(() =>
+                {
+                    house.SetLocationsWithoutHidingPlaces(new List<Location>() { new LocationWithHidingPlace("Closet", "between the clothes") });
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith("LocationWithHidingPlace \"Closet\" passed to LocationsWithoutHidingPlaces setter"));
+            });
+        }
+
+        [Test]
+        [Category("House SetLocationsWithoutHidingPlaces InvalidOperationException Failure")]
+        public void Test_House_SetLocationsWithoutHidingPlacesMethod_AndCheckErrorMessage_ForStartingPointWouldNotBeInHouse()
+        {
+            // Set House with StartingPoint in LocationsWithoutHidingPlaces list
+            Location entry = new Location("Entry");
+            house = new House("my house", "TestHouse", entry, new List<Location>() { entry }, 
+                              new List<LocationWithHidingPlace>() { new LocationWithHidingPlace("Kitchen", "beside the stove") });
+
+            Assert.Multiple(() =>
+            {
+                // Assert that calling method with list not including StartingPoint raises exception
+                Exception exception = Assert.Throws<InvalidOperationException>(() =>
+                {
+                    house.SetLocationsWithoutHidingPlaces(new List<Location>() { new Location("Foyer") });
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith("StartingPoint is not in LocationsWithHidingPlaces or the locations passed in"));
+            });
+        }
+
+        [Test]
+        [Category("House LocationsWithHidingPlaces Success")]
+        public void Test_House_Set_LocationsWithHidingPlaces()
+        {
+            house = GetBasicHouse(); // Set House
+            LocationWithHidingPlace locationWithHidingPlace = new Mock<LocationWithHidingPlace>().Object; // Create location with hiding place
+            house.LocationsWithHidingPlaces = new List<LocationWithHidingPlace>() { locationWithHidingPlace }; // Set House locations with hiding places to new value
+            Assert.That(house.LocationsWithHidingPlaces, Is.EquivalentTo(new List<LocationWithHidingPlace>() { locationWithHidingPlace })); // Assert that House locations with hiding places property is set correctly
         }
 
         [Test]
         [Category("House LocationsWithHidingPlaces ArgumentException Failure")]
         public void Test_House_Set_LocationsWithHidingPlaces_AndCheckErrorMessage_ForEmptyEnumerable()
         {
+            // Set House
+            house = GetBasicHouse();
+
             Assert.Multiple(() =>
             {
                 // Assert that setting locations with hiding places property to an empty list raises an exception
@@ -810,282 +468,82 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("House Locations ArgumentException Failure")]
-        public void Test_House_Set_Locations_AndCheckErrorMessage_ForEmptyEnumerable()
+        [Category("House SetLocationsWithHidingPlaces Success")]
+        public void Test_House_SetLocationsWithHidingPlacesMethod()
         {
+            // Set House with StartingPoint in LocationsWithoutHidingPlaces list
+            Location entryLocation = new Location("Entry");
+            house = new House("my house", "TestHouse", entryLocation, new List<Location>() { entryLocation },
+                              new List<LocationWithHidingPlace>() { new LocationWithHidingPlace("Closet", "between the coats") });
+
+            // Set House locations with hiding places to new value
+            LocationWithHidingPlace locationWithHidingPlace = new Mock<LocationWithHidingPlace>().Object; // Create location with hiding place
+            house.SetLocationsWithHidingPlaces(new List<LocationWithHidingPlace>() { locationWithHidingPlace }); // Set House locations with hiding places to new value
+
+            // Assert that House locations with hiding places property is set correctly
+            Assert.That(house.LocationsWithHidingPlaces, Is.EquivalentTo(new List<LocationWithHidingPlace>() { locationWithHidingPlace }));
+        }
+
+        [Test]
+        [Category("House SetLocationsWithHidingPlaces ArgumentException Failure")]
+        public void Test_House_SetLocationsWithHidingPlacesMethod_AndCheckErrorMessage_ForEmptyList()
+        {
+            // Set House with StartingPoint in LocationsWithoutHidingPlaces list
+            Location entryLocation = new Location("Entry");
+            house = new House("my house", "TestHouse", entryLocation, new List<Location>() { entryLocation },
+                              new List<LocationWithHidingPlace>() { new LocationWithHidingPlace("Closet", "between the coats") });
+
+
             Assert.Multiple(() =>
             {
-                // Assert that setting the locations property to an empty list raises an exception
-                var exception = Assert.Throws<ArgumentException>(() =>
+                // Assert that calling method with empty list raises exception
+                Exception exception = Assert.Throws<ArgumentException>(() =>
                 {
-                    house.Locations = new List<Location>();
+                    house.SetLocationsWithHidingPlaces(Enumerable.Empty<LocationWithHidingPlace>());
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Does.StartWith("locations list is empty"));
+                Assert.That(exception.Message, Does.StartWith("locations with hiding places list is empty"));
             });
         }
 
         [Test]
-        [Category("House Serialize Success")]
-        public void Test_House_SerializeMethod_DefaultHouse()
+        [Category("House SetLocationsWithHidingPlaces InvalidOperationException Failure")]
+        public void Test_House_SetLocationsWithHidingPlacesMethod_AndCheckErrorMessage_ForStartingPointWouldNotBeInHouse()
         {
-            Assert.That(house.Serialize(), Is.EqualTo(TestHouse_TestData.DefaultHouse_Serialized));
+            // Set House with StartingPoint in LocationsWithHidingPlaces list
+            LocationWithHidingPlace entryWithHidingPlace = new LocationWithHidingPlace("Entry", "behind the coat rack");
+            house = new House("my house", "TestHouse", entryWithHidingPlace, Enumerable.Empty<Location>(),
+                              new List<LocationWithHidingPlace>() { entryWithHidingPlace });
+
+            Assert.Multiple(() =>
+            {
+                // Assert that calling method with list not including StartingPoint raises exception
+                Exception exception = Assert.Throws<InvalidOperationException>(() =>
+                {
+                    house.SetLocationsWithHidingPlaces(new List<LocationWithHidingPlace>() { new LocationWithHidingPlace("Foyer", "behind the chair") });
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith("StartingPoint is not in LocationsWithoutHidingPlaces or the locations passed in"));
+            });
         }
 
-        [Test]
-        [Category("House Serialize Success")]
-        public void Test_House_SerializeMethod_CustomHouse_WithLocationsWithoutHidingPlaces()
+        /// <summary>
+        /// Get basic House (used to set House in failing setter tests)
+        /// </summary>
+        private static House GetBasicHouse()
         {
-            // ARRANGE
-            // Initialize variable to expected serialized House text
-            string expectedSerializedHouse =
-                #region expected serialized House
-                "{" +
-                    "\"Name\":\"dream house\"" + "," + 
-                    "\"HouseFileName\":\"DreamHouse\"" + "," + 
-                    "\"PlayerStartingPoint\":\"Kitchen\"" + "," + 
-                    "\"LocationsWithoutHidingPlaces\":" +
-                    "[" +
-                        "{" +
-                            "\"Name\":\"Kitchen\"" + "," + 
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"North\":\"Bedroom\"" + "," + 
-                                "\"East\":\"Pantry\"" + "," + 
-                                "\"West\":\"Office\"" +
-                            "}" +
-                        "}" + "," +
-                        "{" +
-                            "\"Name\":\"Exercise Room\"" + "," + 
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"South\":\"Bedroom\"" +
-                            "}" +
-                        "}" +
-                    "]" + "," + 
-                    "\"LocationsWithHidingPlaces\":" +
-                    "[" +
-                        "{" +
-                            "\"HidingPlace\":\"under the bed\"" + "," + 
-                            "\"Name\":\"Bedroom\"" + "," + 
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"South\":\"Kitchen\"" + "," + 
-                                "\"North\":\"Exercise Room\"" + "," + 
-                                "\"East\":\"Closet\"" + "," + 
-                                "\"West\":\"Bathroom\"" +
-                            "}" +
-                        "}" + "," + 
-                        "{" +
-                            "\"HidingPlace\":\"in a box\"" + "," + 
-                            "\"Name\":\"Pantry\"" + "," + 
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"West\":\"Kitchen\"" +
-                            "}" +
-                        "}" + "," + 
-                        "{" +
-                            "\"HidingPlace\":\"under the desk\"" + "," + 
-                            "\"Name\":\"Office\"" + "," + 
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"East\":\"Kitchen\"" + "," + 
-                                "\"Northeast\":\"Bathroom\"" +
-                            "}" +
-                        "}" + "," + 
-                        "{" +
-                            "\"HidingPlace\":\"between the coats\"" + "," + 
-                            "\"Name\":\"Closet\"" + "," + 
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"West\":\"Bedroom\"" +
-                            "}" +
-                        "}" + "," + 
-                        "{" +
-                            "\"HidingPlace\":\"in the tub\"" + "," + 
-                            "\"Name\":\"Bathroom\"" + "," + 
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"East\":\"Bedroom\"" + "," + 
-                                "\"West\":\"Sensory Room\"" + "," + 
-                                "\"Southwest\":\"Office\"" +
-                            "}" +
-                        "}" + "," + 
-                        "{" +
-                            "\"HidingPlace\":\"under the bean bags\"" + "," + 
-                            "\"Name\":\"Sensory Room\"" + "," + 
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"East\":\"Bathroom\"" +
-                            "}" +
-                        "}" +
-                    "]" +
-                "}";
-            #endregion
+            // Create locations for House
+            Location entry = new Location("Entry");
+            Location hallway = new Location("Hallway");
+            LocationWithHidingPlace bedroom = new LocationWithHidingPlace("Bedroom", "under the bed");
+            LocationWithHidingPlace kitchen = new LocationWithHidingPlace("Kitchen", "beside the stove");
+            LocationWithHidingPlace office = new LocationWithHidingPlace("Office", "under the desk");
 
-            #region create House
-            // Create starting point (Kitchen) and connect to new locations: Bedroom, Pantry, Office
-            Location kitchen = new Location("Kitchen");
-            LocationWithHidingPlace bedroom = kitchen.AddExit(Direction.North, "Bedroom", "under the bed");
-            LocationWithHidingPlace pantry = kitchen.AddExit(Direction.East, "Pantry", "in a box");
-            LocationWithHidingPlace office = kitchen.AddExit(Direction.West, "Office", "under the desk");
-
-            // Connect Bedroom to new locations: Exercise Room, Closet, Bathroom
-            Location exerciseRoom = bedroom.AddExit(Direction.North, "Exercise Room");
-            LocationWithHidingPlace closet = bedroom.AddExit(Direction.East, "Closet", "between the coats");
-            LocationWithHidingPlace bathroom = bedroom.AddExit(Direction.West, "Bathroom", "in the tub");
-
-            // Connect Office to new location: Sensory Room
-            LocationWithHidingPlace sensoryRoom = bathroom.AddExit(Direction.West, "Sensory Room", "under the bean bags");
-
-            // Connect Office to Bathroom
-            office.AddExit(Direction.Northeast, bathroom);
-
-            // Create enumerable of Location objects
-            IEnumerable<Location> locationsWithoutHidingPlaces = new List<Location>() { kitchen, exerciseRoom };
-
-            // Create enumerable of LocationWithHidingPlace objects
-            IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces = new List<LocationWithHidingPlace>()
-            {
-                bedroom, pantry, office, closet, bathroom, sensoryRoom
-            };
-
-            // Create House
-            house = new House("dream house", "DreamHouse", "Kitchen", locationsWithoutHidingPlaces, locationsWithHidingPlaces);
-            #endregion
-
-            // ACT
-            string serializedHouse = house.Serialize();
-
-            // Assert that serialized House text is as expected
-            Assert.That(serializedHouse, Is.EqualTo(expectedSerializedHouse));
-        }
-
-        [Test]
-        [Category("House Serialize Success")]
-        public void Test_House_SerializeMethod_CustomHouse_WithoutLocationsWithoutHidingPlaces()
-        {
-            // ARRANGE
-            // Initialize variable to expected serialized House text
-            string expectedSerializedHouse =
-            #region expected serialized House
-                "{" +
-                    "\"Name\":\"dream house\"" + "," +
-                    "\"HouseFileName\":\"DreamHouse\"" + "," +
-                    "\"PlayerStartingPoint\":\"Kitchen\"" + "," +
-                    "\"LocationsWithoutHidingPlaces\":[]" + "," +
-                    "\"LocationsWithHidingPlaces\":" +
-                    "[" +
-                        "{" +
-                            "\"HidingPlace\":\"in a cupboard\"" + "," +
-                            "\"Name\":\"Kitchen\"" + "," +
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"North\":\"Bedroom\"" + "," +
-                                "\"East\":\"Pantry\"" + "," +
-                                "\"West\":\"Office\"" +
-                            "}" +
-                        "}" + "," +
-                        "{" +
-                            "\"HidingPlace\":\"under the bed\"" + "," +
-                            "\"Name\":\"Bedroom\"" + "," +
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"South\":\"Kitchen\"" + "," +
-                                "\"North\":\"Exercise Room\"" + "," +
-                                "\"East\":\"Closet\"" + "," +
-                                "\"West\":\"Bathroom\"" +
-                            "}" +
-                        "}" + "," +
-                        "{" +
-                            "\"HidingPlace\":\"in a box\"" + "," +
-                            "\"Name\":\"Pantry\"" + "," +
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"West\":\"Kitchen\"" +
-                            "}" +
-                        "}" + "," +
-                        "{" +
-                            "\"HidingPlace\":\"under the desk\"" + "," +
-                            "\"Name\":\"Office\"" + "," +
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"East\":\"Kitchen\"" + "," +
-                                "\"Northeast\":\"Bathroom\"" +
-                            "}" +
-                        "}" + "," +
-                        "{" +
-                            "\"HidingPlace\":\"behind the balls\"" + "," +
-                            "\"Name\":\"Exercise Room\"" + "," +
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"South\":\"Bedroom\"" +
-                            "}" +
-                        "}" + "," +
-                        "{" +
-                            "\"HidingPlace\":\"between the coats\"" + "," +
-                            "\"Name\":\"Closet\"" + "," +
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"West\":\"Bedroom\"" +
-                            "}" +
-                        "}" + "," +
-                        "{" +
-                            "\"HidingPlace\":\"in the tub\"" + "," +
-                            "\"Name\":\"Bathroom\"" + "," +
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"East\":\"Bedroom\"" + "," +
-                                "\"West\":\"Sensory Room\"" + "," +
-                                "\"Southwest\":\"Office\"" +
-                            "}" +
-                        "}" + "," +
-                        "{" +
-                            "\"HidingPlace\":\"under the bean bags\"" + "," +
-                            "\"Name\":\"Sensory Room\"" + "," +
-                            "\"ExitsForSerialization\":" +
-                            "{" +
-                                "\"East\":\"Bathroom\"" +
-                            "}" +
-                        "}" +
-                    "]" +
-                "}";
-            #endregion
-
-            #region create House
-            // Create starting point (Kitchen) and connect to new locations: Bedroom, Pantry, Office
-            LocationWithHidingPlace kitchen = new LocationWithHidingPlace("Kitchen", "in a cupboard");
-            LocationWithHidingPlace bedroom = kitchen.AddExit(Direction.North, "Bedroom", "under the bed");
-            LocationWithHidingPlace pantry = kitchen.AddExit(Direction.East, "Pantry", "in a box");
-            LocationWithHidingPlace office = kitchen.AddExit(Direction.West, "Office", "under the desk");
-
-            // Connect Bedroom to new locations: Exercise Room, Closet, Bathroom
-            LocationWithHidingPlace exerciseRoom = bedroom.AddExit(Direction.North, "Exercise Room", "behind the balls");
-            LocationWithHidingPlace closet = bedroom.AddExit(Direction.East, "Closet", "between the coats");
-            LocationWithHidingPlace bathroom = bedroom.AddExit(Direction.West, "Bathroom", "in the tub");
-
-            // Connect Office to new location: Sensory Room
-            LocationWithHidingPlace sensoryRoom = bathroom.AddExit(Direction.West, "Sensory Room", "under the bean bags");
-
-            // Connect Office to Bathroom
-            office.AddExit(Direction.Northeast, bathroom);
-
-            // Create enumerable of LocationWithHidingPlace objects
-            IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces = new List<LocationWithHidingPlace>()
-            {
-                kitchen, bedroom, pantry, office, exerciseRoom, closet, bathroom, sensoryRoom
-            };
-
-            // Create House
-            house = new House("dream house", "DreamHouse", "Kitchen", new List<Location>(), locationsWithHidingPlaces);
-            #endregion
-
-            // ACT
-            string serializedHouse = house.Serialize();
-
-            // Assert that serialized House text is as expected
-            Assert.That(serializedHouse, Is.EqualTo(expectedSerializedHouse));
+            // Call House constructor and return House object
+            return new House("my house", "DefaultHouse", entry,
+                new List<Location>() { entry, hallway }, new List<LocationWithHidingPlace>() { bedroom, kitchen, office });
         }
     }
 }

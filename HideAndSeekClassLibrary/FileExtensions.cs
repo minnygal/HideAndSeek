@@ -21,7 +21,7 @@ namespace HideAndSeek
         public static readonly string JsonFileExtension = ".json";
 
         /// <summary>
-        /// Get full name for file (including extension)
+        /// Get full name for JSON file (including extension)
         /// </summary>
         /// <param name="fileSystem"></param>
         /// <param name="fileNameWithoutExtension">Name of file not including extension</param>
@@ -43,7 +43,8 @@ namespace HideAndSeek
             // If file name is invalid
             if( !(IsValidName(fileNameWithoutExtension)) )
             {
-                throw new ArgumentException($"Cannot perform action because file name \"{fileNameWithoutExtension}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)", nameof(fileNameWithoutExtension));
+                throw new ArgumentException($"Cannot perform action because file name \"{fileNameWithoutExtension}\" is invalid " +
+                                             "(is empty or contains illegal characters, e.g. \\, /, or whitespace)", nameof(fileNameWithoutExtension));
             }
 
             // Return file name with extension

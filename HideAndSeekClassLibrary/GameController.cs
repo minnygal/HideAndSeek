@@ -107,7 +107,7 @@ namespace HideAndSeek
                 else // if Opponents have been opponentsFound
                 {
                     message += Environment.NewLine + $"You have found {FoundOpponents.Count} of {OpponentsAndHidingLocations.Count()} opponent{(OpponentsAndHidingLocations.Count() == 1 ? "" : "s")}"
-                            + ": " + String.Join(", ", FoundOpponents); // Add information about Opponents opponentsFound to message
+                            + ": " + String.Join(", ", FoundOpponents.Select((o) => o.Name)); // Add information about found Opponents to message
                 }
 
                 // Return status message
@@ -122,9 +122,9 @@ namespace HideAndSeek
         {
             get
             {
-                return $"{MoveNumber}: Which direction do you want to go{( ( CurrentLocation.GetType() == typeof(LocationWithHidingPlace) ) ? " (or type 'check')" : "")}: ";
+                return $"{MoveNumber}: Which direction do you want to go{((CurrentLocation.GetType() == typeof(LocationWithHidingPlace)) ? " (or type 'check')" : "")}: ";
             }
-        } 
+        }
 
         /// <summary>
         /// The number of moves the player has made
@@ -135,7 +135,7 @@ namespace HideAndSeek
         /// Opponents and their hiding places
         /// </summary>
         public Dictionary<Opponent, LocationWithHidingPlace> OpponentsAndHidingLocations { get; private set; }
-            
+
         /// <summary>
         /// List of opponents the player has found so far
         /// </summary>
@@ -150,7 +150,7 @@ namespace HideAndSeek
         /// Default names used for Opponents when number of Opponents but not names specified in constructor call
         /// </summary>
         public static readonly string[] DefaultOpponentNames = { "Joe", "Bob", "Ana", "Owen", "Jimmy", "Mary", "Alice", "Tony", "Andy", "Jill" };
-
+        
         /// <summary>
         /// Create a GameController with an optional specified House file name and 5 Opponents with default names
         /// </summary>
@@ -162,8 +162,9 @@ namespace HideAndSeek
         /// <exception cref="NullReferenceException">Exception thrown if a reference is null</exception>
         public GameController(string houseFileNameWithoutEnding = "DefaultHouse")
         {
-            SetUpInitialGameWithSpecificOpponentNamesAndHouseFile(
-                DefaultOpponentNames.Take(5).ToArray(), houseFileNameWithoutEnding);
+            // Set Opponents and start game with specified House file name
+            SetUpOpponentsInitially(); // Set Opponents
+            RestartGame(houseFileNameWithoutEnding); // Start game with specified House file
         }
 
         /// <summary>
@@ -174,15 +175,9 @@ namespace HideAndSeek
         /// <exception cref="ArgumentException">Exception thrown when number of Opponents is invalid</exception>
         public GameController(int numberOfOpponents, string houseFileNameWithoutEnding = "DefaultHouse")
         {
-            // If number of Opponents invalid
-            if(numberOfOpponents < 1 || numberOfOpponents > DefaultOpponentNames.Length)
-            {
-                throw new ArgumentException("Cannot create a new instance of GameController " +
-                                            "because the number of Opponents specified is invalid (must be between 1 and 10)", nameof(numberOfOpponents)); // Throw exception
-            }
-
-            // Set up initial game with specific Opponent names and House file name
-            SetUpInitialGameWithSpecificOpponentNamesAndHouseFile(DefaultOpponentNames.Take(numberOfOpponents).ToArray(), houseFileNameWithoutEnding);
+            // Set Opponents and start game with specified House file name
+            SetUpOpponentsInitially(numberOfOpponents); // Set Opponents
+            RestartGame(houseFileNameWithoutEnding); // Start game with specified House file
         }
 
         /// <summary>
@@ -190,37 +185,168 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="opponentNames">Names of Opponents to hide in House</param>
         /// <param name="houseFileNameWithoutEnding">Name of House layout file without ending or extension</param>
-        /// <exception cref="ArgumentException">Exception thrown when no names for Opponents were passed in</exception>"
+        /// <exception cref="ArgumentException">Exception thrown when no names for Opponents were passed in</exception>
         public GameController(string[] opponentNames, string houseFileNameWithoutEnding = "DefaultHouse")
         {
+            // Set Opponents and start game with specified House file name
+            SetUpOpponentsInitially(opponentNames); // Set Opponents
+            RestartGame(houseFileNameWithoutEnding); // Start game with specified House file
+        }
+
+        /// <summary>
+        /// Create a GameController with specific Opponents and an optional specified House file name
+        /// </summary>
+        /// <param name="opponents">Opponents to hide in House</param>
+        /// <param name="houseFileNameWithoutEnding">Name of House layout file without ending or extension</param>
+        /// <exception cref="ArgumentException">Exception thrown when no names for Opponents were passed in</exception>"
+        public GameController(Opponent[] opponents, string houseFileNameWithoutEnding = "DefaultHouse")
+        {
+            // Set up initial game with specific Opponent names and House file name
+            SetUpOpponentsInitially(opponents.ToList()); // Set Opponents
+            RestartGame(houseFileNameWithoutEnding); // Start game with specified House file
+        }
+
+        /// <summary>
+        /// Create a GameController with an optional specified House file name and 5 Opponents with default names
+        /// </summary>
+        /// <param name="house">House in which to play game</param>
+        public GameController(House house)
+        {
+            // Set Opponents and start game with specified House file name
+            SetUpOpponentsInitially(); // Set Opponents
+            RestartGame(house); // Start game with specified House file
+        }
+
+        /// <summary>
+        /// Create a GameController with a specific number of Opponents and a specific House
+        /// </summary>
+        /// <param name="numberOfOpponents">Number of Opponents to hide in House</param>
+        /// <param name="house">House in which to play game</param>
+        /// <exception cref="ArgumentException">Exception thrown when number of Opponents is invalid</exception>
+        public GameController(int numberOfOpponents, House house)
+        {
+            // Set Opponents and start game with specified House
+            SetUpOpponentsInitially(numberOfOpponents); // Set Opponents
+            RestartGame(house); // Start game with House passed in
+        }
+
+        /// <summary>
+        /// Create a GameController with Opponents with specific names and a specific House
+        /// </summary>
+        /// <param name="opponentNames">Names of Opponents to hide in House</param>
+        /// <param name="house">House in which to play game</param>
+        /// <exception cref="ArgumentException">Exception thrown when no names for Opponents were passed in</exception>
+        public GameController(string[] opponentNames, House house)
+        {
+            // Set Opponents and start game with specified House
+            SetUpOpponentsInitially(opponentNames); // Set Opponents
+            RestartGame(house); // Start game with House passed in
+        }
+
+        /// <summary>
+        /// Create a GameController with specific Opponents and a specific House
+        /// </summary>
+        /// <param name="opponents">Opponents to hide in House</param>
+        /// <param name="house">House in which to play game</param>
+        /// <exception cref="ArgumentException">Exception thrown when no names for Opponents were passed in</exception>"
+        public GameController(Opponent[] opponents, House house)
+        {
+            // Set up initial game with specific Opponent names and specified House
+            SetUpOpponentsInitially(opponents.ToList()); // Set Opponents
+            RestartGame(house); // Start game with House passed in
+        }
+
+        /// <summary>
+        /// Set Opponents initially
+        /// </summary>
+        /// <param name="numberOfOpponents">Number of Opponents</param>
+        /// <exception cref="ArgumentException">Exception thrown if number of opponents is invalid</exception>
+        private void SetUpOpponentsInitially(int numberOfOpponents = 5)
+        {
+            // If number of Opponents invalid
+            if (numberOfOpponents < 1 || numberOfOpponents > DefaultOpponentNames.Length)
+            {
+                throw new ArgumentException("Cannot create a new instance of GameController " +
+                                            "because the number of Opponents specified is invalid (must be between 1 and 10)", nameof(numberOfOpponents)); // Throw exception
+            }
+
+            // Set Opponents and start game with specified House file name
+            SetUpOpponentsInitially(DefaultOpponentNames.Take(numberOfOpponents).ToArray()); // Set Opponents
+        }
+
+        /// <summary>
+        /// Set Opponents initially
+        /// </summary>
+        /// <param name="opponentNames">Names of Opponents</param>
+        /// <exception cref="ArgumentException">Exception thrown when no names or invalid name for Opponents were passed in</exception>
+        private void SetUpOpponentsInitially(string[] opponentNames)
+        {
             // If no opponent names in array
-            if(opponentNames.Length == 0)
+            if (opponentNames.Length == 0)
             {
                 throw new ArgumentException("Cannot create a new instance of GameController because no names for Opponents were passed in", nameof(opponentNames)); // Throw exception
             }
 
-            // Set up initial game with specific Opponent names and House file name
-            SetUpInitialGameWithSpecificOpponentNamesAndHouseFile(opponentNames, houseFileNameWithoutEnding);
+            // Create list of Opponents with specified names
+            List<Opponent> opponents = new List<Opponent>();
+            try
+            {
+                foreach (string name in opponentNames)
+                {
+                    // If name is null
+                    if(name == null)
+                    {
+                        throw new ArgumentNullException(nameof(opponentNames), "Cannot create a new instance of GameController because opponent name passed in was null");
+                    }
+
+                    // Create new Opponent and add to list
+                    opponents.Add(new Opponent(name));
+                }
+            }
+            catch(ArgumentNullException e)
+            {
+                throw; // Rethrow exception
+            }
+            catch(ArgumentException e)
+            {
+                throw new ArgumentException($"Cannot create a new instance of GameController because {e.Message}", nameof(opponentNames)); // Throw exception
+            }
+            catch(Exception e)
+            {
+                throw new Exception($"Cannot create a new instance of GameController because {e.Message}"); // Throw exception
+            }
+
+            // Set Opponents
+            SetUpOpponentsInitially(opponents);
         }
 
         /// <summary>
-        /// Set up initial game with specific Opponent names and specific House file name
+        /// Set Opponents initially
         /// </summary>
-        /// <param name="opponentNames">Names of Opponents</param>
-        /// <param name="houseFileName">Name of House layout file without ending or extension</param>
-        private void SetUpInitialGameWithSpecificOpponentNamesAndHouseFile(string[] opponentNames, string houseFileName)
+        /// <param name="opponents">Opponents</param>
+        private void SetUpOpponentsInitially(List<Opponent> opponents)
         {
+            // If no Opponents in list
+            if (opponents.Count() == 0)
+            {
+                throw new ArgumentException("Cannot create a new instance of GameController because no Opponents were passed in", nameof(opponents)); // Throw exception
+            }
+
             // Set Opponents and hiding locations property to new Dictionary
             OpponentsAndHidingLocations = new Dictionary<Opponent, LocationWithHidingPlace>();
 
-            // Create Opponents with specified names and add them to dictionary as keys
-            foreach (string name in opponentNames)
+            // Add Opponents to dictionary as keys
+            foreach (Opponent opponent in opponents)
             {
-                OpponentsAndHidingLocations.Add(new Opponent(name), null);
-            }
+                // If Opponent is null
+                if(opponent == null)
+                {
+                    throw new ArgumentNullException(nameof(opponents), "Cannot create a new instance of GameController because null Opponent was passed in"); // Throw exception
+                }
 
-            // Start game with specified House file
-            RestartGame(houseFileName);
+                // Add Opponent to dictionary with null hiding location
+                OpponentsAndHidingLocations.Add(opponent, null);
+            }
         }
 
         /// <summary>
@@ -236,6 +362,17 @@ namespace HideAndSeek
         public GameController RestartGame(string houseFileNameWithoutEnding)
         {
             House = House.CreateHouse(houseFileNameWithoutEnding);
+            return RestartGame();
+        }
+
+        /// <summary>
+        /// Restart game from beginning in House passed in
+        /// </summary>
+        /// <param name="house">House in which to play game</param>
+        /// <returns>This GameController</returns>
+        public GameController RestartGame(House house)
+        {
+            House = house;
             return RestartGame();
         }
 
@@ -263,7 +400,7 @@ namespace HideAndSeek
             // If the number of hiding places is not equal to the number of Opponents
             if (hidingPlaces.Count() != OpponentsAndHidingLocations.Count())
             {
-                throw new ArgumentOutOfRangeException("hidingPlaces", "The number of hiding places must equal the number of opponents."); // Throw exception
+                throw new ArgumentOutOfRangeException("hidingPlaces", "The number of hiding places must equal the number of opponents"); // Throw exception
             }
 
             // Clear hiding places
@@ -298,7 +435,7 @@ namespace HideAndSeek
             List<LocationWithHidingPlace> hidingPlacesAsObjects = new List<LocationWithHidingPlace>();
 
             // Get each LocationWithHidingPlace object and add it to list
-            foreach(string hidingPlace in hidingPlaces)
+            foreach (string hidingPlace in hidingPlaces)
             {
                 hidingPlacesAsObjects.Add(House.GetLocationWithHidingPlaceByName(hidingPlace));
             }
@@ -317,7 +454,7 @@ namespace HideAndSeek
             List<LocationWithHidingPlace> hidingLocations = new List<LocationWithHidingPlace>();
 
             // Populate list with random hiding locations (1 per Opponent)
-            for(int i = 0; i < OpponentsAndHidingLocations.Count(); i++)
+            for (int i = 0; i < OpponentsAndHidingLocations.Count(); i++)
             {
                 hidingLocations.Add(House.GetRandomLocationWithHidingPlace());
             }
@@ -355,7 +492,7 @@ namespace HideAndSeek
         /// <exception cref="ArgumentException">Exception thrown if direction is invalid</exception>
         public string Move(string direction)
         {
-            return Move( DirectionExtensions.Parse(direction) );
+            return Move(DirectionExtensions.Parse(direction));
         }
 
         /// <summary>
@@ -367,7 +504,7 @@ namespace HideAndSeek
         public string CheckCurrentLocation()
         {
             // If current location does not have a hiding place
-            if( !(CurrentLocation.GetType() == typeof(LocationWithHidingPlace)) )
+            if (!(CurrentLocation.GetType() == typeof(LocationWithHidingPlace)))
             {
                 throw new InvalidOperationException($"There is no hiding place in the {CurrentLocation}"); // Throw new exception with custom error message
             }
@@ -423,16 +560,16 @@ namespace HideAndSeek
 
             // Create dictionary of Opponents and hiding locations as strings
             Dictionary<string, string> opponentsAndHidingPlacesAsStrings = new Dictionary<string, string>();
-            foreach(KeyValuePair<Opponent, LocationWithHidingPlace> kvp in OpponentsAndHidingLocations)
+            foreach (KeyValuePair<Opponent, LocationWithHidingPlace> kvp in OpponentsAndHidingLocations)
             {
                 opponentsAndHidingPlacesAsStrings.Add(kvp.Key.ToString(), kvp.Value.ToString());
             }
 
             // Initialize SavedGame object to store game state data
-            SavedGame savedGame = new SavedGame(House, House.HouseFileName, CurrentLocation.ToString(), 
-                                                MoveNumber, opponentsAndHidingPlacesAsStrings, 
+            SavedGame savedGame = new SavedGame(House, House.HouseFileName, CurrentLocation.ToString(),
+                                                MoveNumber, opponentsAndHidingPlacesAsStrings,
                                                 FoundOpponents.Select((o) => o.Name));
-            
+
             // Save game as JSON to file and return success message
             string savedGameAsJSON = JsonSerializer.Serialize(savedGame); // Convert game's state data to JSON
             FileSystem.File.WriteAllText(fullFileName, savedGameAsJSON); // Save game's state data in file
@@ -455,7 +592,7 @@ namespace HideAndSeek
             string fullFileName = SavedGame.GetFullSavedGameFileName(fileNameWithoutEnding);
 
             // If file does not exist
-            if ( !(FileSystem.File.Exists(fullFileName)) )
+            if (!(FileSystem.File.Exists(fullFileName)))
             {
                 throw new FileNotFoundException($"Cannot load game because file {fileNameWithoutEnding} does not exist"); // Throw exception with custom message
             }
@@ -470,27 +607,27 @@ namespace HideAndSeek
             try
             {
                 savedGame = JsonSerializer.Deserialize<SavedGame>(fileText);
-            } 
-            catch(JsonException e) // If problem due to JSON formatting issue
+            }
+            catch (JsonException e) // If problem due to JSON formatting issue
             {
                 throw new JsonException($"Cannot process because data is corrupt - {e.Message}"); // Throw new exception with custom error message
             }
-            catch(InvalidOperationException e) // If problem due to attempted invalid operation
+            catch (InvalidOperationException e) // If problem due to attempted invalid operation
             {
                 throw new InvalidOperationException($"Cannot process because data is corrupt - {e.Message}"); // Throw new exception with custom error message
             }
-            catch(ArgumentOutOfRangeException e) // If problem due to value out of required range (e.g. MoveNumber not positive)
+            catch (ArgumentOutOfRangeException e) // If problem due to value out of required range (e.g. MoveNumber not positive)
             {
                 string message = $"Cannot process because data is corrupt - {e.Message}";
                 throw new ArgumentOutOfRangeException(e.ParamName, $"Cannot process because data is corrupt - {e.Message}"); // Throw new exception with custom error message
             }
-            catch(ArgumentException e) // If problem due to invalid argument (e.g. House file name is invalid)
+            catch (ArgumentException e) // If problem due to invalid argument (e.g. House file name is invalid)
             {
                 throw new ArgumentException($"Cannot process because data is corrupt - {e.Message}", e.ParamName); // Throw new exception with custom error message
             }
-            catch(NullReferenceException e)
+            catch (NullReferenceException e)
             {
-                if(e.Message == "House has not been set") // If SavedGame House property has not been set
+                if (e.Message == "House has not been set") // If SavedGame House property has not been set
                 {
                     throw new JsonException("Cannot process because data is corrupt - JSON deserialization for type 'HideAndSeek.SavedGame' was missing required properties, including the following: HouseFileName"); // Throw exception with custom error message
                 }
@@ -499,7 +636,7 @@ namespace HideAndSeek
                     throw; // Bubble up exception
                 }
             }
-            catch(Exception)
+            catch (Exception)
             {
                 throw; // Bubble up exception
             }
@@ -528,14 +665,14 @@ namespace HideAndSeek
 
             // Restore dictionary of Opponents and their hiding places, creating new Opponent objects
             OpponentsAndHidingLocations = new Dictionary<Opponent, LocationWithHidingPlace>();
-            foreach(KeyValuePair<string, string> kvp in savedGame.OpponentsAndHidingLocations)
+            foreach (KeyValuePair<string, string> kvp in savedGame.OpponentsAndHidingLocations)
             {
                 OpponentsAndHidingLocations.Add(new Opponent(kvp.Key), House.GetLocationWithHidingPlaceByName(kvp.Value));
             }
 
             // Restore list of found opponents
             FoundOpponents.Clear(); // Clear list of found Opponents
-            foreach(String opponent in savedGame.FoundOpponents) // For each found Opponent
+            foreach (String opponent in savedGame.FoundOpponents) // For each found Opponent
             {
                 FoundOpponents.Add(OpponentsAndHidingLocations.Keys.First((x) => x.Name == opponent)); // Add Opponent object with matching name to FoundOpponents list
             }
@@ -544,11 +681,11 @@ namespace HideAndSeek
             House.ClearHidingPlaces();
 
             // Initialize to dictionary of unfound Opponents who should still be hidden and their hiding locations
-            IDictionary<Opponent, LocationWithHidingPlace> unfoundOpponentsAndHidingLocations = 
+            IDictionary<Opponent, LocationWithHidingPlace> unfoundOpponentsAndHidingLocations =
                         OpponentsAndHidingLocations.Where((kvp) => !(FoundOpponents.Contains(kvp.Key))).ToDictionary();
 
             // Hide each unfound Opponent in their hiding location
-            foreach(KeyValuePair<Opponent, LocationWithHidingPlace> kvp in unfoundOpponentsAndHidingLocations)
+            foreach (KeyValuePair<Opponent, LocationWithHidingPlace> kvp in unfoundOpponentsAndHidingLocations)
             {
                 kvp.Value.HideOpponent(kvp.Key);
             }
@@ -567,7 +704,7 @@ namespace HideAndSeek
             string fullFileName = SavedGame.GetFullSavedGameFileName(fileNameWithoutEnding);
 
             // If file does not exist
-            if ( !(FileSystem.File.Exists(fullFileName)) )
+            if (!(FileSystem.File.Exists(fullFileName)))
             {
                 throw new FileNotFoundException($"Could not delete game because file {fileNameWithoutEnding} does not exist"); // Throw new exception with custom error message
             }

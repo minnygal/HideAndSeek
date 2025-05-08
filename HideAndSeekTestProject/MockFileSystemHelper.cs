@@ -14,8 +14,7 @@ namespace HideAndSeek
     public static class MockFileSystemHelper
     {
         /// <summary>
-        /// Helper method to create and return a mocked file system
-        /// set up to return the specified text
+        /// Helper method to create and return a mocked file system set up to return the specified text
         /// when File.ReadAllText called with specified file name
         /// </summary>
         /// <param name="fileName">Name of file</param>
@@ -27,8 +26,7 @@ namespace HideAndSeek
         }
 
         /// <summary>
-        /// Helper method to create and return a mock file system
-        /// set up to return the specified text
+        /// Helper method to create and return a mock file system set up to return the specified text
         /// when File.ReadAllText called with specified file name
         /// </summary>
         /// <param name="fileName">Name of file</param>

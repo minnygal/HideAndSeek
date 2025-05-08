@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.IO.Abstractions;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -9,9 +8,10 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// Test data for some House tests for creating House objects with CreateHouse method
+    /// Test data for House tests for CreateHouse method
     /// </summary>
-    public static class TestHouse_TestData
+    [TestFixture]
+    public static class TestHouse_CreateHouse_TestData
     {
         /// <summary>
         /// Text representing default House for tests serialized
@@ -401,60 +401,6 @@ namespace HideAndSeek
             }
         }
 
-        /// <summary>
-        /// Get new House object for testing purposes
-        /// </summary>
-        /// <returns>House object for testing purposes</returns>
-        public static House GetDefaultHouse()
-        {
-            // Create Entry and connect to new locations: Garage, Hallway
-            Location entry = new Location("Entry");
-            LocationWithHidingPlace garage = entry.AddExit(Direction.Out, "Garage", "behind the car");
-            Location hallway = entry.AddExit(Direction.East, "Hallway");
-
-            // Connect Hallway to new locations: Kitchen, Bathroom, Living Room, Landing
-            LocationWithHidingPlace kitchen = hallway.AddExit(Direction.Northwest, "Kitchen", "next to the stove");
-            LocationWithHidingPlace bathroom = hallway.AddExit(Direction.North, "Bathroom", "behind the door");
-            LocationWithHidingPlace livingRoom = hallway.AddExit(Direction.South, "Living Room", "behind the sofa");
-            Location landing = hallway.AddExit(Direction.Up, "Landing");
-
-            // Connect Landing to new locations: Attic, Kids Room, Master Bedroom, Nursery, Pantry, Second Bathroom
-            LocationWithHidingPlace attic = landing.AddExit(Direction.Up, "Attic", "in a trunk");
-            LocationWithHidingPlace kidsRoom = landing.AddExit(Direction.Southeast, "Kids Room", "in the bunk beds");
-            LocationWithHidingPlace masterBedroom = landing.AddExit(Direction.Northwest, "Master Bedroom", "under the bed");
-            LocationWithHidingPlace nursery = landing.AddExit(Direction.Southwest, "Nursery", "behind the changing table");
-            LocationWithHidingPlace pantry = landing.AddExit(Direction.South, "Pantry", "inside a cabinet");
-            LocationWithHidingPlace secondBathroom = landing.AddExit(Direction.West, "Second Bathroom", "in the shower");
-
-            // Connect Master Bedroom to new location: Master Bath
-            LocationWithHidingPlace masterBath = masterBedroom.AddExit(Direction.East, "Master Bath", "in the tub");
-
-            // Create list of Location objects (no hiding places)
-            IEnumerable<Location> locationsWithoutHidingPlaces = new List<Location>()
-            {
-                hallway, landing, entry
-            };
-
-            // Create list of LocationWithHidingPlace objects
-            IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces = new List<LocationWithHidingPlace>()
-            {
-                attic,
-                bathroom,
-                kidsRoom,
-                masterBedroom,
-                nursery,
-                pantry,
-                secondBathroom,
-                kitchen,
-                masterBath,
-                garage,
-                livingRoom
-            };
-
-            // Create and return new House
-            return new House("my house", "DefaultHouse", "Entry", locationsWithoutHidingPlaces, locationsWithHidingPlaces);
-        }
-
         public static IEnumerable TestCases_For_Test_House_CreateHouse_AndCheckErrorMessage_WhenFileFormatIsInvalid
         {
             get
@@ -788,8 +734,17 @@ namespace HideAndSeek
                         "{" +
                            DefaultHouse_Serialized_Name + "," +
                            DefaultHouse_Serialized_HouseFileName + "," +
-                           DefaultHouse_Serialized_PlayerStartingPoint + "," + 
-                           DefaultHouse_Serialized_LocationsWithoutHidingPlaces + "," +
+                           DefaultHouse_Serialized_PlayerStartingPoint + "," +
+                           "\"LocationsWithoutHidingPlaces\":" +
+                           "[" +
+                                "{" +
+                                    "\"Name\":\"Entry\"," +
+                                    "\"ExitsForSerialization\":" +
+                                    "{" +
+                                        "\"Up\":\"Attic\"" +
+                                    "}" +
+                                "}" +
+                           "]" + "," +
                            "\"LocationsWithHidingPlaces\":" +
                            "[" +
                                 "{" +
@@ -967,47 +922,6 @@ namespace HideAndSeek
                            "]" +
                        "}")
                    .SetName("Test_House_CreateHouse_AndCheckErrorMessage_WhenFileDataHasInvalidValue_NonexistentLocation - LocationsWithHidingPlaces");
-            }
-        }
-
-        public static IEnumerable TestCases_For_Test_House_GetHouseFileNames_SingleHouseFile
-        {
-            get
-            {
-                // No directory path passed in
-                yield return new TestCaseData(() => House.GetHouseFileNames())
-                    .SetName("Test_House_GetHouseFileNames_SingleHouseFile - no argument");
-
-                // Directory path passed in
-                yield return new TestCaseData(() => House.GetHouseFileNames("C:\\Users\\Tester\\Desktop\\HideAndSeekConsole"))
-                    .SetName("Test_House_GetHouseFileNames_SingleHouseFile - directory name");
-            }
-        }
-
-        public static IEnumerable TestCases_For_Test_House_GetHouseFileNames_MultipleHouseFiles
-        {
-            get
-            {
-                // No directory path passed in
-                yield return new TestCaseData(() => House.GetHouseFileNames())
-                    .SetName("Test_House_GetHouseFileNames_MultipleHouseFiles - no argument");
-
-                // Directory path passed in
-                yield return new TestCaseData(() => House.GetHouseFileNames("C:\\Users\\Tester\\Desktop\\HideAndSeekConsole"))
-                    .SetName("Test_House_GetHouseFileNames_MultipleHouseFiles - directory name");
-            }
-        }
-
-        public static IEnumerable TestCases_For_Test_House_GetHouseFileNames_NoHouseFiles
-        {
-            get {
-                // No directory path passed in
-                yield return new TestCaseData(() => House.GetHouseFileNames())
-                    .SetName("Test_House_GetHouseFileNames_NoHouseFiles - no argument");
-
-                // Directory path passed in
-                yield return new TestCaseData(() => House.GetHouseFileNames("C:\\Users\\Tester\\Desktop\\HideAndSeekConsole"))
-                    .SetName("Test_House_GetHouseFileNames_NoHouseFiles - directory name");
             }
         }
     }

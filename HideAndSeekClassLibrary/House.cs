@@ -33,8 +33,7 @@ namespace HideAndSeek
      * -I added a method to get a LocationWithHidingPlace by name.
      * -I renamed a method to GetRandomExit to follow project method naming convention.
      * -I used ElementAt instead of Skip in GetRandomExit.
-     * -I added a method to get a random hiding place using logic from 
-     *  Andrew Stellman and Jennifer Greene's HideAndSeek project's Opponent class's Hide method.
+     * -I added a method to get a random hiding place.
      * -I added methods to hide all opponents to ensure hiding places are cleared before
      *  opponents are rehidden.
      * -I selected LocationWithHidingPlace objects in foreach header instead of using if statement in body
@@ -228,7 +227,7 @@ namespace HideAndSeek
         private string _playerStartingPoint;
 
         /// <summary>
-        /// Player starting point in House as string
+        /// Player starting point in House as string - DO NOT SET MANUALLY - for serialization/deserialization use only
         /// </summary>
         /// <exception cref="ArgumentException">Exception thrown if value passed to setter is invalid (empty of contains whitespace)</exception>
         [JsonRequired]
@@ -270,7 +269,7 @@ namespace HideAndSeek
                 // If Location is null or does not exist in House
                 if ( value == null || !(DoesLocationExist(value.Name)) )
                 {
-                    throw new InvalidOperationException($"player starting point location \"{value}\" does not exist in House"); // Throw exception
+                    throw new InvalidOperationException($"starting point location \"{value}\" does not exist in House"); // Throw exception
                 }
 
                 // Set backing field and property for JSON serialization
@@ -279,16 +278,61 @@ namespace HideAndSeek
             }
         }
 
+        private IEnumerable<Location> _locationsWithoutHidingPlaces;
+
         /// <summary>
         /// List of all Locations without hiding places in House
+        /// DO NOT MANUALLY CALL SETTER - call SetLocationsWithoutHidingPlaces method instead
+        /// This setter does NOT check that StartingPoint is still in House
         /// </summary>
+        /// <exception cref="ArgumentException">Exception thrown if LocationWithHidingPlace passed in to setter</exception>
         [JsonRequired]
-        public IEnumerable<Location> LocationsWithoutHidingPlaces { get; set; }
+        public IEnumerable<Location> LocationsWithoutHidingPlaces
+        {
+            get
+            {
+                return _locationsWithoutHidingPlaces;
+            }
+            set
+            {
+                // If any object passed in is a LocationWithHidingPlace
+                foreach(Location location in value)
+                {
+                    if(location.GetType() == typeof(LocationWithHidingPlace))
+                    {
+                        throw new ArgumentException($"LocationWithHidingPlace \"{location.Name}\" passed to LocationsWithoutHidingPlaces setter", nameof(value)); // Throw exception
+                    }
+                }
+
+                // Set backing field
+                _locationsWithoutHidingPlaces = value;
+            }
+        }
+
+        /// <summary>
+        /// Set LocationsWithoutHidingPlaces property, checking that StartingPoint is still in the House
+        /// </summary>
+        /// <param name="locations">Enumerable to set LocationsWithoutHidingPlaces property to</param>
+        /// <exception cref="InvalidOperationException">Exception thrown if StartingPoint is not in locations passed in or LocationsWithHidingPlaces</exception>
+        /// <exception cref="ArgumentException">Exception thrown if LocationWithHidingPlace passed in</exception>
+        public void SetLocationsWithoutHidingPlaces(IEnumerable<Location> locations)
+        {
+            // If StartingPoint is not in locations passed in or LocationsWithHidingPlaces
+            if( !(locations.Concat(LocationsWithHidingPlaces).Contains(StartingPoint)) )
+            {
+                throw new InvalidOperationException("StartingPoint is not in LocationsWithHidingPlaces or the locations passed in"); // Throw exception
+            }
+
+            // Set property (any exception thrown bubbles up)
+            LocationsWithoutHidingPlaces = locations;
+        }
 
         private IEnumerable<LocationWithHidingPlace> _locationsWithHidingPlaces;
 
         /// <summary>
         /// List of all LocationWithHidingPlace objects in House
+        /// DO NOT MANUALLY CALL SETTER - call SetLocationsWithHidingPlaces method instead
+        /// This setter does NOT check that StartingPoint is still in House
         /// </summary>
         /// <exception cref="ArgumentException">Exception thrown if value passed to setter is empty list</exception>
         [JsonRequired]
@@ -311,32 +355,30 @@ namespace HideAndSeek
             }
         }
 
-        private IEnumerable<Location> _locations;
+        /// <summary>
+        /// Set LocationsWithHidingPlaces property, checking that StartingPoint is still in the House
+        /// </summary>
+        /// <param name="locationsWithHidingPlaces">Enumerable to set LocationsWithHidingPlaces property to</param>
+        /// <exception cref="InvalidOperationException">Exception thrown if StartingPoint is not in locations passed in or LocationsWithoutHidingPlaces</exception>
+        /// <exception cref="ArgumentException">Exception thrown if value passed in is empty list</exception>
+        public void SetLocationsWithHidingPlaces(IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces)
+        {
+            // If StartingPoint is not in locations passed in or LocationsWithoutHidingPlaces
+            if (!(locationsWithHidingPlaces.Concat(LocationsWithoutHidingPlaces).Contains(StartingPoint)))
+            {
+                throw new InvalidOperationException("StartingPoint is not in LocationsWithoutHidingPlaces or the locations passed in"); // Throw exception
+            }
+
+            // Set property (any exception thrown bubbles up)
+            LocationsWithHidingPlaces = locationsWithHidingPlaces;
+        }
 
         /// <summary>
         /// List of all Locations in House
         /// </summary>
-        /// <exception cref="ArgumentException">Exception thrown if value passed to setter is empty list</exception>
         [JsonIgnore]
-        public IEnumerable<Location> Locations
-        {
-            get
-            {
-                return _locations;
-            }
-            set
-            {
-                // If enumerable is empty
-                if(value.Count() == 0)
-                {
-                    throw new ArgumentException("locations list is empty", "value"); // Throw exception
-                }
-
-                // Set backing field
-                _locations = value;
-            }
-        }
-
+        public IEnumerable<Location> Locations => LocationsWithoutHidingPlaces.Concat(LocationsWithHidingPlaces);
+        
         [JsonIgnore]
         /// <summary>
         /// Random number generator (used for returning random hiding place)
@@ -353,39 +395,34 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="name">Name of House</param>
         /// <param name="houseFileName">Name of file in which House layout is stored</param>
-        /// <param name="playerStartingPoint">Name of Location where player should start a new game</param>
+        /// <param name="startingPoint">Location from which player should start a new game</param>
         /// <param name="locationsWithoutHidingPlaces">Enumerable of Location objects (without hiding places)</param>
         /// <param name="locationsWithHidingPlaces">Enumerable of LocationWithHidingPlace objects</param>
         /// <exception cref="InvalidOperationException">Exception thrown if player starting location is not in House</exception>
         [SetsRequiredMembers]
-        public House(string name, string houseFileName, string playerStartingPoint, 
-                     IEnumerable<Location> locationsWithoutHidingPlaces, 
+        public House(string name, string houseFileName, Location startingPoint,
+                     IEnumerable<Location> locationsWithoutHidingPlaces,
                      IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces)
         {
-            // Set all properties except Locations and StartingPoint
+            // Set properties which don't require other properties to be set
             Name = name;
             HouseFileName = houseFileName;
-            PlayerStartingPoint = playerStartingPoint;
             LocationsWithoutHidingPlaces = locationsWithoutHidingPlaces;
             LocationsWithHidingPlaces = locationsWithHidingPlaces;
 
-            // Set Locations and StartingPoint properties
-            SetLocationsAndStartingPoint();
+            // Set StartingPoint (requiring Locations to be set)
+            StartingPoint = startingPoint;
         }
 
         /// <summary>
-        /// Helper method to set Locations and StartingPoint properties
-        /// after LocationsWithoutHidingPlaces and LocationsWithHidingPlaces are set
+        /// Set up House after deserialization
+        /// (set Locations, StartingPoint, and Exits property for each Location in House)
         /// </summary>
-        /// <exception cref="InvalidOperationException">Exception thrown if player starting location is not in House</exception>
-        private void SetLocationsAndStartingPoint()
+        /// <exception cref="InvalidOperationException">Exception thrown if a Location does not exist in House</exception>
+        private void SetUpHouseAfterDeserialization()
         {
-            // Set list of all Locations in House
-            Locations = LocationsWithHidingPlaces.Concat(LocationsWithoutHidingPlaces).ToList();
-
-            // Declare variable to store starting point
-            Location startingPoint;
-
+            // Set StartingPoint property (requiring Locations to be set)
+            Location startingPoint; // Declare variable to store starting point as Location
             try
             {
                 // Attempt to get player starting point location
@@ -398,17 +435,6 @@ namespace HideAndSeek
             {
                 throw new InvalidOperationException($"player starting point location \"{PlayerStartingPoint}\" does not exist in House"); // Throw exception
             }
-        }
-
-        /// <summary>
-        /// Set up House after deserialization
-        /// (set Locations, StartingPoint, and Exits property for each Location in House)
-        /// </summary>
-        /// <exception cref="InvalidOperationException">Exception thrown if a Location does not exist in House</exception>
-        private void SetUpHouseAfterDeserialization()
-        {
-            // Set Locations and StartingPoint properties
-            SetLocationsAndStartingPoint();
 
             // Set Exit list for each Location
             foreach (Location location in Locations)
@@ -464,7 +490,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="name">Name of Location</param>
         /// <returns>True if Location exists</returns>
-        public bool DoesLocationExist(string name)
+        public virtual bool DoesLocationExist(string name)
         {
             return Locations.Select((l) => l.Name).ToList().Contains(name);
         }
@@ -474,7 +500,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="name">Name of LocationWithHidingPlace</param>
         /// <returns>True if LocationWithHidingPlace exists</returns>
-        public bool DoesLocationWithHidingPlaceExist(string name)
+        public virtual bool DoesLocationWithHidingPlaceExist(string name)
         {
             return LocationsWithHidingPlaces.Select((l) => l.Name).ToList().Contains(name);
         }
@@ -540,43 +566,10 @@ namespace HideAndSeek
 
         /// <summary>
         /// Get a random location with hiding place
-        /// 
-        /// CREDIT: adapted from HideAndSeek project's Opponent class's Hide method
-        ///         © 2023 Andrew Stellman and Jennifer Greene
-        ///         Published under the MIT License
-        ///         https://github.com/head-first-csharp/fourth-edition/blob/master/Code/Chapter_10/HideAndSeek_part_3/HideAndSeek/Opponent.cs
-        ///         Link valid as of 02-25-2025
-        ///         
-        /// CHANGES:
-        /// -I renamed variables and made them type specific for easier comprehension.
-        /// -I used GetType and typeof instead of "is" in while loop (just my approach).
-        /// -I removed the diagnostic debug line of code because it's unnecessary right now.
-        /// -I removed House class specifiers before method calls (unnecessary in House class).
-        /// -I added comments for easier reading.
-        /// </summary>
         /// <returns>Random location with hiding place</returns>
         public LocationWithHidingPlace GetRandomLocationWithHidingPlace()
         {
-            // Current Location of Opponent moving through House to find hiding place
-            Location opponentCurrentLocation = StartingPoint;
-
-            // Minimum number of moves Opponent must make through House to find a LocationWithHidingPlace
-            int minNumberOfMoves = Random.Next(10, 51);
-
-            // Move through Locations in House via random exits between 10 and 50 times (inclusive)
-            for (int currentMove = 0; currentMove < minNumberOfMoves; currentMove++)
-            {
-                opponentCurrentLocation = GetRandomExit(opponentCurrentLocation);
-            }
-
-            // Keep moving until Opponent is in LocationWithHidingPlace
-            while (opponentCurrentLocation.GetType() != typeof(LocationWithHidingPlace))
-            {
-                opponentCurrentLocation = GetRandomExit(opponentCurrentLocation);
-            }
-
-            // Return LocationWithHidingPlace
-            return (LocationWithHidingPlace)opponentCurrentLocation;
+            return LocationsWithHidingPlaces.ElementAt(Random.Next(LocationsWithHidingPlaces.Count()));
         }
     }
 }

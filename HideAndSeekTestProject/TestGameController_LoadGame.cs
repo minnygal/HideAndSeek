@@ -12,30 +12,43 @@ namespace HideAndSeek
     /// <summary>
     /// GameController tests for LoadGame method to load saved game from file
     /// (not including tests with corrupt House file)
+    /// 
+    /// These are integration tests using SavedGame, House, Opponent, Location, and LocationWithHidingPlace.
+    /// Opponent object is mocked in initial GameController instantiation but real Opponents are created in LoadGame.
     /// </summary>
     [TestFixture]
     public class TestGameController_LoadGame
     {
         private GameController gameController;
-        private string message; // Message returned by LoadGame
-        private Exception exception; // Exception thrown by LoadGame
+        private static readonly Opponent[] mockedOpponent = new Opponent[] { new Mock<Opponent>().Object };
 
         [SetUp]
-        public void Setup()
+        public void SetUp()
         {
             gameController = null;
-            message = null;
-            exception = null;
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
-                               "DefaultHouse.house.json", TestGameController_LoadGame_TestData.DefaultHouse_Serialized); // Set mock file system for House property to return default House file text
+            House.FileSystem = new FileSystem(); // Set static House file system to new file system
             GameController.FileSystem = new FileSystem(); // Set static GameController file system to new file system
         }
 
         [OneTimeTearDown]
         public void OneTimeTearDown()
         {
-            House.FileSystem = new FileSystem(); // Set static House file system to new file system
+            House.FileSystem = new FileSystem(); // Set static House file system to new file system 
             GameController.FileSystem = new FileSystem(); // Set static GameController file system to new file system
+        }
+
+        /// <summary>
+        /// Get GameController created with minimal House object and mocked Opponent
+        /// </summary>
+        /// <returns>GameController created with minimal House object and mocked Opponent</returns>
+        private static GameController GetMinimalGameController()
+        {
+            Location entryLocation = new Location("Entry"); // Create entry
+            LocationWithHidingPlace locationWithHidingPlace = new LocationWithHidingPlace("Office", "under the table"); // Create a location with hiding place
+            House house = new House("test house", "TestHouse", entryLocation,
+                              new List<Location>() { entryLocation },
+                              new List<LocationWithHidingPlace>() { locationWithHidingPlace }); // Create House
+            return new GameController(mockedOpponent, house); // Create GameController with House
         }
 
         [TestCase("a", "Game successfully loaded from a")]
@@ -43,138 +56,105 @@ namespace HideAndSeek
         [Category("GameController LoadGame Success")]
         public void Test_GameController_LoadGame_AndCheckSuccessMessage(string fileName, string expected)
         {
+            // Set variable to SavedGame file text
+            string savedGameFileText = 
+                "{" +
+                    "\"HouseFileName\":\"DefaultHouse\"" + "," +
+                    "\"PlayerLocation\":\"Entry\"" + "," +
+                    "\"MoveNumber\":1" + "," +
+                    "\"OpponentsAndHidingLocations\":" +
+                    "{" +
+                        "\"Joe\":\"Kitchen\"," +
+                        "\"Bob\":\"Pantry\"," +
+                        "\"Ana\":\"Bathroom\"," +
+                        "\"Owen\":\"Kitchen\"," +
+                        "\"Jimmy\":\"Pantry\"" +
+                    "}" + "," +
+                    "\"FoundOpponents\":[]" +
+                "}";
+
             // Set up mock for GameController file system
-            GameController.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText($"{fileName}.game.json",
-                                            TestGameController_LoadGame_TestData.SavedGame_Serialized_NoFoundOpponents);
+            GameController.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText($"{fileName}.game.json", savedGameFileText);
 
-            // Create new GameController
-            gameController = new GameController("DefaultHouse");
+            // Set game controller
+            gameController = GetMinimalGameController();
 
-            // Have game controller load game
-            message = gameController.LoadGame(fileName);
-
-            // Assert that return message is as expected
-            Assert.That(message, Is.EqualTo(expected));
+            // Load game and assert that return message is as expected
+            Assert.That(gameController.LoadGame(fileName), Is.EqualTo(expected));
         }
 
-        [TestCaseSource(typeof(TestGameController_LoadGame_TestData),
-                        nameof(TestGameController_LoadGame_TestData.TestCases_For_Test_GameController_LoadGame_WithNoFoundOpponents_AndSameHouse))]
-        public void Test_GameController_LoadGame_WithNoFoundOpponents_AndSameHouse(
-            string savedGameFileText, string houseName, string houseFileName, string houseFileText, string housePlayerStartingPoint,
-            IEnumerable<string> locations, IEnumerable<string> locationsWithoutHidingPlaces, IEnumerable<string> locationsWithHidingPlaces,
-            string currentLocation, int moveNumber, IEnumerable<string> opponents, IEnumerable<string> opponentHidingLocations)
+        [Test]
+        [Category("GameController LoadGame House CurrentLocation MoveNumber OpponentsAndHidingLocations Success")]
+        public void Test_GameController_LoadGame_WithNoFoundOpponents()
         {
             // ARRANGE
-            // Set mock file system for House property
-            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText($"{houseFileName}.house.json", houseFileText);
+            // Set mock file system for House property to return House file text
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
+                "TestHouse.house.json", TestGameController_LoadGame_TestData.CustomTestHouse_Serialized);
 
-            // Set up mock for GameController file system
+            // Set variable to text in SavedGame file
+            string savedGameFileText = 
+                "{" +
+                    "\"HouseFileName\":\"TestHouse\"" + "," +
+                    "\"PlayerLocation\":\"Landing\"" + "," +
+                    "\"MoveNumber\":1" + "," +
+                    "\"OpponentsAndHidingLocations\":" +
+                    "{" +
+                        "\"Joe\":\"Closet\"," +
+                        "\"Bob\":\"Yard\"," +
+                        "\"Ana\":\"Cellar\"," +
+                        "\"Owen\":\"Attic\"," +
+                        "\"Jimmy\":\"Yard\"" +
+                    "}" + "," +
+                    "\"FoundOpponents\":[]" +
+                "}";
+
+            // Set up mock for GameController file system to return SavedGame file text
             GameController.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("my_saved_game.game.json", savedGameFileText);
 
-            // Create new GameController with specified House layout
-            gameController = new GameController(houseFileName);
-
-            // ACT
-            // Have game controller load game and store message
-            message = gameController.LoadGame("my_saved_game");
-
-            // ASSERT
-            // Assert that message is as expected and game state has been restored successfully
-            Assert.Multiple(() =>
-            {
-                // Assert that load game return message is as expected
-                Assert.That(message, Is.EqualTo("Game successfully loaded from my_saved_game"), "LoadGame return message");
-
-                // Assert that House properties are as expected
-                Assert.That(gameController.House.Name, Is.EqualTo(houseName), "House name");
-                Assert.That(gameController.House.HouseFileName, Is.EqualTo(houseFileName), "House file name");
-                Assert.That(gameController.House.PlayerStartingPoint, Is.EqualTo(housePlayerStartingPoint), "House starting point");
-                Assert.That(gameController.House.Locations.Select((l) => l.Name), Is.EquivalentTo(locations), "House all savedGameLocations names");
-                Assert.That(gameController.House.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(locationsWithoutHidingPlaces), "House savedGameLocations without hiding places names");
-                Assert.That(gameController.House.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(locationsWithHidingPlaces), "House savedGameLocations with hiding places names");
-
-                // Assert that GameController properties are as expected
-                Assert.That(gameController.CurrentLocation.Name, Is.EqualTo(currentLocation), "player location");
-                Assert.That(gameController.MoveNumber, Is.EqualTo(moveNumber), "move number");
-                Assert.That(gameController.OpponentsAndHidingLocations.Select((x) => x.Key.Name), Is.EquivalentTo(opponents), "all savedGameOpponents");
-                Assert.That(gameController.OpponentsAndHidingLocations.Select((x) => x.Value.Name), Is.EquivalentTo(opponentHidingLocations), "savedGameOpponents' hiding places");
-                Assert.That(gameController.FoundOpponents, Is.Empty, "no savedGameOpponents found");
-
-                // Assert that savedGameLocations with hiding places that should not have hidden Opponents do not have any hidden Opponents
-                gameController.House.LocationsWithHidingPlaces.Where((l) => !(opponentHidingLocations.Distinct().Contains(l.Name))).ToList().ForEach((l) =>
-                {
-                    Assert.That(l.CheckHidingPlace, Is.Empty, $"no Opponents hiding in the {l.Name}");
-                });
-            });
-        }
-
-        [TestCaseSource(typeof(TestGameController_LoadGame_TestData),
-                        nameof(TestGameController_LoadGame_TestData.TestCases_For_Test_GameController_LoadGame_WithNoFoundOpponents_AndDifferentHouse))]
-        public void Test_GameController_LoadGame_WithNoFoundOpponents_AndDifferentHouse(
-            string startHouseName, string startHouseFileName, string startHouseFileText, string startHousePlayerStartingPoint, // Starting House file name and properties
-            IEnumerable<string> startHouseLocations, IEnumerable<string> startHouseLocationsWithoutHidingPlaces, IEnumerable<string> startHouseLocationsWithHidingPlaces, // Starting House properties
-            string savedGameHouseName, string savedGameHouseFileName, string savedGameHouseFileText, string savedGamePlayerStartingPoint, // SavedGame House file name and properties
-            IEnumerable<string> savedGameLocations, IEnumerable<string> savedGameLocationsWithoutHidingPlaces, IEnumerable<string> savedGameLocationsWithHidingPlaces, // SavedGame House properties
-            string savedGameFileText, string savedGameCurrentLocation, int savedGameMoveNumber, IEnumerable<string> savedGameOpponents, IEnumerable<string> savedGameOpponentHidingLocations // SavedGame file text and properties
-            )
-        {
-            // ARRANGE
-            // Set mock file System for House
-            Mock<IFileSystem> houseFileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText($"{startHouseFileName}.house.json", startHouseFileText); // Mock House file for GameController creation
-            houseFileSystem = MockFileSystemHelper.SetMockOfFileSystem_ToReadAllText(houseFileSystem, $"{savedGameHouseFileName}.house.json", savedGameHouseFileText); // Mock House file for SavedGame
-            House.FileSystem = houseFileSystem.Object; // Set House file system property
-
-            // Set up mock for GameController file system
-            GameController.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("my_saved_game.game.json", savedGameFileText);
-
-            // Create new GameController with specified House layout for starting game
-            gameController = new GameController(startHouseFileName);
+            // Set game controller
+            gameController = GetMinimalGameController();
 
             Assert.Multiple(() =>
             {
-                // Assert that GameController's House's properties are as expected when GameController created but before loading game
-                Assert.That(gameController.House.Name, Is.EqualTo(startHouseName), "starting House name");
-                Assert.That(gameController.House.HouseFileName, Is.EqualTo(startHouseFileName), "starting House file name");
-                Assert.That(gameController.House.PlayerStartingPoint, Is.EqualTo(startHousePlayerStartingPoint), "starting House player starting point");
-                Assert.That(gameController.House.Locations.Select((l) => l.Name), Is.EquivalentTo(startHouseLocations), "starting House all location names");
-                Assert.That(gameController.House.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(startHouseLocationsWithoutHidingPlaces), "starting House locations without hiding places names");
-                Assert.That(gameController.House.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(startHouseLocationsWithHidingPlaces), "starting House locations with hiding places names");
-
-                // ACT
-                // Have game controller load game and store message
-                message = gameController.LoadGame("my_saved_game");
-
-                // ASSERT
-                // Assert that load game return message is as expected
-                Assert.That(message, Is.EqualTo("Game successfully loaded from my_saved_game"), "LoadGame return message");
+                // ACT/ASSERT
+                // Have game controller load game and assert that return message is as expected
+                Assert.That(gameController.LoadGame("my_saved_game"), Is.EqualTo("Game successfully loaded from my_saved_game"), "LoadGame return message");
 
                 // Assert that GameController's House's properties are as expected after loading game
-                Assert.That(gameController.House.Name, Is.EqualTo(savedGameHouseName), "loaded House name");
-                Assert.That(gameController.House.HouseFileName, Is.EqualTo(savedGameHouseFileName), "loaded House file name");
-                Assert.That(gameController.House.PlayerStartingPoint, Is.EqualTo(savedGamePlayerStartingPoint), "loaded House player starting point");
-                Assert.That(gameController.House.Locations.Select((l) => l.Name), Is.EquivalentTo(savedGameLocations), "loaded House all location names");
-                Assert.That(gameController.House.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(savedGameLocationsWithoutHidingPlaces), "loaded House locations without hiding places names");
-                Assert.That(gameController.House.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(savedGameLocationsWithHidingPlaces), "loaded House locations with hiding places names");
+                Assert.That(gameController.House.Name, Is.EqualTo("test house"), "loaded House name");
+                Assert.That(gameController.House.HouseFileName, Is.EqualTo("TestHouse"), "loaded House file name");
+                Assert.That(gameController.House.PlayerStartingPoint, Is.EqualTo("Landing"), "loaded House player starting point");
+                Assert.That(gameController.House.Locations.Select((l) => l.Name), 
+                    Is.EquivalentTo(TestGameController_LoadGame_TestData.CustomTestHouse_Locations), "loaded House all location names");
+                Assert.That(gameController.House.LocationsWithoutHidingPlaces.Select((l) => l.Name), 
+                    Is.EquivalentTo(TestGameController_LoadGame_TestData.CustomTestHouse_LocationsWithoutHidingPlaces), "loaded House locations without hiding places names");
+                Assert.That(gameController.House.LocationsWithHidingPlaces.Select((l) => l.Name), 
+                    Is.EquivalentTo(TestGameController_LoadGame_TestData.CustomTestHouse_LocationsWithHidingPlaces), "loaded House locations with hiding places names");
 
-                // Assert that GameController properties are as expected
-                Assert.That(gameController.CurrentLocation.Name, Is.EqualTo(savedGameCurrentLocation), "player location");
-                Assert.That(gameController.MoveNumber, Is.EqualTo(savedGameMoveNumber), "move number");
-                Assert.That(gameController.OpponentsAndHidingLocations.Select((x) => x.Key.Name), Is.EquivalentTo(savedGameOpponents), "all savedGameOpponents");
-                Assert.That(gameController.OpponentsAndHidingLocations.Select((x) => x.Value.Name), Is.EquivalentTo(savedGameOpponentHidingLocations), "savedGameOpponents' hiding places");
-                Assert.That(gameController.FoundOpponents, Is.Empty, "no savedGameOpponents found");
+                // Assert that GameController properties are as expected after loading game
+                Assert.That(gameController.CurrentLocation.Name, Is.EqualTo("Landing"), "player location");
+                Assert.That(gameController.MoveNumber, Is.EqualTo(1), "move number");
+                Assert.That(gameController.OpponentsAndHidingLocations.Select((x) => x.Key.Name), 
+                    Is.EquivalentTo(new List<string>() { "Joe", "Bob", "Ana", "Owen", "Jimmy" }), "all opponents");
+                Assert.That(gameController.OpponentsAndHidingLocations.Select((x) => x.Value.Name), 
+                    Is.EquivalentTo(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" }), "opponents' hiding places");
+                Assert.That(gameController.FoundOpponents, Is.Empty, "no opponents found");
 
                 // Assert that locations with hiding places that should not have hidden Opponents do not have any hidden Opponents
-                gameController.House.LocationsWithHidingPlaces.Where((l) => !(savedGameOpponentHidingLocations.Distinct().Contains(l.Name))).ToList().ForEach((l) =>
-                {
-                    Assert.That(l.CheckHidingPlace, Is.Empty, $"no Opponents hiding in the {l.Name}");
-                });
+                gameController.House.LocationsWithHidingPlaces.Where((l) => !(new List<string>(){ "Closet", "Yard", "Cellar", "Attic" }.Contains(l.Name)))
+                                                              .ToList().ForEach((l) =>
+                                                              {
+                                                                  Assert.That(l.CheckHidingPlace(), Is.Empty, $"no Opponents hiding in the {l.Name}");
+                                                              });
             });
         }
 
+
         [TestCaseSource(typeof(TestGameController_LoadGame_TestData),
-            nameof(TestGameController_LoadGame_TestData.TestCases_For_Test_GameController_LoadGame_WithFoundOpponents_AndSameHouse))]
+            nameof(TestGameController_LoadGame_TestData.TestCases_For_Test_GameController_LoadGame_WithFoundOpponents))]
         [Category("GameController LoadGame Success")]
-        public void Test_GameController_LoadGame_WithFoundOpponents_AndSameHouse(
+        public void Test_GameController_LoadGame_WithFoundOpponents(
             string playerLocation, int moveNumber, List<string> foundOpponents, Action<IEnumerable<LocationWithHidingPlace>> CheckHidingPlacesWithOpponents)
         {
             // Initialize variable to serialized SavedGame
@@ -183,113 +163,55 @@ namespace HideAndSeek
                     "\"HouseFileName\":\"DefaultHouse\"" + "," +
                    $"\"PlayerLocation\":\"{playerLocation}\"" + "," +
                    $"\"MoveNumber\":{moveNumber}" + "," +
-                    TestGameController_LoadGame_TestData.SavedGame_Serialized_OpponentsAndHidingLocations_DefaultHouse + "," +
+                    "\"OpponentsAndHidingLocations\":" +
+                    "{" +
+                        "\"Joe\":\"Kitchen\"," +
+                        "\"Bob\":\"Pantry\"," +
+                        "\"Ana\":\"Bathroom\"," +
+                        "\"Owen\":\"Kitchen\"," +
+                        "\"Jimmy\":\"Pantry\"" +
+                    "}" + "," +
                    $"\"FoundOpponents\":[{string.Join(",", foundOpponents.Select((o) => $"\"{o}\""))}]" +
                 "}";
-
-            // Set up mock for file system for GameController
+            
+            // Set up mock for file system for GameController to return SavedGame file text
             GameController.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("my_saved_game.game.json", savedGameFileText);
 
-            // Create new game controller
-            gameController = new GameController("DefaultHouse");
+            // Set up mock file system for House property to return default House file text
+            House.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText(
+                               "DefaultHouse.house.json", TestGameController_LoadGame_TestData.DefaultHouse_Serialized);
 
-            // Load game from SavedGame file and get message
-            message = gameController.LoadGame("my_saved_game");
+            // Get game controller
+            gameController = GetMinimalGameController();
 
-            // Assert that message is as expected and game state has been restored successfully
             Assert.Multiple(() =>
             {
-                // Assert that LoadGame return message is as expected
-                Assert.That(message, Is.EqualTo("Game successfully loaded from my_saved_game"), "LoadGame return message");
+                //ACT/ASSERT
+                // Have game controller load game and assert that load game return message is as expected
+                Assert.That(gameController.LoadGame("my_saved_game"), Is.EqualTo("Game successfully loaded from my_saved_game"), "LoadGame return message");
 
                 // Assert that House properties are as expected
                 Assert.That(gameController.House.Name, Is.EqualTo("my house"), "House name");
                 Assert.That(gameController.House.HouseFileName, Is.EqualTo("DefaultHouse"), "House file name");
                 Assert.That(gameController.House.PlayerStartingPoint, Is.EqualTo("Entry"), "House starting point");
-                Assert.That(gameController.House.Locations.Select((l) => l.Name), Is.EquivalentTo(TestGameController_LoadGame_TestData.DefaultHouse_Locations), "House all savedGameLocations names");
-                Assert.That(gameController.House.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestGameController_LoadGame_TestData.DefaultHouse_LocationsWithoutHidingPlaces), "House savedGameLocations without hiding places names");
-                Assert.That(gameController.House.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestGameController_LoadGame_TestData.DefaultHouse_LocationsWithHidingPlaces), "House savedGameLocations with hiding places names");
+                Assert.That(gameController.House.Locations.Select((l) => l.Name), Is.EquivalentTo(TestGameController_LoadGame_TestData.DefaultHouse_Locations), "House all opponent names");
+                Assert.That(gameController.House.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestGameController_LoadGame_TestData.DefaultHouse_LocationsWithoutHidingPlaces), "House opponent without hiding places names");
+                Assert.That(gameController.House.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestGameController_LoadGame_TestData.DefaultHouse_LocationsWithHidingPlaces), "House opponent with hiding places names");
 
                 // Assert that GameController properties are as expected
                 Assert.That(gameController.CurrentLocation.Name, Is.EqualTo(playerLocation), "player location");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(moveNumber), "move number");
-                Assert.That(gameController.OpponentsAndHidingLocations.Select((x) => x.Key.Name), Is.EquivalentTo(TestGameController_LoadGame_TestData.SavedGame_OpponentsAndHidingPlaces_InDefaultHouse.Keys.ToList()), "all savedGameOpponents");
-                Assert.That(gameController.OpponentsAndHidingLocations.Select((x) => x.Value.Name), Is.EquivalentTo(TestGameController_LoadGame_TestData.SavedGame_OpponentsAndHidingPlaces_InDefaultHouse.Values.ToList()), "savedGameOpponents' hiding places");
-                Assert.That(gameController.FoundOpponents.Select((x) => x.Name), Is.EquivalentTo(foundOpponents), "found savedGameOpponents");
+                Assert.That(gameController.OpponentsAndHidingLocations.Select((x) => x.Key.Name), 
+                    Is.EquivalentTo(new List<string>() { "Joe", "Bob", "Ana", "Owen", "Jimmy" }), "all opponents");
+                Assert.That(gameController.OpponentsAndHidingLocations.Select((x) => x.Value.Name), 
+                    Is.EquivalentTo(new List<string>() { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry" }), "opponents' hiding places");
+                Assert.That(gameController.FoundOpponents.Select((x) => x.Name), Is.EquivalentTo(foundOpponents), "found opponents");
 
                 // Check hiding places that should have Opponents still hidden there and make sure Opponents found are as expected
                 CheckHidingPlacesWithOpponents(gameController.House.LocationsWithHidingPlaces);
 
                 // Assert that all hiding places which had no Opponents hidden there in this game are empty
-                gameController.House.LocationsWithHidingPlaces.Where((l) => !(TestGameController_LoadGame_TestData.SavedGame_OpponentsAndHidingPlaces_InDefaultHouse
-                                                                              .Select((kvp) => kvp.Value).Distinct().Contains(l.Name)))
-                                                              .ToList().ForEach((l) =>
-                                                              {
-                                                                  Assert.That(l.CheckHidingPlace, Is.Empty, $"no Opponents hiding in the {l.Name}");
-                                                              });
-            });
-        }
-
-        [TestCaseSource(typeof(TestGameController_LoadGame_TestData),
-            nameof(TestGameController_LoadGame_TestData.TestCases_For_Test_GameController_LoadGame_WithFoundOpponents_AndDifferentHouse))]
-        [Category("GameController LoadGame Success")]
-        public void Test_GameController_LoadGame_WithFoundOpponents_AndDifferentHouse(
-            string savedGameCurrentLocation, int savedGameMoveNumber, List<string> savedGameFoundOpponents, // SavedGame properties
-            Action<IEnumerable<LocationWithHidingPlace>> CheckHidingPlacesWithOpponents // Check hiding places action
-            )
-        {
-            // ARRANGE
-            // Set mock file System for House
-            Mock<IFileSystem> houseFileSystem = MockFileSystemHelper.GetMockOfFileSystem_ToReadAllText($"TestHouse.house.json", TestGameController_LoadGame_TestData.CustomTestHouse_Serialized); // Mock House file for GameController creation
-            houseFileSystem = MockFileSystemHelper.SetMockOfFileSystem_ToReadAllText(houseFileSystem, "DefaultHouse.house.json", TestGameController_LoadGame_TestData.DefaultHouse_Serialized); // Mock House file for SavedGame
-            House.FileSystem = houseFileSystem.Object; // Set House file system property
-
-            // Initialize variable to serialized SavedGame
-            string savedGameFileText =
-                "{" +
-                    "\"HouseFileName\":\"DefaultHouse\"" + "," +
-                   $"\"PlayerLocation\":\"{savedGameCurrentLocation}\"" + "," +
-                   $"\"MoveNumber\":{savedGameMoveNumber}" + "," +
-                    TestGameController_LoadGame_TestData.SavedGame_Serialized_OpponentsAndHidingLocations_DefaultHouse + "," +
-                   $"\"FoundOpponents\":[{string.Join(",", savedGameFoundOpponents.Select((o) => $"\"{o}\""))}]" +
-                "}";
-
-            // Set up mock for GameController file system
-            GameController.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("my_saved_game.game.json", savedGameFileText);
-
-            // Create new game controller
-            gameController = new GameController("TestHouse");
-
-            // Load game from SavedGame file and get message
-            message = gameController.LoadGame("my_saved_game");
-
-            // Assert that message is as expected and game state has been restored successfully
-            Assert.Multiple(() =>
-            {
-                // Assert that LoadGame return message is as expected
-                Assert.That(message, Is.EqualTo("Game successfully loaded from my_saved_game"), "LoadGame return message");
-
-                // Assert that House properties are as expected
-                Assert.That(gameController.House.Name, Is.EqualTo("my house"), "House name");
-                Assert.That(gameController.House.HouseFileName, Is.EqualTo("DefaultHouse"), "House file name");
-                Assert.That(gameController.House.PlayerStartingPoint, Is.EqualTo("Entry"), "House starting point");
-                Assert.That(gameController.House.Locations.Select((l) => l.Name), Is.EquivalentTo(TestGameController_LoadGame_TestData.DefaultHouse_Locations), "House all savedGameLocations names");
-                Assert.That(gameController.House.LocationsWithoutHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestGameController_LoadGame_TestData.DefaultHouse_LocationsWithoutHidingPlaces), "House savedGameLocations without hiding places names");
-                Assert.That(gameController.House.LocationsWithHidingPlaces.Select((l) => l.Name), Is.EquivalentTo(TestGameController_LoadGame_TestData.DefaultHouse_LocationsWithHidingPlaces), "House savedGameLocations with hiding places names");
-
-                // Assert that GameController properties are as expected
-                Assert.That(gameController.CurrentLocation.Name, Is.EqualTo(savedGameCurrentLocation), "player location");
-                Assert.That(gameController.MoveNumber, Is.EqualTo(savedGameMoveNumber), "move number");
-                Assert.That(gameController.OpponentsAndHidingLocations.Select((x) => x.Key.Name), Is.EquivalentTo(TestGameController_LoadGame_TestData.SavedGame_OpponentsAndHidingPlaces_InDefaultHouse.Keys.ToList()), "all savedGameOpponents");
-                Assert.That(gameController.OpponentsAndHidingLocations.Select((x) => x.Value.Name), Is.EquivalentTo(TestGameController_LoadGame_TestData.SavedGame_OpponentsAndHidingPlaces_InDefaultHouse.Values.ToList()), "savedGameOpponents' hiding places");
-                Assert.That(gameController.FoundOpponents.Select((x) => x.Name), Is.EquivalentTo(savedGameFoundOpponents), "found opponents");
-
-                // Check hiding places that should have Opponents still hidden there and make sure Opponents found are as expected
-                CheckHidingPlacesWithOpponents(gameController.House.LocationsWithHidingPlaces);
-
-                // Assert that all hiding places which had no Opponents hidden there in this game are empty
-                gameController.House.LocationsWithHidingPlaces.Where((l) => !(TestGameController_LoadGame_TestData.SavedGame_OpponentsAndHidingPlaces_InDefaultHouse
-                                                                              .Select((kvp) => kvp.Value).Distinct().Contains(l.Name)))
+                gameController.House.LocationsWithHidingPlaces.Where((l) => !(new List<string>() { "Kitchen", "Pantry", "Bathroom" }.Contains(l.Name)))
                                                               .ToList().ForEach((l) =>
                                                               {
                                                                   Assert.That(l.CheckHidingPlace, Is.Empty, $"no Opponents hiding in the {l.Name}");
@@ -302,10 +224,21 @@ namespace HideAndSeek
         public void Test_GameController_LoadGame_AndCheckErrorMessage_ForInvalidFileName(
             [Values("", " ", "my saved game", "my\\saved\\game", "my/saved/game", "my/saved\\ game")] string fileName)
         {
-            gameController = new GameController("DefaultHouse");
-            exception = Assert.Throws<ArgumentException>(() => gameController.LoadGame(fileName));
-            Assert.That(exception.Message, Does.StartWith($"Cannot perform action because file name \"{fileName}\" " +
-                                                           "is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+            // Set game controller
+            gameController = GetMinimalGameController();
+
+            Assert.Multiple(() =>
+            {
+                // Assert that loading game with invalid file name raises exception
+                Exception exception = Assert.Throws<ArgumentException>(() =>
+                {
+                    gameController.LoadGame(fileName);
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith($"Cannot perform action because file name \"{fileName}\" " +
+                                                               "is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+            });
         }
 
         [Test]
@@ -317,18 +250,18 @@ namespace HideAndSeek
             mockFileSystemForGameController.Setup(manager => manager.File.Exists("my_nonexistent_file.json")).Returns(false); // Mock that file does not exist
             GameController.FileSystem = mockFileSystemForGameController.Object;
 
-            // Create new game controller
-            gameController = new GameController("DefaultHouse");
+            // Set game controller
+            gameController = GetMinimalGameController();
 
             Assert.Multiple(() =>
             {
                 // Assert that loading a game with a name of a nonexistent file raises an exception
-                exception = Assert.Throws<FileNotFoundException>(() =>
+                Exception exception = Assert.Throws<FileNotFoundException>(() =>
                 {
                     gameController.LoadGame("my_nonexistent_file");
                 });
 
-                // Assert that error message is correct
+                // Assert that exception message is correct
                 Assert.That(exception.Message, Is.EqualTo("Cannot load game because file my_nonexistent_file does not exist"));
             });
         }
@@ -338,73 +271,111 @@ namespace HideAndSeek
         [Category("GameController LoadGame InvalidOperationException Failure")]
         public void Test_GameController_LoadGame_AndCheckErrorMessage_WhenFileDataHasInvalidValue(string endOfExceptionMessage, string textInFile)
         {
-            // Assert that loading corrupt game raises exception
-            exception = Assert.Throws<InvalidOperationException>(() => GetExceptionWhenLoadGameWithCorruptSavedGameFile(textInFile));
+            Assert.Multiple(() =>
+            {
+                // Assert that loading corrupt game raises exception
+                Exception exception = Assert.Throws<InvalidOperationException>(() =>
+                {
+                    GetExceptionWhenLoadGameWithCorruptSavedGameFile(textInFile);
+                });
 
-            // Assert that error message is correct
-            Assert.That(exception.Message, Is.EqualTo($"Cannot process because data is corrupt - {endOfExceptionMessage}"));
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo($"Cannot process because data is corrupt - {endOfExceptionMessage}"));
+            });
         }
 
         [Test]
         [Category("GameController LoadGame ArgumentOutOfRangeException Failure")]
         public void Test_GameController_LoadGame_AndCheckErrorMessage_WhenFileDataHasInvalidValue_ForMoveNumber()
         {
-            // Assert that loading game with invalid savedGameOpponents value raises exception
-            exception = Assert.Throws<ArgumentOutOfRangeException>(() => {
-                GetExceptionWhenLoadGameWithCorruptSavedGameFile(
+            // Set variable to text in SavedGame file
+            string textInFile = 
+                "{" +
+                    "\"HouseFileName\":\"DefaultHouse\"" + "," +
+                    "\"PlayerLocation\":\"Entry\"" + "," +
+                    "\"MoveNumber\":-1" + "," +
+                    "\"OpponentsAndHidingLocations\":" +
                     "{" +
-                        TestGameController_LoadGame_TestData.SavedGame_Serialized_HouseFileName + "," +
-                        TestGameController_LoadGame_TestData.SavedGame_Serialized_PlayerLocation_NoOpponentsGame_DefaultHouse + "," +
-                        "\"MoveNumber\":-1" + "," +
-                        TestGameController_LoadGame_TestData.SavedGame_Serialized_OpponentsAndHidingLocations_DefaultHouse + "," +
-                        TestGameController_LoadGame_TestData.SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
-                    "}");
-            });
+                        "\"Joe\":\"Kitchen\"," +
+                        "\"Bob\":\"Pantry\"," +
+                        "\"Ana\":\"Bathroom\"," +
+                        "\"Owen\":\"Kitchen\"," +
+                        "\"Jimmy\":\"Pantry\"" +
+                    "}" + "," +
+                    "\"FoundOpponents\":[]" +
+                "}";
 
-            // Assert that error message is correct
-            Assert.That(exception.Message, Does.StartWith($"Cannot process because data is corrupt - MoveNumber is invalid - must be positive number"));
+            Assert.Multiple(() =>
+            {
+                // Assert that loading game with invalid move number value raises exception
+                Exception exception = Assert.Throws<ArgumentOutOfRangeException>(() => {
+                    GetExceptionWhenLoadGameWithCorruptSavedGameFile(textInFile);
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith($"Cannot process because data is corrupt - MoveNumber is invalid - must be positive number"));
+            });
         }
 
         [Test]
         [Category("GameController LoadGame ArgumentException Failure")]
         public void Test_GameController_LoadGame_AndCheckErrorMessage_WhenFileDataHasInvalidValue_ForOpponents()
         {
-            // Assert that loading game with invalid savedGameOpponents value raises exception
-            exception = Assert.Throws<ArgumentException>(() => {
-                GetExceptionWhenLoadGameWithCorruptSavedGameFile(
-                    "{" +
-                        TestGameController_LoadGame_TestData.SavedGame_Serialized_HouseFileName + "," +
-                        TestGameController_LoadGame_TestData.SavedGame_Serialized_PlayerLocation_NoOpponentsGame_DefaultHouse + "," +
-                        TestGameController_LoadGame_TestData.SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
-                        "\"OpponentsAndHidingLocations\":{}" + "," +
-                        TestGameController_LoadGame_TestData.SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
-                    "}");
-            });
+            // Set variable to text in SavedGame file
+            string textInFile =
+                "{" +
+                    "\"HouseFileName\":\"DefaultHouse\"" + "," +
+                    "\"PlayerLocation\":\"Entry\"" + "," +
+                    "\"MoveNumber\":1" + "," +
+                    "\"OpponentsAndHidingLocations\":{}" + "," +
+                    "\"FoundOpponents\":[]" +
+                "}";
 
-            // Assert that error message is correct
-            Assert.That(exception.Message, Does.StartWith($"Cannot process because data is corrupt - invalid OpponentsAndHidingLocations - no opponents"));
+            Assert.Multiple(() =>
+            {
+                // Assert that loading game with invalid opponents value raises exception
+                Exception exception = Assert.Throws<ArgumentException>(() => {
+                    GetExceptionWhenLoadGameWithCorruptSavedGameFile(textInFile);
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith($"Cannot process because data is corrupt - invalid OpponentsAndHidingLocations - no opponents"));
+            });
         }
 
         [Test]
         [Category("GameController LoadGame ArgumentException Failure")]
         public void Test_GameController_LoadGame_AndCheckErrorMessage_WhenFileDataHasInvalidValue_ForHouseFileName()
         {
-            // Assert that loading corrupt game raises exception
-            exception = Assert.Throws<ArgumentException>(() => {
-                GetExceptionWhenLoadGameWithCorruptSavedGameFile(
-                        "{" +
-                            "\"HouseFileName\":\"a8}{{ /@uaou12 \"" + "," +
-                            TestGameController_LoadGame_TestData.SavedGame_Serialized_PlayerLocation_NoOpponentsGame_DefaultHouse + "," +
-                            TestGameController_LoadGame_TestData.SavedGame_Serialized_MoveNumber_NoFoundOpponents + "," +
-                            TestGameController_LoadGame_TestData.SavedGame_Serialized_OpponentsAndHidingLocations_DefaultHouse + "," +
-                            TestGameController_LoadGame_TestData.SavedGame_Serialized_FoundOpponents_NoFoundOpponents +
-                        "}");
-            });
+            // Set variable to text in SavedGame file
+            string textInFile =
+                "{" +
+                    "\"HouseFileName\":\"a8}{{ /@uaou12 \"" + "," +
+                    "\"PlayerLocation\":\"Entry\"" + "," +
+                    "\"MoveNumber\":1" + "," +
+                    "\"OpponentsAndHidingLocations\":" +
+                    "{" +
+                        "\"Joe\":\"Kitchen\"," +
+                        "\"Bob\":\"Pantry\"," +
+                        "\"Ana\":\"Bathroom\"," +
+                        "\"Owen\":\"Kitchen\"," +
+                        "\"Jimmy\":\"Pantry\"" +
+                    "}" + "," +
+                    "\"FoundOpponents\":[]" +
+                "}";
 
-            // Assert that error message is correct
-            Assert.That(exception.Message, Does.StartWith("Cannot process because data is corrupt - " +
-                                                          "Cannot perform action because file name \"a8}{{ /@uaou12 \" is invalid " +
-                                                          "(is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+            Assert.Multiple(() =>
+            {
+                // Assert that loading corrupt game raises exception
+                Exception exception = Assert.Throws<ArgumentException>(() => {
+                    GetExceptionWhenLoadGameWithCorruptSavedGameFile(textInFile);
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith("Cannot process because data is corrupt - " +
+                                                              "Cannot perform action because file name \"a8}{{ /@uaou12 \" is invalid " +
+                                                              "(is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+            });
         }
 
         [TestCaseSource(typeof(TestGameController_LoadGame_TestData),
@@ -412,11 +383,17 @@ namespace HideAndSeek
         [Category("GameController LoadGame JsonException Failure")]
         public void Test_GameController_LoadGame_AndCheckErrorMessage_WhenFileFormatIsInvalid(string endOfExceptionMessage, string textInFile)
         {
-            // Assert that loading corrupt game raises exception
-            exception = Assert.Throws<JsonException>(() => GetExceptionWhenLoadGameWithCorruptSavedGameFile(textInFile));
+            Assert.Multiple(() =>
+            {
+                // Assert that loading corrupt game raises exception
+                Exception exception = Assert.Throws<JsonException>(() =>
+                {
+                    GetExceptionWhenLoadGameWithCorruptSavedGameFile(textInFile);
+                });
 
-            // Assert that error message is correct
-            Assert.That(exception.Message, Is.EqualTo($"Cannot process because data is corrupt - {endOfExceptionMessage}"));
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo($"Cannot process because data is corrupt - {endOfExceptionMessage}"));
+            });
         }
 
         /// <summary>
@@ -429,8 +406,8 @@ namespace HideAndSeek
             // Set up mock for GameController file system
             GameController.FileSystem = MockFileSystemHelper.GetMockedFileSystem_ToReadAllText("my_corrupt_game.game.json", savedGameFileText);
 
-            // Create new game controller
-            gameController = new GameController("DefaultHouse");
+            // Get game controller
+            gameController = GetMinimalGameController();
 
             // Load game from corrupt SavedGame file
             gameController.LoadGame("my_corrupt_game"); // Should throw exception
