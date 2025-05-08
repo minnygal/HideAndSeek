@@ -9,7 +9,7 @@ using System.Xml.Linq;
 namespace HideAndSeek
 {
     /// <summary>
-    /// Location tests for properties and methods GetExit, ExitList, AddExit, and SetExitsDictionary
+    /// Location unit tests for properties and methods GetExit, ExitList, AddExit, and SetExitsDictionary
     /// </summary>
     [TestFixture]
     public class TestLocation
@@ -217,7 +217,7 @@ namespace HideAndSeek
         /// and make sure the rooms and return exits are created correctly
         /// </summary>
         [Test]
-        [Category("Location AddExit ExitList")]
+        [Category("Location AddExit ExitList Success")]
         public void Test_Location_AddHall_AndCheckExitLists()
         {
             // Create hallway and add to basement
@@ -266,7 +266,7 @@ namespace HideAndSeek
         /// Call AddExit method with a string name for a new Location and make sure the Location is created and added properly
         /// </summary>
         [Test]
-        [Category("Location AddExit GetExit ExitList")]
+        [Category("Location AddExit GetExit ExitList Success")]
         public void Test_Location_AddExit_WithConstructorAcceptingName()
         {
             // Create expected exit list for yard
@@ -298,7 +298,7 @@ namespace HideAndSeek
         /// and make sure the LocationWithHidingPlace is created and added properly
         /// </summary>
         [Test]
-        [Category("Location AddExit GetExit ExitList")]
+        [Category("Location AddExit GetExit ExitList Success")]
         public void Test_Location_AddExit_WithConstructorAcceptingNameAndHidingPlace()
         {
             // Create expected exit list for yard
@@ -363,7 +363,22 @@ namespace HideAndSeek
             });
         }
 
-        // The test for successful set ExitsForSerialization is in deserialization test
+        [Test]
+        [Category("Location ExitsForSerialization Success")]
+        public void Test_Location_Set_ExitsForSerialization()
+        {
+            // Create dictionary of exits
+            Dictionary<Direction, string> exits = new Dictionary<Direction, string>();
+            exits.Add(Direction.Northeast, "Secret Library");
+            exits.Add(Direction.In, "Secret Snack Corner");
+
+            // Set ExitsForSerialization property
+            northwest_storageRoom.ExitsForSerialization = exits;
+
+            // Assert that property has been set successfully
+            Assert.That(northwest_storageRoom.ExitsForSerialization, Is.EquivalentTo(exits));
+        }
+
         [TestCase("")]
         [TestCase(" ")]
         [Category("Location ExitsForSerialization ArgumentException Failure")]
@@ -498,8 +513,8 @@ namespace HideAndSeek
             // Assert that deserialized Location's Name and ExitsForSerialization properties are as expected
             Assert.Multiple(() =>
             {
-                Assert.That(deserializedLocation.Name, Is.EqualTo("living room"));
-                Assert.That(deserializedLocation.ExitsForSerialization, Is.EquivalentTo(expectedExitsForSerialization));
+                Assert.That(deserializedLocation.Name, Is.EqualTo("living room"), "name");
+                Assert.That(deserializedLocation.ExitsForSerialization, Is.EquivalentTo(expectedExitsForSerialization), "exits for serialization");
             });
         }
 
