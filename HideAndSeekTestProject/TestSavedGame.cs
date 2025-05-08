@@ -205,6 +205,10 @@ namespace HideAndSeek
             });
         }
 
+        // Since HouseFileName property is required and its setter sets House,
+        // House can never NOT be set when SavedGame object created.
+        // Therefore, no independent House property setter test can be performed or is necessary.
+
         [Test]
         [Category("SavedGame House InvalidOperationException Failure")]
         public void Test_SavedGame_Set_House_AndCheckErrorMessage_ForAlreadyHasValue()

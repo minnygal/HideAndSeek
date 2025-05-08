@@ -103,8 +103,7 @@ namespace HideAndSeek
 
         /// <summary>
         /// House object associated with game (used for property validation)
-        /// Can only use setter when backing field has not already been set
-        /// (security measure since other properties' setters rely on this property for data validation)
+        /// DO NOT MANUALLY CALL SETTER since other properties' setters rely on this property for data validation
         /// </summary>
         /// <exception cref="NullReferenceException">Exception thrown if House property has not been set</exception>"
         /// <exception cref="InvalidOperationException">Exception thrown if House property has already been set</exception>
@@ -122,6 +121,8 @@ namespace HideAndSeek
                 // Return House
                 return _house;
             }
+            // Can only use setter when backing field has not already been set
+            // (security measure since other properties' setters rely on this property for data validation)
             set
             {
                 // If backing field already has a value
@@ -157,8 +158,7 @@ namespace HideAndSeek
 
         /// <summary>
         /// Name of file storing House object for layout (w/o JSON extension)
-        /// Can only use setter when backing field has not already been set
-        /// (security measure since other properties' setters rely on House, which this sets, for data validation)
+        /// DO NOT MANUALLY CALL SETTER since other properties' setters rely on the House set by this property for data validation
         /// Should only be used by JSON deserializer and tests
         /// CAUTION: setter calls House's CreateHouse method
         /// </summary>
@@ -177,6 +177,8 @@ namespace HideAndSeek
 
                 return _houseFileName;
             }
+            // Can only use setter when backing field has not already been set
+            // (security measure since other properties' setters rely on House, which this sets, for data validation)
             set
             {
                 // If backing field already has a value
