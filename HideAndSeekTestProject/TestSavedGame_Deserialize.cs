@@ -11,7 +11,10 @@ namespace HideAndSeek
 {
     /// <summary>
     /// SavedGame tests for deserialization
-    /// (success cases are integration tests because they instantiate House and check the House object's properties)
+    /// 
+    /// Success cases are integration tests because deserializing a SavedGame 
+    /// creates a House object with Location and LocationWithHidingPlace objects.
+    /// Failure cases are unit tests.
     /// </summary>
     [TestFixture]
     public class TestSavedGame_Deserialize
@@ -31,10 +34,9 @@ namespace HideAndSeek
             House.FileSystem = new FileSystem(); // Set static House file system to new file system
         }
 
-        // Integration test
         // Tests all properties' setters and House getter
         [Test]
-        [Category("SavedGame Deserialize Integration Success")]
+        [Category("SavedGame Deserialize Success")]
         public void Test_SavedGame_Deserialize_NoFoundOpponents()
         {
             // Set mock file system to House property
@@ -74,10 +76,9 @@ namespace HideAndSeek
             });
         }
 
-        // Integration test
         // Tests all properties' setters and House getter
         [Test]
-        [Category("SavedGame Deserialize Integration Success")]
+        [Category("SavedGame Deserialize Success")]
         public void Test_SavedGame_Deserialize_3FoundOpponents()
         {
             // Set mock file system to House property
@@ -330,8 +331,7 @@ namespace HideAndSeek
                 });
                 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Does.StartWith(
-                    $"Cannot process because data in house layout file DefaultHouse is invalid - {exceptionDescription}"));
+                Assert.That(exception.Message, Does.StartWith($"Cannot process because data in house layout file DefaultHouse is invalid - {exceptionDescription}"));
             });
         }
 
@@ -352,8 +352,7 @@ namespace HideAndSeek
                 });
 
                 // Assert that exception message is as expected
-                Assert.That(exception.Message, Does.StartWith(
-                     $"Cannot process because data in house layout file DefaultHouse is corrupt - {exceptionDescription}"));
+                Assert.That(exception.Message, Does.StartWith($"Cannot process because data in house layout file DefaultHouse is corrupt - {exceptionDescription}"));
             });
         }
 

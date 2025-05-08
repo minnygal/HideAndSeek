@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// SavedGame tests for serialization
+    /// SavedGame unit tests for serialization
     /// </summary>
     [TestFixture]
     public class TestSavedGame_Serialize
@@ -27,6 +27,23 @@ namespace HideAndSeek
         [Category("SavedGame Serialize Success")]
         public void Test_SavedGame_Serialize_NoFoundOpponents()
         {
+            // Initialize variable to expected text for serialized SavedGame
+            string expectedSavedGameText =
+                "{" +
+                    "\"HouseFileName\":\"DefaultHouse\"" + "," +
+                    "\"PlayerLocation\":\"Entry\"" + "," +
+                    "\"MoveNumber\":1" + "," +
+                    "\"OpponentsAndHidingLocations\":" +
+                    "{" +
+                        "\"Joe\":\"Kitchen\"," +
+                        "\"Bob\":\"Pantry\"," +
+                        "\"Ana\":\"Bathroom\"," +
+                        "\"Owen\":\"Kitchen\"," +
+                        "\"Jimmy\":\"Pantry\"" +
+                    "}" + "," +
+                    "\"FoundOpponents\":[]" +
+                "}";
+
             // Create SavedGame object
             SavedGame savedGame = new SavedGame(GetMockedHouse(), "DefaultHouse", "Entry", 1,
                                                 new Dictionary<string, string>()
@@ -43,21 +60,7 @@ namespace HideAndSeek
             string serializedGame = JsonSerializer.Serialize(savedGame);
 
             // Assert that serialized SavedGame object is as expected
-            Assert.That(serializedGame, Is.EqualTo(
-                "{" +
-                    "\"HouseFileName\":\"DefaultHouse\"" + "," +
-                    "\"PlayerLocation\":\"Entry\"" + "," +
-                    "\"MoveNumber\":1" + "," +
-                    "\"OpponentsAndHidingLocations\":" +
-                    "{" +
-                        "\"Joe\":\"Kitchen\"," +
-                        "\"Bob\":\"Pantry\"," +
-                        "\"Ana\":\"Bathroom\"," +
-                        "\"Owen\":\"Kitchen\"," +
-                        "\"Jimmy\":\"Pantry\"" +
-                    "}" + "," +
-                    "\"FoundOpponents\":[]" +
-                "}"));
+            Assert.That(serializedGame, Is.EqualTo(expectedSavedGameText));
         }
 
         // Tests all properties' getters
