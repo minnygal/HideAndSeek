@@ -131,6 +131,12 @@ namespace HideAndSeek
                     throw new InvalidOperationException("House property already has a value"); // Throw exception
                 }
 
+                // If value passed in is null
+                if(value == null)
+                {
+                    throw new ArgumentNullException(nameof(value), "House cannot be null"); // Throw exception
+                }
+
                 // Set backing field to value
                 _house = value;
             }
@@ -267,12 +273,21 @@ namespace HideAndSeek
                     throw new ArgumentException("invalid OpponentsAndHidingLocations - no opponents", "value"); // Throw exception
                 }
 
-                // If any of the LocationWithHidingPlaces do not exist, throw exception
-                foreach (KeyValuePair<string, string> opponentInfo in value)
+                // If any of the Opponent names are invalid
+                foreach(string opponentName in value.Keys)
                 {
-                    if (!(House.DoesLocationWithHidingPlaceExist(opponentInfo.Value)))
+                    if( !(Opponent.IsValidName(opponentName)) )
                     {
-                        throw new InvalidOperationException($"location with hiding place \"{opponentInfo.Value}\" does not exist in House");
+                        throw new ArgumentException($"opponent name \"{opponentName}\" is invalid (is empty or contains only whitespace)", nameof(value)); // Throw exception
+                    }
+                }
+
+                // If any of the LocationWithHidingPlaces do not exist, throw exception
+                foreach(string opponentLocationWithHidingPlace in value.Values)
+                {
+                    if (!(House.DoesLocationWithHidingPlaceExist(opponentLocationWithHidingPlace)))
+                    {
+                        throw new InvalidOperationException($"location with hiding place \"{opponentLocationWithHidingPlace}\" does not exist in House"); // Throw exception
                     }
                 }
 

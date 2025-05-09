@@ -12,7 +12,9 @@ namespace HideAndSeek
 {
     /// <summary>
     /// GameController tests for LoadGame with nonexistent or corrupt House file
-    /// (integration tests using SavedGame, House, Location, and LocationWithHidingPlace)
+    /// (only relevant to LoadGame overload accepting name of file storing serialized SavedGame)
+    /// 
+    /// These are integration tests using SavedGame, House, Location, and LocationWithHidingPlace
     /// </summary>
     [TestFixture]
     public class TestGameController_LoadGame_HouseFailure

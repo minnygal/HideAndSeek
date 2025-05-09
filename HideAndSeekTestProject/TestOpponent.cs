@@ -7,7 +7,7 @@ using System.Threading.Tasks;
 namespace HideAndSeek
 {
     /// <summary>
-    /// Opponent unit tests for setting Name property
+    /// Opponent unit tests for setting Name property and static method returning whether name is valid
     /// </summary>
     [TestFixture]
     public class TestOpponent
@@ -59,6 +59,25 @@ namespace HideAndSeek
                 // Assert that exception message is as expected
                 Assert.That(exception.Message, Does.StartWith($"opponent name \"{name}\" is invalid (is empty or contains only whitespace)"));
             });
+        }
+
+        [TestCase("J")]
+        [TestCase("John")]
+        [TestCase("Mary Alice")]
+        [TestCase("Patrick S O'Sullivan")]
+        [TestCase("'oMalley")]
+        [Category("Opponent IsValidName True")]
+        public void Test_Opponent_IsValidName_ValidName(string name)
+        {
+            Assert.That(Opponent.IsValidName(name), Is.True);
+        }
+
+        [TestCase("")]
+        [TestCase(" ")]
+        [Category("Opponent IsValidName False")]
+        public void Test_Opponent_IsValidName_InvalidName(string name)
+        {
+            Assert.That(Opponent.IsValidName(name), Is.False);
         }
     }
 }

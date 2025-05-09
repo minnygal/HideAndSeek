@@ -10,7 +10,7 @@ namespace HideAndSeek
     /// <summary>
     /// Class to represent an Opponent who can be hidden in a Location in a House for the user to find
     /// 
-    /// CREDIT: adapted from Stellman and Greene's cod
+    /// CREDIT: adapted from Stellman and Greene's code
     /// </summary>
 
     /** CREDIT
@@ -48,8 +48,8 @@ namespace HideAndSeek
             }
             private set
             {
-                // If value is whitespace or empty
-                if(value.Trim() == string.Empty)
+                // If not valid name
+                if( !(IsValidName(value)) )
                 {
                     throw new ArgumentException($"opponent name \"{value}\" is invalid (is empty or contains only whitespace)", "value");
                 }
@@ -57,6 +57,16 @@ namespace HideAndSeek
                 // Set name
                 _name = value;
             }
+        }
+
+        /// <summary>
+        /// Check if name is valid for an Opponent
+        /// </summary>
+        /// <param name="name">Name to check</param>
+        /// <returns>True if name is valid</returns>
+        public static bool IsValidName(string name)
+        {
+            return !(name.Trim() == string.Empty);
         }
 
         public override string ToString() => Name;

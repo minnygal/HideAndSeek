@@ -1,4 +1,5 @@
 ﻿using Moq;
+using Newtonsoft.Json.Linq;
 using NUnit.Framework.Constraints;
 using System;
 using System.Collections.Generic;
@@ -88,6 +89,23 @@ namespace HideAndSeek
                 // Assert that exception message is as expected
                 Assert.That(exception.Message, Does.StartWith($"House file name \"{fileName}\" is invalid " +
                                                                "(is empty or contains illegal characters, e.g. \\, /, or whitespace)"));
+            });
+        }
+
+        [Test]
+        [Category("SavedGame Constructor ArgumentNullException Failure")]
+        public void Test_SavedGame_Constructor_WithHouse_AndHouseFileName_AndCheckErrorMessage_ForNullHouse()
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that creating a SavedGame object with null House raises an exception
+                var exception = Assert.Throws<ArgumentNullException>(() =>
+                {
+                    savedGame = new SavedGame(null, "TestHouse", "Entry", 1, opponentsAndHidingPlaces, new List<string>());
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith("House cannot be null"));
             });
         }
 
@@ -264,6 +282,31 @@ namespace HideAndSeek
 
                 // Assert that exception message is as expected
                 Assert.That(exception.Message, Does.StartWith("invalid OpponentsAndHidingLocations - no opponents"));
+            });
+        }
+
+        [TestCase("")]
+        [TestCase(" ")]
+        [Category("SavedGame OpponentsAndHidingLocations ArgumentException Failure")]
+        public void Test_SavedGame_Set_OpponentsAndHidingLocations_AndCheckErrorMessage_ForInvalidOpponentName(string name)
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that creating a SavedGame object with invalid Opponent name in OpponentsAndHidingLocations raises an exception
+                var exception = Assert.Throws<ArgumentException>(() =>
+                {
+                    savedGame = new SavedGame(GetMockedHouse(), "TestHouse", "Entry", 1, 
+                                              new Dictionary<string, string>()
+                                              {
+                                                  { "Bob", "Pantry" },
+                                                  { name, "Kitchen" },
+                                                  { "Alice", "Bedroom" }
+                                              }, 
+                                              new List<string>());
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith($"opponent name \"{name}\" is invalid (is empty or contains only whitespace)"));
             });
         }
 
