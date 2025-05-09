@@ -74,7 +74,29 @@ namespace HideAndSeek
         /// </summary>
         public Location CurrentLocation { get; private set; }
 
-        public House House { get; private set; }
+        private House _house;
+
+        /// <summary>
+        /// House in which the game is played
+        /// </summary>
+        public House House
+        {
+            get
+            {
+                return _house;
+            }
+            private set
+            {
+                // If House is null
+                if (value == null)
+                {
+                    throw new ArgumentNullException(nameof(House), "House cannot be null"); // Throw exception
+                }
+
+                // Set backing field
+                _house = value;
+            }
+        }
 
         /// <summary>
         /// Status of game
@@ -126,10 +148,29 @@ namespace HideAndSeek
             }
         }
 
+        private int _moveNumber = 1;
+
         /// <summary>
         /// The number of moves the player has made
         /// </summary>
-        public int MoveNumber { get; private set; } = 1;
+        public int MoveNumber
+        {
+            get
+            {
+                return _moveNumber;
+            }
+            private set
+            {
+                // If move number is less than 1
+                if (value < 1)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(MoveNumber), "move number must be greater than or equal to 1"); // Throw exception
+                }
+
+                // Set backing field
+                _moveNumber = value;
+            }
+        }
 
         /// <summary>
         /// Opponents and their hiding places
