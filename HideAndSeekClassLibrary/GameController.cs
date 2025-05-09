@@ -652,7 +652,8 @@ namespace HideAndSeek
         /// Load game from SavedGame object
         /// </summary>
         /// <param name="savedGame">SavedGame object from which to load game</param>
-        private void LoadGame(SavedGame savedGame)
+        /// <returns>This GameController</returns>
+        public GameController LoadGame(SavedGame savedGame)
         {
             // Set GameController House
             House = savedGame.House;
@@ -689,6 +690,9 @@ namespace HideAndSeek
             {
                 kvp.Value.HideOpponent(kvp.Key);
             }
+
+            // Return this GameController to allow daisy-chaining
+            return this;
         }
 
         /// <summary>
