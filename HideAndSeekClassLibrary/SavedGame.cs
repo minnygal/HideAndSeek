@@ -155,7 +155,7 @@ namespace HideAndSeek
             if ( !(new FileSystem().IsValidName(fileName)) )
             {
                 throw new ArgumentException($"House file name \"{fileName}\" is invalid " +
-                                             "(is empty or contains illegal characters, e.g. \\, /, or whitespace)", "value"); // Throw exception
+                                             "(is empty or contains illegal characters, e.g. \\, /, or whitespace)", nameof(fileName)); // Throw exception
             }
 
             // Set House file name backing field, bypassing the HouseFileName property setter which calls House's CreateHouse method
@@ -242,7 +242,7 @@ namespace HideAndSeek
                 // If move number is invalid
                 if (value < 1)
                 {
-                    throw new ArgumentOutOfRangeException("value", "MoveNumber is invalid - must be positive number"); // Throw exception
+                    throw new ArgumentOutOfRangeException(nameof(value), "MoveNumber is invalid - must be positive number"); // Throw exception
                 }
 
                 // Set backing field
@@ -270,7 +270,7 @@ namespace HideAndSeek
                 // If no items
                 if (value.Count == 0)
                 {
-                    throw new ArgumentException("invalid OpponentsAndHidingLocations - no opponents", "value"); // Throw exception
+                    throw new ArgumentException("invalid OpponentsAndHidingLocations - no opponents", nameof(value)); // Throw exception
                 }
 
                 // If any of the Opponent names are invalid
