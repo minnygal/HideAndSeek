@@ -62,7 +62,7 @@ namespace HideAndSeek
                 // If invalid name is entered
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    throw new ArgumentException($"location name \"{value}\" is invalid (is empty or contains only whitespace)", "value"); // Throw exception
+                    throw new ArgumentException($"location name \"{value}\" is invalid (is empty or contains only whitespace)", nameof(value)); // Throw exception
                 }
 
                 // Set backing field
@@ -94,7 +94,7 @@ namespace HideAndSeek
                     if(string.IsNullOrWhiteSpace(kvp.Value))
                     {
                         throw new ArgumentException(
-                            $"location name \"{kvp.Value}\" for exit in direction \"{kvp.Key}\" is invalid (is empty or contains only whitespace", "value"); // Throw exception
+                            $"location name \"{kvp.Value}\" for exit in direction \"{kvp.Key}\" is invalid (is empty or contains only whitespace", nameof(value)); // Throw exception
                     }
                 }
 

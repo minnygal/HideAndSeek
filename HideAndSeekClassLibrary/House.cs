@@ -189,7 +189,7 @@ namespace HideAndSeek
                 // If invalid name is entered
                 if (string.IsNullOrWhiteSpace(value))
                 {
-                    throw new ArgumentException($"house name \"{value}\" is invalid (is empty or contains only whitespace)", "value"); // Throw exception
+                    throw new ArgumentException($"house name \"{value}\" is invalid (is empty or contains only whitespace)", nameof(value)); // Throw exception
                 }
 
                 // Set backing field
@@ -216,7 +216,7 @@ namespace HideAndSeek
                 if( !(FileSystem.IsValidName(value)) )
                 {
                     throw new ArgumentException(
-                        $"house file name \"{value}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)", "value"); // Throw exception
+                        $"house file name \"{value}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)", nameof(value)); // Throw exception
                 }
 
                 // Set backing field
@@ -243,7 +243,7 @@ namespace HideAndSeek
                 if (string.IsNullOrWhiteSpace(value))
                 {
                     throw new ArgumentException(
-                        $"player starting point location name \"{value}\" is invalid (is empty or contains only whitespace)", "value"); // Throw exception
+                        $"player starting point location name \"{value}\" is invalid (is empty or contains only whitespace)", nameof(value)); // Throw exception
                 }
 
                 // Set backing field
@@ -347,7 +347,7 @@ namespace HideAndSeek
                 // If enumerable is empty
                 if(value.Count() == 0)
                 {
-                    throw new ArgumentException("locations with hiding places list is empty", "value"); // Throw exception
+                    throw new ArgumentException("locations with hiding places list is empty", nameof(value)); // Throw exception
                 }
 
                 // Set backing field

@@ -51,7 +51,7 @@ namespace HideAndSeek
                 // If not valid name
                 if( !(IsValidName(value)) )
                 {
-                    throw new ArgumentException($"opponent name \"{value}\" is invalid (is empty or contains only whitespace)", "value");
+                    throw new ArgumentException($"opponent name \"{value}\" is invalid (is empty or contains only whitespace)", nameof(value));
                 }
 
                 // Set name
