@@ -1,6 +1,5 @@
 ﻿using Moq;
 using System.Collections; // From TestableIO
-using System.IO.Abstractions;
 
 namespace HideAndSeek
 {

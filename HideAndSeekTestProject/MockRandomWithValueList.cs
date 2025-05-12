@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Collections.Generic;
-
-namespace HideAndSeek
+﻿namespace HideAndSeek
 {
     /// <summary>
     /// Mock Random for testing that uses a list to return values

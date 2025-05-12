@@ -1,21 +1,7 @@
-﻿using Microsoft.VisualStudio.TestPlatform.CommunicationUtilities;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
-using Moq;
-using NUnit.Framework.Constraints;
+﻿using Moq;
 using NUnit.Framework.Internal;
-using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.IO.Abstractions;
-using System.Linq;
-using System.Linq.Expressions;
-using System.Text;
 using System.Text.Json;
-using System.Text.Json.Nodes;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using static System.Net.Mime.MediaTypeNames;
-using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HideAndSeek
 {
