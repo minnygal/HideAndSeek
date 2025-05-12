@@ -23,7 +23,7 @@ namespace HideAndSeek
      * -I removed DescribeDirection method and put the logic in Direction file as Extension class
      *  for separation of concerns.
      * -I used a loop instead of LINQ in the ExitList method (just my approach).
-     * -I made AddExit return the connecting Location added.
+     * -I made AddExit return the connecting Location added to allow daisy-chaining.
      * -I created an AddExit overload to allow a location name to be passed in
      *  to have a new Location created in method (for ease).
      * -I created an AddExit overload to allow a location name and hiding place description
@@ -93,8 +93,8 @@ namespace HideAndSeek
                     // If name is invalid
                     if(string.IsNullOrWhiteSpace(kvp.Value))
                     {
-                        throw new ArgumentException(
-                            $"location name \"{kvp.Value}\" for exit in direction \"{kvp.Key}\" is invalid (is empty or contains only whitespace", nameof(value)); // Throw exception
+                        throw new ArgumentException($"location name \"{kvp.Value}\" for exit in direction \"{kvp.Key}\" is invalid " +
+                                                    "(is empty or contains only whitespace", nameof(value)); // Throw exception
                     }
                 }
 
@@ -161,7 +161,7 @@ namespace HideAndSeek
         public Location() { }
 
         /// <summary>
-        /// The constructor sets the location name
+        /// Constructor setting location name
         /// </summary>
         /// <param name="name">Name of the location</param>
         [SetsRequiredMembers]
