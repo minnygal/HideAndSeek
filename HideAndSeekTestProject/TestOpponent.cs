@@ -23,23 +23,17 @@ namespace HideAndSeek
         [Category("Opponent Constructor Name Success")]
         public void Test_Opponent_Constructor_Parameterized_SetsToNamePassedIn()
         {
-            Opponent opponent = new Opponent("John Doe");
-            Assert.That(opponent.Name, Is.EqualTo("John Doe"));
+            Assert.That(new Opponent("John Doe").Name, Is.EqualTo("John Doe"));
         }
 
         [Test]
         [Category("Opponent Constructor Name Success")]
         public void Test_Opponent_Constructor_Unparameterized_SetsToDefaultName()
         {
-            // Create two new Opponents
-            Opponent opponent1 = new Opponent();
-            Opponent opponent2 = new Opponent();
-
-            // Assert that Opponent names are as expected
             Assert.Multiple(() =>
             {
-                Assert.That(opponent1.Name, Is.EqualTo("Random Opponent 1"));
-                Assert.That(opponent2.Name, Is.EqualTo("Random Opponent 2"));
+                Assert.That(new Opponent().Name, Is.EqualTo("Random Opponent 1"));
+                Assert.That(new Opponent().Name, Is.EqualTo("Random Opponent 2"));
             });
         }
 
