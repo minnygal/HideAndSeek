@@ -251,7 +251,7 @@ namespace HideAndSeek
             // If no location found in direction
             if(location == null)
             {
-                throw new InvalidOperationException($"There is no exit for location \"{Name}\" in direction \"{direction}\""); // Throw exception
+                throw new InvalidOperationException($"no exit for location \"{Name}\" in direction \"{direction}\""); // Throw exception
             }
 
             // Return location

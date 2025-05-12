@@ -226,7 +226,7 @@ namespace HideAndSeek
             {
                 Exception exception = Move(gameController);
                 Assert.That(exception, Is.TypeOf<InvalidOperationException>());
-                Assert.That(exception.Message, Is.EqualTo("There is no exit for location \"Entry\" in direction \"Up\""), "exception message");
+                Assert.That(exception.Message, Is.EqualTo("no exit for location \"Entry\" in direction \"Up\""), "exception message");
                 Assert.That(gameController.CurrentLocation, Is.EqualTo(initialLocation), "current location does not change");
                 Assert.That(gameController.MoveNumber, Is.EqualTo(1), "move number does not increment");
             });
