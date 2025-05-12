@@ -1,10 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
+﻿using Moq;
 using System.IO.Abstractions;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using Moq;
 
 namespace HideAndSeek
 {

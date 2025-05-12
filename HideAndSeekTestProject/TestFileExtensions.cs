@@ -1,13 +1,4 @@
-﻿using HideAndSeek;
-using System;
-using System.Collections.Generic;
-using System.IO.Abstractions;
-using System.IO.Enumeration;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HideAndSeek
+﻿namespace HideAndSeek
 {
     /// <summary>
     /// FileExtensions tests for methods for getting full file name for JSON file and validating file name

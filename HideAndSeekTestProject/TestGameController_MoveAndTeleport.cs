@@ -1,10 +1,4 @@
-﻿using HideAndSeek;
-using System.IO.Abstractions;
-using System.Collections.Generic;
-using Castle.Components.DictionaryAdapter.Xml;
-using NUnit.Framework.Internal;
-using static System.Runtime.InteropServices.JavaScript.JSType;
-using System.Runtime.Intrinsics.X86;
+﻿using NUnit.Framework.Internal;
 using Moq;
 
 namespace HideAndSeek
