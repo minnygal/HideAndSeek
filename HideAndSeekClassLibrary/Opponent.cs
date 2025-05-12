@@ -30,6 +30,20 @@
     public class Opponent
     {
         /// <summary>
+        /// Create opponent with default name
+        /// </summary>
+        public Opponent() : this("Random Opponent " + numberForNextDefaultName++) { }
+
+        /// <summary>
+        /// Create opponent with specified name
+        /// </summary>
+        /// <param name="name">Name off opponent</param>
+        public Opponent(string name)
+        {
+            Name = name;
+        }
+
+        /// <summary>
         /// Check if name is valid for an Opponent
         /// </summary>
         /// <param name="name">Name to check</param>
@@ -74,20 +88,6 @@
         public static void ResetDefaultNumbersForOpponentNames()
         {
             numberForNextDefaultName = 1;
-        }
-
-        /// <summary>
-        /// Create opponent with default name
-        /// </summary>
-        public Opponent() : this("Random Opponent " + numberForNextDefaultName++) { }
-
-        /// <summary>
-        /// Create opponent with specified name
-        /// </summary>
-        /// <param name="name">Name off opponent</param>
-        public Opponent(string name)
-        {
-            Name = name;
         }
     }
 }
