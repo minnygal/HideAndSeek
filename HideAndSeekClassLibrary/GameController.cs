@@ -193,6 +193,16 @@ namespace HideAndSeek
         public static readonly string[] DefaultOpponentNames = { "Joe", "Bob", "Ana", "Owen", "Jimmy", "Mary", "Alice", "Tony", "Andy", "Jill" };
         
         /// <summary>
+        /// Create a GameController and load a specific saved game
+        /// </summary>
+        /// <param name="savedGame">SavedGame object from which to load game</param>
+        public GameController(SavedGame savedGame)
+        {
+            // Load game from SavedGame object
+            LoadGame(savedGame);
+        }
+
+        /// <summary>
         /// Create a GameController with an optional specified House file name and 5 Opponents with default names
         /// </summary>
         /// <param name="houseFileNameWithoutEnding">Name of House layout file without ending or extension</param>

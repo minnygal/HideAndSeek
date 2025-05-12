@@ -401,13 +401,69 @@ namespace HideAndSeek
             }
         }
 
-        private static House CustomHouse = GetHouse();
+        public static readonly House CustomHouse = GetCustomTestHouse();
 
         /// <summary>
-        /// Helper method to get House object for tests
+        /// Get new House object for testing purposes (lines up with CustomTestHouse_ property values)
         /// </summary>
-        /// <returns></returns>
-        private static House GetHouse()
+        /// <returns>House object for testing purposes</returns>
+        private static House GetCustomTestHouse()
+        {
+            // Create Landing and connect to new location: Hallway
+            Location landing = new Location("Landing");
+            Location hallway = landing.AddExit(Direction.North, "Hallway");
+
+            // Connect Hallway to new locations: Bedroom, Sensory Room, Kitchen, Pantry, Bathroom, Living Room, Office, Attic
+            LocationWithHidingPlace bedroom = hallway.AddExit(Direction.North, "Bedroom", "under the bed");
+            LocationWithHidingPlace sensoryRoom = hallway.AddExit(Direction.Northeast, "Sensory Room", "under the beanbags");
+            LocationWithHidingPlace kitchen = hallway.AddExit(Direction.East, "Kitchen", "beside the stove");
+            LocationWithHidingPlace pantry = hallway.AddExit(Direction.Southeast, "Pantry", "behind the food");
+            LocationWithHidingPlace bathroom = hallway.AddExit(Direction.Southwest, "Bathroom", "in the tub");
+            LocationWithHidingPlace livingRoom = hallway.AddExit(Direction.West, "Living Room", "behind the sofa");
+            LocationWithHidingPlace office = hallway.AddExit(Direction.Northwest, "Office", "under the desk");
+            LocationWithHidingPlace attic = hallway.AddExit(Direction.Up, "Attic", "behind a trunk");
+
+            // Connect Bedroom to new Closet and existing Sensory Room
+            LocationWithHidingPlace closet = bedroom.AddExit(Direction.North, "Closet", "between the coats");
+            bedroom.AddExit(Direction.East, sensoryRoom);
+
+            // Connect Kitchen to existing Pantry and new Cellar and Yard
+            kitchen.AddExit(Direction.South, pantry);
+            LocationWithHidingPlace cellar = kitchen.AddExit(Direction.Down, "Cellar", "behind the canned goods");
+            LocationWithHidingPlace yard = kitchen.AddExit(Direction.Out, "Yard", "behind a bush");
+
+            // Connect Living Room to existing Office and Bathroom
+            livingRoom.AddExit(Direction.North, office);
+            livingRoom.AddExit(Direction.South, bathroom);
+
+            // Create list of Location objects (no hiding places)
+            IEnumerable<Location> locationsWithoutHidingPlaces = new List<Location>() { landing, hallway };
+
+            // Create list of LocationWithHidingPlace objects
+            IEnumerable<LocationWithHidingPlace> locationsWithHidingPlaces = new List<LocationWithHidingPlace>()
+            {
+                bedroom,
+                closet,
+                sensoryRoom,
+                kitchen,
+                cellar,
+                pantry,
+                yard,
+                bathroom,
+                livingRoom,
+                office,
+                attic
+            };
+
+            // Create and return new House
+            return new House("test house", "TestHouse", landing, locationsWithoutHidingPlaces, locationsWithHidingPlaces);
+        }
+
+        /// <summary>
+        /// Helper method to get simplified House object for game play tests
+        /// </summary>
+        /// <returns>House object for testing purposes</returns>
+        public static House GetHouseForGamePlayTests()
         {
             // Create and connect Location and LocationWithHidingPlace objects
             Location startingPlace = new Location("Start");
@@ -656,6 +712,29 @@ namespace HideAndSeek
                     () => new GameController(new Opponent[] { new Mock<Opponent>().Object, new Mock<Opponent>().Object }, CustomHouse))
                     .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaHouseObject - constructor - Opponents and House")
                     .SetCategory("GameController Constructor SpecifyOpponentsAndHouse Success");
+
+                // Constructor with SavedGame object
+                yield return new TestCaseData(
+                    CustomHouse,
+                    () =>
+                    {
+                        // Create mock of SavedGame object
+                        Mock<SavedGame> savedGameMock = new Mock<SavedGame>();
+                        savedGameMock.Setup((sg) => sg.House).Returns(CustomHouse);
+                        savedGameMock.Setup((sg) => sg.PlayerLocation).Returns("Landing");
+                        savedGameMock.Setup((sg) => sg.MoveNumber).Returns(1);
+                        savedGameMock.Setup((sg) => sg.OpponentsAndHidingLocations).Returns(
+                            new Dictionary<string, string>()
+                            {
+                                { "Amy", "Kitchen" },
+                                { "Steve", "Bedroom" }
+                            });
+
+                        // Return new GameController created with SavedGame object
+                        return new GameController(savedGameMock.Object);
+                    })
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaHouseObject - constructor - SavedGame")
+                    .SetCategory("GameController Constructor SpecifySavedGame Success");
             }
         }
 
@@ -778,6 +857,29 @@ namespace HideAndSeek
                     MockedOpponents.Select((o) => o.Name).ToArray())
                     .SetName("Test_GameController_CheckOpponentsSetSuccessfully - constructor - Opponents - House")
                     .SetCategory("GameController Constructor SpecifyOpponentsAndHouse OpponentsSet Success");
+
+                // Constructor with SavedGame object
+                yield return new TestCaseData(
+                    () => 
+                    {
+                        // Create mock of SavedGame object
+                        Mock<SavedGame> savedGameMock = new Mock<SavedGame>();
+                        savedGameMock.Setup((sg) => sg.House).Returns(CustomHouse);
+                        savedGameMock.Setup((sg) => sg.PlayerLocation).Returns("Landing");
+                        savedGameMock.Setup((sg) => sg.MoveNumber).Returns(1);
+                        savedGameMock.Setup((sg) => sg.OpponentsAndHidingLocations).Returns(
+                            new Dictionary<string, string>()
+                            {
+                                { "Amy", "Kitchen" },
+                                { "Steve", "Bedroom" }
+                            });
+
+                        // Return new GameController created with SavedGame object
+                        return new GameController(savedGameMock.Object);
+                    },
+                    new string[] { "Amy", "Steve" })
+                    .SetName("Test_GameController_CheckOpponentsSetSuccessfully - constructor - SavedGame")
+                    .SetCategory("GameController Constructor SpecifySavedGame OpponentsSet Success");
             }
         }
 
@@ -1181,14 +1283,14 @@ namespace HideAndSeek
             {
                 // Constructor with number of opponents and House object
                 yield return new TestCaseData(
-                    () => new GameController(2, CustomHouse), // Return GameController
+                    () => new GameController(2, GetHouseForGamePlayTests()), // Return GameController
                     new string[] { "Joe", "Bob" })
                     .SetName("Test_GameController_Constructor_FullGame_InCustomHouse_SpecifiedByObject_With2Opponents - # opponents")
                     .SetCategory("GameController Constructor SpecifyNumberOfOpponentsAndHouseFileName FullGame Move CheckCurrentLocation Message Prompt Status GameOver Success");
 
                 // Constructor with names of opponents and House object
                 yield return new TestCaseData(
-                    () => new GameController(new string[] { "Lisa", "Steve" }, CustomHouse),
+                    () => new GameController(new string[] { "Lisa", "Steve" }, GetHouseForGamePlayTests()),
                     new string[] { "Lisa", "Steve" })
                     .SetName("Test_GameController_Constructor_FullGame_InCustomHouse_SpecifiedByObject_With2Opponents - opponent names")
                     .SetCategory("GameController Constructor SpecifyOpponentNamesAndHouseFileName FullGame Move CheckCurrentLocation Message Prompt Status GameOver Success");
@@ -1205,7 +1307,7 @@ namespace HideAndSeek
                         opponent2.Setup((o) => o.Name).Returns("Paul");
 
                         // Return GameController
-                        return new GameController(new Opponent[] { opponent1.Object, opponent2.Object }, CustomHouse);
+                        return new GameController(new Opponent[] { opponent1.Object, opponent2.Object }, GetHouseForGamePlayTests());
                     },
                     new string[] { "Annie", "Paul" })
                     .SetName("Test_GameController_Constructor_FullGame_InCustomHouse_SpecifiedByObject_With2Opponents - Opponents")
@@ -1273,7 +1375,7 @@ namespace HideAndSeek
                     {
                         SetUpHouseMockFileSystemToReturnValidDefaultHouseText();
                         GameController gameController = new GameController(MockedOpponents, "DefaultHouse"); // Create GameController
-                        return gameController.RestartGame(CustomHouse); // Restart game with House and return GameController
+                        return gameController.RestartGame(GetHouseForGamePlayTests()); // Restart game with House and return GameController
                     })
                     .SetName("Test_GameController_RestartGame - parameterized - House - initial game not completed")
                     .SetCategory("GameController RestartGame SpecifyHouse HidingLocations MoveNumber CurrentLocation GameOver Success");
@@ -1314,7 +1416,7 @@ namespace HideAndSeek
                         SetUpHouseMockFileSystemToReturnValidDefaultHouseText();
                         GameController gameController = new GameController(MockedOpponents, "DefaultHouse"); // Create GameController
                         gameController = FindAllOpponentsInDefaultHouse(); // Find all Opponents
-                        return gameController.RestartGame(CustomHouse); // Restart game and return GameController
+                        return gameController.RestartGame(GetHouseForGamePlayTests()); // Restart game and return GameController
                     })
                     .SetName("Test_GameController_RestartGame - parameterized - House - initial game completed")
                     .SetCategory("GameController RestartGame SpecifyHouse HidingLocations MoveNumber CurrentLocation GameOver Success");

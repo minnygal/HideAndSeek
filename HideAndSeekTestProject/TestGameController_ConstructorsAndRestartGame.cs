@@ -14,6 +14,8 @@ using System.Text.Json;
 using System.Text.Json.Nodes;
 using System.Threading.Tasks;
 using System.Xml.Linq;
+using static System.Net.Mime.MediaTypeNames;
+using static System.Runtime.InteropServices.JavaScript.JSType;
 
 namespace HideAndSeek
 {
@@ -1139,6 +1141,118 @@ namespace HideAndSeek
                 Assert.That(gameController.Prompt, Is.EqualTo("15: Which direction do you want to go (or type 'check'): "), "check prompt after check in Attic");
                 Assert.That(gameController.GameOver, Is.True, "check game over after check in Attic");
             });
+        }
+
+        [Test]
+        [Category("GameController Constructor SpecifySavedGame FullGame Move CheckCurrentLocation Message Prompt Status GameOver Success")]
+        public void Test_GameController_Constructor_WithSavedGame_FinishGame()
+        {
+            // Create mock of SavedGame object
+            Mock<SavedGame> savedGameMock = new Mock<SavedGame>();
+            savedGameMock.Setup((sg) => sg.House).Returns(TestGameController_ConstructorsAndRestartGame_TestData.GetHouseForGamePlayTests());
+            savedGameMock.Setup((sg) => sg.PlayerLocation).Returns("Bedroom");
+            savedGameMock.Setup((sg) => sg.MoveNumber).Returns(3);
+            savedGameMock.Setup((sg) => sg.OpponentsAndHidingLocations).Returns(
+                new Dictionary<string, string>()
+                {
+                                { "Amy", "Bedroom" },
+                                { "Steve", "Kitchen" },
+                                { "Tony", "Pantry" },
+                                { "Andy", "Bedroom" },
+                                { "Sarah", "Kitchen" }
+                });
+            savedGameMock.Setup((sg) => sg.FoundOpponents).Returns(new List<string>() { "Amy", "Andy" });
+
+            // Create new GameController with SavedGame object
+            GameController gameController = new GameController(savedGameMock.Object);
+
+            Assert.Multiple(() =>
+            {
+                // Assert that properties are as expected
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Bedroom. You see the following exits:" + Environment.NewLine +
+                    " - the Start is to the East" + Environment.NewLine +
+                    " - the Office is to the North" + Environment.NewLine +
+                    "Someone could hide under the bed" + Environment.NewLine +
+                    "You have found 2 of 5 opponents: Amy, Andy"), "check status when move West to Bedroom");
+                Assert.That(gameController.Prompt, Is.EqualTo("3: Which direction do you want to go (or type 'check'): "), "check prompt after move West to Bedroom");
+                Assert.That(gameController.GameOver, Is.False, "check game not over after move West to Bedroom");
+
+                // Move to the Office
+                Assert.That(gameController.Move(Direction.North), Is.EqualTo("Moving North"), "check string returned when move North to Office");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Office. You see the following exits:" + Environment.NewLine +
+                    " - the Hallway is to the East" + Environment.NewLine +
+                    " - the Bedroom is to the South" + Environment.NewLine +
+                    "Someone could hide under the desk" + Environment.NewLine +
+                    "You have found 2 of 5 opponents: Amy, Andy"), "check status when move North to Office");
+                Assert.That(gameController.Prompt, Is.EqualTo("4: Which direction do you want to go (or type 'check'): "), "check prompt after move North to Office");
+                Assert.That(gameController.GameOver, Is.False, "check game not over after move North to Office");
+
+                // Check the Office - nobody hiding there
+                Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("Nobody was hiding under the desk"), "check string returned when check in Office");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Office. You see the following exits:" + Environment.NewLine +
+                    " - the Hallway is to the East" + Environment.NewLine +
+                    " - the Bedroom is to the South" + Environment.NewLine +
+                    "Someone could hide under the desk" + Environment.NewLine +
+                    "You have found 2 of 5 opponents: Amy, Andy"), "check status after check in Office");
+                Assert.That(gameController.Prompt, Is.EqualTo("5: Which direction do you want to go (or type 'check'): "), "check prompt after check in Office");
+                Assert.That(gameController.GameOver, Is.False, "check game not over after check in Office");
+
+                // Move to the Hallway
+                Assert.That(gameController.Move(Direction.East), Is.EqualTo("Moving East"), "check string returned when move East to Hallway");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Hallway. You see the following exits:" + Environment.NewLine +
+                    " - the Kitchen is to the South" + Environment.NewLine +
+                    " - the Office is to the West" + Environment.NewLine +
+                    "You have found 2 of 5 opponents: Amy, Andy"), "check status when move East to Hallway");
+                Assert.That(gameController.Prompt, Is.EqualTo("6: Which direction do you want to go: "), "check prompt after move East to Hallway");
+                Assert.That(gameController.GameOver, Is.False, "check game not over after move East to Hallway");
+
+                // Move to the Kitchen
+                Assert.That(gameController.Move(Direction.South), Is.EqualTo("Moving South"), "check string returned when move South to Kitchen");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Kitchen. You see the following exits:" + Environment.NewLine +
+                    " - the Pantry is to the East" + Environment.NewLine +
+                    " - the Hallway is to the North" + Environment.NewLine +
+                    "Someone could hide beside the stove" + Environment.NewLine +
+                    "You have found 2 of 5 opponents: Amy, Andy"), "check status when move South to Kitchen");
+                Assert.That(gameController.Prompt, Is.EqualTo("7: Which direction do you want to go (or type 'check'): "), "check prompt after move South to Kitchen");
+                Assert.That(gameController.GameOver, Is.False, "check game not over after move South to Kitchen");
+
+                // Check the Kitchen - opponents 2 and 4 hiding there
+                Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 2 opponents hiding beside the stove"), "check string returned when check in Kitchen");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Kitchen. You see the following exits:" + Environment.NewLine +
+                    " - the Pantry is to the East" + Environment.NewLine +
+                    " - the Hallway is to the North" + Environment.NewLine +
+                    "Someone could hide beside the stove" + Environment.NewLine +
+                    "You have found 4 of 5 opponents: Amy, Andy, Steve, Sarah"), "check status after check in Kitchen");
+                Assert.That(gameController.Prompt, Is.EqualTo("8: Which direction do you want to go (or type 'check'): "), "check prompt after check in Kitchen");
+                Assert.That(gameController.GameOver, Is.False, "check game not over after check in Kitchen");
+
+                // Move to the Pantry
+                Assert.That(gameController.Move(Direction.East), Is.EqualTo("Moving East"), "check string returned when move East to Pantry");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Pantry. You see the following exit:" + Environment.NewLine +
+                    " - the Kitchen is to the West" + Environment.NewLine +
+                    "Someone could hide behind the canned goods" + Environment.NewLine +
+                    "You have found 4 of 5 opponents: Amy, Andy, Steve, Sarah"), "check status when move East to Pantry");
+                Assert.That(gameController.Prompt, Is.EqualTo("9: Which direction do you want to go (or type 'check'): "), "check prompt after move East to Pantry");
+                Assert.That(gameController.GameOver, Is.False, "check game not over after move East to Pantry");
+
+                // Check the Pantry - opponent 1 hiding there
+                Assert.That(gameController.CheckCurrentLocation(), Is.EqualTo("You found 1 opponent hiding behind the canned goods"), "check string returned when check in Pantry");
+                Assert.That(gameController.Status, Is.EqualTo(
+                    "You are in the Pantry. You see the following exit:" + Environment.NewLine +
+                    " - the Kitchen is to the West" + Environment.NewLine +
+                    "Someone could hide behind the canned goods" + Environment.NewLine +
+                    "You have found 5 of 5 opponents: Amy, Andy, Steve, Sarah, Tony"), "check status after check in Pantry");
+                Assert.That(gameController.Prompt, Is.EqualTo("10: Which direction do you want to go (or type 'check'): "), "check prompt after check in Pantry");
+                Assert.That(gameController.GameOver, Is.True, "check game over after check in Pantry");
+            });
+
         }
 
         [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData),
