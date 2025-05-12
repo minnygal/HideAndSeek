@@ -1,8 +1,4 @@
-﻿using HideAndSeek;
-using Moq;
-using NUnit.Framework;
-using System.Collections.Generic;
-using System.Linq;
+﻿using Moq;
 using System.Text.Json;
 
 namespace HideAndSeek

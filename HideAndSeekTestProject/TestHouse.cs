@@ -1,15 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO.Abstractions;
-using System.Linq;
-using System.Text;
-using System.Text.Json;
-using System.Threading.Tasks;
-using System.Xml.Linq;
-using Castle.Components.DictionaryAdapter.Xml;
-using Microsoft.VisualStudio.TestPlatform.ObjectModel;
+﻿using Microsoft.VisualStudio.TestPlatform.ObjectModel;
 using Moq;
-using Newtonsoft.Json.Linq;
 
 namespace HideAndSeek
 {

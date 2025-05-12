@@ -1,7 +1,4 @@
 ﻿using Moq;
-using System.IO.Abstractions;
-using System.Runtime.CompilerServices;
-using System.Xml.Linq;
 
 namespace HideAndSeek
 {

@@ -1,11 +1,4 @@
-﻿using HideAndSeek;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HideAndSeek
+﻿namespace HideAndSeek
 {
     /// <summary>
     /// DirectionExtensions tests for methods to get opposite direction and direction description
