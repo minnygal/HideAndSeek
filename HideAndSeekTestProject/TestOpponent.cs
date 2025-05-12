@@ -43,6 +43,19 @@ namespace HideAndSeek
             });
         }
 
+        [Test]
+        [Category("Opponent ResetDefaultNumbersForOpponentNames Success")]
+        public void Test_Opponent_ResetDefaultNumbersForOpponentNames()
+        {
+            Assert.Multiple(() =>
+            {
+                Assert.That(new Opponent().Name, Does.EndWith("1"), "first new Opponent name ending before resetting");
+                Assert.That(new Opponent().Name, Does.EndWith("2"), "second new Opponent name ending before resetting");
+                Opponent.ResetDefaultNumbersForOpponentNames(); // Reset numbers for Opponent names
+                Assert.That(new Opponent().Name, Does.EndWith("1"), "new Opponent name ending after resetting");
+            });
+        }
+
         [TestCase("")]
         [TestCase(" ")]
         [Category("Opponent Constructor Name ArgumentException Failure")]
