@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.IO.Abstractions;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace HideAndSeek
 {
@@ -69,7 +63,8 @@ namespace HideAndSeek
             // If file name without ending is invalid
             if ( !(FileExtensions.IsValidName(fileNameWithoutEnding)) )
             {
-                throw new ArgumentException($"Cannot perform action because file name \"{fileNameWithoutEnding}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)", nameof(fileNameWithoutEnding)); // Throw new exception with custom error message
+                throw new ArgumentException($"Cannot perform action because file name \"{fileNameWithoutEnding}\" is invalid " +
+                                             "(is empty or contains illegal characters, e.g. \\, /, or whitespace)", nameof(fileNameWithoutEnding)); // Throw new exception with custom error message
             }
 
             // Return full file name including ending and extension
@@ -105,7 +100,7 @@ namespace HideAndSeek
         /// House object associated with game (used for property validation)
         /// DO NOT MANUALLY CALL SETTER since other properties' setters rely on this property for data validation
         /// </summary>
-        /// <exception cref="NullReferenceException">Exception thrown if House property has not been set</exception>"
+        /// <exception cref="NullReferenceException">Exception thrown if House property has not been set</exception>
         /// <exception cref="InvalidOperationException">Exception thrown if House property has already been set</exception>
         [JsonIgnore]
         public virtual House House
@@ -168,7 +163,7 @@ namespace HideAndSeek
         /// Should only be used by JSON deserializer and tests
         /// CAUTION: setter calls House's CreateHouse method
         /// </summary>
-        /// <exception cref="NullReferenceException">Exception thrown if HouseFileName property has not been set</exception>"
+        /// <exception cref="NullReferenceException">Exception thrown if HouseFileName property has not been set</exception>
         /// <exception cref="InvalidOperationException">Exception thrown if HouseFileName property has already been set</exception>
         [JsonRequired]
         public required string HouseFileName
@@ -250,7 +245,7 @@ namespace HideAndSeek
             }
         }
 
-        private Dictionary<string, string> _opponentsAndHidingLocations;
+        private IDictionary<string, string> _opponentsAndHidingLocations;
 
         /// <summary>
         /// Opponents and their locations with hiding place
@@ -259,7 +254,7 @@ namespace HideAndSeek
         /// <exception cref="ArgumentException">Exception thrown if value passed to setter is empty dictionary</exception>
         /// <exception cref="InvalidOperationException">Exception thrown if value passed to setter has value not existing as location with hiding place in House</exception>
         [JsonRequired]
-        public virtual required Dictionary<string, string> OpponentsAndHidingLocations
+        public virtual required IDictionary<string, string> OpponentsAndHidingLocations
         {
             get
             {
@@ -267,7 +262,7 @@ namespace HideAndSeek
             }
             set
             {
-                // If no items
+                // If empty (no items)
                 if (value.Count == 0)
                 {
                     throw new ArgumentException("invalid OpponentsAndHidingLocations - no opponents", nameof(value)); // Throw exception
@@ -285,7 +280,7 @@ namespace HideAndSeek
                 // If any of the LocationWithHidingPlaces do not exist, throw exception
                 foreach(string opponentLocationWithHidingPlace in value.Values)
                 {
-                    if (!(House.DoesLocationWithHidingPlaceExist(opponentLocationWithHidingPlace)))
+                    if( !(House.DoesLocationWithHidingPlaceExist(opponentLocationWithHidingPlace)) )
                     {
                         throw new InvalidOperationException($"location with hiding place \"{opponentLocationWithHidingPlace}\" does not exist in House"); // Throw exception
                     }
@@ -314,7 +309,7 @@ namespace HideAndSeek
                 // If any found opponents do not exist in OpponentsAndHidingLocations dictionary keys, throw exception
                 foreach (string foundOpponent in value)
                 {
-                    if( !(OpponentsAndHidingLocations.Keys.Contains(foundOpponent)) )
+                    if( !(OpponentsAndHidingLocations.ContainsKey(foundOpponent)) )
                     {
                         throw new InvalidOperationException("found opponent is not an opponent");
                     }
@@ -338,9 +333,10 @@ namespace HideAndSeek
         /// <param name="playerLocation">Current location of player</param>
         /// <param name="moveNumber">Current move number</param>
         /// <param name="opponentsAndHidingLocations">Opponents and their hiding locations</param>
-        /// <param name="foundOpponents">Opponents who have been found</param>
+        /// <param name="foundOpponents">Opponents that have been found</param>
         [SetsRequiredMembers]
-        public SavedGame(House house, string houseFileName, string playerLocation, int moveNumber, Dictionary<string, string> opponentsAndHidingLocations, IEnumerable<string> foundOpponents)
+        public SavedGame(House house, string houseFileName, string playerLocation, int moveNumber, 
+                         IDictionary<string, string> opponentsAndHidingLocations, IEnumerable<string> foundOpponents)
         {
             House = house;
             SetHouseFileName_WithoutCreatingHouse(houseFileName); // Set backing field rather than property to get around CreateHouse call in property setter
