@@ -108,7 +108,7 @@ namespace HideAndSeek
         /// <exception cref="NullReferenceException">Exception thrown if House property has not been set</exception>"
         /// <exception cref="InvalidOperationException">Exception thrown if House property has already been set</exception>
         [JsonIgnore]
-        public House House
+        public virtual House House
         {
             get
             {
@@ -206,7 +206,7 @@ namespace HideAndSeek
         /// </summary>
         /// <exception cref="InvalidOperationException">Exception thrown if value passed to setter does not exist in House</exception>
         [JsonRequired]
-        public required string PlayerLocation {
+        public virtual required string PlayerLocation {
             get
             {
                 return _playerLocation;
@@ -231,7 +231,7 @@ namespace HideAndSeek
         /// </summary>
         /// <exception cref="ArgumentOutOfRangeException">Exception thrown if value passed to setter is not a positive number</exception>
         [JsonRequired]
-        public required int MoveNumber
+        public virtual required int MoveNumber
         {
             get
             {
@@ -259,7 +259,7 @@ namespace HideAndSeek
         /// <exception cref="ArgumentException">Exception thrown if value passed to setter is empty dictionary</exception>
         /// <exception cref="InvalidOperationException">Exception thrown if value passed to setter has value not existing as location with hiding place in House</exception>
         [JsonRequired]
-        public required Dictionary<string, string> OpponentsAndHidingLocations
+        public virtual required Dictionary<string, string> OpponentsAndHidingLocations
         {
             get
             {
@@ -303,7 +303,7 @@ namespace HideAndSeek
         /// </summary>
         /// <exception cref="InvalidOperationException">Exception thrown if value passed to setter includes name of opponent not in game</exception>
         [JsonRequired]
-        public required IEnumerable<string> FoundOpponents
+        public virtual required IEnumerable<string> FoundOpponents
         {
             get
             {

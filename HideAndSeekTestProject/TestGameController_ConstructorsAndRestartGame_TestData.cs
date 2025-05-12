@@ -712,6 +712,29 @@ namespace HideAndSeek
                     () => new GameController(new Opponent[] { new Mock<Opponent>().Object, new Mock<Opponent>().Object }, CustomHouse))
                     .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaHouseObject - constructor - Opponents and House")
                     .SetCategory("GameController Constructor SpecifyOpponentsAndHouse Success");
+
+                // Constructor with SavedGame object
+                yield return new TestCaseData(
+                    CustomHouse,
+                    () =>
+                    {
+                        // Create mock of SavedGame object
+                        Mock<SavedGame> savedGameMock = new Mock<SavedGame>();
+                        savedGameMock.Setup((sg) => sg.House).Returns(CustomHouse);
+                        savedGameMock.Setup((sg) => sg.PlayerLocation).Returns("Landing");
+                        savedGameMock.Setup((sg) => sg.MoveNumber).Returns(1);
+                        savedGameMock.Setup((sg) => sg.OpponentsAndHidingLocations).Returns(
+                            new Dictionary<string, string>()
+                            {
+                                { "Amy", "Kitchen" },
+                                { "Steve", "Bedroom" }
+                            });
+
+                        // Return new GameController created with SavedGame object
+                        return new GameController(savedGameMock.Object);
+                    })
+                    .SetName("Test_GameController_CheckHouseSetSuccessfully_ViaHouseObject - constructor - SavedGame")
+                    .SetCategory("GameController Constructor SpecifySavedGame Success");
             }
         }
 
@@ -834,6 +857,29 @@ namespace HideAndSeek
                     MockedOpponents.Select((o) => o.Name).ToArray())
                     .SetName("Test_GameController_CheckOpponentsSetSuccessfully - constructor - Opponents - House")
                     .SetCategory("GameController Constructor SpecifyOpponentsAndHouse OpponentsSet Success");
+
+                // Constructor with SavedGame object
+                yield return new TestCaseData(
+                    () => 
+                    {
+                        // Create mock of SavedGame object
+                        Mock<SavedGame> savedGameMock = new Mock<SavedGame>();
+                        savedGameMock.Setup((sg) => sg.House).Returns(CustomHouse);
+                        savedGameMock.Setup((sg) => sg.PlayerLocation).Returns("Landing");
+                        savedGameMock.Setup((sg) => sg.MoveNumber).Returns(1);
+                        savedGameMock.Setup((sg) => sg.OpponentsAndHidingLocations).Returns(
+                            new Dictionary<string, string>()
+                            {
+                                { "Amy", "Kitchen" },
+                                { "Steve", "Bedroom" }
+                            });
+
+                        // Return new GameController created with SavedGame object
+                        return new GameController(savedGameMock.Object);
+                    },
+                    new string[] { "Amy", "Steve" })
+                    .SetName("Test_GameController_CheckOpponentsSetSuccessfully - constructor - SavedGame")
+                    .SetCategory("GameController Constructor SpecifySavedGame OpponentsSet Success");
             }
         }
 
