@@ -114,16 +114,16 @@ namespace HideAndSeek
             Assert.Multiple(() =>
             {
                 // Assert Landing's random exits
-                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Attic"), "Landing exit at index 0");
-                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Kids Room"), "Landing exit at index 1");
-                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Pantry"), "Landing exit at index 2");
-                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Second Bathroom"), "Landing exit at index 3");
-                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Nursery"), "Landing exit at index 4");
-                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Master Bedroom"), "Landing exit at index 5");
-                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Hallway"), "Landing exit at index 6");
+                Assert.That(House.GetRandomExit(landing).Name, Is.EqualTo("Attic"), "Landing exit at index 0");
+                Assert.That(House.GetRandomExit(landing).Name, Is.EqualTo("Kids Room"), "Landing exit at index 1");
+                Assert.That(House.GetRandomExit(landing).Name, Is.EqualTo("Pantry"), "Landing exit at index 2");
+                Assert.That(House.GetRandomExit(landing).Name, Is.EqualTo("Second Bathroom"), "Landing exit at index 3");
+                Assert.That(House.GetRandomExit(landing).Name, Is.EqualTo("Nursery"), "Landing exit at index 4");
+                Assert.That(House.GetRandomExit(landing).Name, Is.EqualTo("Master Bedroom"), "Landing exit at index 5");
+                Assert.That(House.GetRandomExit(landing).Name, Is.EqualTo("Hallway"), "Landing exit at index 6");
 
                 // Assert Kitchen's random exit at index 0 is Hallway
-                Assert.That(house.GetRandomExit(kitchen).Name, Is.EqualTo("Hallway"), "Kitchen exit at index 0");
+                Assert.That(House.GetRandomExit(kitchen).Name, Is.EqualTo("Hallway"), "Kitchen exit at index 0");
             });
         }
 
