@@ -44,13 +44,13 @@ namespace HideAndSeek
     {
         /// <summary>
         /// Serialize object and return as string
-        /// Calls private PrepForSerialization method
+        /// Calls PrepForSerialization method
         /// which must be called prior to object serialization.
         /// </summary>
         /// <returns>Serialized object as string</returns>
         public override string Serialize()
         {
-            base.Serialize(); // Prepare object for serialization but ignore object serialized as Location
+            PrepForSerialization(); // Prepare object for serialization
             return JsonSerializer.Serialize(this); // Serialize this object as a LocationWithHidingPlace
         }
 
