@@ -38,11 +38,19 @@ namespace HideAndSeek
      * -I added a property and method for JSON serialization of exits.
      * -I added a method to prepare the object for JSON serialization.
      * -I added a method to serialize the object and return the text.
+     * -I moved the GetRandomExit to this class and made it nonstatic.
      * -I added comments for easier reading.
      * **/
 
     public class Location
     {
+        [JsonIgnore]
+        /// <summary>
+        /// Random number generator used for getting random exit
+        /// (should only be changed for testing purposes)
+        /// </summary>
+        public static Random Random { get; set; } = new Random();
+
         /// <summary>
         /// Constructor for JSON deserialization
         /// </summary>
@@ -261,6 +269,16 @@ namespace HideAndSeek
         private void AddReturnExit(Direction direction, Location connectingLocation)
         {
             Exits.Add(direction, connectingLocation);
+        }
+
+        /// <summary>
+        /// Get random exit
+        /// </summary>
+        /// <param name="location">Location from which to find random exit</param>
+        /// <returns>Location to which random exit leads</returns>
+        public Location GetRandomExit()
+        {
+            return Exits.ElementAt(Random.Next(Exits.Count)).Value; // Return random Location from exits collection
         }
     }
 }

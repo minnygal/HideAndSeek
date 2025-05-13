@@ -42,6 +42,9 @@ namespace HideAndSeek
         [SetUp]
         public void Setup()
         {
+            // Set Location Random number generator to fresh generator
+            Location.Random = new Random();
+
             // Initialize class variables to new Locations
             center = new Location("living room");
             in_closet = new Location("closet");
@@ -80,6 +83,55 @@ namespace HideAndSeek
 
                 // Assert that center location's exit list has expected number of items
                 Assert.That(center.ExitList().Count(), Is.EqualTo(12), "center room has 12 exits in exit list after exits added");
+            });
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            Location.Random = new Random(); // Set Location Random number generator to fresh generator
+        }
+
+        /// <summary>
+        /// Assert that GetRandomExit method returns appropriate Location using mock of Random
+        /// 
+        /// CREDIT: adapted from HideAndSeek project's TestHouse class's TestRandomExit() test method
+        ///         © 2023 Andrew Stellman and Jennifer Greene
+        ///         Published under the MIT License
+        ///         https://github.com/head-first-csharp/fourth-edition/blob/master/Code/Chapter_10/HideAndSeek_part_3/HideAndSeekTests/TestHouse.cs
+        ///         Link valid as of 02-26-2025
+        /// 
+        /// CHANGES:
+        /// -I moved the method and property to the Location class since this pertains to Location rather than House.
+        /// -I changed the method name to be consistent with the conventions I'm using in this test project.
+        /// -I put all the assertions in the body of a multiple assert so all assertions will be run.
+        /// -I changed the assertions to use the constraint model to stay up-to-date.
+        /// -I added some comments for easier reading.
+        /// -I added messages to the assertions to make them easier to debug.
+        /// -I moved the GetLocationByName method call for getting the Kitchen Location to the beginning of the test method.
+        /// </summary>
+        [Test]
+        [Category("GetRandomExit Success")]
+        public void Test_Location_GetRandomExit()
+        {
+            // Set House random number generator to mock
+            Location.Random = new MockRandomWithValueList(new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 });
+
+            Assert.Multiple(() =>
+            {
+                // Assert Center's random exits
+                Assert.That(center.GetRandomExit().Name, Is.EqualTo("kitchen"), "exit at index 0");
+                Assert.That(center.GetRandomExit().Name, Is.EqualTo("pantry"), "exit at index 1");
+                Assert.That(center.GetRandomExit().Name, Is.EqualTo("game room"), "exit at index 2");
+                Assert.That(center.GetRandomExit().Name, Is.EqualTo("study"), "exit at index 3");
+                Assert.That(center.GetRandomExit().Name, Is.EqualTo("office"), "exit at index 4");
+                Assert.That(center.GetRandomExit().Name, Is.EqualTo("sensory room"), "exit at index 5");
+                Assert.That(center.GetRandomExit().Name, Is.EqualTo("bedroom"), "exit at index 6");
+                Assert.That(center.GetRandomExit().Name, Is.EqualTo("storage room"), "exit at index 7");
+                Assert.That(center.GetRandomExit().Name, Is.EqualTo("closet"), "exit at index 8");
+                Assert.That(center.GetRandomExit().Name, Is.EqualTo("yard"), "exit at index 9");
+                Assert.That(center.GetRandomExit().Name, Is.EqualTo("attic"), "exit at index 10");
+                Assert.That(center.GetRandomExit().Name, Is.EqualTo("basement"), "exit at index 11");
             });
         }
 

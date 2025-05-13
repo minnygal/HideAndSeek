@@ -31,9 +31,7 @@ namespace HideAndSeek
     /** CHANGES
      * -I renamed Entry to StartingPoint since the starting point may not always be the entry.
      * -I added a method to get a LocationWithHidingPlace by name.
-     * -I renamed a method to GetRandomExit to follow project method naming convention.
-     * -I used ElementAt instead of Skip in GetRandomExit.
-     * -I made GetRandomExit static.
+     * -I moved the random exit method to the Location class.
      * -I added a method to get a random hiding place.
      * -I added methods to hide all opponents to ensure hiding places are cleared before
      *  opponents are rehidden.
@@ -523,17 +521,6 @@ namespace HideAndSeek
         /// (should only be changed for testing purposes)
         /// </summary>
         public static Random Random { get; set; } = new Random();
-
-        /// <summary>
-        /// Get random exit from specified location
-        /// </summary>
-        /// <param name="location">Location from which to find random exit</param>
-        /// <returns>Location to which random exit leads</returns>
-        public static Location GetRandomExit(Location location)
-        {
-            IDictionary<Direction, Location> exitList = location.Exits.OrderBy(x => x.Key).ToDictionary(); // Get collection of all exits from Location ordered by name
-            return exitList.ElementAt(Random.Next(exitList.Count)).Value; // Return random Location from exits collection
-        }
 
         /// <summary>
         /// File system to use when creating a new House from a House file
