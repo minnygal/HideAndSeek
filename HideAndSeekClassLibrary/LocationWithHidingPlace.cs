@@ -83,7 +83,7 @@ namespace HideAndSeek
         /// <summary>
         /// Opponents hidden in this hiding place
         /// </summary>
-        private List<Opponent> opponentsHiding = new List<Opponent>();
+        private IList<Opponent> opponentsHiding = new List<Opponent>();
 
         /// <summary>
         /// Constructor for JSON deserialization
@@ -114,9 +114,9 @@ namespace HideAndSeek
         /// Check hiding place for opponents (clear hiding place of all opponents)
         /// </summary>
         /// <returns>List of opponents found in hiding place</returns>
-        public List<Opponent> CheckHidingPlace()
+        public IList<Opponent> CheckHidingPlace()
         {
-            List<Opponent> opponentsFound = new List<Opponent>(opponentsHiding); // Store opponents found in new list
+            IList<Opponent> opponentsFound = new List<Opponent>(opponentsHiding); // Store opponents found in new list
             opponentsHiding.Clear(); // Clear list of opponents hiding
             return opponentsFound; // Return list of opponents found
         }

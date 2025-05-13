@@ -565,7 +565,7 @@ namespace HideAndSeek
 
             // Check hiding place
             LocationWithHidingPlace location = (LocationWithHidingPlace)CurrentLocation; // Convert CurrentLocation to LocationWithHidingPlace
-            List<Opponent> opponentsFound = location.CheckHidingPlace(); // Check hiding place and initialize list to Opponents found
+            IList<Opponent> opponentsFound = location.CheckHidingPlace(); // Check hiding place and initialize list to Opponents found
 
             // If any Opponents were found in the hiding place
             if (opponentsFound.Count >= 1)
