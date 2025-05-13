@@ -464,7 +464,7 @@ namespace HideAndSeek
                 }
 
                 // Set Location's Exits Dictionary
-                location.SetExitsDictionary(exitsDictionary);
+                location.Exits = exitsDictionary;
             }
         }
 

@@ -358,6 +358,39 @@ namespace HideAndSeek
         }
 
         [Test]
+        [Category("Location Exits Success")]
+        public void Test_Location_Set_Exits()
+        {
+            // Create dictionary of exits
+            Dictionary<Direction, Location> exits = new Dictionary<Direction, Location>();
+            exits.Add(Direction.Out, out_yard);
+            exits.Add(Direction.North, north_kitchen);
+
+            // Set exits dictionary for center location
+            center.Exits = exits;
+
+            // Check that Exits property was set successfully
+            Assert.That(center.Exits, Is.EquivalentTo(exits));
+        }
+
+        [Test]
+        [Category("Location Exits ArgumentException Failure")]
+        public void Test_Location_Set_Exits_AndCheckErrorMessage_ForEmptyDictionary()
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that setting exits dictionary to empty dictionary raises exception
+                var exception = Assert.Throws<ArgumentException>(() =>
+                {
+                    center.Exits = new Dictionary<Direction, Location>();
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith("location \"living room\" must be assigned at least one exit"));
+            });
+        }
+
+        [Test]
         [Category("Location ExitsForSerialization Success")]
         public void Test_Location_Set_ExitsForSerialization()
         {
@@ -394,39 +427,6 @@ namespace HideAndSeek
                 // Assert that exception message is as expected
                 Assert.That(exception.Message, Does.StartWith($"location name \"{locationName}\" for exit in direction \"North\" " +
                                                            "is invalid (is empty or contains only whitespace"));
-            });
-        }
-
-        [Test]
-        [Category("Location SetExitsDictionary Success")]
-        public void Test_Location_SetExitsDictionary()
-        {
-            // Create dictionary of exits
-            Dictionary<Direction, Location> exits = new Dictionary<Direction, Location>();
-            exits.Add(Direction.Out, out_yard);
-            exits.Add(Direction.North, north_kitchen);
-
-            // Set exits dictionary for center location
-            center.SetExitsDictionary(exits);
-
-            // Check that Exits property was set successfully
-            Assert.That(center.Exits, Is.EquivalentTo(exits));
-        }
-
-        [Test]
-        [Category("Location SetExitsDictionary ArgumentException Failure")]
-        public void Test_Location_SetExitsDictionary_AndCheckErrorMessage_ForEmptyDictionary()
-        {
-            Assert.Multiple(() =>
-            {
-                // Assert that setting exits dictionary to empty dictionary raises exception
-                var exception = Assert.Throws<ArgumentException>(() =>
-                {
-                    center.SetExitsDictionary(new Dictionary<Direction, Location>());
-                });
-
-                // Assert that exception message is as expected
-                Assert.That(exception.Message, Does.StartWith("location \"living room\" must be assigned at least one exit"));
             });
         }
 

@@ -38,7 +38,6 @@ namespace HideAndSeek
      * -I added a property and method for JSON serialization of exits.
      * -I added a method to prepare the object for JSON serialization.
      * -I added a method to serialize the object and return the text.
-     * -I added a method to set Exits property (called from House after JSON deserialization).
      * -I added comments for easier reading.
      * **/
 
@@ -85,28 +84,29 @@ namespace HideAndSeek
             }
         }
 
+        private IDictionary<Direction, Location> _exits = new Dictionary<Direction, Location>();
+
         [JsonIgnore]
         /// <summary>
         /// The exits out of this location
         /// </summary>
-        public IDictionary<Direction, Location> Exits { get; private set; } = new Dictionary<Direction, Location>();
-        
-        /// <summary>
-        /// Set the Exits dictionary
-        /// Should only be called by House method
-        /// </summary>
-        /// <param name="exits">Dictionary of exits</param>
-        /// <exception cref="ArgumentException">Exception thrown if exits dictionary is empty</exception>
-        public void SetExitsDictionary(IDictionary<Direction, Location> exits)
+        public IDictionary<Direction, Location> Exits
         {
-            // If dictionary is empty
-            if(exits.Count() == 0)
+            get
             {
-                throw new ArgumentException($"location \"{Name}\" must be assigned at least one exit", nameof(exits)); // Throw exception
+                return _exits;
             }
+            set
+            {
+                // If value passed in is empty Dictionary
+                if (value.Count == 0)
+                {
+                    throw new ArgumentException($"location \"{Name}\" must be assigned at least one exit", nameof(value)); // Throw exception
+                }
 
-            // Set Exits property
-            Exits = exits;
+                // Set backing field
+                _exits = value;
+            }
         }
 
         public override string ToString() => Name;
