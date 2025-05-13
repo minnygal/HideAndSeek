@@ -149,7 +149,7 @@ namespace HideAndSeek
         /// <summary>
         /// Prepare object for serialization by setting ExitsForSerialization property
         /// </summary>
-        protected void PrepForSerialization()
+        public void PrepForSerialization()
         {
             // Create Dictionary of directions and Location names
             IDictionary<Direction, string> exitsForSerialization = new Dictionary<Direction, string>();

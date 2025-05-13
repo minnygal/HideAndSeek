@@ -431,6 +431,59 @@ namespace HideAndSeek
         }
 
         [Test]
+        [Category("Location PrepForSerialization Success")]
+        public void Test_Location_PrepForSerialization_WithNoExits()
+        {
+            // Create Location with no exits
+            Location location = new Location("sealed room");
+
+            Assert.Multiple(() =>
+            {
+                // Assert that ExitsForSerialization is null before prep
+                Assert.That(center.ExitsForSerialization, Is.Null, "null before PrepForSerialization");
+
+                // ACT: Prep for serialization
+                location.PrepForSerialization();
+
+                // Assert that ExitsForSerialization has been set successfully
+                Assert.That(location.ExitsForSerialization, Is.Empty, "set properly by PrepForSerialization");
+            });
+        }
+
+        [Test]
+        [Category("Location PrepForSerialization Success")]
+        public void Test_Location_PrepForSerialization_WithExits()
+        {
+            // Create dictionary of expected exits
+            Dictionary<Direction, string> expectedexits = new Dictionary<Direction, string>()
+            {
+                { Direction.North, "kitchen" },
+                { Direction.Northeast, "pantry" },
+                { Direction.East, "game room" },
+                { Direction.Southeast, "study" },
+                { Direction.South, "office" },
+                { Direction.Southwest, "sensory room" },
+                { Direction.West, "bedroom" },
+                { Direction.Northwest, "storage room" },
+                { Direction.In, "closet" },
+                { Direction.Out, "yard" },
+                { Direction.Up, "attic" },
+                { Direction.Down, "basement" }
+            };
+            Assert.Multiple(() =>
+            {
+                // Assert that ExitsForSerialization is null before prep
+                Assert.That(center.ExitsForSerialization, Is.Null, "null before PrepForSerialization");
+                
+                // ACT: Prep for serialization
+                center.PrepForSerialization();
+
+                // Assert that ExitsForSerialization has been set successfully
+                Assert.That(center.ExitsForSerialization, Is.EquivalentTo(expectedexits), "set properly by PrepForSerialization");
+            });
+        }
+
+        [Test]
         [Category("Location Serialization Success")]
         public void Test_Location_Serialization()
         {

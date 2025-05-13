@@ -390,12 +390,13 @@ namespace HideAndSeek
         /// Serialize House and get text of serialized House
         /// (preps each Location in House appropriately)
         /// </summary>
+        /// <returns>Text of serialized House</returns>
         public string Serialize()
         {
             // For each Location in House
             foreach (Location location in Locations)
             {
-                location.Serialize(); // Prep for serialization
+                location.PrepForSerialization(); // Prep for serialization
             }
 
             // Return serialized House
