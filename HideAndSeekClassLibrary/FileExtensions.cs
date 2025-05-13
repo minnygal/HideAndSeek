@@ -1,17 +1,11 @@
-﻿using System;
-using System.Collections.Generic;
-using System.IO.Abstractions;
-using System.Linq;
-using System.Runtime.ConstrainedExecution;
-using System.Text;
-using System.Text.Json.Serialization;
-using System.Threading.Tasks;
+﻿using System.IO.Abstractions;
 
 namespace HideAndSeek
 {
     /// <summary>
-    /// Extension class for IFileSystem interface to store JSON file extension
-    /// and methods to get full file name and validate file name
+    /// Extension class for IFileSystem interface 
+    /// to store JSON file extension
+    /// and methods (extension and static) to get full file name with JSON extension and validate file name
     /// </summary>
     public static class FileExtensions
     {
@@ -36,7 +30,7 @@ namespace HideAndSeek
         /// Get full name for file (including extension)
         /// </summary>
         /// <param name="fileNameWithoutExtension">Name of file not including extension</param>
-        /// <returns></returns>
+        /// <returns>Full name of file including extension</returns>
         /// <exception cref="ArgumentException">Exception thrown if file name is invalid</exception>
         public static string GetFullFileNameForJson(string fileNameWithoutExtension)
         {
@@ -56,7 +50,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="fileSystem"></param>
         /// <param name="name">File name to evaluate</param>
-        /// <returns>Whether file name is valid</returns>
+        /// <returns>True if file name is valid</returns>
         public static bool IsValidName(this IFileSystem fileSystem, string name)
         {
             return IsValidName(name);
@@ -66,7 +60,7 @@ namespace HideAndSeek
         /// Return whether file name is valid (not empty and no illegal characters)
         /// </summary>
         /// <param name="name">File name to evaluate</param>
-        /// <returns>Whether file name is valid</returns>
+        /// <returns>True if file name is valid</returns>
         public static bool IsValidName(string name)
         {
             // Return whether file name does NOT contain whitespace, a backslash, or a forward slash
