@@ -31,7 +31,8 @@
     }
 
     /// <summary>
-    /// Extension class for Direction enum to describe a direction or get the opposite direction
+    /// Extension class for Direction enum
+    /// with methods (extension and static) to describe a direction or get the opposite directionn
     /// Also includes static method to convert a string to a direction
     /// 
     /// CREDIT: Direction descriptions and description logic adapted from Stellman and Greene's code
@@ -57,20 +58,9 @@
             Direction.In, 
             Direction.Out 
         };
-
+        
         /// <summary>
-        /// Get the opposite Direction of the Direction provided
-        /// </summary>
-        /// <param name="direction">Direction to find the opposite of</param>
-        /// <returns>The opposite Direction of the Direction provided</returns>
-        public static Direction OppositeDirection(this Direction direction)
-        {
-            // Return Direction provided converted to integer, multiplied by -1, and converted back to Direction
-            return (Direction)((int)(direction) * -1); 
-        }
-
-        /// <summary>
-        /// Describes a direction (e.g. "in" vs. "to the North")
+        /// Describes a direction (e.g. "in", "to the North", etc.)
         /// </summary>
         /// <param name="direction">Direction to describe</param>
         /// <returns>String describing the direction</returns>
@@ -120,7 +110,7 @@
         };
 
         /// <summary>
-        /// Parse Direction from text (not case sensitive)
+        /// Parse Direction from trimmed text (not case sensitive)
         /// (checks for direction as text and shorthand for direction)
         /// </summary>
         /// <param name="directionText">Direction as text or shorthand for direction</param>
@@ -131,14 +121,26 @@
             // Trim direction text and convert to lowercase
             directionText = directionText.Trim().ToLower();
 
-            // Attempt to parse direction, if parse unsuccessful
+            // Attempt to parse direction
+            // If parse unsuccessful
             if( !(TextsForDirections.TryGetValue(directionText, out Direction parsedDirection)) )
             {
                 throw new ArgumentException("That's not a valid direction", nameof(directionText)); // Throw new exception with custom error message
             }
 
-            // Return whether parse was successful
+            // Return parsed Direction
             return parsedDirection;
+        }
+
+        /// <summary>
+        /// Get the opposite Direction of the Direction provided
+        /// </summary>
+        /// <param name="direction">Direction to find the opposite of</param>
+        /// <returns>The opposite Direction of the Direction provided</returns>
+        public static Direction OppositeDirection(this Direction direction)
+        {
+            // Return Direction provided converted to integer, multiplied by -1, and converted back to Direction
+            return (Direction)((int)(direction) * -1);
         }
     }
 }
