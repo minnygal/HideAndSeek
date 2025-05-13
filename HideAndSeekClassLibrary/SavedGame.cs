@@ -30,6 +30,9 @@ namespace HideAndSeek
      * -I added a method to set the HouseFileName property's backing field
      *  without using the property's setter (which calls House.CreateHouse)
      * -I added a parameterized constructor for setting properties upon initialization.
+     * -I added a static property to store the ending for a saved game file name.
+     * -I added a static method to get the full name of a saved game file.
+     * -I added a static method to get the names of all saved game files in a directory.
      * -I added comments for easier reading.
      **/
 
