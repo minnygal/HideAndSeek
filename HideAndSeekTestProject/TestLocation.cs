@@ -414,9 +414,11 @@ namespace HideAndSeek
         public void Test_Location_Set_Exits()
         {
             // Create dictionary of exits
-            Dictionary<Direction, Location> exits = new Dictionary<Direction, Location>();
-            exits.Add(Direction.Out, out_yard);
-            exits.Add(Direction.North, north_kitchen);
+            Dictionary<Direction, Location> exits = new Dictionary<Direction, Location>()
+            {
+                { Direction.Out, out_yard },
+                { Direction.North, north_kitchen }
+            };
 
             // Set exits dictionary for center location
             center.Exits = exits;
@@ -447,9 +449,11 @@ namespace HideAndSeek
         public void Test_Location_Set_ExitsForSerialization()
         {
             // Create dictionary of exits
-            Dictionary<Direction, string> exits = new Dictionary<Direction, string>();
-            exits.Add(Direction.Northeast, "Secret Library");
-            exits.Add(Direction.In, "Secret Snack Corner");
+            Dictionary<Direction, string> exits = new Dictionary<Direction, string>()
+            {
+                { Direction.Northeast, "Secret Library" },
+                { Direction.In, "Secret Snack Corner" }
+            };
 
             // Set ExitsForSerialization property
             northwest_storageRoom.ExitsForSerialization = exits;
@@ -464,9 +468,11 @@ namespace HideAndSeek
         public void Test_Location_Set_ExitsForSerialization_AndCheckErrorMessage_ForInvalidExitLocationName(string locationName)
         {
             // Create dictionary of exits
-            Dictionary<Direction, string> exits = new Dictionary<Direction, string>();
-            exits.Add(Direction.South, "Game Room");
-            exits.Add(Direction.North, locationName);
+            Dictionary<Direction, string> exits = new Dictionary<Direction, string>()
+            {
+                { Direction.South, "Game Room" },
+                { Direction.North, locationName }
+            };
 
             Assert.Multiple(() =>
             {
@@ -572,19 +578,21 @@ namespace HideAndSeek
         public void Test_Location_Deserialization()
         {
             // Set expected ExitsForSerialization property value
-            IDictionary<Direction, string> expectedExitsForSerialization = new Dictionary<Direction, string>();
-            expectedExitsForSerialization.Add(Direction.North, "kitchen");
-            expectedExitsForSerialization.Add(Direction.Northeast, "pantry");
-            expectedExitsForSerialization.Add(Direction.East, "game room");
-            expectedExitsForSerialization.Add(Direction.Southeast, "study");
-            expectedExitsForSerialization.Add(Direction.South, "office");
-            expectedExitsForSerialization.Add(Direction.Southwest, "sensory room");
-            expectedExitsForSerialization.Add(Direction.West, "bedroom");
-            expectedExitsForSerialization.Add(Direction.Northwest, "storage room");
-            expectedExitsForSerialization.Add(Direction.In, "closet");
-            expectedExitsForSerialization.Add(Direction.Out, "yard");
-            expectedExitsForSerialization.Add(Direction.Up, "attic");
-            expectedExitsForSerialization.Add(Direction.Down, "basement");
+            IDictionary<Direction, string> expectedExitsForSerialization = new Dictionary<Direction, string>()
+            {
+                { Direction.North, "kitchen" },
+                { Direction.Northeast, "pantry" },
+                { Direction.East, "game room" },
+                { Direction.Southeast, "study" },
+                { Direction.South, "office" },
+                { Direction.Southwest, "sensory room" },
+                { Direction.West, "bedroom" },
+                { Direction.Northwest, "storage room" },
+                { Direction.In, "closet" },
+                { Direction.Out, "yard" },
+                { Direction.Up, "attic" },
+                { Direction.Down, "basement" }
+            };
 
             // Text representing serialized location
             string serializedLocation = 
@@ -623,8 +631,7 @@ namespace HideAndSeek
         public void Test_Location_Deserialization_AndCheckErrorMessage_ForInvalidName(string name)
         {
             // Set expected ExitsForSerialization property value
-            IDictionary<Direction, string> expectedExitsForSerialization = new Dictionary<Direction, string>();
-            expectedExitsForSerialization.Add(Direction.North, "kitchen");
+            IDictionary<Direction, string> expectedExitsForSerialization = new Dictionary<Direction, string>() { { Direction.North, "kitchen" } };
 
             // Text representing serialized Location
             string serializedLocation = 

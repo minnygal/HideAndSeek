@@ -646,11 +646,11 @@ namespace HideAndSeek
             SavedGame savedGame = new SavedGame(GetDefaultHouse(), "DefaultHouse", playerLocation, moveNumber,
                                                 new Dictionary<string, string>()
                                                 {
-                                                                    { "Joe", "Kitchen" },
-                                                                    { "Bob", "Pantry" },
-                                                                    { "Ana", "Bathroom" },
-                                                                    { "Owen", "Kitchen" },
-                                                                    { "Jimmy", "Pantry" }
+                                                    { "Joe", "Kitchen" },
+                                                    { "Bob", "Pantry" },
+                                                    { "Ana", "Bathroom" },
+                                                    { "Owen", "Kitchen" },
+                                                    { "Jimmy", "Pantry" }
                                                 },
                                                 foundOpponents);
 

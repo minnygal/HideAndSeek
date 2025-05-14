@@ -129,19 +129,21 @@ namespace HideAndSeek
         public void Test_LocationWithHidingPlace_Deserialize()
         {
             // Initialize to expected ExitsForSerialization property value
-            IDictionary<Direction, string> expectedExitsForSerialization = new Dictionary<Direction, string>();
-            expectedExitsForSerialization.Add(Direction.North, "kitchen");
-            expectedExitsForSerialization.Add(Direction.Northeast, "pantry");
-            expectedExitsForSerialization.Add(Direction.East, "game room");
-            expectedExitsForSerialization.Add(Direction.Southeast, "study");
-            expectedExitsForSerialization.Add(Direction.South, "office");
-            expectedExitsForSerialization.Add(Direction.Southwest, "sensory room");
-            expectedExitsForSerialization.Add(Direction.West, "bedroom");
-            expectedExitsForSerialization.Add(Direction.Northwest, "storage room");
-            expectedExitsForSerialization.Add(Direction.In, "closet");
-            expectedExitsForSerialization.Add(Direction.Out, "yard");
-            expectedExitsForSerialization.Add(Direction.Up, "attic");
-            expectedExitsForSerialization.Add(Direction.Down, "basement");
+            IDictionary<Direction, string> expectedExitsForSerialization = new Dictionary<Direction, string>()
+            {
+                { Direction.North, "kitchen" },
+                { Direction.Northeast, "pantry" },
+                { Direction.East, "game room" },
+                { Direction.Southeast, "study" },
+                { Direction.South, "office" },
+                { Direction.Southwest, "sensory room" },
+                { Direction.West, "bedroom" },
+                { Direction.Northwest, "storage room" },
+                { Direction.In, "closet" },
+                { Direction.Out, "yard" },
+                { Direction.Up, "attic" },
+                { Direction.Down, "basement" }
+            };
 
             // Initialize to text representing serialized object
             string serializedLocation =
@@ -183,8 +185,7 @@ namespace HideAndSeek
         public void Test_LocationWithHidingPlace_Deserialize_AndCheckErrorMessage_ForInvalidHidingLocation(string hidingPlace)
         {
             // Initialize to expected ExitsForSerialization property value
-            IDictionary<Direction, string> expectedExitsForSerialization = new Dictionary<Direction, string>();
-            expectedExitsForSerialization.Add(Direction.North, "kitchen");
+            IDictionary<Direction, string> expectedExitsForSerialization = new Dictionary<Direction, string>() { { Direction.North, "kitchen" } };
 
             // Initialize to text representing serialized object
             string serializedLocation =
