@@ -92,7 +92,7 @@ namespace HideAndSeek
                 yield return new TestCaseData("",
                     (string fileName) =>
                     {
-                        fileSystem.GetFullFileNameForJson(fileName);
+                        FileExtensions.GetFullFileNameForJson(fileName);
                     })
                     .SetName("Test_FileExtensions_GetFullFileNameForJson_AndCheckErrorMessage_ForInvalidFileName - class method - empty")
                     .SetCategory("FileExtensions GetFullFileNameForJson ClassMethod ArgumentException Failure");
@@ -100,7 +100,7 @@ namespace HideAndSeek
                 yield return new TestCaseData(" ",
                     (string fileName) =>
                     {
-                        fileSystem.GetFullFileNameForJson(fileName);
+                        FileExtensions.GetFullFileNameForJson(fileName);
                     })
                     .SetName("Test_FileExtensions_GetFullFileNameForJson_AndCheckErrorMessage_ForInvalidFileName - class method - whitespace")
                     .SetCategory("FileExtensions GetFullFileNameForJson ClassMethod ArgumentException Failure");
@@ -108,7 +108,7 @@ namespace HideAndSeek
                 yield return new TestCaseData(" myFile",
                     (string fileName) =>
                     {
-                        fileSystem.GetFullFileNameForJson(fileName);
+                        FileExtensions.GetFullFileNameForJson(fileName);
                     })
                     .SetName("Test_FileExtensions_GetFullFileNameForJson_AndCheckErrorMessage_ForInvalidFileName - class method - space at beginning")
                     .SetCategory("FileExtensions GetFullFileNameForJson ClassMethod ArgumentException Failure");
@@ -116,7 +116,7 @@ namespace HideAndSeek
                 yield return new TestCaseData("my file",
                     (string fileName) =>
                     {
-                        fileSystem.GetFullFileNameForJson(fileName);
+                        FileExtensions.GetFullFileNameForJson(fileName);
                     })
                     .SetName("Test_FileExtensions_GetFullFileNameForJson_AndCheckErrorMessage_ForInvalidFileName - class method - space in middle")
                     .SetCategory("FileExtensions GetFullFileNameForJson ClassMethod ArgumentException Failure");
@@ -124,7 +124,7 @@ namespace HideAndSeek
                 yield return new TestCaseData("myFile ",
                     (string fileName) =>
                     {
-                        fileSystem.GetFullFileNameForJson(fileName);
+                        FileExtensions.GetFullFileNameForJson(fileName);
                     })
                     .SetName("Test_FileExtensions_GetFullFileNameForJson_AndCheckErrorMessage_ForInvalidFileName - class method - space at end")
                     .SetCategory("FileExtensions GetFullFileNameForJson ClassMethod ArgumentException Failure");
@@ -132,7 +132,7 @@ namespace HideAndSeek
                 yield return new TestCaseData("\\my\\File\\",
                     (string fileName) =>
                     {
-                        fileSystem.GetFullFileNameForJson(fileName);
+                        FileExtensions.GetFullFileNameForJson(fileName);
                     })
                     .SetName("Test_FileExtensions_GetFullFileNameForJson_AndCheckErrorMessage_ForInvalidFileName - class method - backslashes")
                     .SetCategory("FileExtensions GetFullFileNameForJson ClassMethod ArgumentException Failure");
@@ -140,7 +140,7 @@ namespace HideAndSeek
                 yield return new TestCaseData("/my/File/",
                     (string fileName) =>
                     {
-                        fileSystem.GetFullFileNameForJson(fileName);
+                        FileExtensions.GetFullFileNameForJson(fileName);
                     })
                     .SetName("Test_FileExtensions_GetFullFileNameForJson_AndCheckErrorMessage_ForInvalidFileName - class method - forwardslashes")
                     .SetCategory("FileExtensions GetFullFileNameForJson ClassMethod ArgumentException Failure");
