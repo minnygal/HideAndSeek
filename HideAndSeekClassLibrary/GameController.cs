@@ -284,7 +284,7 @@ namespace HideAndSeek
             {
                 // Initialize variable to first part of message for status
                 string message = $"You are in the {CurrentLocation.Name}. " +
-                                 $"You see the following exit{(CurrentLocation.Exits.Count() == 1 ? "" : "s")}:";
+                                 $"You see the following exit{(CurrentLocation.Exits.Count == 1 ? "" : "s")}:";
 
                 // Add each exit's description to the message for status
                 foreach (string exitDescription in CurrentLocation.ExitList())
@@ -307,7 +307,7 @@ namespace HideAndSeek
                 else // if Opponents have been found
                 {
                     message += Environment.NewLine + $"You have found {FoundOpponents.Count} of " +
-                               $"{OpponentsAndHidingLocations.Count()} opponent{(OpponentsAndHidingLocations.Count() == 1 ? "" : "s")}" +
+                               $"{OpponentsAndHidingLocations.Count} opponent{(OpponentsAndHidingLocations.Count == 1 ? "" : "s")}" +
                                 ": " + String.Join(", ", FoundOpponents.Select((o) => o.Name)); // Add information about found Opponents to message
                 }
 
@@ -404,7 +404,7 @@ namespace HideAndSeek
         private void SetUpOpponentsInitially(List<Opponent> opponents)
         {
             // If no Opponents in list
-            if (opponents.Count() == 0)
+            if (opponents.Count == 0)
             {
                 throw new ArgumentException("Cannot create a new instance of GameController because no Opponents were passed in", nameof(opponents)); // Throw exception
             }

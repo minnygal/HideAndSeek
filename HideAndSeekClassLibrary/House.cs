@@ -267,7 +267,7 @@ namespace HideAndSeek
             set
             {
                 // If enumerable is empty
-                if(value.Count() == 0)
+                if( !(value.Any()) )
                 {
                     throw new ArgumentException("locations with hiding places list is empty", nameof(value)); // Throw exception
                 }
