@@ -51,13 +51,13 @@
         /// <summary>
         /// Directions whose descriptions should be output without extra words
         /// </summary>
-        private static readonly Direction[] directionsToOutputWithoutExtraText = 
-        {   
+        private static readonly Direction[] directionsToOutputWithoutExtraText =
+        [
             Direction.Up, 
             Direction.Down, 
             Direction.In, 
             Direction.Out 
-        };
+        ];
         
         /// <summary>
         /// Describes a direction (e.g. "in", "to the North", etc.)
