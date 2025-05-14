@@ -23,7 +23,7 @@ namespace HideAndSeek
      * -I removed DescribeDirection method and put the logic in Direction file as Extension class
      *  for separation of concerns.
      * -I used a loop instead of LINQ in the ExitList method (just my approach).
-     * -I made AddExit return the connecting Location added.
+     * -I made AddExit return the connecting Location added to allow daisy-chaining.
      * -I created an AddExit overload to allow a location name to be passed in
      *  to have a new Location created in method (for ease).
      * -I created an AddExit overload to allow a location name and hiding place description
@@ -38,12 +38,34 @@ namespace HideAndSeek
      * -I added a property and method for JSON serialization of exits.
      * -I added a method to prepare the object for JSON serialization.
      * -I added a method to serialize the object and return the text.
-     * -I added a method to set Exits property (called from House after JSON deserialization).
+     * -I moved the GetRandomExit to this class and made it nonstatic.
      * -I added comments for easier reading.
      * **/
 
     public class Location
     {
+        [JsonIgnore]
+        /// <summary>
+        /// Random number generator used for getting random exit
+        /// (should only be changed for testing purposes)
+        /// </summary>
+        public static Random Random { get; set; } = new Random();
+
+        /// <summary>
+        /// Constructor for JSON deserialization
+        /// </summary>
+        public Location() { }
+
+        /// <summary>
+        /// Constructor setting location name
+        /// </summary>
+        /// <param name="name">Name of the location</param>
+        [SetsRequiredMembers]
+        public Location(string name)
+        {
+            Name = name;
+        }
+
         private string _name;
 
         /// <summary>
@@ -70,6 +92,35 @@ namespace HideAndSeek
             }
         }
 
+        private IDictionary<Direction, Location> _exits = new Dictionary<Direction, Location>();
+
+        [JsonIgnore]
+        /// <summary>
+        /// The exits out of this location
+        /// </summary>
+        public IDictionary<Direction, Location> Exits
+        {
+            get
+            {
+                return _exits;
+            }
+            set
+            {
+                // If value passed in is empty Dictionary
+                if (value.Count == 0)
+                {
+                    throw new ArgumentException($"location \"{Name}\" must be assigned at least one exit", nameof(value)); // Throw exception
+                }
+
+                // Set backing field
+                _exits = value;
+            }
+        }
+
+        public override string ToString() => Name;
+
+        #region Serialization-related property and methods
+
         private IDictionary<Direction, string> _exitsForSerialization;
 
         /// <summary>
@@ -88,13 +139,13 @@ namespace HideAndSeek
             set
             {
                 // Check each location name in Dictionary
-                foreach(KeyValuePair<Direction, string> kvp in value)
+                foreach (KeyValuePair<Direction, string> kvp in value)
                 {
                     // If name is invalid
-                    if(string.IsNullOrWhiteSpace(kvp.Value))
+                    if (string.IsNullOrWhiteSpace(kvp.Value))
                     {
-                        throw new ArgumentException(
-                            $"location name \"{kvp.Value}\" for exit in direction \"{kvp.Key}\" is invalid (is empty or contains only whitespace", nameof(value)); // Throw exception
+                        throw new ArgumentException($"location name \"{kvp.Value}\" for exit in direction \"{kvp.Key}\" is invalid " +
+                                                    "(is empty or contains only whitespace", nameof(value)); // Throw exception
                     }
                 }
 
@@ -106,7 +157,7 @@ namespace HideAndSeek
         /// <summary>
         /// Prepare object for serialization by setting ExitsForSerialization property
         /// </summary>
-        private void PrepForSerialization()
+        public void PrepForSerialization()
         {
             // Create Dictionary of directions and Location names
             IDictionary<Direction, string> exitsForSerialization = new Dictionary<Direction, string>();
@@ -131,46 +182,28 @@ namespace HideAndSeek
             return JsonSerializer.Serialize(this);
         }
 
-        [JsonIgnore]
+        #endregion
+
         /// <summary>
-        /// The exits out of this location
+        /// Get the exit location in a direction
         /// </summary>
-        public IDictionary<Direction, Location> Exits { get; private set; } = new Dictionary<Direction, Location>();
-        
-        /// <summary>
-        /// Set the Exits dictionary
-        /// Should only be called by House method
-        /// </summary>
-        /// <param name="exits">Dictionary of exits</param>
-        /// <exception cref="ArgumentException">Exception thrown if exits dictionary is empty</exception>
-        public void SetExitsDictionary(IDictionary<Direction, Location> exits)
+        /// <param name="direction">Direction of exit location</param>
+        /// <returns>The exit location</returns>
+        /// <exception cref="InvalidOperationException">Exception thrown if no exit in specified direction</exception>
+        public Location GetExit(Direction direction)
         {
-            // If dictionary is empty
-            if(exits.Count() == 0)
+            // Get exit in direction specified and store in location variable
+            Exits.TryGetValue(direction, out Location location);
+
+            // If no location found in direction
+            if (location == null)
             {
-                throw new ArgumentException($"location \"{Name}\" must be assigned at least one exit", nameof(exits)); // Throw exception
+                throw new InvalidOperationException($"no exit for location \"{Name}\" in direction \"{direction}\""); // Throw exception
             }
 
-            // Set Exits property
-            Exits = exits;
+            // Return location
+            return location;
         }
-
-        /// <summary>
-        /// Constructor for JSON deserialization
-        /// </summary>
-        public Location() { }
-
-        /// <summary>
-        /// The constructor sets the location name
-        /// </summary>
-        /// <param name="name">Name of the location</param>
-        [SetsRequiredMembers]
-        public Location(string name)
-        {
-            Name = name;
-        }
-
-        public override string ToString() => Name;
 
         /// <summary>
         /// Get an enumerable of descriptions of the exits, sorted by direction
@@ -239,23 +272,13 @@ namespace HideAndSeek
         }
 
         /// <summary>
-        /// Get the exit location in a direction
+        /// Get random exit
         /// </summary>
-        /// <param name="direction">Direction of exit location</param>
-        /// <returns>The exit location</returns>
-        /// <exception cref="InvalidOperationException">Exception thrown if no exit in specified direction</exception>
-        public Location GetExit(Direction direction) {
-            // Get exit in direction specified and store in location variable
-            Exits.TryGetValue(direction, out Location location);
-
-            // If no location found in direction
-            if(location == null)
-            {
-                throw new InvalidOperationException($"There is no exit for location \"{Name}\" in direction \"{direction}\""); // Throw exception
-            }
-
-            // Return location
-            return location;
+        /// <param name="location">Location from which to find random exit</param>
+        /// <returns>Location to which random exit leads</returns>
+        public Location GetRandomExit()
+        {
+            return Exits.ElementAt(Random.Next(Exits.Count)).Value; // Return random Location from exits collection
         }
     }
 }

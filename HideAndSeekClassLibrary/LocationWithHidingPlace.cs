@@ -1,13 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
-using System.Globalization;
-using System.Linq;
-using System.Text;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
-using System.Xml.Linq;
 
 namespace HideAndSeek
 {
@@ -29,8 +22,7 @@ namespace HideAndSeek
      * -I added data validation for the HidingPlace property.
      * -I renamed the parameters in the constructor for easier comprehension.
      * -I renamed the private list to opponentsHiding for easier comprehension.
-     * -I renamed the Hide method to HideOpponent so it's easier to 
-        differentiate between this class's hide method and Opponent's Hide method.
+     * -I renamed the Hide method to HideOpponent for clarity.
      * -I converted lambdas to regular method bodies for easier modification.
      * -I changed the return type for CheckHidingPlace.
      * -I made a local variable in CheckHidingPlace a specific type.
@@ -43,21 +35,25 @@ namespace HideAndSeek
     public class LocationWithHidingPlace : Location
     {
         /// <summary>
-        /// Serialize object and return as string
-        /// Calls private PrepForSerialization method
-        /// which must be called prior to object serialization.
+        /// Constructor for JSON deserialization
         /// </summary>
-        /// <returns>Serialized object as string</returns>
-        public override string Serialize()
+        public LocationWithHidingPlace() : base() { }
+
+        /// <summary>
+        /// Constructor to set name and hiding place description
+        /// </summary>
+        /// <param name="locationName">Name of location hiding place is in</param>
+        /// <param name="hidingPlaceDescription">Description of hiding place</param>
+        [SetsRequiredMembers]
+        public LocationWithHidingPlace(string locationName, string hidingPlaceDescription) : base(locationName)
         {
-            base.Serialize(); // Prepare object for serialization but ignore object serialized as Location
-            return JsonSerializer.Serialize(this); // Serialize this object as a LocationWithHidingPlace
+            HidingPlace = hidingPlaceDescription;
         }
 
         private string _hidingPlace;
 
         /// <summary>
-        /// Name of hiding place
+        /// Description of hiding place
         /// </summary>
         /// <exception cref="ArgumentException">Exception thrown if value passed to setter is invalid (empty or only whitespace)</exception>
         [JsonRequired]
@@ -83,24 +79,8 @@ namespace HideAndSeek
         /// <summary>
         /// Opponents hidden in this hiding place
         /// </summary>
-        private List<Opponent> opponentsHiding = new List<Opponent>();
-
-        /// <summary>
-        /// Constructor for JSON deserialization
-        /// </summary>
-        public LocationWithHidingPlace() : base() { }
-
-        /// <summary>
-        /// Constructor to set name and description
-        /// </summary>
-        /// <param name="locationName">Name of location hiding place is in</param>
-        /// <param name="hidingPlaceDescription">Description of hiding place</param>
-        [SetsRequiredMembers]
-        public LocationWithHidingPlace(string locationName, string hidingPlaceDescription) : base(locationName)
-        {
-            HidingPlace = hidingPlaceDescription;
-        }
-
+        private IList<Opponent> opponentsHiding = new List<Opponent>();
+        
         /// <summary>
         /// Hide opponent in hiding place
         /// </summary>
@@ -114,11 +94,23 @@ namespace HideAndSeek
         /// Check hiding place for opponents (clear hiding place of all opponents)
         /// </summary>
         /// <returns>List of opponents found in hiding place</returns>
-        public List<Opponent> CheckHidingPlace()
+        public IList<Opponent> CheckHidingPlace()
         {
-            List<Opponent> opponentsFound = new List<Opponent>(opponentsHiding); // Store opponents found in new list
+            IList<Opponent> opponentsFound = new List<Opponent>(opponentsHiding); // Store opponents found in new list
             opponentsHiding.Clear(); // Clear list of opponents hiding
             return opponentsFound; // Return list of opponents found
+        }
+
+        /// <summary>
+        /// Serialize object and return as string
+        /// Calls PrepForSerialization method
+        /// which must be called prior to object serialization.
+        /// </summary>
+        /// <returns>Serialized object as string</returns>
+        public override string Serialize()
+        {
+            PrepForSerialization(); // Prepare object for serialization
+            return JsonSerializer.Serialize(this); // Serialize this object as a LocationWithHidingPlace
         }
     }
 }

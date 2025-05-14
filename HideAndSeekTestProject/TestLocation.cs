@@ -42,6 +42,9 @@ namespace HideAndSeek
         [SetUp]
         public void Setup()
         {
+            // Set Location Random number generator to fresh generator
+            Location.Random = new Random();
+
             // Initialize class variables to new Locations
             center = new Location("living room");
             in_closet = new Location("closet");
@@ -80,6 +83,55 @@ namespace HideAndSeek
 
                 // Assert that center location's exit list has expected number of items
                 Assert.That(center.ExitList().Count(), Is.EqualTo(12), "center room has 12 exits in exit list after exits added");
+            });
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            Location.Random = new Random(); // Set Location Random number generator to fresh generator
+        }
+
+        /// <summary>
+        /// Assert that GetRandomExit method returns appropriate Location using mock of Random
+        /// 
+        /// CREDIT: adapted from HideAndSeek project's TestHouse class's TestRandomExit() test method
+        ///         © 2023 Andrew Stellman and Jennifer Greene
+        ///         Published under the MIT License
+        ///         https://github.com/head-first-csharp/fourth-edition/blob/master/Code/Chapter_10/HideAndSeek_part_3/HideAndSeekTests/TestHouse.cs
+        ///         Link valid as of 02-26-2025
+        /// 
+        /// CHANGES:
+        /// -I moved the method and property to the Location class since this pertains to Location rather than House.
+        /// -I changed the method name to be consistent with the conventions I'm using in this test project.
+        /// -I put all the assertions in the body of a multiple assert so all assertions will be run.
+        /// -I changed the assertions to use the constraint model to stay up-to-date.
+        /// -I added some comments for easier reading.
+        /// -I added messages to the assertions to make them easier to debug.
+        /// -I moved the GetLocationByName method call for getting the Kitchen Location to the beginning of the test method.
+        /// </summary>
+        [Test]
+        [Category("GetRandomExit Success")]
+        public void Test_Location_GetRandomExit()
+        {
+            // Set House random number generator to mock
+            Location.Random = new MockRandomWithValueList(new int[] { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12 });
+
+            Assert.Multiple(() =>
+            {
+                // Assert Center's random exits
+                Assert.That(center.GetRandomExit().Name, Is.EqualTo("kitchen"), "exit at index 0");
+                Assert.That(center.GetRandomExit().Name, Is.EqualTo("pantry"), "exit at index 1");
+                Assert.That(center.GetRandomExit().Name, Is.EqualTo("game room"), "exit at index 2");
+                Assert.That(center.GetRandomExit().Name, Is.EqualTo("study"), "exit at index 3");
+                Assert.That(center.GetRandomExit().Name, Is.EqualTo("office"), "exit at index 4");
+                Assert.That(center.GetRandomExit().Name, Is.EqualTo("sensory room"), "exit at index 5");
+                Assert.That(center.GetRandomExit().Name, Is.EqualTo("bedroom"), "exit at index 6");
+                Assert.That(center.GetRandomExit().Name, Is.EqualTo("storage room"), "exit at index 7");
+                Assert.That(center.GetRandomExit().Name, Is.EqualTo("closet"), "exit at index 8");
+                Assert.That(center.GetRandomExit().Name, Is.EqualTo("yard"), "exit at index 9");
+                Assert.That(center.GetRandomExit().Name, Is.EqualTo("attic"), "exit at index 10");
+                Assert.That(center.GetRandomExit().Name, Is.EqualTo("basement"), "exit at index 11");
             });
         }
 
@@ -138,7 +190,7 @@ namespace HideAndSeek
                 });
 
                 // Assert that error message is as expected
-                Assert.That(e.Message, Is.EqualTo("There is no exit for location \"attic\" in direction \"Up\""));
+                Assert.That(e.Message, Is.EqualTo("no exit for location \"attic\" in direction \"Up\""));
             });
         }
 
@@ -358,6 +410,39 @@ namespace HideAndSeek
         }
 
         [Test]
+        [Category("Location Exits Success")]
+        public void Test_Location_Set_Exits()
+        {
+            // Create dictionary of exits
+            Dictionary<Direction, Location> exits = new Dictionary<Direction, Location>();
+            exits.Add(Direction.Out, out_yard);
+            exits.Add(Direction.North, north_kitchen);
+
+            // Set exits dictionary for center location
+            center.Exits = exits;
+
+            // Check that Exits property was set successfully
+            Assert.That(center.Exits, Is.EquivalentTo(exits));
+        }
+
+        [Test]
+        [Category("Location Exits ArgumentException Failure")]
+        public void Test_Location_Set_Exits_AndCheckErrorMessage_ForEmptyDictionary()
+        {
+            Assert.Multiple(() =>
+            {
+                // Assert that setting exits dictionary to empty dictionary raises exception
+                var exception = Assert.Throws<ArgumentException>(() =>
+                {
+                    center.Exits = new Dictionary<Direction, Location>();
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith("location \"living room\" must be assigned at least one exit"));
+            });
+        }
+
+        [Test]
         [Category("Location ExitsForSerialization Success")]
         public void Test_Location_Set_ExitsForSerialization()
         {
@@ -398,35 +483,55 @@ namespace HideAndSeek
         }
 
         [Test]
-        [Category("Location SetExitsDictionary Success")]
-        public void Test_Location_SetExitsDictionary()
+        [Category("Location PrepForSerialization Success")]
+        public void Test_Location_PrepForSerialization_WithNoExits()
         {
-            // Create dictionary of exits
-            Dictionary<Direction, Location> exits = new Dictionary<Direction, Location>();
-            exits.Add(Direction.Out, out_yard);
-            exits.Add(Direction.North, north_kitchen);
+            // Create Location with no exits
+            Location location = new Location("sealed room");
 
-            // Set exits dictionary for center location
-            center.SetExitsDictionary(exits);
+            Assert.Multiple(() =>
+            {
+                // Assert that ExitsForSerialization is null before prep
+                Assert.That(center.ExitsForSerialization, Is.Null, "null before PrepForSerialization");
 
-            // Check that Exits property was set successfully
-            Assert.That(center.Exits, Is.EquivalentTo(exits));
+                // ACT: Prep for serialization
+                location.PrepForSerialization();
+
+                // Assert that ExitsForSerialization has been set successfully
+                Assert.That(location.ExitsForSerialization, Is.Empty, "set properly by PrepForSerialization");
+            });
         }
 
         [Test]
-        [Category("Location SetExitsDictionary ArgumentException Failure")]
-        public void Test_Location_SetExitsDictionary_AndCheckErrorMessage_ForEmptyDictionary()
+        [Category("Location PrepForSerialization Success")]
+        public void Test_Location_PrepForSerialization_WithExits()
         {
+            // Create dictionary of expected exits
+            Dictionary<Direction, string> expectedexits = new Dictionary<Direction, string>()
+            {
+                { Direction.North, "kitchen" },
+                { Direction.Northeast, "pantry" },
+                { Direction.East, "game room" },
+                { Direction.Southeast, "study" },
+                { Direction.South, "office" },
+                { Direction.Southwest, "sensory room" },
+                { Direction.West, "bedroom" },
+                { Direction.Northwest, "storage room" },
+                { Direction.In, "closet" },
+                { Direction.Out, "yard" },
+                { Direction.Up, "attic" },
+                { Direction.Down, "basement" }
+            };
             Assert.Multiple(() =>
             {
-                // Assert that setting exits dictionary to empty dictionary raises exception
-                var exception = Assert.Throws<ArgumentException>(() =>
-                {
-                    center.SetExitsDictionary(new Dictionary<Direction, Location>());
-                });
+                // Assert that ExitsForSerialization is null before prep
+                Assert.That(center.ExitsForSerialization, Is.Null, "null before PrepForSerialization");
+                
+                // ACT: Prep for serialization
+                center.PrepForSerialization();
 
-                // Assert that exception message is as expected
-                Assert.That(exception.Message, Does.StartWith("location \"living room\" must be assigned at least one exit"));
+                // Assert that ExitsForSerialization has been set successfully
+                Assert.That(center.ExitsForSerialization, Is.EquivalentTo(expectedexits), "set properly by PrepForSerialization");
             });
         }
 

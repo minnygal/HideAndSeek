@@ -182,7 +182,7 @@ namespace HideAndSeek
                     }
                     else // If user wants to delete game
                     {
-                        return gameController.DeleteGame(fileName); // Delete game and return message
+                        return GameController.DeleteGame(fileName); // Delete game and return message
                     }
                 }
                 catch (Exception e)

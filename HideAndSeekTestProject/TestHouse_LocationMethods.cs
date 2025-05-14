@@ -80,53 +80,6 @@ namespace HideAndSeek
             return new House("my house", "DefaultHouse", entry, locationsWithoutHidingPlaces, locationsWithHidingPlaces);
         }
 
-        /// <summary>
-        /// Assert that GetRandomExit method returns appropriate Location using mock of Random
-        /// 
-        /// CREDIT: adapted from HideAndSeek project's TestHouse class's TestRandomExit() test method
-        ///         © 2023 Andrew Stellman and Jennifer Greene
-        ///         Published under the MIT License
-        ///         https://github.com/head-first-csharp/fourth-edition/blob/master/Code/Chapter_10/HideAndSeek_part_3/HideAndSeekTests/TestHouse.cs
-        ///         Link valid as of 02-26-2025
-        /// 
-        /// CHANGES:
-        /// -I changed the method name to be consistent with the conventions I'm using in this test project.
-        /// -I put all the assertions in the body of a multiple assert so all assertions will be run.
-        /// -I changed the assertions to use the constraint model to stay up-to-date.
-        /// -I added some comments for easier reading.
-        /// -I added messages to the assertions to make them easier to debug.
-        /// -I moved the GetLocationByName method call for getting the Kitchen Location to the beginning of the test method.
-        /// </summary>
-        [Test]
-        [Category("House GetRandomExit Success")]
-        public void Test_House_GetRandomExit()
-        {
-            // Set House
-            house = GetDefaultHouse();
-
-            // Set House random number generator to mock
-            House.Random = new MockRandomWithValueList(new int[] { 0, 1, 2, 3, 4, 5, 6, 0 });
-
-            // Get locations
-            Location landing = house.Locations.Where((l) => l.Name == "Landing").First();
-            Location kitchen = house.Locations.Where((l) => l.Name == "Kitchen").First();
-
-            Assert.Multiple(() =>
-            {
-                // Assert Landing's random exits
-                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Attic"), "Landing exit at index 0");
-                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Kids Room"), "Landing exit at index 1");
-                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Pantry"), "Landing exit at index 2");
-                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Second Bathroom"), "Landing exit at index 3");
-                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Nursery"), "Landing exit at index 4");
-                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Master Bedroom"), "Landing exit at index 5");
-                Assert.That(house.GetRandomExit(landing).Name, Is.EqualTo("Hallway"), "Landing exit at index 6");
-
-                // Assert Kitchen's random exit at index 0 is Hallway
-                Assert.That(house.GetRandomExit(kitchen).Name, Is.EqualTo("Hallway"), "Kitchen exit at index 0");
-            });
-        }
-
         [Test]
         [Category("House GetRandomLocationWithHidingPlace Success")]
         public void Test_House_GetRandomLocationWithHidingPlace()

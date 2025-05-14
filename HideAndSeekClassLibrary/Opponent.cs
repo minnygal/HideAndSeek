@@ -1,11 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Collections.Immutable;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace HideAndSeek
+﻿namespace HideAndSeek
 {
     /// <summary>
     /// Class to represent an Opponent who can be hidden in a Location in a House for the user to find
@@ -22,7 +15,9 @@ namespace HideAndSeek
      * **/
 
     /** CHANGES
-     * -I moved the Hide method out of the class.
+     * -I moved the Hide method out of this class to keep all the
+     *  hiding functionality and details in LocationWithHidingPlace
+     *  (instead of having the functionality in both classes).
      * -I converted lambdas to regular method bodies for easier modification.
      * -I added a feature to allow opponents to be created with default names.
      *      -Allows an opponent to be created without a name passed in.
@@ -34,6 +29,30 @@ namespace HideAndSeek
 
     public class Opponent
     {
+        /// <summary>
+        /// Create opponent with default name
+        /// </summary>
+        public Opponent() : this("Random Opponent " + numberForNextDefaultName++) { }
+
+        /// <summary>
+        /// Create opponent with specified name
+        /// </summary>
+        /// <param name="name">Name off opponent</param>
+        public Opponent(string name)
+        {
+            Name = name;
+        }
+
+        /// <summary>
+        /// Check if name is valid for an Opponent
+        /// </summary>
+        /// <param name="name">Name to check</param>
+        /// <returns>True if name is valid</returns>
+        public static bool IsValidName(string name)
+        {
+            return !(name.Trim() == string.Empty);
+        }
+
         private string _name;
 
         /// <summary>
@@ -59,40 +78,16 @@ namespace HideAndSeek
             }
         }
 
-        /// <summary>
-        /// Check if name is valid for an Opponent
-        /// </summary>
-        /// <param name="name">Name to check</param>
-        /// <returns>True if name is valid</returns>
-        public static bool IsValidName(string name)
-        {
-            return !(name.Trim() == string.Empty);
-        }
-
         public override string ToString() => Name;
 
-        private static int _randomOpponentNumber = 1; // Number for next opponent created with default name
+        private static int numberForNextDefaultName = 1; // Number for next name for opponent created with default name
         
         /// <summary>
         /// Reset numbers for default names for opponents created without specified names
         /// </summary>
         public static void ResetDefaultNumbersForOpponentNames()
         {
-            _randomOpponentNumber = 1;
-        }
-
-        /// <summary>
-        /// Create opponent with default name
-        /// </summary>
-        public Opponent() : this("Random Opponent " + _randomOpponentNumber++) { }
-
-        /// <summary>
-        /// Create opponent with specified name
-        /// </summary>
-        /// <param name="name"></param>
-        public Opponent(string name)
-        {
-            Name = name;
+            numberForNextDefaultName = 1;
         }
     }
 }

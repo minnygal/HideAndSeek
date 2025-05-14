@@ -1,13 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Diagnostics.CodeAnalysis;
+﻿using System.Diagnostics.CodeAnalysis;
 using System.IO.Abstractions;
-using System.Linq;
 using System.Reflection;
-using System.Text;
-using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace HideAndSeek
 {
@@ -36,67 +30,38 @@ namespace HideAndSeek
      * -I added a method to set the HouseFileName property's backing field
      *  without using the property's setter (which calls House.CreateHouse)
      * -I added a parameterized constructor for setting properties upon initialization.
+     * -I added a static property to store the ending for a saved game file name.
+     * -I added a static method to get the full name of a saved game file.
+     * -I added a static method to get the names of all saved game files in a directory.
      * -I added comments for easier reading.
      **/
 
     public class SavedGame
     {
         /// <summary>
-        /// File system to use when getting names of SavedGame files
-        /// (should only be changed for testing purposes)
+        /// Parameterless constructor for JSON deserializer
         /// </summary>
-        public static IFileSystem FileSystem { get; set; } = new FileSystem();
+        public SavedGame() { }
 
         /// <summary>
-        /// Ending text for SavedGame file
+        /// Constructor for setting properties (does not load House from file or validate that file exists)
         /// </summary>
-        public static string SavedGameFileEnding
+        /// <param name="house">House object being used</param>
+        /// <param name="houseFileName">Name of House file</param>
+        /// <param name="playerLocation">Current location of player</param>
+        /// <param name="moveNumber">Current move number</param>
+        /// <param name="opponentsAndHidingLocations">Opponents and their hiding locations</param>
+        /// <param name="foundOpponents">Opponents that have been found</param>
+        [SetsRequiredMembers]
+        public SavedGame(House house, string houseFileName, string playerLocation, int moveNumber,
+                         IDictionary<string, string> opponentsAndHidingLocations, IEnumerable<string> foundOpponents)
         {
-            get
-            {
-                return ".game";
-            }
-        }
-
-        /// <summary>
-        /// Get full file name for a saved game file
-        /// </summary>
-        /// <param name="fileNameWithoutEnding">Name of saved game file without ending</param>
-        /// <returns>Name of saved game file with ending and extension</returns>
-        /// <exception cref="ArgumentException">Exception thrown if file name is invalid</exception>
-        public static string GetFullSavedGameFileName(string fileNameWithoutEnding)
-        {
-            // If file name without ending is invalid
-            if ( !(FileExtensions.IsValidName(fileNameWithoutEnding)) )
-            {
-                throw new ArgumentException($"Cannot perform action because file name \"{fileNameWithoutEnding}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)", nameof(fileNameWithoutEnding)); // Throw new exception with custom error message
-            }
-
-            // Return full file name including ending and extension
-            return FileExtensions.GetFullFileNameForJson(fileNameWithoutEnding + SavedGameFileEnding);
-        }
-
-        /// <summary>
-        /// Get names of all saved game files in directory (without saved game file ending or extension)
-        /// </summary>
-        /// <param name="directoryFullName">Full name of directory</param>
-        /// <returns>Enumerable of saved game file names (without saved game file ending or extension)</returns>
-        public static IEnumerable<string> GetSavedGameFileNames(string directoryFullName = null)
-        {
-            // If directory name has not been set
-            if (directoryFullName == null)
-            {
-                directoryFullName = FileSystem.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location); // Set to current directory
-            }
-
-            // Return names of saved game files (without saved game file ending or extension) in directory
-            return FileSystem.Directory.GetFiles(directoryFullName)
-                .Where((n) => n.EndsWith($"{SavedGameFileEnding}{FileExtensions.JsonFileExtension}"))
-                .Select((n) =>
-                {
-                    string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(n); // Get file name without extension
-                    return fileNameWithoutExtension.Substring(0, fileNameWithoutExtension.Length - SavedGameFileEnding.Length); // Return file name without saved game file ending or extension
-                });
+            House = house;
+            SetHouseFileName_WithoutCreatingHouse(houseFileName); // Set backing field rather than property to get around CreateHouse call in property setter
+            PlayerLocation = playerLocation;
+            MoveNumber = moveNumber;
+            OpponentsAndHidingLocations = opponentsAndHidingLocations;
+            FoundOpponents = foundOpponents;
         }
 
         private House _house;
@@ -105,7 +70,7 @@ namespace HideAndSeek
         /// House object associated with game (used for property validation)
         /// DO NOT MANUALLY CALL SETTER since other properties' setters rely on this property for data validation
         /// </summary>
-        /// <exception cref="NullReferenceException">Exception thrown if House property has not been set</exception>"
+        /// <exception cref="NullReferenceException">Exception thrown if House property has not been set</exception>
         /// <exception cref="InvalidOperationException">Exception thrown if House property has already been set</exception>
         [JsonIgnore]
         public virtual House House
@@ -168,7 +133,7 @@ namespace HideAndSeek
         /// Should only be used by JSON deserializer and tests
         /// CAUTION: setter calls House's CreateHouse method
         /// </summary>
-        /// <exception cref="NullReferenceException">Exception thrown if HouseFileName property has not been set</exception>"
+        /// <exception cref="NullReferenceException">Exception thrown if HouseFileName property has not been set</exception>
         /// <exception cref="InvalidOperationException">Exception thrown if HouseFileName property has already been set</exception>
         [JsonRequired]
         public required string HouseFileName
@@ -250,7 +215,7 @@ namespace HideAndSeek
             }
         }
 
-        private Dictionary<string, string> _opponentsAndHidingLocations;
+        private IDictionary<string, string> _opponentsAndHidingLocations;
 
         /// <summary>
         /// Opponents and their locations with hiding place
@@ -259,7 +224,7 @@ namespace HideAndSeek
         /// <exception cref="ArgumentException">Exception thrown if value passed to setter is empty dictionary</exception>
         /// <exception cref="InvalidOperationException">Exception thrown if value passed to setter has value not existing as location with hiding place in House</exception>
         [JsonRequired]
-        public virtual required Dictionary<string, string> OpponentsAndHidingLocations
+        public virtual required IDictionary<string, string> OpponentsAndHidingLocations
         {
             get
             {
@@ -267,7 +232,7 @@ namespace HideAndSeek
             }
             set
             {
-                // If no items
+                // If empty (no items)
                 if (value.Count == 0)
                 {
                     throw new ArgumentException("invalid OpponentsAndHidingLocations - no opponents", nameof(value)); // Throw exception
@@ -285,7 +250,7 @@ namespace HideAndSeek
                 // If any of the LocationWithHidingPlaces do not exist, throw exception
                 foreach(string opponentLocationWithHidingPlace in value.Values)
                 {
-                    if (!(House.DoesLocationWithHidingPlaceExist(opponentLocationWithHidingPlace)))
+                    if( !(House.DoesLocationWithHidingPlaceExist(opponentLocationWithHidingPlace)) )
                     {
                         throw new InvalidOperationException($"location with hiding place \"{opponentLocationWithHidingPlace}\" does not exist in House"); // Throw exception
                     }
@@ -314,7 +279,7 @@ namespace HideAndSeek
                 // If any found opponents do not exist in OpponentsAndHidingLocations dictionary keys, throw exception
                 foreach (string foundOpponent in value)
                 {
-                    if( !(OpponentsAndHidingLocations.Keys.Contains(foundOpponent)) )
+                    if( !(OpponentsAndHidingLocations.ContainsKey(foundOpponent)) )
                     {
                         throw new InvalidOperationException("found opponent is not an opponent");
                     }
@@ -325,29 +290,67 @@ namespace HideAndSeek
             }
         }
 
-        /// <summary>
-        /// Parameterless constructor for JSON deserializer
-        /// </summary>
-        public SavedGame() { }
+        #region Static properties and methods
 
         /// <summary>
-        /// Constructor for setting properties (does not load House from file or validate that file exists)
+        /// File system to use when getting names of SavedGame files
+        /// (should only be changed for testing purposes)
         /// </summary>
-        /// <param name="house">House object being used</param>
-        /// <param name="houseFileName">Name of House file</param>
-        /// <param name="playerLocation">Current location of player</param>
-        /// <param name="moveNumber">Current move number</param>
-        /// <param name="opponentsAndHidingLocations">Opponents and their hiding locations</param>
-        /// <param name="foundOpponents">Opponents who have been found</param>
-        [SetsRequiredMembers]
-        public SavedGame(House house, string houseFileName, string playerLocation, int moveNumber, Dictionary<string, string> opponentsAndHidingLocations, IEnumerable<string> foundOpponents)
+        public static IFileSystem FileSystem { get; set; } = new FileSystem();
+
+        /// <summary>
+        /// Ending text for SavedGame file
+        /// </summary>
+        public static string SavedGameFileEnding
         {
-            House = house;
-            SetHouseFileName_WithoutCreatingHouse(houseFileName); // Set backing field rather than property to get around CreateHouse call in property setter
-            PlayerLocation = playerLocation;
-            MoveNumber = moveNumber;
-            OpponentsAndHidingLocations = opponentsAndHidingLocations;
-            FoundOpponents = foundOpponents;
+            get
+            {
+                return ".game";
+            }
         }
+
+        /// <summary>
+        /// Get full file name for a saved game file
+        /// </summary>
+        /// <param name="fileNameWithoutEnding">Name of saved game file without ending</param>
+        /// <returns>Name of saved game file with ending and extension</returns>
+        /// <exception cref="ArgumentException">Exception thrown if file name is invalid</exception>
+        public static string GetFullSavedGameFileName(string fileNameWithoutEnding)
+        {
+            // If file name without ending is invalid
+            if (!(FileExtensions.IsValidName(fileNameWithoutEnding)))
+            {
+                throw new ArgumentException($"Cannot perform action because file name \"{fileNameWithoutEnding}\" is invalid " +
+                                             "(is empty or contains illegal characters, e.g. \\, /, or whitespace)", nameof(fileNameWithoutEnding)); // Throw new exception with custom error message
+            }
+
+            // Return full file name including ending and extension
+            return FileExtensions.GetFullFileNameForJson(fileNameWithoutEnding + SavedGameFileEnding);
+        }
+
+        /// <summary>
+        /// Get names of all saved game files in directory (without saved game file ending or extension)
+        /// </summary>
+        /// <param name="directoryFullName">Full name of directory</param>
+        /// <returns>Enumerable of saved game file names (without saved game file ending or extension)</returns>
+        public static IEnumerable<string> GetSavedGameFileNames(string directoryFullName = null)
+        {
+            // If directory name has not been set
+            if (directoryFullName == null)
+            {
+                directoryFullName = FileSystem.Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location); // Set to current directory
+            }
+
+            // Return names of saved game files (without saved game file ending or extension) in directory
+            return FileSystem.Directory.GetFiles(directoryFullName)
+                .Where((n) => n.EndsWith($"{SavedGameFileEnding}{FileExtensions.JsonFileExtension}"))
+                .Select((n) =>
+                {
+                    string fileNameWithoutExtension = Path.GetFileNameWithoutExtension(n); // Get file name without extension
+                    return fileNameWithoutExtension.Substring(0, fileNameWithoutExtension.Length - SavedGameFileEnding.Length); // Return file name without saved game file ending or extension
+                });
+        }
+
+        #endregion
     }
 }
