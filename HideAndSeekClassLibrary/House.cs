@@ -343,7 +343,7 @@ namespace HideAndSeek
                 // Set StartingPoint
                 StartingPoint = startingPoint;
             }
-            catch (InvalidOperationException e)
+            catch (InvalidOperationException)
             {
                 throw new InvalidOperationException($"player starting point location \"{PlayerStartingPoint}\" does not exist in House"); // Throw exception
             }

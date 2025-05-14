@@ -380,7 +380,7 @@ namespace HideAndSeek
                     opponents.Add(new Opponent(name));
                 }
             }
-            catch(ArgumentNullException e)
+            catch(ArgumentNullException)
             {
                 throw; // Rethrow exception
             }
