@@ -529,7 +529,7 @@ namespace HideAndSeek
         public static IFileSystem FileSystem { get; set; } = new FileSystem();
 
         /// <summary>
-        /// Ending text for House layout file
+        /// Ending text for House layout file name
         /// </summary>
         public static string HouseFileEnding
         {
