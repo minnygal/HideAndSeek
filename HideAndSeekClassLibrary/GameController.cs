@@ -801,7 +801,7 @@ namespace HideAndSeek
         /// <returns>String describing what happened</returns>
         /// <exception cref="ArgumentException">Exception thrown if file name is invalid</exception>
         /// <exception cref="FileNotFoundException">Exception thrown if file not found</exception>
-        public string DeleteGame(string fileNameWithoutEnding)
+        public static string DeleteGame(string fileNameWithoutEnding)
         {
             // Get full file name including saved game file ending and JSON extension
             string fullFileName = SavedGame.GetFullSavedGameFileName(fileNameWithoutEnding); // Throws exception if file name is invalid
