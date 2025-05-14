@@ -13,13 +13,10 @@ namespace HideAndSeek
     [TestFixture]
     public class TestHouse_CreateHouse
     {
-        private House house;
-
         [SetUp]
         public void SetUp()
         {
             House.FileSystem = new FileSystem(); // Set static House file system to new file system
-            house = null;
         }
 
         [OneTimeTearDown]

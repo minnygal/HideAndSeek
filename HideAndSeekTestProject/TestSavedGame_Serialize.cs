@@ -9,14 +9,6 @@ namespace HideAndSeek
     [TestFixture]
     public class TestSavedGame_Serialize
     {
-        private SavedGame savedGame;
-
-        [SetUp]
-        public void SetUp()
-        {
-            savedGame = null;
-        }
-
         // Tests all properties' getters
         [Test]
         [Category("SavedGame Serialize Success")]
