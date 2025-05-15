@@ -1,0 +1,355 @@
+﻿namespace HideAndSeek
+{
+    /// <summary>
+    /// Class to run a Console interactive game of HideAndSeek
+    /// Outputs game information to Console and accepts user input via Console
+    /// CREDIT: adapted from Stellman and Greene's code
+    /// </summary>
+
+    /** CREDIT
+     *  adapted from HideAndSeek project's Program class
+     *  © 2023 Andrew Stellman and Jennifer Greene
+     *         Published under the MIT License
+     *         https://github.com/head-first-csharp/fourth-edition/blob/master/Code/Chapter_10/HideAndSeek_part_1/HideAndSeek/Program.cs
+     *         Link valid as of 02-25-2025
+     * **/
+
+    /** CHANGES
+     * -I added instructions to be printed for the user when they launch the program.
+     * -I allow the user to select the number or names of opponents.
+     * -I used the RestartGame method I added to GameController so
+     *  GameController only has to be created once.
+     * -I display available House layouts and allow the user to enter a House layout name 
+     *  or use the default House layout.
+     * -I display available SavedGame file names.
+     * -I moved the ParseInput method to this class.
+     * -I added comments to make the code more readable.
+     * -I made code conform to my formatting.
+     * -I added code to print an empty line to put space between moves information.
+     * **/
+    public class HideAndSeekConsoleRunner
+    {
+        /// <summary>
+        /// GameController object to control game
+        /// </summary>
+        public GameController GameController { get; set; } = new GameController();
+
+        /// <summary>
+        /// Method to run the game
+        /// Outputs game information to Console and accepts user input from Console
+        /// </summary>
+        public void RunGame()
+        {
+            // Print welcome, basic instructions, and space
+            Console.WriteLine( GetWelcomeAndInstructions() + Environment.NewLine );
+
+            // Until the user quits the program
+            while (true)
+            {
+                // Welcome user to the House
+                Console.WriteLine(GetWelcomeToHouse());
+
+                // Until game is over
+                while( !(GameController.GameOver) )
+                {
+                    Console.WriteLine(GameController.Status); // Print game status
+                    Console.Write(GameController.Prompt); // Print game prompt
+                    Console.WriteLine(RemoveParamText( ParseInput(Console.ReadLine()) )); // Get user input, parse input, and print message without param text
+                    Console.WriteLine(); // Print empty line to put space between moves
+                }
+
+                // Print post-game info and instructions
+                Console.WriteLine($"You won the game in {GameController.MoveNumber} moves!");
+                Console.WriteLine("Press P to play again, any other key to quit.");
+
+                // If user does not want to play again, quit
+                if( !(Console.ReadKey(true).KeyChar.ToString().Equals("P", StringComparison.CurrentCultureIgnoreCase)) )
+                {
+                    return;
+                }
+
+                // If user does want to play again, restart game and print space
+                GameController.RestartGame();
+                Console.WriteLine();
+            }
+        }
+
+        /// <summary>
+        /// Parse input from the player
+        /// Accepts case-insensitive commands for directions to move,
+        /// teleport, check, new, save, load, delete
+        /// </summary>
+        /// <param name="userInput">User input to parse</param>
+        /// <returns>Return message from parsing the input</returns>
+        private string ParseInput(string userInput)
+        {
+            // Trim input
+            userInput = userInput.Trim();
+
+            // Extract command (text before first space) and make lowercase
+            string lowercaseCommand = userInput.Split(" ").FirstOrDefault("").ToLower();
+            
+            // Extract text after command
+            string textAfterCommand = userInput.Substring(lowercaseCommand.Length);
+
+            try
+            {
+                // Evaluate command and act accordingly
+                switch (lowercaseCommand)
+                {
+                    // Check current location and return description
+                    case "check":
+                        return GameController.CheckCurrentLocation();
+
+                    // Teleport and return description
+                    case "teleport":
+                        return GameController.Teleport();
+
+                    // Save game and return description
+                    case "save":
+                        Console.WriteLine();
+                        return SaveGame(textAfterCommand);
+
+                    // Load game and return description
+                    case "load":
+                        Console.WriteLine();
+                        return GameController.LoadGame( GetNameOfExistingSavedGameFile(textAfterCommand, lowercaseCommand) ) + 
+                               Environment.NewLine + GetWelcomeToHouse();
+
+                    // Delete game and return description
+                    case "delete":
+                        Console.WriteLine();
+                        return GameController.DeleteGame( GetNameOfExistingSavedGameFile(textAfterCommand, lowercaseCommand) );
+
+                    // Start new game and return description
+                    case "new":
+                        Console.WriteLine();
+                        GameController = GetGameControllerForCustomGame(); // Set game controller for new custom game                            
+                        return "New game started" + Environment.NewLine + GetWelcomeToHouse(); // Return info and welcome message
+
+                    // Move in specified direction and return results
+                    default:
+                        return GameController.Move(DirectionExtensions.Parse(lowercaseCommand));
+                }
+            }
+            catch(Exception e)
+            {
+                return RemoveParamText(e.Message); // Return exception message without param text
+            }
+        }
+
+        /// <summary>
+        /// Helper method to save current game (trims file name)
+        /// </summary>
+        /// <param name="fileName">Name of file in which to save game</param>
+        /// <returns></returns>
+        private string SaveGame(string fileName)
+        {
+            // Trim file name
+            fileName = fileName.Trim();
+
+            // If input is empty
+            if (string.IsNullOrEmpty(fileName))
+            {
+                return "Cannot perform action because no file name was entered"; // Return failure message
+            }
+            else // If input is not empty
+            {
+                return GameController.SaveGame(fileName); // Save game and return message
+            }
+        }
+
+        /// <summary>
+        /// Get name of existing SavedGame file stored in current directory from user
+        /// </summary>
+        /// <param name="userInput">User input of file name (null, whitespace, or empty if should display list of existing SavedGame files)</param>
+        /// <param name="command">Description of action to be done with file (e.g. "load", "delete")</param>
+        /// <returns>Description</returns>
+        private static string GetNameOfExistingSavedGameFile(string userInput, string command)
+        {
+            // Trim user input
+            userInput = userInput.Trim();
+
+            // If input is empty
+            if (string.IsNullOrEmpty(userInput))
+            {
+                return DisplayListOfSavedGamesAndGetUserInput(command); // Display list of saved game files and return input for file name
+            }
+            else
+            {
+                return userInput; // Return user input
+            }
+        }
+
+        /// <summary>
+        /// Helper method to display list of names of saved game files
+        /// and get user input for name of file
+        /// </summary>
+        /// <param name="command">Description of action to be performed with file</param>
+        /// <returns>User input for name of file</returns>
+        /// <exception cref="InvalidOperationException">Exception thrown if no saved game files found</exception>
+        private static string DisplayListOfSavedGamesAndGetUserInput(string command)
+        {
+            // Get list of names of SavedGame files available
+            IEnumerable<string> allSavedGameFileNames = SavedGame.GetSavedGameFileNames();
+
+            // If no SavedGame files available
+            if ( !(allSavedGameFileNames.Any()) )
+            {
+                throw new InvalidOperationException($"Cannot perform action because no saved game files are available"); // Throw exception
+            }
+
+            // Display list of names of SavedGame files available
+            Console.WriteLine("Here are the names of the saved game files available:" + Environment.NewLine +
+                              GetTextListOfFileNames(allSavedGameFileNames)); // Display names of SavedGame files available
+
+            // Get name of SavedGame file to load from user
+            Console.Write($"Enter the name of the saved game file to {command}: "); // Prompt
+            return Console.ReadLine().Trim(); // Set file name to trimmed user input
+        }
+
+        /// <summary>
+        /// Helper method to get game controller for new game based on user input;
+        /// also sets GameController House layout based on user input
+        /// </summary>
+        /// <returns>Game controller set up for game</returns>
+        private static GameController GetGameControllerForCustomGame()
+        {
+            // Set local game controller variable to null (used as flag in do-while to create new game controller)
+            GameController gameController = null;
+
+            do
+            {
+                // Obtain user input for setting opponents or loading game
+                Console.Write("How many opponents would you like?  Enter a number between 1 and 10, or a comma-separated list of names: "); // Prompt
+                string userInput = Console.ReadLine().Trim(); // Get user input and trim it
+
+                try
+                {
+                    // Create game controller with Opponents set
+                    if (userInput == string.Empty) // If user did not enter anything
+                    {
+                        gameController = new GameController(); // Create a new default game controller
+                    }
+                    else if( int.TryParse(userInput, out int numberOfOpponents) ) // If user entered a number
+                    {
+                        gameController = new GameController(numberOfOpponents); // Create new game controller with specified number of opponents
+                    }
+                    else // if user did not enter empty string or a number, then assume user entered names for opponents
+                    {
+                        string[] namesOfOpponents = userInput.Split(','); // Extract names from user input
+                        for (int i = 0; i < namesOfOpponents.Length; i++)
+                        {
+                            namesOfOpponents[i] = namesOfOpponents[i].Trim(); // Remove whitespace before or after each name
+                        }
+                        gameController = new GameController(namesOfOpponents); // Create new game controller with names entered by user as array (without whitespace)
+                    }
+
+                    // Set game controller House layout based on user input
+                   gameController = GetUserInputAndSetHouseLayout(gameController);
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine(e.Message); // Print error message
+                    gameController = null; // Make sure game controller variable is not set
+                }
+            } while (gameController == null);
+
+            // Return game controller
+            return gameController;
+        }
+
+        /// <summary>
+        /// Helper method to set the House layout for a game controller based on user input
+        /// (allows user to enter name of file from which to load House layout or empty string to load default layout)
+        /// </summary>
+        /// <returns>Game controller with House layout loaded</returns>
+        private static GameController GetUserInputAndSetHouseLayout(GameController GameController)
+        {
+            // Set flag
+            bool houseLayoutChosen = false;
+
+            do
+            {
+                // Display list of names of House layout files available
+                Console.WriteLine("Here are the names of the house layout files available:" + Environment.NewLine +
+                                  GetTextListOfFileNames(House.GetHouseFileNames())); // Display names of House layout files available
+
+                // Get House file name from user
+                Console.Write("Type a house layout file name or just press Enter to use the default house layout: "); // Prompt for House layout file name
+                string houseLayoutFileName = Console.ReadLine().Trim(); // Get user input for file name and trim
+
+                try
+                {
+                    // If any text was entered
+                    if (houseLayoutFileName != string.Empty)
+                    {
+                        GameController.RestartGame(houseLayoutFileName); // Restart game with House layout file, throws exception if anything invalid
+                    } // else if no text entered, don't change House layout
+
+                    // Update flag
+                    houseLayoutChosen = true;
+                }
+                catch (Exception e)
+                {
+                    Console.WriteLine( RemoveParamText(e.Message) ); // Print exception message without param text
+                }
+            } while( !(houseLayoutChosen) );
+
+            // Return game controller
+            return GameController;
+        }
+
+        /// <summary>
+        /// Helper method to return welcome to house message
+        /// </summary>
+        /// <returns>Welcome to house message</returns>
+        private string GetWelcomeToHouse()
+        {
+            return $"Welcome to {GameController.House.Name}!";
+        }
+
+        /// <summary>
+        /// Helper method to print app welcome and instructions
+        /// </summary>
+        /// <returns>Welcome and instructions text</returns>
+        private static string GetWelcomeAndInstructions()
+        {
+            return "Welcome to the Hide And Seek Console App!" + Environment.NewLine +
+                   "Navigate through rooms in a virtual house to find all the hiding opponents in the fewest number of moves possible." + Environment.NewLine +
+                   "-To MOVE, enter the direction in which you want to move." + Environment.NewLine +
+                   "-To CHECK if any opponents are hiding in your current location, enter \"check\"." + Environment.NewLine +
+                   "-To TELEPORT to a random location with a hiding place, enter \"teleport\"." + Environment.NewLine +
+                   "-To SAVE your progress, enter \"save\" followed by a space and a name for your game." + Environment.NewLine +
+                   "-To LOAD a saved game, enter \"load\" followed by a space and the name of your game." + Environment.NewLine +
+                   "-To DELETE a saved game, enter \"delete\" followed by a space and the name of your game." + Environment.NewLine +
+                   "-To start a NEW custom game, enter \"new\" and follow the prompts.";
+        }
+
+        /// <summary>
+        /// Remove parameter text in error messages
+        /// </summary>
+        /// <param name="text">Text to remove parameter text from</param>
+        /// <returns>Text without parameter text</returns>
+        private static string RemoveParamText(string text)
+        {
+            int indexOfParam = text.IndexOf("(Param");
+            if (indexOfParam == -1)
+            {
+                return text;
+            }
+
+            // Remove parameter text
+            return text.Substring(0, indexOfParam - 1);
+        }
+
+        /// <summary>
+        /// Get text list of file names
+        /// </summary>
+        /// <param name="fileNames"></param>
+        private static string GetTextListOfFileNames(IEnumerable<string> fileNames)
+        {
+            return String.Join(Environment.NewLine, fileNames.Select((name) => $" - {name}"));
+        }
+    }
+}
