@@ -198,7 +198,7 @@ namespace HideAndSeek
             // If no location found in direction
             if (location == null)
             {
-                throw new InvalidOperationException($"no exit for location \"{Name}\" in direction \"{direction}\""); // Throw exception
+                throw new InvalidOperationException($"There is no exit for location \"{Name}\" in direction \"{direction}\""); // Throw exception
             }
 
             // Return location
@@ -214,7 +214,7 @@ namespace HideAndSeek
             List<string> descriptions = new List<string>();
 
             // Add description to list for each exit (exits sorted by direction)
-            foreach(KeyValuePair<Direction, Location> exit in Exits.OrderBy(x => x.Key))
+            foreach (KeyValuePair<Direction, Location> exit in Exits.OrderBy(x => x.Key))
             {
                 descriptions.Add($"the {exit.Value.Name} is {exit.Key.DirectionDescription()}");
             }
@@ -258,7 +258,7 @@ namespace HideAndSeek
         /// <returns>New LocationWithHidingPlace</returns>
         public LocationWithHidingPlace AddExit(Direction direction, string newLocationName, string hidingPlaceDescription)
         {
-            return (LocationWithHidingPlace) AddExit(direction, new LocationWithHidingPlace(newLocationName, hidingPlaceDescription));
+            return (LocationWithHidingPlace)AddExit(direction, new LocationWithHidingPlace(newLocationName, hidingPlaceDescription));
         }
 
         /// <summary>
@@ -274,7 +274,6 @@ namespace HideAndSeek
         /// <summary>
         /// Get random exit
         /// </summary>
-        /// <param name="location">Location from which to find random exit</param>
         /// <returns>Location to which random exit leads</returns>
         public Location GetRandomExit()
         {
