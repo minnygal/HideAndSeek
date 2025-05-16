@@ -190,7 +190,7 @@ namespace HideAndSeek
                 });
 
                 // Assert that error message is as expected
-                Assert.That(e.Message, Is.EqualTo("no exit for location \"attic\" in direction \"Up\""));
+                Assert.That(e.Message, Is.EqualTo("There is no exit for location \"attic\" in direction \"Up\""));
             });
         }
 
