@@ -59,6 +59,11 @@ namespace HideAndSeek
         #region Constructors
 
         /// <summary>
+        /// Default number of Opponents to start the game with (unless number, names, or Opponent objects specified in constructor)
+        /// </summary>
+        public static readonly int DefaultNumberOfOpponents = 5;
+
+        /// <summary>
         /// Create a GameController and load a specific saved game
         /// </summary>
         /// <param name="savedGame">SavedGame object from which to load game</param>
@@ -77,12 +82,7 @@ namespace HideAndSeek
         /// <exception cref="InvalidOperationException">Exception thrown if invalid operation attempted</exception>
         /// <exception cref="FileNotFoundException">Exception thrown if saved game file not found</exception>
         /// <exception cref="NullReferenceException">Exception thrown if a reference is null</exception>
-        public GameController(string houseFileNameWithoutEnding = "DefaultHouse")
-        {
-            // Set Opponents and start game with specified House file name
-            SetUpOpponentsInitially(); // Set Opponents
-            RestartGame(houseFileNameWithoutEnding); // Start game with specified House file
-        }
+        public GameController(string houseFileNameWithoutEnding = "DefaultHouse") : this(DefaultNumberOfOpponents, houseFileNameWithoutEnding) { }
 
         /// <summary>
         /// Create a GameController with a specific number of Opponents and an optional specified House file name
@@ -140,12 +140,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="house">House in which to play game</param>
         /// <exception cref="ArgumentNullException">Exception thrown if House is null</exception>
-        public GameController(House house)
-        {
-            // Set Opponents and start game with specified House
-            SetUpOpponentsInitially(); // Set Opponents
-            RestartGame(house); // Start game with specified House
-        }
+        public GameController(House house) : this(DefaultNumberOfOpponents, house) { }
 
         /// <summary>
         /// Create a GameController with a specific number of Opponents and a specific House
@@ -337,7 +332,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="numberOfOpponents">Number of Opponents</param>
         /// <exception cref="ArgumentException">Exception thrown if number of opponents is invalid</exception>
-        private void SetUpOpponentsInitially(int numberOfOpponents = 5)
+        private void SetUpOpponentsInitially(int numberOfOpponents)
         {
             // If number of Opponents invalid
             if (numberOfOpponents < 1 || numberOfOpponents > DefaultOpponentNames.Length)
