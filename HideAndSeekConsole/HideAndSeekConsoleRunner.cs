@@ -29,10 +29,21 @@
      * **/
     public class HideAndSeekConsoleRunner
     {
+        public HideAndSeekConsoleRunner() : this(new GameController(), new ConsoleIOAdapter()) { }
+
+        public HideAndSeekConsoleRunner(GameController gameController, IConsoleIO console)
+        {
+            GameController = gameController; // Set game controller to passed in game controller
+            consoleIO = console; // Set console IO to passed in console IO
+        }
+
         /// <summary>
         /// GameController object to control game
         /// </summary>
-        public GameController GameController { get; set; } = new GameController();
+        public GameController GameController { get; private set; }
+
+        // Console input/output object
+        private readonly IConsoleIO consoleIO;
 
         /// <summary>
         /// Method to run the game
@@ -41,36 +52,36 @@
         public void RunGame()
         {
             // Print welcome, basic instructions, and space
-            Console.WriteLine( GetWelcomeAndInstructions() + Environment.NewLine );
+            consoleIO.WriteLine( GetWelcomeAndInstructions() + Environment.NewLine );
 
             // Until the user quits the program
             while (true)
             {
                 // Welcome user to the House
-                Console.WriteLine(GetWelcomeToHouse());
+                consoleIO.WriteLine(GetWelcomeToHouse());
 
                 // Until game is over
                 while( !(GameController.GameOver) )
                 {
-                    Console.WriteLine(GameController.Status); // Print game status
-                    Console.Write(GameController.Prompt); // Print game prompt
-                    Console.WriteLine(RemoveParamText( ParseInput(Console.ReadLine()) )); // Get user input, parse input, and print message without param text
-                    Console.WriteLine(); // Print empty line to put space between moves
+                    consoleIO.WriteLine(GameController.Status); // Print game status
+                    consoleIO.Write(GameController.Prompt); // Print game prompt
+                    consoleIO.WriteLine(RemoveParamText( ParseInput(consoleIO.ReadLine()) )); // Get user input, parse input, and print message without param text
+                    consoleIO.WriteLine(); // Print empty line to put space between moves
                 }
 
                 // Print post-game info and instructions
-                Console.WriteLine($"You won the game in {GameController.MoveNumber} moves!");
-                Console.WriteLine("Press P to play again, any other key to quit.");
+                consoleIO.WriteLine($"You won the game in {GameController.MoveNumber} moves!");
+                consoleIO.WriteLine("Press P to play again, any other key to quit.");
 
                 // If user does not want to play again, quit
-                if( !(Console.ReadKey(true).KeyChar.ToString().Equals("P", StringComparison.CurrentCultureIgnoreCase)) )
+                if( !(consoleIO.ReadKey().KeyChar.ToString().Equals("P", StringComparison.CurrentCultureIgnoreCase)) )
                 {
                     return;
                 }
 
                 // If user does want to play again, restart game and print space
                 GameController.RestartGame();
-                Console.WriteLine();
+                consoleIO.WriteLine();
             }
         }
 
@@ -107,23 +118,23 @@
 
                     // Save game and return description
                     case "save":
-                        Console.WriteLine();
+                        consoleIO.WriteLine();
                         return SaveGame(textAfterCommand);
 
                     // Load game and return description
                     case "load":
-                        Console.WriteLine();
+                        consoleIO.WriteLine();
                         return GameController.LoadGame( GetNameOfExistingSavedGameFile(textAfterCommand, lowercaseCommand) ) + 
                                Environment.NewLine + GetWelcomeToHouse();
 
                     // Delete game and return description
                     case "delete":
-                        Console.WriteLine();
+                        consoleIO.WriteLine();
                         return GameController.DeleteGame( GetNameOfExistingSavedGameFile(textAfterCommand, lowercaseCommand) );
 
                     // Start new game and return description
                     case "new":
-                        Console.WriteLine();
+                        consoleIO.WriteLine();
                         GameController = GetGameControllerForCustomGame(); // Set game controller for new custom game                            
                         return "New game started" + Environment.NewLine + GetWelcomeToHouse(); // Return info and welcome message
 
@@ -165,7 +176,7 @@
         /// <param name="userInput">User input of file name (null, whitespace, or empty if should display list of existing SavedGame files)</param>
         /// <param name="command">Description of action to be done with file (e.g. "load", "delete")</param>
         /// <returns>Description</returns>
-        private static string GetNameOfExistingSavedGameFile(string userInput, string command)
+        private string GetNameOfExistingSavedGameFile(string userInput, string command)
         {
             // Trim user input
             userInput = userInput.Trim();
@@ -188,7 +199,7 @@
         /// <param name="command">Description of action to be performed with file</param>
         /// <returns>User input for name of file</returns>
         /// <exception cref="InvalidOperationException">Exception thrown if no saved game files found</exception>
-        private static string DisplayListOfSavedGamesAndGetUserInput(string command)
+        private string DisplayListOfSavedGamesAndGetUserInput(string command)
         {
             // Get list of names of SavedGame files available
             IEnumerable<string> allSavedGameFileNames = SavedGame.GetSavedGameFileNames();
@@ -200,12 +211,12 @@
             }
 
             // Display list of names of SavedGame files available
-            Console.WriteLine("Here are the names of the saved game files available:" + Environment.NewLine +
+            consoleIO.WriteLine("Here are the names of the saved game files available:" + Environment.NewLine +
                               GetTextListOfFileNames(allSavedGameFileNames)); // Display names of SavedGame files available
 
             // Get name of SavedGame file to load from user
-            Console.Write($"Enter the name of the saved game file to {command}: "); // Prompt
-            return Console.ReadLine().Trim(); // Set file name to trimmed user input
+            consoleIO.Write($"Enter the name of the saved game file to {command}: "); // Prompt
+            return consoleIO.ReadLine().Trim(); // Set file name to trimmed user input
         }
 
         /// <summary>
@@ -213,7 +224,7 @@
         /// also sets GameController House layout based on user input
         /// </summary>
         /// <returns>Game controller set up for game</returns>
-        private static GameController GetGameControllerForCustomGame()
+        private GameController GetGameControllerForCustomGame()
         {
             // Set local game controller variable to null (used as flag in do-while to create new game controller)
             GameController gameController = null;
@@ -221,8 +232,8 @@
             do
             {
                 // Obtain user input for setting opponents or loading game
-                Console.Write("How many opponents would you like?  Enter a number between 1 and 10, or a comma-separated list of names: "); // Prompt
-                string userInput = Console.ReadLine().Trim(); // Get user input and trim it
+                consoleIO.Write("How many opponents would you like?  Enter a number between 1 and 10, or a comma-separated list of names: "); // Prompt
+                string userInput = consoleIO.ReadLine().Trim(); // Get user input and trim it
 
                 try
                 {
@@ -250,7 +261,7 @@
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine(e.Message); // Print error message
+                    consoleIO.WriteLine(e.Message); // Print error message
                     gameController = null; // Make sure game controller variable is not set
                 }
             } while (gameController == null);
@@ -264,7 +275,7 @@
         /// (allows user to enter name of file from which to load House layout or empty string to load default layout)
         /// </summary>
         /// <returns>Game controller with House layout loaded</returns>
-        private static GameController GetUserInputAndSetHouseLayout(GameController GameController)
+        private GameController GetUserInputAndSetHouseLayout(GameController GameController)
         {
             // Set flag
             bool houseLayoutChosen = false;
@@ -272,12 +283,12 @@
             do
             {
                 // Display list of names of House layout files available
-                Console.WriteLine("Here are the names of the house layout files available:" + Environment.NewLine +
+                consoleIO.WriteLine("Here are the names of the house layout files available:" + Environment.NewLine +
                                   GetTextListOfFileNames(House.GetHouseFileNames())); // Display names of House layout files available
 
                 // Get House file name from user
-                Console.Write("Type a house layout file name or just press Enter to use the default house layout: "); // Prompt for House layout file name
-                string houseLayoutFileName = Console.ReadLine().Trim(); // Get user input for file name and trim
+                consoleIO.Write("Type a house layout file name or just press Enter to use the default house layout: "); // Prompt for House layout file name
+                string houseLayoutFileName = consoleIO.ReadLine().Trim(); // Get user input for file name and trim
 
                 try
                 {
@@ -292,7 +303,7 @@
                 }
                 catch (Exception e)
                 {
-                    Console.WriteLine( RemoveParamText(e.Message) ); // Print exception message without param text
+                    consoleIO.WriteLine( RemoveParamText(e.Message) ); // Print exception message without param text
                 }
             } while( !(houseLayoutChosen) );
 
