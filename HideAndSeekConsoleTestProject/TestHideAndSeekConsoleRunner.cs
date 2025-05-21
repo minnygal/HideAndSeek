@@ -41,34 +41,28 @@ namespace HideAndSeekConsoleTestProject
 
             // Set up mock GameController to return House name (used in welcome message)
             mockGameController.SetupGet((gc) => gc.House.Name).Returns("tester house");
+
+            // Set up mock GameController to return Status
+            mockGameController.SetupGet((gc) => gc.Status).Returns("[status]");
+
+            // Set up mock GameController to return Prompt
+            mockGameController.SetupGet((gc) => gc.Prompt).Returns("[prompt]");
         }
 
         [Test]
         [Category("ConsoleRunner")]
         public void Test_ConsoleRunner_ProgramStarted_TextDisplayed()
         {
-            // ARRANGE
-            // Set up mock GameController to return Status
-            mockGameController.SetupGet((gc) => gc.Status).Returns(
-                "You are in the Entry. You see the following exits:" + Environment.NewLine +
-                " - the Hallway is to the East" + Environment.NewLine +
-                " - the Garage is Out" + Environment.NewLine +
-                "You have not found any opponents");
-
-            // Set up mock GameController to return Prompt
-            mockGameController.SetupGet((gc) => gc.Prompt).Returns("1: Which direction do you want to go: ");
-
             // Set up mock to return user input to terminate program
             mockConsoleIO.Setup((cio) => cio.ReadLine()).Returns("exit");
 
             // Create console runner with mocked GameController and IConsoleIO
             consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object);
 
-            // ACT
             // Run game
             consoleRunner.RunGame();
 
-            // ASSERT
+            // Assert text displayed is as expected
             Assert.That(sbActualTextDisplayed.ToString(), Is.EqualTo(
                 "Welcome to the Hide And Seek Console App!" + Environment.NewLine +
                 "Navigate through rooms in a virtual house to find all the hiding opponents in the fewest number of moves possible." + Environment.NewLine +
@@ -82,34 +76,14 @@ namespace HideAndSeekConsoleTestProject
                 "-To EXIT the program, enter \"exit\"" + Environment.NewLine +
                 Environment.NewLine +
                 "Welcome to tester house!" + Environment.NewLine +
-                "You are in the Entry. You see the following exits:" + Environment.NewLine +
-                " - the Hallway is to the East" + Environment.NewLine +
-                " - the Garage is Out" + Environment.NewLine +
-                "You have not found any opponents" + Environment.NewLine +
-                "1: Which direction do you want to go: ")); // Assert that text displayed is as expected
+                "[status]" + Environment.NewLine +
+                "[prompt]")); // Assert that text displayed is as expected
         }
 
         [Test]
         [Category("ConsoleRunner Move Success")]
         public void Test_ConsoleRunner_Move()
         {
-            // ARRANGE
-            // Set up mock GameController to return Status
-            mockGameController.SetupSequence((gc) => gc.Status)
-                .Returns(
-                    "You are in the Entry. You see the following exits:" + Environment.NewLine +
-                    " - the Hallway is to the East" + Environment.NewLine +
-                    " - the Garage is Out" + Environment.NewLine +
-                    "You have not found any opponents")
-                .Returns("You are in the Garage. You see the following exit:" + Environment.NewLine +
-                    " - the Hallway is In" + Environment.NewLine +
-                    "You have not found any opponents");
-
-            // Set up mock GameController to return Prompt
-            mockGameController.SetupSequence((gc) => gc.Prompt)
-                .Returns("1: Which direction do you want to go: ")
-                .Returns("2: Which direction do you want to go (or type 'check'): ");
-
             // Set up mock GameController to return message when Move
             mockGameController.Setup((gc) => gc.Move(Direction.Out)).Returns("Moving Out");
 
@@ -121,42 +95,21 @@ namespace HideAndSeekConsoleTestProject
             // Create console runner with mocked GameController and IConsoleIO
             consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object);
 
-            // ACT
             // Run game
             consoleRunner.RunGame();
 
-            // ASSERT
+            // Assert text displayed is as expected
             Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
-                "Welcome to tester house!" + Environment.NewLine +
-                "You are in the Entry. You see the following exits:" + Environment.NewLine +
-                " - the Hallway is to the East" + Environment.NewLine +
-                " - the Garage is Out" + Environment.NewLine +
-                "You have not found any opponents" + Environment.NewLine +
-                "1: Which direction do you want to go: " +
                 "Moving Out" + Environment.NewLine +
                 Environment.NewLine +
-                "You are in the Garage. You see the following exit:" + Environment.NewLine +
-                " - the Hallway is In" + Environment.NewLine +
-                "You have not found any opponents" + Environment.NewLine +
-                "2: Which direction do you want to go (or type 'check'): "));
+                "[status]" + Environment.NewLine +
+                "[prompt]"));
         }
 
         [Test]
         [Category("ConsoleRunner Move Failure")]
         public void Test_ConsoleRunner_Move_NoLocationInDirection()
         {
-            // ARRANGE
-            // Set up mock GameController to return Status
-            mockGameController.Setup((gc) => gc.Status).Returns(
-                    "You are in the Entry. You see the following exits:" + Environment.NewLine +
-                    " - the Hallway is to the East" + Environment.NewLine +
-                    " - the Garage is Out" + Environment.NewLine +
-                    "You have not found any opponents");
-
-            // Set up mock GameController to return Prompt
-            mockGameController.Setup((gc) => gc.Prompt)
-                .Returns("1: Which direction do you want to go: ");
-
             // Set up mock GameController to throw exception when Move
             mockGameController.Setup((gc) => gc.Move(Direction.Up))
                 .Throws(new InvalidOperationException("There is no exit for location \"Hallway\" in direction \"Up\""));
@@ -169,45 +122,21 @@ namespace HideAndSeekConsoleTestProject
             // Create console runner with mocked GameController and IConsoleIO
             consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object);
 
-            // ACT
             // Run game
             consoleRunner.RunGame();
 
-            Console.WriteLine(sbActualTextDisplayed.ToString());
-
-            // ASSERT
+            // Assert text displayed is as expected
             Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
-                "Welcome to tester house!" + Environment.NewLine +
-                "You are in the Entry. You see the following exits:" + Environment.NewLine +
-                " - the Hallway is to the East" + Environment.NewLine +
-                " - the Garage is Out" + Environment.NewLine +
-                "You have not found any opponents" + Environment.NewLine +
-                "1: Which direction do you want to go: " +
                 "There is no exit for location \"Hallway\" in direction \"Up\"" + Environment.NewLine +
                 Environment.NewLine +
-                "You are in the Entry. You see the following exits:" + Environment.NewLine +
-                " - the Hallway is to the East" + Environment.NewLine +
-                " - the Garage is Out" + Environment.NewLine +
-                "You have not found any opponents" + Environment.NewLine +
-                "1: Which direction do you want to go: "));
+                "[status]" + Environment.NewLine +
+                "[prompt]"));
         }
 
         [Test]
         [Category("ConsoleRunner Check Failure")]
         public void Test_ConsoleRunner_Check_NoHidingPlace()
         {
-            // ARRANGE
-            // Set up mock GameController to return Status
-            mockGameController.Setup((gc) => gc.Status).Returns(
-                    "You are in the Entry. You see the following exits:" + Environment.NewLine +
-                    " - the Hallway is to the East" + Environment.NewLine +
-                    " - the Garage is Out" + Environment.NewLine +
-                    "You have not found any opponents");
-
-            // Set up mock GameController to return Prompt
-            mockGameController.Setup((gc) => gc.Prompt)
-                .Returns("1: Which direction do you want to go: ");
-
             // Set up mock GameController to throw exception when check
             mockGameController.Setup((gc) => gc.CheckCurrentLocation())
                 .Throws(new InvalidOperationException("There is no hiding place in the Hallway"));
@@ -220,27 +149,15 @@ namespace HideAndSeekConsoleTestProject
             // Create console runner with mocked GameController and IConsoleIO
             consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object);
 
-            // ACT
             // Run game
             consoleRunner.RunGame();
 
-            Console.WriteLine(sbActualTextDisplayed.ToString());
-
-            // ASSERT
+            // Assert text displayed is as expected
             Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
-                "Welcome to tester house!" + Environment.NewLine +
-                "You are in the Entry. You see the following exits:" + Environment.NewLine +
-                " - the Hallway is to the East" + Environment.NewLine +
-                " - the Garage is Out" + Environment.NewLine +
-                "You have not found any opponents" + Environment.NewLine +
-                "1: Which direction do you want to go: " +
                 "There is no hiding place in the Hallway" + Environment.NewLine +
                 Environment.NewLine +
-                "You are in the Entry. You see the following exits:" + Environment.NewLine +
-                " - the Hallway is to the East" + Environment.NewLine +
-                " - the Garage is Out" + Environment.NewLine +
-                "You have not found any opponents" + Environment.NewLine +
-                "1: Which direction do you want to go: "));
+                "[status]" + Environment.NewLine +
+                "[prompt]"));
         }
     }
 }
