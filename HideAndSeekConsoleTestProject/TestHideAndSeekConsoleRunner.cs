@@ -28,10 +28,19 @@ namespace HideAndSeekConsoleTestProject
                 sbActualTextDisplayed.AppendSafeWithNewLine(message); // Append text written to StringBuilder
             });
 
+            mockConsoleIO.Setup((cio) => cio.WriteLine()).Callback(() =>
+            {
+                sbActualTextDisplayed.Append(Environment.NewLine); // Append new line to StringBuilder
+            });
+
             mockConsoleIO.Setup((cio) => cio.Write(It.IsAny<string>())).Callback((string message) =>
             {
                 sbActualTextDisplayed.Append(message); // Append text written to StringBuilder
             });
+
+
+            // Set up mock GameController to return House name (used in welcome message)
+            mockGameController.SetupGet((gc) => gc.House.Name).Returns("tester house");
         }
 
         [Test]
@@ -47,10 +56,7 @@ namespace HideAndSeekConsoleTestProject
                 "You have not found any opponents");
 
             // Set up mock GameController to return Prompt
-            mockGameController.SetupGet((gc) => gc.Prompt).Returns("1: Which direction do you want to go:");
-
-            // Set up mock GameController to return House name (used in welcome message)
-            mockGameController.SetupGet((gc) => gc.House.Name).Returns("tester house");
+            mockGameController.SetupGet((gc) => gc.Prompt).Returns("1: Which direction do you want to go: ");
 
             // Set up mock to return user input to terminate program
             mockConsoleIO.Setup((cio) => cio.ReadLine()).Returns($"exit{Environment.NewLine}");
@@ -63,7 +69,8 @@ namespace HideAndSeekConsoleTestProject
             consoleRunner.RunGame();
 
             // ASSERT
-            Assert.That(sbActualTextDisplayed.ToString(), Is.EqualTo("Welcome to the Hide And Seek Console App!" + Environment.NewLine +
+            Assert.That(sbActualTextDisplayed.ToString(), Is.EqualTo(
+                "Welcome to the Hide And Seek Console App!" + Environment.NewLine +
                 "Navigate through rooms in a virtual house to find all the hiding opponents in the fewest number of moves possible." + Environment.NewLine +
                 "-To MOVE, enter the direction in which you want to move." + Environment.NewLine +
                 "-To CHECK if any opponents are hiding in your current location, enter \"check\"." + Environment.NewLine +
@@ -79,7 +86,7 @@ namespace HideAndSeekConsoleTestProject
                 " - the Hallway is to the East" + Environment.NewLine +
                 " - the Garage is Out" + Environment.NewLine +
                 "You have not found any opponents" + Environment.NewLine +
-                "1: Which direction do you want to go:")); // Assert that text displayed is as expected
+                "1: Which direction do you want to go: ")); // Assert that text displayed is as expected
         }
         }
     }
