@@ -134,6 +134,38 @@ namespace HideAndSeekConsoleTestProject
         }
 
         [Test]
+        [Category("ConsoleRunner Check Success")]
+        public void Test_ConsoleRunner_Check()
+        {
+            // Set up mock GameController to return message when check
+            mockGameController.Setup((gc) => gc.CheckCurrentLocation()).Returns("[check current location return message]");
+
+            // Set up mock to return user input
+            mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
+                .Returns("check") // Move Up
+                .Returns("exit"); // Exit game
+
+            // Create console runner with mocked GameController and IConsoleIO
+            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object);
+
+            // Run game
+            consoleRunner.RunGame();
+
+            Assert.Multiple(() =>
+            {
+                // Assert text displayed is as expected
+                Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
+                    "[check current location return message]" + Environment.NewLine +
+                    Environment.NewLine +
+                    "[status]" + Environment.NewLine +
+                    "[prompt]"));
+
+                // Verify that method was called
+                mockGameController.Verify((gc) => gc.CheckCurrentLocation(), Times.Once);
+            });
+        }
+
+        [Test]
         [Category("ConsoleRunner Check Failure")]
         public void Test_ConsoleRunner_Check_NoHidingPlace()
         {
