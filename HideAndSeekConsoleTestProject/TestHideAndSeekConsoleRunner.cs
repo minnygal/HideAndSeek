@@ -50,8 +50,8 @@ namespace HideAndSeekConsoleTestProject
         }
 
         [Test]
-        [Category("ConsoleRunner")]
-        public void Test_ConsoleRunner_ProgramStarted_TextDisplayed()
+        [Category("ConsoleRunner Exit")]
+        public void Test_ConsoleRunner_ProgramStarted_AndExit()
         {
             // Set up mock to return user input to terminate program
             mockConsoleIO.Setup((cio) => cio.ReadLine()).Returns("exit");
