@@ -35,29 +35,10 @@ namespace HideAndSeekConsoleTestProject
         }
 
         [Test]
-        public void Test_ConsoleRunner_TextDisplayed_WhenGameStarted()
+        [Category("ConsoleRunner")]
+        public void Test_ConsoleRunner_ProgramStarted_TextDisplayed()
         {
             // ARRANGE
-            // Text expected to be displayed
-            string expectedTextDisplayed =
-                "Welcome to the Hide And Seek Console App!" + Environment.NewLine +
-                "Navigate through rooms in a virtual house to find all the hiding opponents in the fewest number of moves possible." + Environment.NewLine +
-                "-To MOVE, enter the direction in which you want to move." + Environment.NewLine +
-                "-To CHECK if any opponents are hiding in your current location, enter \"check\"." + Environment.NewLine +
-                "-To TELEPORT to a random location with a hiding place, enter \"teleport\"." + Environment.NewLine +
-                "-For a NEW custom game, enter \"new\" and follow the prompts." + Environment.NewLine +
-                "-To SAVE your progress, enter \"save\" followed by a space and a name for your game." + Environment.NewLine +
-                "-To LOAD a saved game, enter \"load\" followed by a space and the name of your game." + Environment.NewLine +
-                "-To DELETE a saved game, enter \"delete\" followed by a space and the name of your game." + Environment.NewLine +
-                "-To EXIT the program, enter \"exit\"" + Environment.NewLine +
-                Environment.NewLine +
-                "Welcome to tester house!" + Environment.NewLine +
-                "You are in the Entry. You see the following exits:" + Environment.NewLine +
-                " - the Hallway is to the East" + Environment.NewLine +
-                " - the Garage is Out" + Environment.NewLine +
-                "You have not found any opponents" + Environment.NewLine +
-                "1: Which direction do you want to go:";
-
             // Set up mock GameController to return Status
             mockGameController.SetupGet((gc) => gc.Status).Returns(
                 "You are in the Entry. You see the following exits:" + Environment.NewLine +
@@ -82,7 +63,24 @@ namespace HideAndSeekConsoleTestProject
             consoleRunner.RunGame();
 
             // ASSERT
-            Assert.That(sbActualTextDisplayed.ToString(), Is.EqualTo(expectedTextDisplayed)); // Assert that text displayed is as expected
+            Assert.That(sbActualTextDisplayed.ToString(), Is.EqualTo("Welcome to the Hide And Seek Console App!" + Environment.NewLine +
+                "Navigate through rooms in a virtual house to find all the hiding opponents in the fewest number of moves possible." + Environment.NewLine +
+                "-To MOVE, enter the direction in which you want to move." + Environment.NewLine +
+                "-To CHECK if any opponents are hiding in your current location, enter \"check\"." + Environment.NewLine +
+                "-To TELEPORT to a random location with a hiding place, enter \"teleport\"." + Environment.NewLine +
+                "-For a NEW custom game, enter \"new\" and follow the prompts." + Environment.NewLine +
+                "-To SAVE your progress, enter \"save\" followed by a space and a name for your game." + Environment.NewLine +
+                "-To LOAD a saved game, enter \"load\" followed by a space and the name of your game." + Environment.NewLine +
+                "-To DELETE a saved game, enter \"delete\" followed by a space and the name of your game." + Environment.NewLine +
+                "-To EXIT the program, enter \"exit\"" + Environment.NewLine +
+                Environment.NewLine +
+                "Welcome to tester house!" + Environment.NewLine +
+                "You are in the Entry. You see the following exits:" + Environment.NewLine +
+                " - the Hallway is to the East" + Environment.NewLine +
+                " - the Garage is Out" + Environment.NewLine +
+                "You have not found any opponents" + Environment.NewLine +
+                "1: Which direction do you want to go:")); // Assert that text displayed is as expected
+        }
         }
     }
 }
