@@ -88,6 +88,57 @@ namespace HideAndSeekConsoleTestProject
                 "You have not found any opponents" + Environment.NewLine +
                 "1: Which direction do you want to go: ")); // Assert that text displayed is as expected
         }
+
+        [Test]
+        [Category("ConsoleRunner Move Success")]
+        public void Test_ConsoleRunner_Move()
+        {
+            // ARRANGE
+            // Set up mock GameController to return Status
+            mockGameController.SetupSequence((gc) => gc.Status)
+                .Returns(
+                    "You are in the Entry. You see the following exits:" + Environment.NewLine +
+                    " - the Hallway is to the East" + Environment.NewLine +
+                    " - the Garage is Out" + Environment.NewLine +
+                    "You have not found any opponents")
+                .Returns("You are in the Garage. You see the following exit:" + Environment.NewLine +
+                    " - the Hallway is In" + Environment.NewLine +
+                    "You have not found any opponents");
+
+            // Set up mock GameController to return Prompt
+            mockGameController.SetupSequence((gc) => gc.Prompt)
+                .Returns("1: Which direction do you want to go: ")
+                .Returns("2: Which direction do you want to go (or type 'check'): ");
+
+            // Set up mock GameController to return message when Move
+            mockGameController.Setup((gc) => gc.Move(Direction.Out)).Returns("Moving Out");
+
+            // Set up mock to return user input to terminate program
+            mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
+                .Returns($"out{Environment.NewLine}") // Move to Garage
+                .Returns($"exit{Environment.NewLine}"); // Exit game
+
+            // Create console runner with mocked GameController and IConsoleIO
+            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object);
+
+            // ACT
+            // Run game
+            consoleRunner.RunGame();
+
+            // ASSERT
+            Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
+                "Welcome to tester house!" + Environment.NewLine +
+                "You are in the Entry. You see the following exits:" + Environment.NewLine +
+                " - the Hallway is to the East" + Environment.NewLine +
+                " - the Garage is Out" + Environment.NewLine +
+                "You have not found any opponents" + Environment.NewLine +
+                "1: Which direction do you want to go: " +
+                "Moving Out" + Environment.NewLine +
+                Environment.NewLine +
+                "You are in the Garage. You see the following exit:" + Environment.NewLine +
+                " - the Hallway is In" + Environment.NewLine +
+                "You have not found any opponents" + Environment.NewLine +
+                "2: Which direction do you want to go (or type 'check'): "));
         }
     }
 }
