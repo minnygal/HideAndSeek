@@ -42,6 +42,11 @@
         /// </summary>
         public GameController GameController { get; private set; }
 
+        /// <summary>
+        /// Command to quit program
+        /// </summary>
+        public const string QuitCommand = "exit";
+
         // Console input/output object
         private readonly IConsoleIO consoleIO;
 
@@ -51,6 +56,9 @@
         /// </summary>
         public void RunGame()
         {
+            // Create variable to store return value of ParseInput method
+            string parseInputReturnValue;
+
             // Print welcome, basic instructions, and space
             consoleIO.WriteLine( GetWelcomeAndInstructions() + Environment.NewLine );
 
@@ -63,9 +71,19 @@
                 // Until game is over
                 while( !(GameController.GameOver) )
                 {
+                    // Print game status and prompt, and get/parse/act on user input
                     consoleIO.WriteLine(GameController.Status); // Print game status
                     consoleIO.Write(GameController.Prompt); // Print game prompt
-                    consoleIO.WriteLine(RemoveParamText( ParseInput(consoleIO.ReadLine()) )); // Get user input, parse input, and print message without param text
+                    parseInputReturnValue = RemoveParamText(ParseInput(consoleIO.ReadLine())); // Get user input, parse input, act on input, and return message
+
+                    // If requested, quit program
+                    if (parseInputReturnValue == QuitCommand)
+                    {
+                        return;
+                    }
+
+                    // Print update
+                    consoleIO.WriteLine(parseInputReturnValue); // Print ParseInput return message
                     consoleIO.WriteLine(); // Print empty line to put space between moves
                 }
 
@@ -91,7 +109,7 @@
         /// teleport, check, new, save, load, delete
         /// </summary>
         /// <param name="userInput">User input to parse</param>
-        /// <returns>Return message from parsing the input</returns>
+        /// <returns>Return message from parsing input / doing action OR "quit" if user wants to quit game</returns>
         private string ParseInput(string userInput)
         {
             // Trim input
@@ -100,7 +118,7 @@
             // Extract command (text before first space) and make lowercase
             string lowercaseCommand = userInput.Split(" ").FirstOrDefault("").ToLower();
             
-            // Extract text after command
+            // Extract text after command (may include file name)
             string textAfterCommand = userInput.Substring(lowercaseCommand.Length);
 
             try
@@ -121,22 +139,40 @@
                         consoleIO.WriteLine();
                         return SaveGame(textAfterCommand);
 
-                    // Load game and return description
+                    // Load game and return description (or "quit" command if user wants to quit game)
                     case "load":
                         consoleIO.WriteLine();
-                        return GameController.LoadGame( GetNameOfExistingSavedGameFile(textAfterCommand, lowercaseCommand) ) + 
-                               Environment.NewLine + GetWelcomeToHouse();
+                        return ReturnActionResultsOrQuitCommand(GetNameOfExistingSavedGameFile(textAfterCommand, lowercaseCommand), 
+                            () => {
+                                return GameController.LoadGame(userInput) +
+                                       Environment.NewLine + GetWelcomeToHouse(); // Return results from loading game plus welcome message
+                            });
 
-                    // Delete game and return description
+                    // Delete game and return description (or "quit" command if user wants to quit game)
                     case "delete":
-                        consoleIO.WriteLine();
-                        return GameController.DeleteGame( GetNameOfExistingSavedGameFile(textAfterCommand, lowercaseCommand) );
+                        return ReturnActionResultsOrQuitCommand(GetNameOfExistingSavedGameFile(textAfterCommand, lowercaseCommand), 
+                            () => {
+                                return GameController.DeleteGame(userInput); // Return results from deleting game
+                            });
 
-                    // Start new game and return description
+                    // Start new game and return description (or "quit" command if user wants to quit game)
                     case "new":
+                        // Set game controller for new custom game based on user input
                         consoleIO.WriteLine();
-                        GameController = GetGameControllerForCustomGame(); // Set game controller for new custom game                            
-                        return "New game started" + Environment.NewLine + GetWelcomeToHouse(); // Return info and welcome message
+                        GameController = GetGameControllerForCustomGame();   
+                        
+                        // If user entered command to quit
+                        if(GameController == null)
+                        {
+                            return QuitCommand; // Return quit command
+                        }
+
+                        // Return results and welcome message
+                        return "New game started" + Environment.NewLine + GetWelcomeToHouse();
+
+                    // Quit (exit) program
+                    case QuitCommand:
+                        return QuitCommand; // Return quit command
 
                     // Move in specified direction and return results
                     default:
@@ -175,7 +211,7 @@
         /// </summary>
         /// <param name="userInput">User input of file name (null, whitespace, or empty if should display list of existing SavedGame files)</param>
         /// <param name="command">Description of action to be done with file (e.g. "load", "delete")</param>
-        /// <returns>Description</returns>
+        /// <returns>User input for name of SavedGame file OR quit command if user wants to quit game</returns>
         private string GetNameOfExistingSavedGameFile(string userInput, string command)
         {
             // Trim user input
@@ -185,6 +221,10 @@
             if (string.IsNullOrEmpty(userInput))
             {
                 return DisplayListOfSavedGamesAndGetUserInput(command); // Display list of saved game files and return input for file name
+            }
+            else if(userInput == QuitCommand) // If user entered quit command
+            {
+                return QuitCommand; // Return quit command
             }
             else
             {
@@ -197,7 +237,7 @@
         /// and get user input for name of file
         /// </summary>
         /// <param name="command">Description of action to be performed with file</param>
-        /// <returns>User input for name of file</returns>
+        /// <returns>User input for name of SavedGame file OR quit command</returns>
         /// <exception cref="InvalidOperationException">Exception thrown if no saved game files found</exception>
         private string DisplayListOfSavedGamesAndGetUserInput(string command)
         {
@@ -223,10 +263,10 @@
         /// Helper method to get game controller for new game based on user input;
         /// also sets GameController House layout based on user input
         /// </summary>
-        /// <returns>Game controller set up for game</returns>
+        /// <returns>Game controller set up for game OR null if user wants to quit program</returns>
         private GameController GetGameControllerForCustomGame()
         {
-            // Set local game controller variable to null (used as flag in do-while to create new game controller)
+            // Create local game controller variable (used as flag)
             GameController gameController = null;
 
             do
@@ -242,7 +282,11 @@
                     {
                         gameController = new GameController(); // Create a new default game controller
                     }
-                    else if( int.TryParse(userInput, out int numberOfOpponents) ) // If user entered a number
+                    else if(userInput == QuitCommand) // If user entered command to quit
+                    {
+                        return null; // Return null to indicate user wants to quit
+                    }
+                    else if (int.TryParse(userInput, out int numberOfOpponents)) // If user entered a number
                     {
                         gameController = new GameController(numberOfOpponents); // Create new game controller with specified number of opponents
                     }
@@ -262,7 +306,6 @@
                 catch (Exception e)
                 {
                     consoleIO.WriteLine(e.Message); // Print error message
-                    gameController = null; // Make sure game controller variable is not set
                 }
             } while (gameController == null);
 
@@ -274,8 +317,8 @@
         /// Helper method to set the House layout for a game controller based on user input
         /// (allows user to enter name of file from which to load House layout or empty string to load default layout)
         /// </summary>
-        /// <returns>Game controller with House layout loaded</returns>
-        private GameController GetUserInputAndSetHouseLayout(GameController GameController)
+        /// <returns>Game controller with House layout loaded OR null if user wants to quit program</returns>
+        private GameController GetUserInputAndSetHouseLayout(GameController gameController)
         {
             // Set flag
             bool houseLayoutChosen = false;
@@ -288,14 +331,20 @@
 
                 // Get House file name from user
                 consoleIO.Write("Type a house layout file name or just press Enter to use the default house layout: "); // Prompt for House layout file name
-                string houseLayoutFileName = consoleIO.ReadLine().Trim(); // Get user input for file name and trim
+                string userInputForFileName = consoleIO.ReadLine().Trim(); // Get user input for file name and trim
+
+                // If user entered quit command, return null
+                if(userInputForFileName == QuitCommand)
+                {
+                    return null;
+                }
 
                 try
                 {
                     // If any text was entered
-                    if (houseLayoutFileName != string.Empty)
+                    if (userInputForFileName != string.Empty)
                     {
-                        GameController.RestartGame(houseLayoutFileName); // Restart game with House layout file, throws exception if anything invalid
+                        gameController.RestartGame(userInputForFileName); // Restart game with House layout file, throws exception if anything invalid
                     } // else if no text entered, don't change House layout
 
                     // Update flag
@@ -308,7 +357,7 @@
             } while( !(houseLayoutChosen) );
 
             // Return game controller
-            return GameController;
+            return gameController;
         }
 
         /// <summary>
@@ -331,10 +380,11 @@
                    "-To MOVE, enter the direction in which you want to move." + Environment.NewLine +
                    "-To CHECK if any opponents are hiding in your current location, enter \"check\"." + Environment.NewLine +
                    "-To TELEPORT to a random location with a hiding place, enter \"teleport\"." + Environment.NewLine +
+                   "-For a NEW custom game, enter \"new\" and follow the prompts." + Environment.NewLine +
                    "-To SAVE your progress, enter \"save\" followed by a space and a name for your game." + Environment.NewLine +
                    "-To LOAD a saved game, enter \"load\" followed by a space and the name of your game." + Environment.NewLine +
                    "-To DELETE a saved game, enter \"delete\" followed by a space and the name of your game." + Environment.NewLine +
-                   "-To start a NEW custom game, enter \"new\" and follow the prompts.";
+                   "-To EXIT the program, enter \"exit\"";
         }
 
         /// <summary>
@@ -361,6 +411,25 @@
         private static string GetTextListOfFileNames(IEnumerable<string> fileNames)
         {
             return String.Join(Environment.NewLine, fileNames.Select((name) => $" - {name}"));
+        }
+
+        /// <summary>
+        /// Helper method to return quit command if user wants to quit game
+        /// OR results of action performed if user does not want to quit game
+        /// </summary>
+        /// <param name="textInput">Text which could indicate user wants to quit game</param>
+        /// <param name="ActionToPerform">Action to perform if user does not want to quit game</param>
+        /// <returns>Return message from performing action OR "quit" if user wants to quit game</returns>
+        private static string ReturnActionResultsOrQuitCommand(string textInput, Func<string> ActionToPerform)
+        {
+            // If text input is quit command
+            if (textInput == QuitCommand)
+            {
+                return QuitCommand; // Return quit command
+            }
+
+            // Perform action and return message
+            return ActionToPerform();
         }
     }
 }
