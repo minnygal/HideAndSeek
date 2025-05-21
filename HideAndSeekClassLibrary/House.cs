@@ -97,7 +97,7 @@ namespace HideAndSeek
         /// </summary>
         /// <exception cref="ArgumentException">Exception thrown if value passed to setter is invalid (empty or only whitespace)</exception>
         [JsonRequired]
-        public required string Name
+        public virtual required string Name
         {
             get
             {
