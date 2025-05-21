@@ -31,7 +31,7 @@
     {
         public HideAndSeekConsoleRunner() : this(new GameController(), new ConsoleIOAdapter()) { }
 
-        public HideAndSeekConsoleRunner(GameController gameController, IConsoleIO console)
+        public HideAndSeekConsoleRunner(IGameController gameController, IConsoleIO console)
         {
             GameController = gameController; // Set game controller to passed in game controller
             consoleIO = console; // Set console IO to passed in console IO
@@ -40,7 +40,7 @@
         /// <summary>
         /// GameController object to control game
         /// </summary>
-        public GameController GameController { get; private set; }
+        public IGameController GameController { get; private set; }
 
         /// <summary>
         /// Command to quit program

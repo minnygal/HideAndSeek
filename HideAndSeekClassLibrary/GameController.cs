@@ -54,7 +54,7 @@ namespace HideAndSeek
      * -I added/edited comments for easier reading.
      * **/
 
-    public class GameController
+    public class GameController : IGameController
     {
         #region Constructors
 
