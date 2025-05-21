@@ -49,7 +49,7 @@ namespace HideAndSeek
                 // Assert that attempting to delete game with invalid file name raises exception
                 Exception exception = Assert.Throws<ArgumentException>(() =>
                 {
-                    GameController.DeleteGame(fileName);
+                    new GameController().DeleteGame(fileName);
                 });
 
                 // Assert that exception message is as expected
@@ -72,7 +72,7 @@ namespace HideAndSeek
                 // Assert that attempting to delete nonexistent game raises exception
                 Exception exception = Assert.Throws<FileNotFoundException>(() =>
                 {
-                    GameController.DeleteGame("my_nonexistent_game");
+                    new GameController().DeleteGame("my_nonexistent_game");
                 });
 
                 // Assert that exception message is as expected
@@ -92,7 +92,7 @@ namespace HideAndSeek
             Assert.Multiple(() =>
             {
                 // Delete game and assert that return message is as expected
-                Assert.That(GameController.DeleteGame("my_saved_game"), Is.EqualTo("Game file my_saved_game has been successfully deleted"));
+                Assert.That(new GameController().DeleteGame("my_saved_game"), Is.EqualTo("Game file my_saved_game has been successfully deleted"));
 
                 // Verify that File.Delete was called once
                 mockFileSystemForGameController.Verify(manager => manager.File.Delete("my_saved_game.game.json"), Times.Once);
