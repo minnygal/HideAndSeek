@@ -209,5 +209,37 @@ namespace HideAndSeekConsoleTestProject
                 mockGameController.Verify((gc) => gc.CheckCurrentLocation(), Times.Once);
             });
         }
+
+        [Test]
+        [Category("ConsoleRunner Teleport Success")]
+        public void Test_ConsoleRunner_Teleport()
+        {
+            // Set up mock GameController to return message when teleport
+            mockGameController.Setup((gc) => gc.Teleport()).Returns("[teleport return message]");
+
+            // Set up mock to return user input
+            mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
+                .Returns("teleport") // Teleport
+                .Returns("exit"); // Exit game
+
+            // Create console runner with mocked GameController and IConsoleIO
+            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object);
+
+            // Run game
+            consoleRunner.RunGame();
+
+            Assert.Multiple(() =>
+            {
+                // Assert text displayed is as expected
+                Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
+                    "[teleport return message]" + Environment.NewLine +
+                    Environment.NewLine +
+                    "[status]" + Environment.NewLine +
+                    "[prompt]"));
+
+                // Verify that Teleport method was called
+                mockGameController.Verify((gc) => gc.Teleport(), Times.Once);
+            });
+        }
     }
 }
