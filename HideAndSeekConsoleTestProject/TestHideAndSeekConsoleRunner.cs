@@ -98,12 +98,18 @@ namespace HideAndSeekConsoleTestProject
             // Run game
             consoleRunner.RunGame();
 
-            // Assert text displayed is as expected
-            Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
-                "Moving Out" + Environment.NewLine +
-                Environment.NewLine +
-                "[status]" + Environment.NewLine +
-                "[prompt]"));
+            Assert.Multiple(() =>
+            {
+                // Assert text displayed is as expected
+                Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
+                    "Moving Out" + Environment.NewLine +
+                    Environment.NewLine +
+                    "[status]" + Environment.NewLine +
+                    "[prompt]"));
+
+                // Verify that Move method was called
+                mockGameController.Verify((gc) => gc.Move(Direction.Out), Times.Once);
+            });
         }
 
         [Test]
@@ -125,12 +131,18 @@ namespace HideAndSeekConsoleTestProject
             // Run game
             consoleRunner.RunGame();
 
-            // Assert text displayed is as expected
-            Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
-                "There is no exit for location \"Hallway\" in direction \"Up\"" + Environment.NewLine +
-                Environment.NewLine +
-                "[status]" + Environment.NewLine +
-                "[prompt]"));
+            Assert.Multiple(() =>
+            {
+                // Assert text displayed is as expected
+                Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
+                    "There is no exit for location \"Hallway\" in direction \"Up\"" + Environment.NewLine +
+                    Environment.NewLine +
+                    "[status]" + Environment.NewLine +
+                    "[prompt]"));
+
+                // Verify that Move method was called
+                mockGameController.Verify((gc) => gc.Move(Direction.Up), Times.Once);
+            });
         }
 
         [Test]
@@ -160,7 +172,7 @@ namespace HideAndSeekConsoleTestProject
                     "[status]" + Environment.NewLine +
                     "[prompt]"));
 
-                // Verify that method was called
+                // Verify that CheckCurrentLocation method was called
                 mockGameController.Verify((gc) => gc.CheckCurrentLocation(), Times.Once);
             });
         }
@@ -184,12 +196,18 @@ namespace HideAndSeekConsoleTestProject
             // Run game
             consoleRunner.RunGame();
 
-            // Assert text displayed is as expected
-            Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
-                "There is no hiding place in the Hallway" + Environment.NewLine +
-                Environment.NewLine +
-                "[status]" + Environment.NewLine +
-                "[prompt]"));
+            Assert.Multiple(() =>
+            {
+                // Assert text displayed is as expected
+                Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
+                    "There is no hiding place in the Hallway" + Environment.NewLine +
+                    Environment.NewLine +
+                    "[status]" + Environment.NewLine +
+                    "[prompt]"));
+
+                // Verify that CheckCurrentLocation method was called
+                mockGameController.Verify((gc) => gc.CheckCurrentLocation(), Times.Once);
+            });
         }
     }
 }
