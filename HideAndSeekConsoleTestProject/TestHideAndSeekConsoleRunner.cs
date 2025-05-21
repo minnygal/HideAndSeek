@@ -241,5 +241,31 @@ namespace HideAndSeekConsoleTestProject
                 mockGameController.Verify((gc) => gc.Teleport(), Times.Once);
             });
         }
+
+        [TestCase("")]
+        [TestCase(" ")]
+        [TestCase("invalid")]
+        [TestCase("go east")]
+        [Category("ConsoleRunner Failure")]
+        public void Test_ConsoleRunner_InvalidCommand(string command)
+        {
+            // Set up mock to return user input
+            mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
+                .Returns(command) // Command
+                .Returns("exit"); // Exit game
+
+            // Create console runner with mocked GameController and IConsoleIO
+            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object);
+
+            // Run game
+            consoleRunner.RunGame();
+
+            // Assert text displayed is as expected
+            Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
+                "That's not a valid direction" + Environment.NewLine +
+                Environment.NewLine +
+                "[status]" + Environment.NewLine +
+                "[prompt]"));
+        }
     }
 }
