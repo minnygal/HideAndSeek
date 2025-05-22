@@ -223,10 +223,6 @@
             {
                 return DisplayListOfSavedGamesAndGetUserInput(command); // Display list of saved game files and return input for file name
             }
-            else if(userInput == QuitCommand) // If user entered quit command
-            {
-                return QuitCommand; // Return quit command
-            }
             else
             {
                 return userInput; // Return user input
