@@ -89,7 +89,7 @@
 
                 // Print post-game info and instructions
                 consoleIO.WriteLine($"You won the game in {GameController.MoveNumber} moves!");
-                consoleIO.WriteLine("Press P to play again, any other key to quit.");
+                consoleIO.Write("Press P to play again, any other key to quit. ");
 
                 // If user does not want to play again, quit
                 if( !(consoleIO.ReadKey().KeyChar.ToString().Equals("P", StringComparison.CurrentCultureIgnoreCase)) )

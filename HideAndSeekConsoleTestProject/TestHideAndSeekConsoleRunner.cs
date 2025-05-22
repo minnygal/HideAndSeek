@@ -267,5 +267,95 @@ namespace HideAndSeekConsoleTestProject
                 "[status]" + Environment.NewLine +
                 "[prompt]"));
         }
+
+        [TestCase("")]
+        [TestCase(" ")]
+        [TestCase("oh my")]
+        [TestCase("bye")]
+        [Category("ConsoleRunner GameOver Move Check Success")]
+        public void Test_ConsoleRunner_GameOver_DoNotPlayAgain(string inputToQuit)
+        {
+            // Set up mock GameController to return whether game is over
+            mockGameController.SetupSequence((gc) => gc.GameOver)
+                .Returns(false)
+                .Returns(false)
+                .Returns(true);
+
+            // Set up mock GameController to implement check method
+            mockGameController.Setup((gc) => gc.CheckCurrentLocation()).Returns("[check current location return message]");
+
+            // Set up mock GameController to implement move method
+            mockGameController.Setup((gc) => gc.Move(Direction.Out)).Returns("[move return message]");
+
+            // Set up mock GameController to return move number
+            mockGameController.Setup((gc) => gc.MoveNumber).Returns(2);
+
+            // Set up mock to return user input
+            mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
+                .Returns("out") // Move to Garage
+                .Returns("check") // Check current location
+                .Returns(inputToQuit); // Quit game
+
+            // Create console runner with mocked GameController and IConsoleIO
+            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object);
+
+            // Run game
+            consoleRunner.RunGame();
+
+            // Assert text displayed is as expected
+            Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
+                "[check current location return message]" + Environment.NewLine +
+                Environment.NewLine +
+                "You won the game in 2 moves!" + Environment.NewLine +
+                "Press P to play again, any other key to quit. "));
+        }
+
+        [TestCase('P')]
+        [TestCase('p')]
+        [Category("ConsoleRunner GameOver Move Check Success")]
+        public void Test_ConsoleRunner_GameOver_PlayAgain(char inputToPlayAgain)
+        {
+            // Set up mock GameController to return whether game is over
+            mockGameController.SetupSequence((gc) => gc.GameOver)
+                .Returns(false)
+                .Returns(false)
+                .Returns(true)
+                .Returns(false);
+
+            // Set up mock GameController to implement check method
+            mockGameController.Setup((gc) => gc.CheckCurrentLocation()).Returns("[check current location return message]");
+
+            // Set up mock GameController to implement move method
+            mockGameController.Setup((gc) => gc.Move(Direction.Out)).Returns("[move return message]");
+
+            // Set up mock GameController to return move number
+            mockGameController.Setup((gc) => gc.MoveNumber).Returns(2);
+
+            // Set up mock to return user input
+            mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
+                .Returns("out") // Move to Garage
+                .Returns("check") // Check current location
+                .Returns("exit"); // Quit game
+
+            // Set up mock to return user input to play again
+            mockConsoleIO.Setup((cio) => cio.ReadKey()).Returns(new ConsoleKeyInfo(inputToPlayAgain, ConsoleKey.P, false, false, false)); // Play again
+
+            // Create console runner with mocked GameController and IConsoleIO
+            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object);
+
+            // Run game
+            consoleRunner.RunGame();
+
+            // Assert text displayed is as expected
+            Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
+                "[check current location return message]" + Environment.NewLine +
+                Environment.NewLine +
+                "You won the game in 2 moves!" + Environment.NewLine +
+                "Press P to play again, any other key to quit. " +
+                Environment.NewLine +
+                "Welcome to tester house!" + Environment.NewLine +
+                "[status]" + Environment.NewLine +
+                "[prompt]"));
+        }
     }
 }
