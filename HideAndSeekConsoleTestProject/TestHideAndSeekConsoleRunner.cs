@@ -6,7 +6,7 @@ using System.Text;
 namespace HideAndSeekConsoleTestProject
 {
     /// <summary>
-    /// Test class for HideAndSeekConsoleRunner basic functionality
+    /// HideAndSeekConsoleRunner tests for basic functionality
     /// (move, check, teleport, invalid command, user input when game over, exit in main loop)
     /// </summary>
     [TestFixture]

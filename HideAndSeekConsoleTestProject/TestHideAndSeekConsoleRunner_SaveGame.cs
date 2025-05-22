@@ -6,7 +6,7 @@ using System.Text;
 namespace HideAndSeekConsoleTestProject
 {
     /// <summary>
-    /// Test class for HideAndSeekConsoleRunner class for command to save game
+    /// HideAndSeekConsoleRunner tests for command to save game
     /// </summary>
     [TestFixture]
     public class TestHideAndSeekConsoleRunner_SaveGame
@@ -61,7 +61,7 @@ namespace HideAndSeekConsoleTestProject
 
             // Set up mock to return user input
             mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
-                .Returns("save fileName") // Move to Garage
+                .Returns("save fileName") // Save game
                 .Returns("exit"); // Exit game
 
             // Create console runner with mocked GameController and IConsoleIO
