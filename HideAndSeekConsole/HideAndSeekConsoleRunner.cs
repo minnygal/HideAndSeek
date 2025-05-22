@@ -141,18 +141,19 @@
 
                     // Load game and return description (or "quit" command if user wants to quit game)
                     case "load":
-                        consoleIO.WriteLine();
-                        return ReturnActionResultsOrQuitCommand(GetNameOfExistingSavedGameFile(textAfterCommand, lowercaseCommand), 
+                        string userInputForFileToLoad = GetNameOfExistingSavedGameFile(textAfterCommand, lowercaseCommand);
+                        return ReturnActionResultsOrQuitCommand(userInputForFileToLoad, 
                             () => {
-                                return GameController.LoadGame(userInput) +
+                                return GameController.LoadGame(userInputForFileToLoad) +
                                        Environment.NewLine + GetWelcomeToHouse(); // Return results from loading game plus welcome message
                             });
 
                     // Delete game and return description (or "quit" command if user wants to quit game)
                     case "delete":
-                        return ReturnActionResultsOrQuitCommand(GetNameOfExistingSavedGameFile(textAfterCommand, lowercaseCommand), 
+                        string userInputForFileToDelete = GetNameOfExistingSavedGameFile(textAfterCommand, lowercaseCommand);
+                        return ReturnActionResultsOrQuitCommand(userInputForFileToDelete, 
                             () => {
-                                return GameController.DeleteGame(userInput); // Return results from deleting game
+                                return GameController.DeleteGame(userInputForFileToDelete); // Return results from deleting game
                             });
 
                     // Start new game and return description (or "quit" command if user wants to quit game)
