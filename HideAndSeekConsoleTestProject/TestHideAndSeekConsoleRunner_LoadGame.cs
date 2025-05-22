@@ -1,12 +1,19 @@
 ﻿using HideAndSeek;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions;
 using Moq;
+using System.IO.Abstractions;
 using System.Text;
 
 namespace HideAndSeekConsoleTestProject
 {
     /// <summary>
     /// HideAndSeekConsoleRunner tests for command to load game
+    /// 
+    /// 
+    /// SelectFileNameSeparately tests are integration tests 
+    /// relying upon SavedGame's GetSavedGameFileNames static method.
+    /// The file system is mocked to control the output,
+    /// but changes to GetSavedGameFileNames's implementation will impact this test class.
     /// </summary>
     [TestFixture]
     public class TestHideAndSeekConsoleRunner_LoadGame
@@ -15,15 +22,20 @@ namespace HideAndSeekConsoleTestProject
         Mock<IGameController> mockGameController; // GameController mock used by HideAndSeekConsoleRunner object
         StringBuilder sbActualTextDisplayed; // StringBuilder to capture actual text displayed (not including user input)
         Mock<IConsoleIO> mockConsoleIO; // IConsoleIO mock used by HideAndSeekConsoleRunner object
+        Mock<IFileSystem> mockFileSystem; // IFileSystem mock used by SavedGame class
 
         [SetUp]
         public void SetUp()
         {
+            // Reset SavedGame file system (may or may not be reassigned to mock in test)
+            SavedGame.FileSystem = new FileSystem();
+
             // Initialize class variables
             mockGameController = new Mock<IGameController>();
             consoleRunner = null;
             mockConsoleIO = new Mock<IConsoleIO>();
             sbActualTextDisplayed = new StringBuilder();
+            mockFileSystem = new Mock<IFileSystem>();
 
             // Set up mock IConsoleIO to write text to StringBuilder
             mockConsoleIO.Setup((cio) => cio.WriteLine(It.IsAny<string>())).Callback((string message) =>
@@ -50,6 +62,12 @@ namespace HideAndSeekConsoleTestProject
 
             // Set up mock GameController to return Prompt
             mockGameController.SetupGet((gc) => gc.Prompt).Returns("[prompt]");
+        }
+
+        [OneTimeTearDown]
+        public void OneTimeTearDown()
+        {
+            SavedGame.FileSystem = new FileSystem(); // Reset SavedGame file system
         }
 
         [Test]
@@ -148,6 +166,50 @@ namespace HideAndSeekConsoleTestProject
 
                 // Verify that Load method was called
                 mockGameController.Verify((gc) => gc.LoadGame("nonexistentFile"), Times.Once);
+            });
+        }
+
+        [Test]
+        [Category("ConsoleRunner Load Success")]
+        public void Test_ConsoleRunner_Load_SelectFileNameSeparately()
+        {
+            // Set up mock file system
+            mockFileSystem.Setup((fs) => fs.Path.GetDirectoryName(It.IsAny<string>())).Returns("directoryName"); // Return directory name
+            mockFileSystem.Setup((fs) => fs.Directory.GetFiles("directoryName"))
+                .Returns(new string[] { "myFile.game.json", "otherFile.game.json" }); // Return file names
+            SavedGame.FileSystem = mockFileSystem.Object; // Set SavedGame file system to mock file system
+
+            // Set up mock GameController to return message when load
+            mockGameController.Setup((gc) => gc.LoadGame("myFile")).Returns("[load return message]");
+
+            // Set up mock to return user input
+            mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
+                .Returns("load") // Start load
+                .Returns("myFile") // Specify file
+                .Returns("exit"); // Exit game
+
+            // Create console runner with mocked GameController and IConsoleIO
+            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object);
+
+            // Run game
+            consoleRunner.RunGame();
+
+            Assert.Multiple(() =>
+            {
+                // Assert text displayed is as expected
+                Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
+                    "Here are the names of the saved game files available:" + Environment.NewLine +
+                    " - myFile" + Environment.NewLine +
+                    " - otherFile" + Environment.NewLine +
+                    "Enter the name of the saved game file to load: " +
+                    "[load return message]" + Environment.NewLine +
+                    "Welcome to tester house!" + Environment.NewLine +
+                    Environment.NewLine +
+                    "[status]" + Environment.NewLine +
+                    "[prompt]"));
+
+                // Verify that Load method was called
+                mockGameController.Verify((gc) => gc.LoadGame("myFile"), Times.Once);
             });
         }
     }
