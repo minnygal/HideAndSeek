@@ -263,7 +263,10 @@
         /// <returns>Game controller set up for game OR null if user wants to quit program</returns>
         private GameController GetGameControllerForCustomGame()
         {
-            // Create local game controller variable (used as flag)
+            // Flag to indicate if done creating game controller
+            bool doneCreatingGameController = false;
+
+            // Create local variable to store created game controller
             GameController gameController = null;
 
             do
@@ -272,16 +275,18 @@
                 consoleIO.Write("How many opponents would you like?  Enter a number between 1 and 10, or a comma-separated list of names: "); // Prompt
                 string userInput = consoleIO.ReadLine().Trim(); // Get user input and trim it
 
+                // If user entered command to quit
+                if (userInput == QuitCommand)
+                {
+                    return null; // Return null to indicate user wants to quit
+                }
+
                 try
                 {
                     // Create game controller with Opponents set
                     if (userInput == string.Empty) // If user did not enter anything
                     {
                         gameController = new GameController(); // Create a new default game controller
-                    }
-                    else if(userInput == QuitCommand) // If user entered command to quit
-                    {
-                        return null; // Return null to indicate user wants to quit
                     }
                     else if (int.TryParse(userInput, out int numberOfOpponents)) // If user entered a number
                     {
@@ -297,14 +302,17 @@
                         gameController = new GameController(namesOfOpponents); // Create new game controller with names entered by user as array (without whitespace)
                     }
 
-                    // Set game controller House layout based on user input
-                   gameController = GetUserInputAndSetHouseLayout(gameController);
+                    // Set game controller House layout based on user input (null if user wants to quit)
+                    gameController = GetUserInputAndSetHouseLayout(gameController);
+
+                    // Set flag to indicate done creating game controller
+                    doneCreatingGameController = true;
                 }
                 catch (Exception e)
                 {
                     consoleIO.WriteLine(e.Message); // Print error message
                 }
-            } while (gameController == null);
+            } while( !(doneCreatingGameController) );
 
             // Return game controller
             return gameController;
