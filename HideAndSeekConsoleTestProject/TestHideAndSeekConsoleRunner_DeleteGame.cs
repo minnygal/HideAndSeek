@@ -120,7 +120,7 @@ namespace HideAndSeekConsoleTestProject
             {
                 // Assert text displayed is as expected
                 Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
-                    "Cannot perform action because file name is invalid" + Environment.NewLine +
+                    "Cannot delete game because file name is invalid" + Environment.NewLine +
                     Environment.NewLine +
                     "[status]" + Environment.NewLine +
                     "[prompt]"));

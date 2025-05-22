@@ -191,11 +191,11 @@
             // If input is empty
             if(string.IsNullOrEmpty(fileName))
             {
-                return "Cannot perform action because no file name was entered"; // Return failure message
+                return "Cannot save game because no file name was entered"; // Return failure message
             }
             else if( !(FileExtensions.IsValidName(fileName)) ) // If input is invalid file name
             {
-                return "Cannot perform action because file name is invalid"; // Return failure message
+                return "Cannot save game because file name is invalid"; // Return failure message
             }
             else
             {
@@ -242,7 +242,7 @@
             // If file name is invalid
             if (!(FileExtensions.IsValidName(userInputForFileName)))
             {
-                return "Cannot perform action because file name is invalid"; // Return failure message
+                return $"Cannot {lowercaseCommand} game because file name is invalid"; // Return failure message
             }
 
             // Return action results or quit command
@@ -356,17 +356,17 @@
                 string userInputForFileName = consoleIO.ReadLine().Trim(); // Get user input for file name and trim
 
                 // If user entered quit command
-                if (userInputForFileName == QuitCommand)
+                if(userInputForFileName == QuitCommand)
                 {
                     return null; // Return null to indicate user wants to quit program
                 }
-                else if (userInputForFileName == string.Empty) // If user did not enter any text
+                else if(userInputForFileName == string.Empty) // If user did not enter any text
                 {
                     return gameController; // Return game controller without changing House layout
                 }
-                else if (!(FileExtensions.IsValidName(userInputForFileName))) // If user entered invalid file name
+                else if( !(FileExtensions.IsValidName(userInputForFileName)) ) // If user entered invalid file name
                 {
-                    consoleIO.WriteLine("Cannot perform action because file name is invalid"); // Print error message
+                    consoleIO.WriteLine("Cannot load house layout because file name is invalid"); // Print error message
                 }
                 else if( !(houseFileNames.Contains(userInputForFileName)) ) // If user entered nonexisting file name
                 {

@@ -168,7 +168,7 @@ namespace HideAndSeekConsoleTestProject
 
             // Assert text displayed is as expected
             Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
-                "Cannot perform action because no file name was entered" + Environment.NewLine +
+                "Cannot save game because no file name was entered" + Environment.NewLine +
                 Environment.NewLine +
                 "[status]" + Environment.NewLine +
                 "[prompt]"));
