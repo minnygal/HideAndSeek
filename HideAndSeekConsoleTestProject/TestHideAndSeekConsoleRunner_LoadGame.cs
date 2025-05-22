@@ -165,6 +165,7 @@ namespace HideAndSeekConsoleTestProject
             });
         }
 
+        // INTEGRATION TESTS BELOW
         [Test]
         [Category("ConsoleRunner Load Success")]
         public void Test_ConsoleRunner_Load_SelectFileNameSeparately()
@@ -206,6 +207,46 @@ namespace HideAndSeekConsoleTestProject
 
                 // Verify that Load method was called
                 mockGameController.Verify((gc) => gc.LoadGame("myFile"), Times.Once);
+            });
+        }
+
+        [Test]
+        [Category("ConsoleRunner Load Failure")]
+        public void Test_ConsoleRunner_Load_SelectFileNameSeparately_InvalidFileName()
+        { 
+            // Set up mock file system
+            mockFileSystem.Setup((fs) => fs.Path.GetDirectoryName(It.IsAny<string>())).Returns("directoryName"); // Return directory name
+            mockFileSystem.Setup((fs) => fs.Directory.GetFiles("directoryName"))
+                .Returns(new string[] { "myFile.game.json", "otherFile.game.json" }); // Return file names
+            SavedGame.FileSystem = mockFileSystem.Object; // Set SavedGame file system to mock file system
+
+            // Set up mock to return user input
+            mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
+                .Returns("load") // Start delete
+                .Returns("\\/ invalid") // Specify file
+                .Returns("exit"); // Exit game
+
+            // Create console runner with mocked GameController and IConsoleIO
+            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object);
+
+            // Run game
+            consoleRunner.RunGame();
+
+            Assert.Multiple(() =>
+            {
+                // Assert text displayed is as expected
+                Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
+                    "Here are the names of the saved game files available:" + Environment.NewLine +
+                    " - myFile" + Environment.NewLine +
+                    " - otherFile" + Environment.NewLine +
+                    "Enter the name of the saved game file to load: " +
+                    "Cannot load game because file name is invalid" + Environment.NewLine +
+                    Environment.NewLine +
+                    "[status]" + Environment.NewLine +
+                    "[prompt]"));
+
+                // Verify that load method was not called
+                mockGameController.Verify((gc) => gc.LoadGame(It.IsAny<string>()), Times.Never);
             });
         }
     }

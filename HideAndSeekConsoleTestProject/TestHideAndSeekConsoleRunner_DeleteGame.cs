@@ -163,6 +163,7 @@ namespace HideAndSeekConsoleTestProject
             });
         }
 
+        // INTEGRATION TESTS BELOW
         [Test]
         [Category("ConsoleRunner Delete Success")]
         public void Test_ConsoleRunner_Delete_SelectFileNameSeparately()
@@ -206,5 +207,44 @@ namespace HideAndSeekConsoleTestProject
             });
         }
 
+        [Test]
+        [Category("ConsoleRunner Delete Failure")]
+        public void Test_ConsoleRunner_Delete_SelectFileNameSeparately_InvalidFileName()
+        {
+            // Set up mock file system
+            mockFileSystem.Setup((fs) => fs.Path.GetDirectoryName(It.IsAny<string>())).Returns("directoryName"); // Return directory name
+            mockFileSystem.Setup((fs) => fs.Directory.GetFiles("directoryName"))
+                .Returns(new string[] { "myFile.game.json", "otherFile.game.json" }); // Return file names
+            SavedGame.FileSystem = mockFileSystem.Object; // Set SavedGame file system to mock file system
+
+            // Set up mock to return user input
+            mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
+                .Returns("delete") // Start delete
+                .Returns("\\/ invalid") // Specify file
+                .Returns("exit"); // Exit game
+
+            // Create console runner with mocked GameController and IConsoleIO
+            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object);
+
+            // Run game
+            consoleRunner.RunGame();
+
+            Assert.Multiple(() =>
+            {
+                // Assert text displayed is as expected
+                Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
+                    "Here are the names of the saved game files available:" + Environment.NewLine +
+                    " - myFile" + Environment.NewLine +
+                    " - otherFile" + Environment.NewLine +
+                    "Enter the name of the saved game file to delete: " +
+                    "Cannot delete game because file name is invalid" + Environment.NewLine +
+                    Environment.NewLine +
+                    "[status]" + Environment.NewLine +
+                    "[prompt]"));
+
+                // Verify that delete method was not called
+                mockGameController.Verify((gc) => gc.DeleteGame(It.IsAny<string>()), Times.Never);
+            });
+        }
     }
 }
