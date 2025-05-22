@@ -107,13 +107,9 @@ namespace HideAndSeekConsoleTestProject
         [Category("ConsoleRunner Load Failure")]
         public void Test_ConsoleRunner_Load_WithFileNameEntered_InvalidFileName()
         {
-            // Set up mock GameController to throw exception when load
-            mockGameController.Setup((gc) => gc.LoadGame("(]}{)file"))
-                .Throws(new ArgumentException("[load exception message]"));
-
             // Set up mock to return user input
             mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
-                .Returns("load (]}{)file") // Load game
+                .Returns("load \\/ file") // Load game
                 .Returns("exit"); // Exit game
 
             // Create console runner with mocked GameController and IConsoleIO
@@ -126,13 +122,13 @@ namespace HideAndSeekConsoleTestProject
             {
                 // Assert text displayed is as expected
                 Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
-                    "[load exception message]" + Environment.NewLine +
+                    "Cannot perform action because file name is invalid" + Environment.NewLine +
                     Environment.NewLine +
                     "[status]" + Environment.NewLine +
                     "[prompt]"));
 
-                // Verify that Load method was called
-                mockGameController.Verify((gc) => gc.LoadGame("(]}{)file"), Times.Once);
+                // Verify that GameController load method was not called
+                mockGameController.Verify((gc) => gc.LoadGame(It.IsAny<string>()), Times.Never);
             });
         }
 

@@ -105,13 +105,9 @@ namespace HideAndSeekConsoleTestProject
         [Category("ConsoleRunner Delete Failure")]
         public void Test_ConsoleRunner_Delete_WithFileNameEntered_InvalidFileName()
         {
-            // Set up mock GameController to throw exception when delete
-            mockGameController.Setup((gc) => gc.DeleteGame("(]}{)file"))
-                .Throws(new ArgumentException("[delete exception message]"));
-
             // Set up mock to return user input
             mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
-                .Returns("delete (]}{)file") // Delete game
+                .Returns("delete \\/ file") // Delete game
                 .Returns("exit"); // Exit game
 
             // Create console runner with mocked GameController and IConsoleIO
@@ -124,13 +120,13 @@ namespace HideAndSeekConsoleTestProject
             {
                 // Assert text displayed is as expected
                 Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
-                    "[delete exception message]" + Environment.NewLine +
+                    "Cannot perform action because file name is invalid" + Environment.NewLine +
                     Environment.NewLine +
                     "[status]" + Environment.NewLine +
                     "[prompt]"));
 
-                // Verify that Delete method was called
-                mockGameController.Verify((gc) => gc.DeleteGame("(]}{)file"), Times.Once);
+                // Verify that GameController delete method was not called
+                mockGameController.Verify((gc) => gc.DeleteGame(It.IsAny<string>()), Times.Never);
             });
         }
 

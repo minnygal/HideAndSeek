@@ -131,53 +131,42 @@
                         return GameController.CheckCurrentLocation();
 
                     // Teleport and return description
-                    case "teleport":
+                    case "teleport": 
                         return GameController.Teleport();
 
                     // Save game and return description
-                    case "save":
-                        consoleIO.WriteLine();
+                    case "save": 
                         return SaveGame(textAfterCommand);
 
                     // Load game and return description (or "quit" command if user wants to quit game)
                     case "load":
-                        string userInputForFileToLoad = GetNameOfExistingSavedGameFile(textAfterCommand, lowercaseCommand);
-                        return ReturnActionResultsOrQuitCommand(userInputForFileToLoad, 
-                            () => {
-                                return GameController.LoadGame(userInputForFileToLoad) +
-                                       Environment.NewLine + GetWelcomeToHouse(); // Return results from loading game plus welcome message
+                        return GetNameForSavedGameFileAndPerformActionOrAcceptQuitCommand(textAfterCommand, lowercaseCommand,
+                            (string fileName) =>
+                            {
+                                return GameController.LoadGame(fileName) +
+                                        Environment.NewLine + GetWelcomeToHouse(); // Return results from loading game plus welcome message
                             });
 
                     // Delete game and return description (or "quit" command if user wants to quit game)
                     case "delete":
-                        string userInputForFileToDelete = GetNameOfExistingSavedGameFile(textAfterCommand, lowercaseCommand);
-                        return ReturnActionResultsOrQuitCommand(userInputForFileToDelete, 
-                            () => {
-                                return GameController.DeleteGame(userInputForFileToDelete); // Return results from deleting game
+                        return GetNameForSavedGameFileAndPerformActionOrAcceptQuitCommand(textAfterCommand, lowercaseCommand,
+                            (string fileName) =>
+                            {
+                                return GameController.DeleteGame(fileName); // Return results from deleting game
                             });
 
                     // Start new game and return description (or "quit" command if user wants to quit game)
                     case "new":
-                        // Set game controller for new custom game based on user input
-                        consoleIO.WriteLine();
-                        GameController = GetGameControllerForCustomGame();   
-                        
-                        // If user entered command to quit
-                        if(GameController == null)
-                        {
-                            return QuitCommand; // Return quit command
-                        }
+                        GameController = GetGameControllerForCustomGame(); // Set game controller to new custom game based on user input
+                        return GameController == null ? QuitCommand : "New game started" + Environment.NewLine + GetWelcomeToHouse(); // Return new game message if not null; if null, return quit command
 
-                        // Return results and welcome message
-                        return "New game started" + Environment.NewLine + GetWelcomeToHouse();
-
-                    // Quit (exit) program
+                    // Return quit command since user wants to quit game
                     case QuitCommand:
-                        return QuitCommand; // Return quit command
+                        return QuitCommand;
 
-                    // Move in specified direction and return results
+                    // Assume direction entered
                     default:
-                        return GameController.Move(DirectionExtensions.Parse(lowercaseCommand));
+                        return GameController.Move(DirectionExtensions.Parse(lowercaseCommand)); // Move in specified direction and return results
                 }
             }
             catch(Exception e)
@@ -193,6 +182,9 @@
         /// <returns></returns>
         private string SaveGame(string fileName)
         {
+            // Add empty line
+            consoleIO.WriteLine();
+
             // Trim file name
             fileName = fileName.Trim();
 
@@ -212,12 +204,13 @@
         }
 
         /// <summary>
-        /// Get name of existing SavedGame file stored in current directory from user
+        /// Get name for SavedGame file from user
+        /// (displays SavedGame file names stored in current directory if user input is empty)
         /// </summary>
         /// <param name="userInput">User input of file name (null, whitespace, or empty if should display list of existing SavedGame files)</param>
         /// <param name="command">Description of action to be done with file (e.g. "load", "delete")</param>
         /// <returns>User input for name of SavedGame file OR quit command if user wants to quit game</returns>
-        private string GetNameOfExistingSavedGameFile(string userInput, string command)
+        private string GetNameForSavedGameFile(string userInput, string command)
         {
             // Trim user input
             userInput = userInput.Trim();
@@ -231,6 +224,29 @@
             {
                 return userInput; // Return user input
             }
+        }
+
+        /// <summary>
+        /// Get name for SavedGame file from user and perform action (or accept quit command)
+        /// </summary>
+        /// <param name="textAfterCommand">Text after command</param>
+        /// <param name="lowercaseCommand">Action command in lowercase (e.g. "load", "delete")</param>
+        /// <param name="ActionWithSavedGameFile">Action to perform with SavedGame file name</param>
+        /// <returns>Message describing action (or quit command)</returns>
+        private string GetNameForSavedGameFileAndPerformActionOrAcceptQuitCommand(
+            string textAfterCommand, string lowercaseCommand, Func<string, string> ActionWithSavedGameFile)
+        {
+            // Get name of SavedGame file to load or delete from user
+            string userInputForFileName = GetNameForSavedGameFile(textAfterCommand, lowercaseCommand);
+
+            // If file name is invalid
+            if (!(FileExtensions.IsValidName(userInputForFileName)))
+            {
+                return "Cannot perform action because file name is invalid"; // Return failure message
+            }
+
+            // Return action results or quit command
+            return ReturnActionResultsOrQuitCommand(userInputForFileName, () => ActionWithSavedGameFile(userInputForFileName));
         }
 
         /// <summary>
@@ -269,6 +285,9 @@
         {
             // Create local variable to store created game controller
             GameController gameController = null;
+
+            // Add empty space
+            consoleIO.WriteLine();
 
             while(true) // Continue until return statement
             {
