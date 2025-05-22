@@ -122,7 +122,7 @@ namespace HideAndSeekConsoleTestProject
         {
             // Set up mock GameController to throw exception when Move
             mockGameController.Setup((gc) => gc.Move(Direction.Up))
-                .Throws(new InvalidOperationException("There is no exit for location \"Hallway\" in direction \"Up\""));
+                .Throws(new InvalidOperationException("[move exception message]"));
 
             // Set up mock to return user input
             mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
@@ -139,7 +139,7 @@ namespace HideAndSeekConsoleTestProject
             {
                 // Assert text displayed is as expected
                 Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
-                    "There is no exit for location \"Hallway\" in direction \"Up\"" + Environment.NewLine +
+                    "[move exception message]" + Environment.NewLine +
                     Environment.NewLine +
                     "[status]" + Environment.NewLine +
                     "[prompt]"));
@@ -187,7 +187,7 @@ namespace HideAndSeekConsoleTestProject
         {
             // Set up mock GameController to throw exception when check
             mockGameController.Setup((gc) => gc.CheckCurrentLocation())
-                .Throws(new InvalidOperationException("There is no hiding place in the Hallway"));
+                .Throws(new InvalidOperationException("[check current location exception message]"));
 
             // Set up mock to return user input
             mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
@@ -204,7 +204,7 @@ namespace HideAndSeekConsoleTestProject
             {
                 // Assert text displayed is as expected
                 Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
-                    "There is no hiding place in the Hallway" + Environment.NewLine +
+                    "[check current location exception message]" + Environment.NewLine +
                     Environment.NewLine +
                     "[status]" + Environment.NewLine +
                     "[prompt]"));
