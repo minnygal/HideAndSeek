@@ -267,13 +267,10 @@
         /// <returns>Game controller set up for game OR null if user wants to quit program</returns>
         private GameController GetGameControllerForCustomGame()
         {
-            // Flag to indicate if done creating game controller
-            bool doneCreatingGameController = false;
-
             // Create local variable to store created game controller
             GameController gameController = null;
 
-            do
+            while(true) // Continue until return statement
             {
                 // Obtain user input for setting opponents or loading game
                 consoleIO.Write("How many opponents would you like?  Enter a number between 1 and 10, or a comma-separated list of names: "); // Prompt
@@ -309,17 +306,14 @@
                     // Set game controller House layout based on user input (null if user wants to quit)
                     gameController = GetUserInputAndSetHouseLayout(gameController);
 
-                    // Set flag to indicate done creating game controller
-                    doneCreatingGameController = true;
+                    // If no exceptions thrown, return game controller
+                    return gameController;
                 }
                 catch (Exception e)
                 {
                     consoleIO.WriteLine(e.Message); // Print error message
                 }
-            } while( !(doneCreatingGameController) );
-
-            // Return game controller
-            return gameController;
+            }
         }
 
         /// <summary>
