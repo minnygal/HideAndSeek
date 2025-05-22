@@ -197,11 +197,15 @@
             fileName = fileName.Trim();
 
             // If input is empty
-            if (string.IsNullOrEmpty(fileName))
+            if(string.IsNullOrEmpty(fileName))
             {
                 return "Cannot perform action because no file name was entered"; // Return failure message
             }
-            else // If input is not empty
+            else if( !(FileExtensions.IsValidName(fileName)) ) // If input is invalid file name
+            {
+                return "Cannot perform action because file name is invalid"; // Return failure message
+            }
+            else
             {
                 return GameController.SaveGame(fileName); // Save game and return message
             }
