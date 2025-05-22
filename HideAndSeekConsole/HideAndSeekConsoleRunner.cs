@@ -329,10 +329,7 @@
         /// <returns>Game controller with House layout loaded OR null if user wants to quit program</returns>
         private GameController GetUserInputAndSetHouseLayout(GameController gameController)
         {
-            // Set flag
-            bool houseLayoutChosen = false;
-
-            do
+            while(true) // Repeat until return statement hit
             {
                 // Display list of names of House layout files available
                 consoleIO.WriteLine("Here are the names of the house layout files available:" + Environment.NewLine +
@@ -342,31 +339,35 @@
                 consoleIO.Write("Type a house layout file name or just press Enter to use the default house layout: "); // Prompt for House layout file name
                 string userInputForFileName = consoleIO.ReadLine().Trim(); // Get user input for file name and trim
 
-                // If user entered quit command, return null
-                if(userInputForFileName == QuitCommand)
+                // If user entered quit command
+                if (userInputForFileName == QuitCommand)
                 {
-                    return null;
+                    return null; // Return null to indicate user wants to quit program
                 }
-
-                try
+                else if (userInputForFileName == string.Empty) // If user did not enter any text
                 {
-                    // If any text was entered
-                    if (userInputForFileName != string.Empty)
+                    return gameController; // Return game controller without changing House layout
+                }
+                else if (!(FileExtensions.IsValidName(userInputForFileName))) // If user entered invalid file name
+                {
+                    consoleIO.WriteLine("Cannot perform action because file name is invalid"); // Print error message
+                }
+                else // If no forseeable issues
+                {
+                    try
                     {
-                        gameController.RestartGame(userInputForFileName); // Restart game with House layout file, throws exception if anything invalid
-                    } // else if no text entered, don't change House layout
+                        // Restart game with House layout file, throws exception if anything invalid
+                        gameController.RestartGame(userInputForFileName);
 
-                    // Update flag
-                    houseLayoutChosen = true;
+                        // If no exceptions thrown, return game controller
+                        return gameController;
+                    }
+                    catch (Exception e)
+                    {
+                        consoleIO.WriteLine(RemoveParamText(e.Message)); // Print exception message without param text
+                    }
                 }
-                catch (Exception e)
-                {
-                    consoleIO.WriteLine( RemoveParamText(e.Message) ); // Print exception message without param text
-                }
-            } while( !(houseLayoutChosen) );
-
-            // Return game controller
-            return gameController;
+            }
         }
 
         /// <summary>
