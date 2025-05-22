@@ -342,11 +342,14 @@
         /// <returns>Game controller with House layout loaded OR null if user wants to quit program</returns>
         private GameController GetUserInputAndSetHouseLayout(GameController gameController)
         {
+            // Set variable to house file names
+            IEnumerable<string> houseFileNames = House.GetHouseFileNames();
+
             while(true) // Repeat until return statement hit
             {
                 // Display list of names of House layout files available
                 consoleIO.WriteLine("Here are the names of the house layout files available:" + Environment.NewLine +
-                                  GetTextListOfFileNames(House.GetHouseFileNames())); // Display names of House layout files available
+                                  GetTextListOfFileNames(houseFileNames)); // Display names of House layout files available
 
                 // Get House file name from user
                 consoleIO.Write("Type a house layout file name or just press Enter to use the default house layout: "); // Prompt for House layout file name
@@ -364,6 +367,10 @@
                 else if (!(FileExtensions.IsValidName(userInputForFileName))) // If user entered invalid file name
                 {
                     consoleIO.WriteLine("Cannot perform action because file name is invalid"); // Print error message
+                }
+                else if( !(houseFileNames.Contains(userInputForFileName)) ) // If user entered nonexisting file name
+                {
+                    consoleIO.WriteLine("Cannot load house layout because file does not exist"); // Print error message
                 }
                 else // If no forseeable issues
                 {
