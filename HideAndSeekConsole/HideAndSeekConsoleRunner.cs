@@ -182,9 +182,6 @@
         /// <returns></returns>
         private string SaveGame(string fileName)
         {
-            // Add empty line
-            consoleIO.WriteLine();
-
             // Trim file name
             fileName = fileName.Trim();
 
