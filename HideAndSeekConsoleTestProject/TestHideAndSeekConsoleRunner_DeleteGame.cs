@@ -9,10 +9,9 @@ namespace HideAndSeekConsoleTestProject
     /// <summary>
     /// HideAndSeekConsoleRunner tests for command to delete game
     /// 
-    /// SelectFileNameSeparately tests are integration tests 
-    /// relying upon SavedGame's GetSavedGameFileNames static method.
-    /// The file system is mocked to control the output,
-    /// but changes to GetSavedGameFileNames's implementation will impact this test class.
+    /// These are integration tests relying upon SavedGame's GetSavedGameFileNames static method
+    /// and the file system stored in its static property.
+    /// The file system is mocked to control the output.
     /// </summary>
     [TestFixture]
     public class TestHideAndSeekConsoleRunner_DeleteGame
@@ -69,16 +68,31 @@ namespace HideAndSeekConsoleTestProject
             SavedGame.FileSystem = new FileSystem(); // Reset SavedGame file system
         }
 
+        /// <summary>
+        /// Helper method to set up mock file system to return two files
+        /// </summary>
+        private void SetUpMockFileSystemToReturnTwoFiles()
+        {
+            // Set up mock file system
+            mockFileSystem.Setup((fs) => fs.Path.GetDirectoryName(It.IsAny<string>())).Returns("directoryName"); // Return directory name
+            mockFileSystem.Setup((fs) => fs.Directory.GetFiles("directoryName"))
+                .Returns(new string[] { "myFile.game.json", "otherFile.game.json" }); // Return file names
+            SavedGame.FileSystem = mockFileSystem.Object; // Set SavedGame file system to mock file system
+        }
+
         [Test]
         [Category("ConsoleRunner Delete Success")]
         public void Test_ConsoleRunner_Delete_WithFileNameEntered()
         {
+            // Set up mock file system to return two files
+            SetUpMockFileSystemToReturnTwoFiles();
+
             // Set up mock GameController to return message when delete
-            mockGameController.Setup((gc) => gc.DeleteGame("fileName")).Returns("[delete return message]");
+            mockGameController.Setup((gc) => gc.DeleteGame("myFile")).Returns("[delete return message]");
 
             // Set up mock to return user input
             mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
-                .Returns("delete fileName") // Delete game
+                .Returns("delete myFile") // Delete game
                 .Returns("exit"); // Exit game
 
             // Create console runner with mocked GameController and IConsoleIO
@@ -97,7 +111,7 @@ namespace HideAndSeekConsoleTestProject
                     "[prompt]"));
 
                 // Verify that Delete method was called
-                mockGameController.Verify((gc) => gc.DeleteGame("fileName"), Times.Once);
+                mockGameController.Verify((gc) => gc.DeleteGame("myFile"), Times.Once);
             });
         }
 
@@ -105,6 +119,9 @@ namespace HideAndSeekConsoleTestProject
         [Category("ConsoleRunner Delete Failure")]
         public void Test_ConsoleRunner_Delete_WithFileNameEntered_InvalidFileName()
         {
+            // Set up mock file system to return two files
+            SetUpMockFileSystemToReturnTwoFiles();
+
             // Set up mock to return user input
             mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
                 .Returns("delete \\/ file") // Delete game
@@ -134,9 +151,8 @@ namespace HideAndSeekConsoleTestProject
         [Category("ConsoleRunner Delete Failure")]
         public void Test_ConsoleRunner_Delete_WithFileNameEntered_NonexistentFileName()
         {
-            // Set up mock GameController to throw exception when delete
-            mockGameController.Setup((gc) => gc.DeleteGame("nonexistentFile"))
-                .Throws(new FileNotFoundException("[delete exception message]"));
+            // Set up mock file system to return two files
+            SetUpMockFileSystemToReturnTwoFiles();
 
             // Set up mock to return user input
             mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
@@ -153,26 +169,22 @@ namespace HideAndSeekConsoleTestProject
             {
                 // Assert text displayed is as expected
                 Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
-                    "[delete exception message]" + Environment.NewLine +
+                    "Cannot delete game because file does not exist" + Environment.NewLine +
                     Environment.NewLine +
                     "[status]" + Environment.NewLine +
                     "[prompt]"));
 
-                // Verify that Delete method was called
-                mockGameController.Verify((gc) => gc.DeleteGame("nonexistentFile"), Times.Once);
+                // Verify that Delete method was not called
+                mockGameController.Verify((gc) => gc.DeleteGame(It.IsAny<string>()), Times.Never);
             });
         }
 
-        // INTEGRATION TESTS BELOW
         [Test]
         [Category("ConsoleRunner Delete Success")]
         public void Test_ConsoleRunner_Delete_SelectFileNameSeparately()
         {
-            // Set up mock file system
-            mockFileSystem.Setup((fs) => fs.Path.GetDirectoryName(It.IsAny<string>())).Returns("directoryName"); // Return directory name
-            mockFileSystem.Setup((fs) => fs.Directory.GetFiles("directoryName"))
-                .Returns(new string[] { "myFile.game.json", "otherFile.game.json" }); // Return file names
-            SavedGame.FileSystem = mockFileSystem.Object; // Set SavedGame file system to mock file system
+            // Set up mock file system to return two files
+            SetUpMockFileSystemToReturnTwoFiles();
 
             // Set up mock GameController to return message when delete
             mockGameController.Setup((gc) => gc.DeleteGame("myFile")).Returns("[delete return message]");
@@ -211,11 +223,8 @@ namespace HideAndSeekConsoleTestProject
         [Category("ConsoleRunner Delete Failure")]
         public void Test_ConsoleRunner_Delete_SelectFileNameSeparately_InvalidFileName()
         {
-            // Set up mock file system
-            mockFileSystem.Setup((fs) => fs.Path.GetDirectoryName(It.IsAny<string>())).Returns("directoryName"); // Return directory name
-            mockFileSystem.Setup((fs) => fs.Directory.GetFiles("directoryName"))
-                .Returns(new string[] { "myFile.game.json", "otherFile.game.json" }); // Return file names
-            SavedGame.FileSystem = mockFileSystem.Object; // Set SavedGame file system to mock file system
+            // Set up mock file system to return two files
+            SetUpMockFileSystemToReturnTwoFiles();
 
             // Set up mock to return user input
             mockConsoleIO.SetupSequence((cio) => cio.ReadLine())

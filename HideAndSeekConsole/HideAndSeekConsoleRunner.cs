@@ -140,7 +140,7 @@
 
                     // Load game and return description (or "quit" command if user wants to quit game)
                     case "load":
-                        return GetNameForSavedGameFileAndPerformActionOrAcceptQuitCommand(textAfterCommand, lowercaseCommand,
+                        return PerformActionWithSavedGameFileOrAcceptQuitCommand(textAfterCommand, lowercaseCommand,
                             (string fileName) =>
                             {
                                 return GameController.LoadGame(fileName) +
@@ -149,7 +149,7 @@
 
                     // Delete game and return description (or "quit" command if user wants to quit game)
                     case "delete":
-                        return GetNameForSavedGameFileAndPerformActionOrAcceptQuitCommand(textAfterCommand, lowercaseCommand,
+                        return PerformActionWithSavedGameFileOrAcceptQuitCommand(textAfterCommand, lowercaseCommand,
                             (string fileName) =>
                             {
                                 return GameController.DeleteGame(fileName); // Return results from deleting game
@@ -201,76 +201,58 @@
         }
 
         /// <summary>
-        /// Get name for SavedGame file from user
-        /// (displays SavedGame file names stored in current directory if user input is empty)
+        /// Perform action with SavedGame file (or accept quit command)
+        /// If empty text after command parameter value, display list of existing SavedGame files
+        /// and get user input for file name.
         /// </summary>
-        /// <param name="userInput">User input of file name (null, whitespace, or empty if should display list of existing SavedGame files)</param>
-        /// <param name="command">Description of action to be done with file (e.g. "load", "delete")</param>
-        /// <returns>User input for name of SavedGame file OR quit command if user wants to quit game</returns>
-        private string GetNameForSavedGameFile(string userInput, string command)
-        {
-            // Trim user input
-            userInput = userInput.Trim();
-
-            // If input is empty
-            if (string.IsNullOrEmpty(userInput))
-            {
-                return DisplayListOfSavedGamesAndGetUserInput(command); // Display list of saved game files and return input for file name
-            }
-            else
-            {
-                return userInput; // Return user input
-            }
-        }
-
-        /// <summary>
-        /// Get name for SavedGame file from user and perform action (or accept quit command)
-        /// </summary>
-        /// <param name="textAfterCommand">Text after command</param>
+        /// <param name="textAfterCommand">Text after command (if not empty/whitespace, used as file name)</param>
         /// <param name="lowercaseCommand">Action command in lowercase (e.g. "load", "delete")</param>
         /// <param name="ActionWithSavedGameFile">Action to perform with SavedGame file name</param>
-        /// <returns>Message describing action (or quit command)</returns>
-        private string GetNameForSavedGameFileAndPerformActionOrAcceptQuitCommand(
+        /// <returns>Message describing action or error (or quit command)</returns>
+        private string PerformActionWithSavedGameFileOrAcceptQuitCommand(
             string textAfterCommand, string lowercaseCommand, Func<string, string> ActionWithSavedGameFile)
-        {
-            // Get name of SavedGame file to load or delete from user
-            string userInputForFileName = GetNameForSavedGameFile(textAfterCommand, lowercaseCommand);
-
-            // If file name is invalid
-            if (!(FileExtensions.IsValidName(userInputForFileName)))
-            {
-                return $"Cannot {lowercaseCommand} game because file name is invalid"; // Return failure message
-            }
-
-            // Return action results or quit command
-            return ReturnActionResultsOrQuitCommand(userInputForFileName, () => ActionWithSavedGameFile(userInputForFileName));
-        }
-
-        /// <summary>
-        /// Helper method to display list of names of saved game files
-        /// and get user input for name of file
-        /// </summary>
-        /// <param name="command">Description of action to be performed with file</param>
-        /// <returns>User input for name of SavedGame file OR quit command</returns>
-        /// <exception cref="InvalidOperationException">Exception thrown if no saved game files found</exception>
-        private string DisplayListOfSavedGamesAndGetUserInput(string command)
         {
             // Get list of names of SavedGame files available
             IEnumerable<string> allSavedGameFileNames = SavedGame.GetSavedGameFileNames();
 
             // If no SavedGame files available
-            if ( !(allSavedGameFileNames.Any()) )
+            if( !(allSavedGameFileNames.Any()) )
             {
-                throw new InvalidOperationException($"Cannot perform action because no saved game files are available"); // Throw exception
+                return $"Cannot {lowercaseCommand} game because no saved game files are available"; // Return error message
             }
 
-            // Display list of names of SavedGame files available
-            consoleIO.WriteLine("Here are the names of the saved game files available:" + Environment.NewLine +
-                              GetTextListOfFileNames(allSavedGameFileNames)); // Display names of SavedGame files available
+            // Set variable for file name to trimmed text after command
+            string userInputForFileName = textAfterCommand.Trim();
 
-            // Get name of SavedGame file to load from user
-            consoleIO.Write($"Enter the name of the saved game file to {command}: "); // Prompt
-            return consoleIO.ReadLine().Trim(); // Set file name to trimmed user input
+            // If user input for file name is empty
+            if (string.IsNullOrEmpty(userInputForFileName))
+            {
+                // Display list of names of SavedGame files available
+                consoleIO.WriteLine("Here are the names of the saved game files available:" + Environment.NewLine +
+                                    GetTextListOfFileNames(allSavedGameFileNames));
+
+                // Get name of SavedGame file to load from user
+                consoleIO.Write($"Enter the name of the saved game file to {lowercaseCommand}: "); // Prompt
+                userInputForFileName = consoleIO.ReadLine().Trim(); // Set variable for file name to trimmed user input
+            }
+
+            // Return action results, quit command, or error message
+            if(userInputForFileName == QuitCommand) // If user entered quit command
+            {
+                return QuitCommand; // Return quit command
+            }
+            else if( !(FileExtensions.IsValidName(userInputForFileName))) // If file name is invalid
+            {
+                return $"Cannot {lowercaseCommand} game because file name is invalid"; // Return failure message
+            }
+            else if( !(allSavedGameFileNames.Contains(userInputForFileName)) ) // If no saved game file with that name exists
+            {
+                return $"Cannot {lowercaseCommand} game because file does not exist"; // Return failure message
+            }
+            else
+            {
+                return ActionWithSavedGameFile(userInputForFileName); // Perform action and return results
+            }
         }
 
         /// <summary>
@@ -438,25 +420,6 @@
         private static string GetTextListOfFileNames(IEnumerable<string> fileNames)
         {
             return String.Join(Environment.NewLine, fileNames.Select((name) => $" - {name}"));
-        }
-
-        /// <summary>
-        /// Helper method to return quit command if user wants to quit game
-        /// OR results of action performed if user does not want to quit game
-        /// </summary>
-        /// <param name="textInput">Text which could indicate user wants to quit game</param>
-        /// <param name="ActionToPerform">Action to perform if user does not want to quit game</param>
-        /// <returns>Return message from performing action OR "quit" if user wants to quit game</returns>
-        private static string ReturnActionResultsOrQuitCommand(string textInput, Func<string> ActionToPerform)
-        {
-            // If text input is quit command
-            if (textInput == QuitCommand)
-            {
-                return QuitCommand; // Return quit command
-            }
-
-            // Perform action and return message
-            return ActionToPerform();
         }
     }
 }
