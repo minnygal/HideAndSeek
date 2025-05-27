@@ -25,7 +25,7 @@ namespace HideAndSeekConsoleTestProject
         [SetUp]
         public void SetUp()
         {
-            // Reset SavedGame file system (may or may not be reassigned to mock in test)
+            // Reset SavedGame file system (reassigned to mock in test)
             SavedGame.FileSystem = new FileSystem();
 
             // Initialize class variables
@@ -50,7 +50,6 @@ namespace HideAndSeekConsoleTestProject
             {
                 sbActualTextDisplayed.Append(message); // Append text written to StringBuilder
             });
-
 
             // Set up mock GameController to return House name (used in welcome message)
             mockGameController.SetupGet((gc) => gc.House.Name).Returns("tester house");
@@ -80,9 +79,11 @@ namespace HideAndSeekConsoleTestProject
             SavedGame.FileSystem = mockFileSystem.Object; // Set SavedGame file system to mock file system
         }
 
-        [Test]
+        [TestCaseSource(typeof(TestHideAndSeekConsoleRunner_DeleteGame_TestData),
+            nameof(TestHideAndSeekConsoleRunner_DeleteGame_TestData.TestCases_For_Test_ConsoleRunner_Delete))]
         [Category("ConsoleRunner Delete Success")]
-        public void Test_ConsoleRunner_Delete_WithFileNameEntered()
+        public void Test_ConsoleRunner_Delete(
+            Func<Mock<IConsoleIO>, Mock<IConsoleIO>> GetMockConsoleIOWithUserInputSetUp, string textBeforeSuccessMessage)
         {
             // Set up mock file system to return two files
             SetUpMockFileSystemToReturnTwoFiles();
@@ -91,9 +92,7 @@ namespace HideAndSeekConsoleTestProject
             mockGameController.Setup((gc) => gc.DeleteGame("myFile")).Returns("[delete return message]");
 
             // Set up mock to return user input
-            mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
-                .Returns("delete myFile") // Delete game
-                .Returns("exit"); // Exit game
+            mockConsoleIO = GetMockConsoleIOWithUserInputSetUp(mockConsoleIO);
 
             // Create console runner with mocked GameController and IConsoleIO
             consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object);
@@ -105,6 +104,7 @@ namespace HideAndSeekConsoleTestProject
             {
                 // Assert text displayed is as expected
                 Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
+                    textBeforeSuccessMessage +
                     "[delete return message]" + Environment.NewLine +
                     Environment.NewLine +
                     "[status]" + Environment.NewLine +
@@ -115,17 +115,17 @@ namespace HideAndSeekConsoleTestProject
             });
         }
 
-        [Test]
+        [TestCaseSource(typeof(TestHideAndSeekConsoleRunner_DeleteGame_TestData),
+            nameof(TestHideAndSeekConsoleRunner_DeleteGame_TestData.TestCases_For_Test_ConsoleRunner_Delete_WithInvalidFileName))]
         [Category("ConsoleRunner Delete Failure")]
-        public void Test_ConsoleRunner_Delete_WithFileNameEntered_InvalidFileName()
+        public void Test_ConsoleRunner_Delete_WithInvalidFileName(
+            Func<Mock<IConsoleIO>, Mock<IConsoleIO>> GetMockConsoleIOWithUserInputSetUp, string textBeforeErrorMessage)
         {
             // Set up mock file system to return two files
             SetUpMockFileSystemToReturnTwoFiles();
 
             // Set up mock to return user input
-            mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
-                .Returns("delete \\/ file") // Delete game
-                .Returns("exit"); // Exit game
+            mockConsoleIO = GetMockConsoleIOWithUserInputSetUp(mockConsoleIO);
 
             // Create console runner with mocked GameController and IConsoleIO
             consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object);
@@ -137,6 +137,7 @@ namespace HideAndSeekConsoleTestProject
             {
                 // Assert text displayed is as expected
                 Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
+                    textBeforeErrorMessage +
                     "Cannot delete game because file name is invalid" + Environment.NewLine +
                     Environment.NewLine +
                     "[status]" + Environment.NewLine +
@@ -147,17 +148,17 @@ namespace HideAndSeekConsoleTestProject
             });
         }
 
-        [Test]
+        [TestCaseSource(typeof(TestHideAndSeekConsoleRunner_DeleteGame_TestData),
+            nameof(TestHideAndSeekConsoleRunner_DeleteGame_TestData.TestCases_For_Test_ConsoleRunner_Delete_WithNonexistentFileName))]
         [Category("ConsoleRunner Delete Failure")]
-        public void Test_ConsoleRunner_Delete_WithFileNameEntered_NonexistentFileName()
+        public void Test_ConsoleRunner_Delete_WithNonexistentFileName(
+            Func<Mock<IConsoleIO>, Mock<IConsoleIO>> GetMockConsoleIOWithUserInputSetUp, string textBeforeErrorMessage)
         {
             // Set up mock file system to return two files
             SetUpMockFileSystemToReturnTwoFiles();
 
             // Set up mock to return user input
-            mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
-                .Returns("delete nonexistentFile") // Delete game
-                .Returns("exit"); // Exit game
+            mockConsoleIO = GetMockConsoleIOWithUserInputSetUp(mockConsoleIO);
 
             // Create console runner with mocked GameController and IConsoleIO
             consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object);
@@ -169,6 +170,7 @@ namespace HideAndSeekConsoleTestProject
             {
                 // Assert text displayed is as expected
                 Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
+                    textBeforeErrorMessage +
                     "Cannot delete game because file does not exist" + Environment.NewLine +
                     Environment.NewLine +
                     "[status]" + Environment.NewLine +
@@ -179,21 +181,20 @@ namespace HideAndSeekConsoleTestProject
             });
         }
 
-        [Test]
-        [Category("ConsoleRunner Delete Success")]
-        public void Test_ConsoleRunner_Delete_SelectFileNameSeparately()
+        [TestCaseSource(typeof(TestHideAndSeekConsoleRunner_DeleteGame_TestData),
+            nameof(TestHideAndSeekConsoleRunner_DeleteGame_TestData.TestCases_For_Test_ConsoleRunner_Delete_ExceptionThrownByGameController))]
+        [Category("ConsoleRunner Delete Failure")]
+        public void Test_ConsoleRunner_Delete_ExceptionThrownByGameController(
+            Func<Mock<IConsoleIO>, Mock<IConsoleIO>> GetMockConsoleIOWithUserInputSetUp, string textBeforeErrorMessage)
         {
             // Set up mock file system to return two files
             SetUpMockFileSystemToReturnTwoFiles();
 
-            // Set up mock GameController to return message when delete
-            mockGameController.Setup((gc) => gc.DeleteGame("myFile")).Returns("[delete return message]");
+            // Set up mock GameController to throw exception when delete
+            mockGameController.Setup((gc) => gc.DeleteGame("myFile")).Throws(new Exception("[delete exception message]"));
 
             // Set up mock to return user input
-            mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
-                .Returns("delete") // Start delete
-                .Returns("myFile") // Specify file
-                .Returns("exit"); // Exit game
+            mockConsoleIO = GetMockConsoleIOWithUserInputSetUp(mockConsoleIO);
 
             // Create console runner with mocked GameController and IConsoleIO
             consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object);
@@ -205,11 +206,8 @@ namespace HideAndSeekConsoleTestProject
             {
                 // Assert text displayed is as expected
                 Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
-                    "Here are the names of the saved game files available:" + Environment.NewLine +
-                    " - myFile" + Environment.NewLine +
-                    " - otherFile" + Environment.NewLine +
-                    "Enter the name of the saved game file to delete: " +
-                    "[delete return message]" + Environment.NewLine +
+                    textBeforeErrorMessage +
+                    "[delete exception message]" + Environment.NewLine +
                     Environment.NewLine +
                     "[status]" + Environment.NewLine +
                     "[prompt]"));
@@ -219,47 +217,10 @@ namespace HideAndSeekConsoleTestProject
             });
         }
 
-        [Test]
-        [Category("ConsoleRunner Delete Failure")]
-        public void Test_ConsoleRunner_Delete_SelectFileNameSeparately_InvalidFileName()
-        {
-            // Set up mock file system to return two files
-            SetUpMockFileSystemToReturnTwoFiles();
-
-            // Set up mock to return user input
-            mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
-                .Returns("delete") // Start delete
-                .Returns("\\/ invalid") // Specify file
-                .Returns("exit"); // Exit game
-
-            // Create console runner with mocked GameController and IConsoleIO
-            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object);
-
-            // Run game
-            consoleRunner.RunGame();
-
-            Assert.Multiple(() =>
-            {
-                // Assert text displayed is as expected
-                Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
-                    "Here are the names of the saved game files available:" + Environment.NewLine +
-                    " - myFile" + Environment.NewLine +
-                    " - otherFile" + Environment.NewLine +
-                    "Enter the name of the saved game file to delete: " +
-                    "Cannot delete game because file name is invalid" + Environment.NewLine +
-                    Environment.NewLine +
-                    "[status]" + Environment.NewLine +
-                    "[prompt]"));
-
-                // Verify that delete method was not called
-                mockGameController.Verify((gc) => gc.DeleteGame(It.IsAny<string>()), Times.Never);
-            });
-        }
-        
         [TestCase("delete")]
         [TestCase("delete aFile")]
         [Category("ConsoleRunner Delete Failure")]
-        public void Test_ConsoleRunner_Load_NoExistingFiles(string deleteInput)
+        public void Test_ConsoleRunner_Delete_NoExistingFiles(string deleteInput)
         {
             // Set up mock file system to return no files
             mockFileSystem.Setup((fs) => fs.Path.GetDirectoryName(It.IsAny<string>())).Returns("directoryName"); // Return directory name
@@ -286,6 +247,38 @@ namespace HideAndSeekConsoleTestProject
                     Environment.NewLine +
                     "[status]" + Environment.NewLine +
                     "[prompt]"));
+
+                // Verify that Delete method was not called
+                mockGameController.Verify((gc) => gc.DeleteGame(It.IsAny<string>()), Times.Never);
+            });
+        }
+
+        [Test]
+        [Category("ConsoleRunner Delete Exit")]
+        public void Test_ConsoleRunner_Delete_SeparateFileNameSelection_Exit()
+        {
+            // Set up mock file system to return two files
+            SetUpMockFileSystemToReturnTwoFiles();
+
+            // Set up mock to return user input
+            mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
+                .Returns("delete") // Start delete
+                .Returns("exit"); // Exit game
+
+            // Create console runner with mocked GameController and IConsoleIO
+            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object);
+
+            // Run game
+            consoleRunner.RunGame();
+
+            Assert.Multiple(() =>
+            {
+                // Assert text displayed is as expected
+                Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
+                    "Here are the names of the saved game files available:" + Environment.NewLine +
+                    " - myFile" + Environment.NewLine +
+                    " - otherFile" + Environment.NewLine +
+                    "Enter the name of the saved game file to delete: "));
 
                 // Verify that Delete method was not called
                 mockGameController.Verify((gc) => gc.DeleteGame(It.IsAny<string>()), Times.Never);
