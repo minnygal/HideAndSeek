@@ -29,12 +29,15 @@
      * **/
     public class HideAndSeekConsoleRunner
     {
-        public HideAndSeekConsoleRunner() : this(new GameController(), new ConsoleIOAdapter()) { }
+        public HideAndSeekConsoleRunner() : this(new GameController(), new ConsoleIOAdapter(), new GetFileNamesAdapter()) { }
 
-        public HideAndSeekConsoleRunner(IGameController gameController, IConsoleIO console)
+        public HideAndSeekConsoleRunner(IGameController gameController, IConsoleIO consoleIO) : this(gameController, consoleIO, new GetFileNamesAdapter()) { }
+
+        public HideAndSeekConsoleRunner(IGameController gameController, IConsoleIO console, IGetFileNamesAdapter fileNamesAdapter)
         {
             GameController = gameController; // Set game controller to passed in game controller
             consoleIO = console; // Set console IO to passed in console IO
+            getFileNamesAdapter = fileNamesAdapter;
         }
 
         /// <summary>
@@ -49,6 +52,9 @@
 
         // Console input/output object
         private readonly IConsoleIO consoleIO;
+
+        // Get file names adapter
+        private readonly IGetFileNamesAdapter getFileNamesAdapter;
 
         /// <summary>
         /// Method to run the game
@@ -213,7 +219,7 @@
             string textAfterCommand, string lowercaseCommand, Func<string, string> ActionWithSavedGameFile)
         {
             // Get list of names of SavedGame files available
-            IEnumerable<string> allSavedGameFileNames = SavedGame.GetSavedGameFileNames();
+            IEnumerable<string> allSavedGameFileNames = getFileNamesAdapter.GetSavedGameFileNames();
 
             // If no SavedGame files available
             if( !(allSavedGameFileNames.Any()) )
@@ -322,7 +328,7 @@
         private GameController GetUserInputAndSetHouseLayout(GameController gameController)
         {
             // Set variable to house file names
-            IEnumerable<string> houseFileNames = House.GetHouseFileNames();
+            IEnumerable<string> houseFileNames = getFileNamesAdapter.GetHouseFileNames();
 
             while(true) // Repeat until return statement hit
             {
