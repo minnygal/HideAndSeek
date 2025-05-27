@@ -277,7 +277,7 @@
             while(true) // Continue until return statement
             {
                 // Obtain user input for setting opponents or loading game
-                consoleIO.Write("How many opponents would you like?  Enter a number between 1 and 10, or a comma-separated list of names: "); // Prompt
+                consoleIO.Write("How many opponents would you like? Enter a number between 1 and 10, or a comma-separated list of names: "); // Prompt
                 string userInput = consoleIO.ReadLine().Trim(); // Get user input and trim it
 
                 // If user entered command to quit
