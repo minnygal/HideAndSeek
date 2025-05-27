@@ -182,6 +182,41 @@ namespace HideAndSeekConsoleTestProject
         }
 
         [Test]
+        [Category("ConsoleRunner Load Failure")]
+        public void Test_ConsoleRunner_Load_WithFileNameEntered_ExceptionThrownByGameController()
+        {
+            // Set up mock file system to return two files
+            SetUpMockFileSystemToReturnTwoFiles();
+
+            // Set up mock GameController to throw exception when load
+            mockGameController.Setup((gc) => gc.LoadGame("myFile")).Throws(new Exception("[load exception message]"));
+
+            // Set up mock to return user input
+            mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
+                .Returns("load myFile") // Start load
+                .Returns("exit"); // Exit game
+
+            // Create console runner with mocked GameController and IConsoleIO
+            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object);
+
+            // Run game
+            consoleRunner.RunGame();
+
+            Assert.Multiple(() =>
+            {
+                // Assert text displayed is as expected
+                Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
+                    "[load exception message]" + Environment.NewLine +
+                    Environment.NewLine +
+                    "[status]" + Environment.NewLine +
+                    "[prompt]"));
+
+                // Verify that Load method was called
+                mockGameController.Verify((gc) => gc.LoadGame("myFile"), Times.Once);
+            });
+        }
+
+        [Test]
         [Category("ConsoleRunner Load Success")]
         public void Test_ConsoleRunner_Load_SelectFileNameSeparately()
         {
@@ -256,6 +291,46 @@ namespace HideAndSeekConsoleTestProject
 
                 // Verify that load method was not called
                 mockGameController.Verify((gc) => gc.LoadGame(It.IsAny<string>()), Times.Never);
+            });
+        }
+
+        [Test]
+        [Category("ConsoleRunner Load Failure")]
+        public void Test_ConsoleRunner_Load_SelectFileNameSeparately_ExceptionThrownByGameController()
+        {
+            // Set up mock file system to return two files
+            SetUpMockFileSystemToReturnTwoFiles();
+
+            // Set up mock GameController to throw exception when load
+            mockGameController.Setup((gc) => gc.LoadGame("myFile")).Throws(new Exception("[load exception message]"));
+
+            // Set up mock to return user input
+            mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
+                .Returns("load") // Start load
+                .Returns("myFile") // Specify file
+                .Returns("exit"); // Exit game
+
+            // Create console runner with mocked GameController and IConsoleIO
+            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object);
+
+            // Run game
+            consoleRunner.RunGame();
+
+            Assert.Multiple(() =>
+            {
+                // Assert text displayed is as expected
+                Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
+                    "Here are the names of the saved game files available:" + Environment.NewLine +
+                    " - myFile" + Environment.NewLine +
+                    " - otherFile" + Environment.NewLine +
+                    "Enter the name of the saved game file to load: " +
+                    "[load exception message]" + Environment.NewLine +
+                    Environment.NewLine +
+                    "[status]" + Environment.NewLine +
+                    "[prompt]"));
+
+                // Verify that Load method was called
+                mockGameController.Verify((gc) => gc.LoadGame("myFile"), Times.Once);
             });
         }
 
