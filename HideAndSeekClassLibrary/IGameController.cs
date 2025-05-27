@@ -12,7 +12,9 @@
         string Prompt { get; }
 
         // Methods
-        GameController RestartGame();
+        IGameController RestartGame();
+        IGameController RestartGame(string userInputForFileName);
+        IGameController RehideAllOpponents(IEnumerable<string> hidingLocations);
         string Move(Direction direction);
         string CheckCurrentLocation();
         string Teleport();

@@ -30,10 +30,10 @@ namespace HideAndSeek
         [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData),
             nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault))]
         public void Test_GameController_CheckHouseSetSuccessfully_ViaFileNameOrDefault(
-            Func<GameController> GetGameController, string houseName, string houseFileName,
+            Func<IGameController> GetGameController, string houseName, string houseFileName,
             IEnumerable<string> locationsWithoutHidingPlaces, IEnumerable<string> locationsWithHidingPlaces)
         {
-            GameController gameController = GetGameController(); // Get game controller
+            IGameController gameController = GetGameController(); // Get game controller
             Assert.Multiple(() =>
             {
                 Assert.That(gameController.House.Name, Is.EqualTo(houseName), "House name");
@@ -45,9 +45,9 @@ namespace HideAndSeek
 
         [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData),
             nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_CheckHouseSetSuccessfully_ViaHouseObject))]
-        public void Test_GameController_CheckHouseSetSuccessfully_ViaHouseObject(House house, Func<GameController> GetGameController)
+        public void Test_GameController_CheckHouseSetSuccessfully_ViaHouseObject(House house, Func<IGameController> GetGameController)
         {
-            GameController gameController = GetGameController();
+            IGameController gameController = GetGameController();
             Assert.That(gameController.House, Is.SameAs(house));
         }
 
@@ -1243,13 +1243,13 @@ namespace HideAndSeek
 
         [TestCaseSource(typeof(TestGameController_ConstructorsAndRestartGame_TestData),
             nameof(TestGameController_ConstructorsAndRestartGame_TestData.TestCases_For_Test_GameController_RestartGame))]
-        public void Test_GameController_RestartGame(string startingLocation, IEnumerable<string> hidingPlaces, Func<GameController> GetGameController)
+        public void Test_GameController_RestartGame(string startingLocation, IEnumerable<string> hidingPlaces, Func<IGameController> GetGameController)
         {
             // Set House random number generator to mock random
             House.Random = new MockRandomWithValueList(new int[] { 0, 1, 2, 3, 0 });
 
             // Set GameController
-            GameController gameController = GetGameController();
+            IGameController gameController = GetGameController();
 
             // Assert that properties are as expected
             Assert.Multiple(() =>
