@@ -79,7 +79,7 @@ namespace HideAndSeekConsoleTestProject
                     "[status]" + Environment.NewLine +
                     "[prompt]"));
 
-                // Verify that Move method was called
+                // Verify that SaveGame method was called
                 mockGameController.Verify((gc) => gc.SaveGame("fileName"), Times.Once);
             });
         }
@@ -172,6 +172,38 @@ namespace HideAndSeekConsoleTestProject
                 Environment.NewLine +
                 "[status]" + Environment.NewLine +
                 "[prompt]"));
+        }
+
+        [Test]
+        [Category("ConsoleRunner Save Failure")]
+        public void Test_ConsoleRunner_Save_ExceptionThrownByGameController()
+        {
+            // Set up mock GameController to throw exception when save
+            mockGameController.Setup((gc) => gc.SaveGame("fileName")).Throws(new Exception("[save exception message]"));
+
+            // Set up mock to return user input
+            mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
+                .Returns("save fileName") // Save game
+                .Returns("exit"); // Exit game
+
+            // Create console runner with mocked GameController and IConsoleIO
+            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object);
+
+            // Run game
+            consoleRunner.RunGame();
+
+            Assert.Multiple(() =>
+            {
+                // Assert text displayed is as expected
+                Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
+                    "[save exception message]" + Environment.NewLine +
+                    Environment.NewLine +
+                    "[status]" + Environment.NewLine +
+                    "[prompt]"));
+
+                // Verify that SaveGame method was called
+                mockGameController.Verify((gc) => gc.SaveGame("fileName"), Times.Once);
+            });
         }
     }
 }
