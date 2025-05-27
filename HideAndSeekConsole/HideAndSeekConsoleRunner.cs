@@ -1,4 +1,6 @@
-﻿namespace HideAndSeek
+﻿using System;
+
+namespace HideAndSeek
 {
     /// <summary>
     /// Class to run a Console interactive game of HideAndSeek
@@ -29,15 +31,21 @@
      * **/
     public class HideAndSeekConsoleRunner
     {
-        public HideAndSeekConsoleRunner() : this(new GameController(), new ConsoleIOAdapter(), new GetFileNamesAdapter()) { }
+        public HideAndSeekConsoleRunner() : this(new GameController(), new ConsoleIOAdapter()) { }
 
-        public HideAndSeekConsoleRunner(IGameController gameController, IConsoleIO consoleIO) : this(gameController, consoleIO, new GetFileNamesAdapter()) { }
+        public HideAndSeekConsoleRunner(IGameController gameController, IConsoleIO consoleIO) 
+            : this(gameController, consoleIO, new GetFileNamesAdapter()) { }
 
-        public HideAndSeekConsoleRunner(IGameController gameController, IConsoleIO console, IGetFileNamesAdapter fileNamesAdapter)
+        public HideAndSeekConsoleRunner(IGameController gameController, IConsoleIO consoleInOut, IGetFileNamesAdapter fileNamesAdapter) 
+            : this(gameController, consoleInOut, fileNamesAdapter, new GameControllerFactory()) { }
+
+        public HideAndSeekConsoleRunner(
+            IGameController gameController, IConsoleIO consoleInOut, IGetFileNamesAdapter fileNamesAdapter, IGameControllerFactory gcFactory)
         {
             GameController = gameController; // Set game controller to passed in game controller
-            consoleIO = console; // Set console IO to passed in console IO
-            getFileNamesAdapter = fileNamesAdapter;
+            consoleIO = consoleInOut; // Set console IO to passed in console IO
+            getFileNamesAdapter = fileNamesAdapter; // Set file names adapter to passed in file names adapter
+            gameControllerFactory = gcFactory; // Set game controller factory to passed in game controller factory
         }
 
         /// <summary>
@@ -55,6 +63,9 @@
 
         // Get file names adapter
         private readonly IGetFileNamesAdapter getFileNamesAdapter;
+
+        // Get game controller factory
+        private readonly IGameControllerFactory gameControllerFactory;
 
         /// <summary>
         /// Method to run the game
@@ -266,10 +277,10 @@
         /// also sets GameController House layout based on user input
         /// </summary>
         /// <returns>Game controller set up for game OR null if user wants to quit program</returns>
-        private GameController GetGameControllerForCustomGame()
+        private IGameController GetGameControllerForCustomGame()
         {
             // Create local variable to store created game controller
-            GameController gameController = null;
+            IGameController gameController = null;
 
             // Add empty space
             consoleIO.WriteLine();
@@ -291,11 +302,11 @@
                     // Create game controller with Opponents set
                     if (userInput == string.Empty) // If user did not enter anything
                     {
-                        gameController = new GameController(); // Create a new default game controller
+                        gameController = gameControllerFactory.GetDefaultGameController(); // Create a new default game controller
                     }
                     else if (int.TryParse(userInput, out int numberOfOpponents)) // If user entered a number
                     {
-                        gameController = new GameController(numberOfOpponents); // Create new game controller with specified number of opponents
+                        gameController = gameControllerFactory.GetGameControllerWithSpecificNumberOfOpponents(numberOfOpponents); // Create new game controller with specified number of opponents
                     }
                     else // if user did not enter empty string or a number, then assume user entered names for opponents
                     {
@@ -304,7 +315,7 @@
                         {
                             namesOfOpponents[i] = namesOfOpponents[i].Trim(); // Remove whitespace before or after each name
                         }
-                        gameController = new GameController(namesOfOpponents); // Create new game controller with names entered by user as array (without whitespace)
+                        gameController = gameControllerFactory.GetGameControllerWithSpecificNamesOfOpponents(namesOfOpponents); // Create new game controller with names entered by user as array (without whitespace)
                     }
 
                     // Set game controller House layout based on user input (null if user wants to quit)
@@ -325,7 +336,7 @@
         /// (allows user to enter name of file from which to load House layout or empty string to load default layout)
         /// </summary>
         /// <returns>Game controller with House layout loaded OR null if user wants to quit program</returns>
-        private GameController GetUserInputAndSetHouseLayout(GameController gameController)
+        private IGameController GetUserInputAndSetHouseLayout(IGameController gameController)
         {
             // Set variable to house file names
             IEnumerable<string> houseFileNames = getFileNamesAdapter.GetHouseFileNames();
