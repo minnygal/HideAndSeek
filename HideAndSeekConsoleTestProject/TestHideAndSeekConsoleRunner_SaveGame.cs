@@ -6,7 +6,7 @@ using System.Text;
 namespace HideAndSeekConsoleTestProject
 {
     /// <summary>
-    /// HideAndSeekConsoleRunner tests for command to save game
+    /// HideAndSeekConsoleRunner unit tests for command to save game
     /// </summary>
     [TestFixture]
     public class TestHideAndSeekConsoleRunner_SaveGame
