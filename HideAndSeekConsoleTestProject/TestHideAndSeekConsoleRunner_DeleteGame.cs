@@ -55,7 +55,7 @@ namespace HideAndSeekConsoleTestProject
         /// <summary>
         /// Helper method to get mocked IGetFileNamesAdapter that returns two saved game file names
         /// </summary>
-        private static IGetFileNamesAdapter GetFileNamesAdapterReturning2Files()
+        private static IGetFileNamesAdapter GetFileNamesAdapterReturning2SavedGameFileNames()
         {
             Mock<IGetFileNamesAdapter> mockAdapter = new Mock<IGetFileNamesAdapter>(); // Create adapter mock
             mockAdapter.Setup((a) => a.GetSavedGameFileNames())
@@ -76,7 +76,7 @@ namespace HideAndSeekConsoleTestProject
             mockConsoleIO = GetMockConsoleIOWithUserInputSetUp(mockConsoleIO);
 
             // Create console runner with mocked GameController, IConsoleIO, and IGetFileNamesAdapter that returns 2 file names
-            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object, GetFileNamesAdapterReturning2Files());
+            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object, GetFileNamesAdapterReturning2SavedGameFileNames());
 
             // Run game
             consoleRunner.RunGame();
@@ -106,7 +106,7 @@ namespace HideAndSeekConsoleTestProject
             mockConsoleIO = GetMockConsoleIOWithUserInputSetUp(mockConsoleIO);
 
             // Create console runner with mocked GameController, IConsoleIO, and IGetFileNamesAdapter that returns 2 file names
-            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object, GetFileNamesAdapterReturning2Files());
+            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object, GetFileNamesAdapterReturning2SavedGameFileNames());
 
             // Run game
             consoleRunner.RunGame();
@@ -136,7 +136,7 @@ namespace HideAndSeekConsoleTestProject
             mockConsoleIO = GetMockConsoleIOWithUserInputSetUp(mockConsoleIO);
 
             // Create console runner with mocked GameController, IConsoleIO, and IGetFileNamesAdapter that returns 2 file names
-            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object, GetFileNamesAdapterReturning2Files());
+            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object, GetFileNamesAdapterReturning2SavedGameFileNames());
 
             // Run game
             consoleRunner.RunGame();
@@ -169,7 +169,7 @@ namespace HideAndSeekConsoleTestProject
             mockConsoleIO = GetMockConsoleIOWithUserInputSetUp(mockConsoleIO);
 
             // Create console runner with mocked GameController, IConsoleIO, and IGetFileNamesAdapter that returns 2 file names
-            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object, GetFileNamesAdapterReturning2Files());
+            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object, GetFileNamesAdapterReturning2SavedGameFileNames());
 
             // Run game
             consoleRunner.RunGame();
@@ -233,7 +233,7 @@ namespace HideAndSeekConsoleTestProject
                 .Returns("exit"); // Exit game
 
             // Create console runner with mocked GameController, IConsoleIO, and IGetFileNamesAdapter that returns 2 file names
-            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object, GetFileNamesAdapterReturning2Files());
+            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object, GetFileNamesAdapterReturning2SavedGameFileNames());
 
             // Run game
             consoleRunner.RunGame();
