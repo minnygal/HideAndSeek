@@ -81,7 +81,6 @@ namespace HideAndSeekConsoleTestProject
             SavedGame.FileSystem = mockFileSystem.Object; // Set SavedGame file system to mock file system
         }
 
-
         [Test]
         [Category("ConsoleRunner Load Success")]
         public void Test_ConsoleRunner_Load_WithFileNameEntered()
@@ -232,7 +231,7 @@ namespace HideAndSeekConsoleTestProject
 
             // Set up mock to return user input
             mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
-                .Returns("load") // Start delete
+                .Returns("load") // Start load
                 .Returns("\\/ invalid") // Specify file
                 .Returns("exit"); // Exit game
 
@@ -256,6 +255,42 @@ namespace HideAndSeekConsoleTestProject
                     "[prompt]"));
 
                 // Verify that load method was not called
+                mockGameController.Verify((gc) => gc.LoadGame(It.IsAny<string>()), Times.Never);
+            });
+        }
+
+        [TestCase("load")]
+        [TestCase("load aFile")]
+        [Category("ConsoleRunner Load Failure")]
+        public void Test_ConsoleRunner_Load_NoExistingFiles(string loadInput)
+        {
+            // Set up mock file system to return no files
+            mockFileSystem.Setup((fs) => fs.Path.GetDirectoryName(It.IsAny<string>())).Returns("directoryName"); // Return directory name
+            mockFileSystem.Setup((fs) => fs.Directory.GetFiles("directoryName"))
+                .Returns(Array.Empty<string>()); // Return empty array (no existing files)
+            SavedGame.FileSystem = mockFileSystem.Object; // Set SavedGame file system to mock file system
+
+            // Set up mock to return user input
+            mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
+                .Returns(loadInput) // Start load
+                .Returns("exit"); // Exit game
+
+            // Create console runner with mocked GameController and IConsoleIO
+            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object);
+
+            // Run game
+            consoleRunner.RunGame();
+
+            Assert.Multiple(() =>
+            {
+                // Assert text displayed is as expected
+                Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
+                    "Cannot load game because no saved game files exist" + Environment.NewLine +
+                    Environment.NewLine +
+                    "[status]" + Environment.NewLine +
+                    "[prompt]"));
+
+                // Verify that Load method was not called
                 mockGameController.Verify((gc) => gc.LoadGame(It.IsAny<string>()), Times.Never);
             });
         }

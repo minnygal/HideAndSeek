@@ -255,5 +255,41 @@ namespace HideAndSeekConsoleTestProject
                 mockGameController.Verify((gc) => gc.DeleteGame(It.IsAny<string>()), Times.Never);
             });
         }
+        
+        [TestCase("delete")]
+        [TestCase("delete aFile")]
+        [Category("ConsoleRunner Delete Failure")]
+        public void Test_ConsoleRunner_Load_NoExistingFiles(string deleteInput)
+        {
+            // Set up mock file system to return no files
+            mockFileSystem.Setup((fs) => fs.Path.GetDirectoryName(It.IsAny<string>())).Returns("directoryName"); // Return directory name
+            mockFileSystem.Setup((fs) => fs.Directory.GetFiles("directoryName"))
+                .Returns(Array.Empty<string>()); // Return empty array (no existing files)
+            SavedGame.FileSystem = mockFileSystem.Object; // Set SavedGame file system to mock file system
+
+            // Set up mock to return user input
+            mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
+                .Returns(deleteInput) // Start delete
+                .Returns("exit"); // Exit game
+
+            // Create console runner with mocked GameController and IConsoleIO
+            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object);
+
+            // Run game
+            consoleRunner.RunGame();
+
+            Assert.Multiple(() =>
+            {
+                // Assert text displayed is as expected
+                Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
+                    "Cannot delete game because no saved game files exist" + Environment.NewLine +
+                    Environment.NewLine +
+                    "[status]" + Environment.NewLine +
+                    "[prompt]"));
+
+                // Verify that Delete method was not called
+                mockGameController.Verify((gc) => gc.DeleteGame(It.IsAny<string>()), Times.Never);
+            });
+        }
     }
 }

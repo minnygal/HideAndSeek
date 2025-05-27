@@ -218,7 +218,7 @@
             // If no SavedGame files available
             if( !(allSavedGameFileNames.Any()) )
             {
-                return $"Cannot {lowercaseCommand} game because no saved game files are available"; // Return error message
+                return $"Cannot {lowercaseCommand} game because no saved game files exist"; // Return error message
             }
 
             // Set variable for file name to trimmed text after command
