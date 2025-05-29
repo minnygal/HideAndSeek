@@ -332,7 +332,7 @@ namespace HideAndSeek
                 }
                 catch (Exception e)
                 {
-                    consoleIO.WriteLine(e.Message); // Print error message
+                    consoleIO.WriteLine(RemoveParamText(e.Message)); // Print error message
                 }
             }
         }
