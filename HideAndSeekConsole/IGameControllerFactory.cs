@@ -6,6 +6,11 @@
     public interface IGameControllerFactory
     {
         /// <summary>
+        /// Maximum number of opponents with default names (setter should only be called in test mocking)
+        /// </summary>
+        int MaximumNumberOfOpponentsWithDefaultNames { get; set; }
+
+        /// <summary>
         /// Create game controller with default settings
         /// </summary>
         /// <returns>Game controller with default settings</returns>

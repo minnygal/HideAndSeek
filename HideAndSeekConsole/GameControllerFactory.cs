@@ -6,6 +6,18 @@ namespace HideAndSeek
     /// </summary>
     public class GameControllerFactory : IGameControllerFactory
     {
+        public int MaximumNumberOfOpponentsWithDefaultNames
+        {
+            get
+            {
+                return GameController.DefaultOpponentNames.Length;
+            }
+            set 
+            { 
+                throw new NotImplementedException("Setting the maximum number of opponents with default names is not supported."); 
+            }
+        }
+
         public IGameController GetDefaultGameController()
         {
             return new GameController();

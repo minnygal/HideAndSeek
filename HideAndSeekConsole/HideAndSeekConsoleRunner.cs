@@ -307,7 +307,15 @@ namespace HideAndSeek
                     }
                     else if (int.TryParse(userInput, out int numberOfOpponents)) // If user entered a number
                     {
-                        gameController = gameControllerFactory.GetGameControllerWithSpecificNumberOfOpponents(numberOfOpponents); // Create new game controller with specified number of opponents
+                        // If number of opponents with default names is invalid
+                        if (numberOfOpponents < 1 || numberOfOpponents > gameControllerFactory.MaximumNumberOfOpponentsWithDefaultNames)
+                        {
+                            throw new ArgumentOutOfRangeException(nameof(numberOfOpponents),
+                                $"Cannot create a new game because the number of opponents specified is invalid (must be between 1 and {gameControllerFactory.MaximumNumberOfOpponentsWithDefaultNames})"); // Throw exception
+                        }
+
+                        // Create new game controller with specified number of opponents
+                        gameController = gameControllerFactory.GetGameControllerWithSpecificNumberOfOpponents(numberOfOpponents);
                     }
                     else // if user did not enter empty string or a number, then assume user entered names for opponents
                     {
