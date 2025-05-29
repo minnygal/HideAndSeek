@@ -174,7 +174,8 @@ namespace HideAndSeek
 
                     // Start new game and return description (or "quit" command if user wants to quit game)
                     case "new":
-                        GameController = GetGameControllerForCustomGame(); // Set game controller to new custom game based on user input
+                        GameController = GetGameControllerWithUserSpecifiedOpponents(); // Set game controller to new game with opponents specified via user input and default house                                                        
+                        GameController = SetHouseLayoutBasedOnUserInput(GameController); // Set game controller House layout based on user input or leave House layout unchanged (returns null if user wants to quit)
                         return GameController == null ? QuitCommand : "New game started" + Environment.NewLine + GetWelcomeToHouse(); // Return new game message if not null; if null, return quit command
 
                     // Return quit command since user wants to quit game
@@ -273,11 +274,11 @@ namespace HideAndSeek
         }
 
         /// <summary>
-        /// Helper method to get game controller for new game based on user input;
-        /// also sets GameController House layout based on user input
+        /// Helper method to get game controller for new game with opponents specified by user input
+        /// and with default house
         /// </summary>
         /// <returns>Game controller set up for game OR null if user wants to quit program</returns>
-        private IGameController GetGameControllerForCustomGame()
+        private IGameController GetGameControllerWithUserSpecifiedOpponents()
         {
             // Create local variable to store created game controller
             IGameController gameController = null;
@@ -318,9 +319,6 @@ namespace HideAndSeek
                         gameController = gameControllerFactory.GetGameControllerWithSpecificNamesOfOpponents(namesOfOpponents); // Create new game controller with names entered by user as array (without whitespace)
                     }
 
-                    // Set game controller House layout based on user input (null if user wants to quit)
-                    gameController = GetUserInputAndSetHouseLayout(gameController);
-
                     // If no exceptions thrown, return game controller
                     return gameController;
                 }
@@ -333,11 +331,18 @@ namespace HideAndSeek
 
         /// <summary>
         /// Helper method to set the House layout for a game controller based on user input
-        /// (allows user to enter name of file from which to load House layout or empty string to load default layout)
+        /// (allows user to enter name of file from which to load House layout;
+        /// if user input is empty, does not change game controller's House layout)
         /// </summary>
         /// <returns>Game controller with House layout loaded OR null if user wants to quit program</returns>
-        private IGameController GetUserInputAndSetHouseLayout(IGameController gameController)
+        private IGameController SetHouseLayoutBasedOnUserInput(IGameController gameController)
         {
+            // If game controller is null (indicating user already wants to quit)
+            if(gameController == null)
+            {
+                return null; // Return null to indicate user wants to quit
+            }
+
             // Set variable to house file names
             IEnumerable<string> houseFileNames = getFileNamesAdapter.GetHouseFileNames();
 
