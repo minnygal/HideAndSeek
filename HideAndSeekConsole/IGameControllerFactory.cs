@@ -11,6 +11,13 @@
         int MaximumNumberOfOpponentsWithDefaultNames { get; set; }
 
         /// <summary>
+        /// Method to return whether name is a valid name for an opponent
+        /// </summary>
+        /// <param name="name">Name for opponent</param>
+        /// <returns>True if name is valid name for opponent</returns>
+        bool IsValidOpponentName(string name);
+
+        /// <summary>
         /// Create game controller with default settings
         /// </summary>
         /// <returns>Game controller with default settings</returns>

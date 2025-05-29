@@ -18,6 +18,11 @@ namespace HideAndSeek
             }
         }
 
+        public bool IsValidOpponentName(string name)
+        {
+            return Opponent.IsValidName(name);
+        }
+
         public IGameController GetDefaultGameController()
         {
             return new GameController();

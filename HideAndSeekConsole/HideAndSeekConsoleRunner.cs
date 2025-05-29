@@ -322,9 +322,18 @@ namespace HideAndSeek
                         string[] namesOfOpponents = userInput.Split(','); // Extract names from user input
                         for (int i = 0; i < namesOfOpponents.Length; i++)
                         {
-                            namesOfOpponents[i] = namesOfOpponents[i].Trim(); // Remove whitespace before or after each name
+                            // Remove whitespace before or after each name
+                            namesOfOpponents[i] = namesOfOpponents[i].Trim();
+
+                            // If name is invalid name for an opponent
+                            if( !(gameControllerFactory.IsValidOpponentName(namesOfOpponents[i])) )
+                            {
+                                throw new ArgumentException($"Cannot create a new game because opponent name \"{namesOfOpponents[i]}\" is invalid (is empty or contains only whitespace)"); // Throw exception
+                            }
                         }
-                        gameController = gameControllerFactory.GetGameControllerWithSpecificNamesOfOpponents(namesOfOpponents); // Create new game controller with names entered by user as array (without whitespace)
+
+                        // Create new game controller with trimmed names entered by user
+                        gameController = gameControllerFactory.GetGameControllerWithSpecificNamesOfOpponents(namesOfOpponents);
                     }
 
                     // If no exceptions thrown, return game controller
