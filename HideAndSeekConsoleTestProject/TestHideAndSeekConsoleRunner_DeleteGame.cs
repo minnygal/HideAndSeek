@@ -55,11 +55,11 @@ namespace HideAndSeekConsoleTestProject
         /// <summary>
         /// Helper method to get mocked IGetFileNamesAdapter that returns two saved game file names
         /// </summary>
+        /// <returns>Mocked IGetFileNamesAdapter returning two saved game names</returns>
         private static IGetFileNamesAdapter GetFileNamesAdapterReturning2SavedGameFileNames()
         {
             Mock<IGetFileNamesAdapter> mockAdapter = new Mock<IGetFileNamesAdapter>(); // Create adapter mock
-            mockAdapter.Setup((a) => a.GetSavedGameFileNames())
-                .Returns(new string[] { "myFile", "otherFile" }); // Set mock to return file names
+            mockAdapter.Setup((a) => a.GetSavedGameFileNames()).Returns(new string[] { "myFile", "otherFile" }); // Set mock to return file names
             return mockAdapter.Object; // Return adapter object
         }
 
