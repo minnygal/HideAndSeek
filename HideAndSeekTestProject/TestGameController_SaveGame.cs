@@ -10,7 +10,7 @@ namespace HideAndSeek
     [TestFixture]
     public class TestGameController_SaveGame
     {
-        private GameController gameController;
+        private IGameController gameController;
 
         [SetUp]
         public void Setup()
@@ -46,7 +46,7 @@ namespace HideAndSeek
         // Tests default House, and tests custom House set via constructor and via ReloadGame
         [TestCaseSource(typeof(TestGameController_SaveGame_TestData),
                         nameof(TestGameController_SaveGame_TestData.TestCases_For_Test_GameController_SaveGame_AndCheckTextSavedToFile))]
-        public void Test_GameController_SaveGame_AndCheckTextSavedToFile(Func<GameController> StartNewGame, string expectedTextInSavedGameFile)
+        public void Test_GameController_SaveGame_AndCheckTextSavedToFile(Func<IGameController> StartNewGame, string expectedTextInSavedGameFile)
         {
             // Create variable to store text written to SavedGame file
             string? actualTextInSavedGameFile = null;

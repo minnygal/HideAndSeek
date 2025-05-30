@@ -185,7 +185,7 @@ namespace HideAndSeek
                         () => 
                         {
                             // Create GameController with default House and hide all Opponents in specified locations
-                            GameController gameController = new GameController(MockedOpponents, GetDefaultHouse())
+                            IGameController gameController = new GameController(MockedOpponents, GetDefaultHouse())
                                                                 .RehideAllOpponents(new List<string>() { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry" });
 
                             // Go to Kitchen and check to find 2 Opponents
@@ -273,7 +273,7 @@ namespace HideAndSeek
                     () =>
                     {
                         // Initialize to GameController with restarted game and rehidden Opponents
-                        GameController gameController = new GameController(MockedOpponents, GetCustomTestHouse()) // Create GameController with mocked Opponents and specific House
+                        IGameController gameController = new GameController(MockedOpponents, GetCustomTestHouse()) // Create GameController with mocked Opponents and specific House
                                                         .RehideAllOpponents(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" }); // and hide all Opponents in specified locations
 
                         // Go to Cellar and find 1 Opponent there
@@ -312,7 +312,7 @@ namespace HideAndSeek
                         () =>
                         {
                             // Initialize GameController
-                            GameController gameController = new GameController(MockedOpponents, GetCustomTestHouse()) // Create GameController with specified file system and specific House
+                            IGameController gameController = new GameController(MockedOpponents, GetCustomTestHouse()) // Create GameController with specified file system and specific House
                                                             .RestartGame() // Restart Game                                    
                                                             .RehideAllOpponents(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" }); // and hide all Opponents in specified locations
 

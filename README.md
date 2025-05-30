@@ -1,4 +1,4 @@
-# Hide And Seek Game Console App Version 4.3.0
+# Hide And Seek Game Console App Version 4.4.0
 
 
 ## Table of Contents
@@ -42,8 +42,9 @@ The Hide and Seek Game Console app allows a user (playing the role of the seeker
 
 <a name="whats-new"></a>
 ## What's new
-- A list of available house layout files is displayed when the user is prompted to enter a house layout file name.
-- A list of saved game files is displayed when the user enters the load or delete command not followed by a file name.
+- More specific error messages
+- Code improvements
+- Console tests added
 
 
 
@@ -265,12 +266,12 @@ Game successfully saved in MyGameName
 
 If the game was not saved successfully because the file name was invalid, you'll see something like:
 ```
-Cannot perform action because file name MyGameName is invalid (is empty or contains illegal characters, e.g. \, /, or whitespace)
+Cannot save game because file name "My Game Name" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)
 ```
 
 If the game was not saved successfully because the file name is already in use, you'll see something like:
 ```
-Cannot perform action because a file named MyGameName already exists
+Cannot save game because a saved game file named "MyGameName" already exists
 ```
 
 If the game was not saved successfully, try again with a valid file name not currently in use or keep playing the game - no harm done.
@@ -279,7 +280,9 @@ If the game was not saved successfully, try again with a valid file name not cur
 <a name="usage-load"></a>
 ### Load game*
 
-**You may load a saved game using the ```load``` command followed by a space and the name of the game to load.**  (*Careful because you will lose your progress in your current game after successfully running the load command!*) 
+**You may load a saved game using the ```load``` command followed by a space and the name of the game to load.** 
+*You will lose your progress in your current game after successfully running the load command!
+Also, keep in mind that game play in the loaded game won't be automatically saved to the saved game file.*
 
 For example, if you are playing a game but would rather play a previously saved game called MyGameName instead:
 ```
@@ -298,7 +301,7 @@ Game successfully loaded from MyGameName
 
 If the game was not successfully loaded because it doesn't exist, you'll see something like:
 ```
-Cannot load game because file MyGameName does not exist
+Cannot load game because no saved game file with name "MyGameName" exists
 ```
 
 If the game was not successfully loaded because the saved game file or the house layout file was corrupt, you'll see a different error message describing the problem.
@@ -337,7 +340,7 @@ Game file MyGameName has been successfully deleted
 
 If the game was not deleted successfully because it does not exist, you'll see something like:
 ```
-Could not delete game because file MyGameName does not exist
+Could not delete game because no saved game file with name "MyGameName" exists
 ```
 
 If the game was not deleted successfully, try again with the name of an existing saved game or keep playing the current game - no harm done.
@@ -369,7 +372,6 @@ Please message me via the [contact form here](https://minnystuff.com/contact/) w
 
 ### Version 5.0 - location tracking, saved game list
 - Add a feature for tracking the places the user has already checked during the current game.  The user can request this list at any point during the game.  (Should viewing the list count as a move?)  The list will be saved/restored when a game is saved/restored.
-- Add a feature for tracking the names of currently saved games.  The user can request to view the names of currently saved games at any time.
 
 
 ### Version 6.0 - custom house layouts
@@ -400,11 +402,12 @@ Please message me via the [contact form here](https://minnystuff.com/contact/) w
 
 <a name="contributing"></a>
 ## Contributing
-
+n
 Pull requests are welcome!  Please make sure to update tests in the HideAndSeekTestProject as appropriate.  Ensure adherence to best practices in all code submitted and remember to comment your code (and, of course, give credit where credit is due!).
 
 Please feel free to clone, fork, or download this repository to your heart's content.  This repository contains the following Visual Studio projects:
 - **HideAndSeekConsoleApp** (containing the code allowing the game to be run via the command line interface)
+- **HideAndSeekConsoleTestProject** (containing the code for testing the HideAndSeekConsoleApp; utilizes NUnit and Moq)
 - **HideAndSeekClassLibrary** (containing the code controlling the game functionality)
 - **HideAndSeekTestProject** (containing the code for testing the HideAndSeekClassLibrary; utilizes NUnit, Moq, TestableIO.System.IO.Abstractions.TestingHelpers, and TestableIO.System.IO.Abstractions.Wrappers)
 

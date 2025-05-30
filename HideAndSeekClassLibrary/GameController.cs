@@ -54,7 +54,7 @@ namespace HideAndSeek
      * -I added/edited comments for easier reading.
      * **/
 
-    public class GameController
+    public class GameController : IGameController
     {
         #region Constructors
 
@@ -432,7 +432,7 @@ namespace HideAndSeek
         /// <exception cref="InvalidOperationException">Exception thrown if invalid operation attempted</exception>
         /// <exception cref="FileNotFoundException">Exception thrown if saved game file not found</exception>
         /// <exception cref="NullReferenceException">Exception thrown if a reference is null</exception>
-        public GameController RestartGame(string houseFileNameWithoutEnding)
+        public IGameController RestartGame(string houseFileNameWithoutEnding)
         {
             House = House.CreateHouse(houseFileNameWithoutEnding); // Set House property to House created from specified House layout file
             return RestartGame(); // Restart the game
@@ -443,7 +443,7 @@ namespace HideAndSeek
         /// </summary>
         /// <param name="house">House in which to play game</param>
         /// <returns>This GameController</returns>
-        public GameController RestartGame(House house)
+        public IGameController RestartGame(House house)
         {
             House = house;
             return RestartGame();
@@ -453,7 +453,7 @@ namespace HideAndSeek
         /// Restart game from beginning without changing House layout
         /// </summary>
         /// <returns>This GameController</returns>
-        public GameController RestartGame()
+        public IGameController RestartGame()
         {
             FoundOpponents = new List<Opponent>(); // Set FoundOpponents to empty list
             RehideAllOpponents(); // Hide opponents in random places
@@ -469,7 +469,7 @@ namespace HideAndSeek
         /// <returns>GameController after Opponents rehidden</returns>
         /// <exception cref="ArgumentOutOfRangeException">Exception thrown if the number of hiding locations is not equal to the number of Opponents</exception>
         /// <exception cref="InvalidOperationException">Exception thrown if no matching location with hiding location in House</exception>
-        public GameController RehideAllOpponents(IEnumerable<string> hidingLocations)
+        public IGameController RehideAllOpponents(IEnumerable<string> hidingLocations)
         {
             // Initialize variable for LocationWithHidingPlace objects to empty list
             List<LocationWithHidingPlace> hidingLocationsAsObjects = new List<LocationWithHidingPlace>();
@@ -491,7 +491,7 @@ namespace HideAndSeek
         /// <returns>GameController after Opponents rehidden</returns>
         /// <exception cref="ArgumentOutOfRangeException">Exception thrown if the number of hiding places is not equal to the number of Opponents</exception>
         /// <exception cref="InvalidOperationException">Exception thrown if a location with hiding place is not in the HOuse</exception>
-        private GameController RehideAllOpponents(IEnumerable<LocationWithHidingPlace> hidingLocations)
+        private IGameController RehideAllOpponents(IEnumerable<LocationWithHidingPlace> hidingLocations)
         {
             // If the number of hiding locations is not equal to the number of Opponents
             if (hidingLocations.Count() != OpponentsAndHidingLocations.Count)
@@ -533,7 +533,7 @@ namespace HideAndSeek
         /// Rehide all Opponents in random hiding places
         /// </summary>
         /// <returns>GameController after Opponents rehidden</returns>
-        private GameController RehideAllOpponents()
+        private IGameController RehideAllOpponents()
         {
             // Initialize list for locations with hiding places
             List<LocationWithHidingPlace> hidingLocations = new List<LocationWithHidingPlace>();
@@ -796,7 +796,7 @@ namespace HideAndSeek
         /// <returns>String describing what happened</returns>
         /// <exception cref="ArgumentException">Exception thrown if file name is invalid</exception>
         /// <exception cref="FileNotFoundException">Exception thrown if file not found</exception>
-        public static string DeleteGame(string fileNameWithoutEnding)
+        public string DeleteGame(string fileNameWithoutEnding)
         {
             // Get full file name including saved game file ending and JSON extension
             string fullFileName = SavedGame.GetFullSavedGameFileName(fileNameWithoutEnding); // Throws exception if file name is invalid
