@@ -39,6 +39,9 @@ namespace HideAndSeek
         public HideAndSeekConsoleRunner(IGameController gameController, IConsoleIO consoleInOut, IGetFileNamesAdapter fileNamesAdapter) 
             : this(gameController, consoleInOut, fileNamesAdapter, new GameControllerFactory()) { }
 
+        public HideAndSeekConsoleRunner(IGameController gameController, IConsoleIO consoleInOut, IGameControllerFactory gcFactory)
+            : this(gameController, consoleInOut, new GetFileNamesAdapter(), gcFactory) { }
+
         public HideAndSeekConsoleRunner(
             IGameController gameController, IConsoleIO consoleInOut, IGetFileNamesAdapter fileNamesAdapter, IGameControllerFactory gcFactory)
         {
