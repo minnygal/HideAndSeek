@@ -14,7 +14,6 @@
         // Methods
         IGameController RestartGame();
         IGameController RestartGame(string userInputForFileName);
-        IGameController RehideAllOpponents(IEnumerable<string> hidingLocations);
         string Move(Direction direction);
         string CheckCurrentLocation();
         string Teleport();

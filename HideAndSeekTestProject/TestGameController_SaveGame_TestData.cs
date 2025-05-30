@@ -161,7 +161,7 @@ namespace HideAndSeek
                         {
                             // Create GameController with default House, hide all Opponents in specified locations, and return GameController
                             return new GameController(MockedOpponents, GetDefaultHouse())
-                                       .RehideAllOpponents(new List<string>() { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry" });
+                                       .RestartGame(new List<string>() { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry" });
                         },
                         "{" +
                             "\"HouseFileName\":\"DefaultHouse\"" + "," +
@@ -178,7 +178,7 @@ namespace HideAndSeek
                             "\"FoundOpponents\":[]" +
                         "}")
                     .SetName("Test_GameController_SaveGame_AndCheckTextSavedToFile - default House - no opponents found")
-                    .SetCategory("GameController SaveGame Constructor RehideAllOpponents Success");
+                    .SetCategory("GameController SaveGame Constructor RestartGame Success");
 
                 // Default House, 3 Opponents found
                 yield return new TestCaseData(
@@ -186,7 +186,7 @@ namespace HideAndSeek
                         {
                             // Create GameController with default House and hide all Opponents in specified locations
                             IGameController gameController = new GameController(MockedOpponents, GetDefaultHouse())
-                                                                .RehideAllOpponents(new List<string>() { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry" });
+                                                                .RestartGame(new List<string>() { "Kitchen", "Pantry", "Bathroom", "Kitchen", "Pantry" });
 
                             // Go to Kitchen and check to find 2 Opponents
                             gameController.Move(Direction.East);
@@ -216,14 +216,14 @@ namespace HideAndSeek
                             "\"FoundOpponents\":[\"Joe\",\"Owen\",\"Ana\"]" +
                         "}")
                     .SetName("Test_GameController_SaveGame_AndCheckTextSavedToFile - default House - 3 opponents found")
-                    .SetCategory("GameController SaveGame Constructor RehideAllOpponents Move CheckCurrentLocation Success");
+                    .SetCategory("GameController SaveGame Constructor RestartGame Move CheckCurrentLocation Success");
                 
-                // Custom House with constructor, no Opponents found
+                // Custom House, no Opponents found
                 yield return new TestCaseData(
                         () =>
                         {
                             return new GameController(MockedOpponents, GetCustomTestHouse()) // Create GameController with mocked Opponents and specific House object
-                                       .RehideAllOpponents(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" }); // and hide all Opponents in specified locations
+                                       .RestartGame(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" }); // and hide all Opponents in specified locations
                         },
                         "{" +
                             "\"HouseFileName\":\"TestHouse\"" + "," +
@@ -239,42 +239,16 @@ namespace HideAndSeek
                             "}" + "," +
                             "\"FoundOpponents\":[]" +
                         "}")
-                    .SetName("Test_GameController_SaveGame_AndCheckTextSavedToFile - custom House - constructor - no opponents found")
-                    .SetCategory("GameController SaveGame CustomHouse Constructor RehideAllOpponents Success");
+                    .SetName("Test_GameController_SaveGame_AndCheckTextSavedToFile - custom House - no opponents found")
+                    .SetCategory("GameController SaveGame CustomHouse Constructor RestartGame Success");
 
-                // Custom House with RestartGame, no Opponents found
-                yield return new TestCaseData(
-                    () =>
-                    {
-                        // Return GameController with restarted game and rehidden Opponents
-                        return new GameController(MockedOpponents, GetCustomTestHouse()) // Create GameController with mocked Opponents and specific House
-                                    .RestartGame() // and restart game
-                                    .RehideAllOpponents(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" }); // and hide all Opponents in specified locations
-                    },
-                    "{" +
-                        "\"HouseFileName\":\"TestHouse\"" + "," +
-                        "\"PlayerLocation\":\"Landing\"" + "," +
-                        "\"MoveNumber\":1" + "," +
-                        "\"OpponentsAndHidingLocations\":" +
-                        "{" +
-                            "\"Joe\":\"Closet\"," +
-                            "\"Bob\":\"Yard\"," +
-                            "\"Ana\":\"Cellar\"," +
-                            "\"Owen\":\"Attic\"," +
-                            "\"Jimmy\":\"Yard\"" +
-                        "}" + "," +
-                        "\"FoundOpponents\":[]" +
-                    "}")
-                    .SetName("Test_GameController_SaveGame_AndCheckTextSavedToFile - custom House - RestartGame - no opponents found")
-                    .SetCategory("GameController SaveGame CustomHouse Constructor RestartGame RehideAllOpponents Success");
-
-                // Custom House with constructor, 3 Opponents found
+                // Custom House, 3 Opponents found
                 yield return new TestCaseData(
                     () =>
                     {
                         // Initialize to GameController with restarted game and rehidden Opponents
                         IGameController gameController = new GameController(MockedOpponents, GetCustomTestHouse()) // Create GameController with mocked Opponents and specific House
-                                                        .RehideAllOpponents(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" }); // and hide all Opponents in specified locations
+                                                        .RestartGame(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" }); // and hide all Opponents in specified locations
 
                         // Go to Cellar and find 1 Opponent there
                         gameController.Move(Direction.North);;
@@ -304,48 +278,8 @@ namespace HideAndSeek
                         "}" + "," +
                         "\"FoundOpponents\":[\"Ana\",\"Bob\",\"Jimmy\"]" +
                     "}")
-                    .SetName("Test_GameController_SaveGame_AndCheckTextSavedToFile - custom House - constructor - 3 opponents found")
-                    .SetCategory("GameController SaveGame CustomHouse Constructor RehideAllOpponents Move CheckCurrentLocation Success");
-
-                // Custom House with RestartGame, 3 Opponents found
-                yield return new TestCaseData(
-                        () =>
-                        {
-                            // Initialize GameController
-                            IGameController gameController = new GameController(MockedOpponents, GetCustomTestHouse()) // Create GameController with specified file system and specific House
-                                                            .RestartGame() // Restart Game                                    
-                                                            .RehideAllOpponents(new List<string>() { "Closet", "Yard", "Cellar", "Attic", "Yard" }); // and hide all Opponents in specified locations
-
-                            // Go to Cellar and find 1 Opponent there
-                            gameController.Move(Direction.North);;
-                            gameController.Move(Direction.East);
-                            gameController.Move(Direction.Down);;
-                            gameController.CheckCurrentLocation();
-
-                            // Go to Yard and find 2 Opponents there
-                            gameController.Move(Direction.Up);;
-                            gameController.Move(Direction.Out);;
-                            gameController.CheckCurrentLocation();
-
-                            // Return GameController
-                            return gameController;
-                        },
-                        "{" +
-                            "\"HouseFileName\":\"TestHouse\"" + "," +
-                            "\"PlayerLocation\":\"Yard\"" + "," +
-                            "\"MoveNumber\":8" + "," +
-                            "\"OpponentsAndHidingLocations\":" +
-                            "{" +
-                                "\"Joe\":\"Closet\"," +
-                                "\"Bob\":\"Yard\"," +
-                                "\"Ana\":\"Cellar\"," +
-                                "\"Owen\":\"Attic\"," +
-                                "\"Jimmy\":\"Yard\"" +
-                            "}" + "," +
-                            "\"FoundOpponents\":[\"Ana\",\"Bob\",\"Jimmy\"]" +
-                        "}")
-                    .SetName("Test_GameController_SaveGame_AndCheckTextSavedToFile - custom House - RestartGame - 3 opponents found")
-                    .SetCategory("GameController SaveGame CustomHouse Constructor RestartGame RehideAllOpponents Move CheckCurrentLocation Success");
+                    .SetName("Test_GameController_SaveGame_AndCheckTextSavedToFile - custom House - 3 opponents found")
+                    .SetCategory("GameController SaveGame CustomHouse Constructor RestartGame Move CheckCurrentLocation Success");
             }
         }
     }

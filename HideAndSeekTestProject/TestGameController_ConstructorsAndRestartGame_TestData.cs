@@ -13,7 +13,7 @@ namespace HideAndSeek
         /// Array of mocked Opponents (named)
         /// </summary>
         /// <returns>Array of mocked Opponents</returns>
-        private static Opponent[] MockedOpponents
+        public static Opponent[] MockedOpponents
         {
             get
             {

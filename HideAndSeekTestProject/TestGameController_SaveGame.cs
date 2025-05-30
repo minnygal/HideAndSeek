@@ -43,7 +43,7 @@ namespace HideAndSeek
             Assert.That(gameController.SaveGame(fileName), Is.EqualTo(expected));
         }
 
-        // Tests default House, and tests custom House set via constructor and via ReloadGame
+        // Tests default House, and tests custom House set via constructor
         [TestCaseSource(typeof(TestGameController_SaveGame_TestData),
                         nameof(TestGameController_SaveGame_TestData.TestCases_For_Test_GameController_SaveGame_AndCheckTextSavedToFile))]
         public void Test_GameController_SaveGame_AndCheckTextSavedToFile(Func<IGameController> StartNewGame, string expectedTextInSavedGameFile)
