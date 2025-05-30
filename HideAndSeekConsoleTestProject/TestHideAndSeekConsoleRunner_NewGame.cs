@@ -529,7 +529,7 @@ namespace HideAndSeekConsoleTestProject
                     " - DefaultHouse" + Environment.NewLine +
                     " - NewHouse" + Environment.NewLine +
                     "Type a house layout file name or just press Enter to use the default house layout: " +
-                    "Cannot load house layout because file name is invalid" + Environment.NewLine +
+                    "Cannot load house layout because file name \"\\ //\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)" + Environment.NewLine +
                     "Here are the names of the house layout files available:" + Environment.NewLine +
                     " - DefaultHouse" + Environment.NewLine +
                     " - NewHouse" + Environment.NewLine +
@@ -574,7 +574,7 @@ namespace HideAndSeekConsoleTestProject
                     " - DefaultHouse" + Environment.NewLine +
                     " - NewHouse" + Environment.NewLine +
                     "Type a house layout file name or just press Enter to use the default house layout: " +
-                    "Cannot load house layout because file name is invalid" + Environment.NewLine +
+                    "Cannot load house layout because file name \"\\ //\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)" + Environment.NewLine +
                     "Here are the names of the house layout files available:" + Environment.NewLine +
                     " - DefaultHouse" + Environment.NewLine +
                     " - NewHouse" + Environment.NewLine +

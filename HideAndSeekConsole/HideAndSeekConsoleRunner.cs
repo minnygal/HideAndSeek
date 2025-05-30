@@ -415,7 +415,8 @@ namespace HideAndSeek
                 }
                 else if( !(FileExtensions.IsValidName(userInputForFileName)) ) // If user entered invalid file name
                 {
-                    consoleIO.WriteLine("Cannot load house layout because file name is invalid"); // Print error message
+                    consoleIO.WriteLine($"Cannot load house layout because file name \"{userInputForFileName}\" is invalid " +
+                                         "(is empty or contains illegal characters, e.g. \\, /, or whitespace)"); // Print error message
                 }
                 else if( !(houseFileNames.Contains(userInputForFileName)) ) // If user entered nonexisting file name
                 {
