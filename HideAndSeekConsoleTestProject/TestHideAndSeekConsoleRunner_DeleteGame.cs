@@ -146,7 +146,7 @@ namespace HideAndSeekConsoleTestProject
                 // Assert text displayed is as expected
                 Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
                     textBeforeErrorMessage +
-                    "Cannot delete game because file does not exist" + Environment.NewLine +
+                    "Cannot delete game because no saved game file with name \"nonexistentFile\" exists" + Environment.NewLine +
                     Environment.NewLine +
                     "[status]" + Environment.NewLine +
                     "[prompt]"));

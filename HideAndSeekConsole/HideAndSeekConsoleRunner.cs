@@ -292,7 +292,7 @@ namespace HideAndSeek
             }
             else if( !(allSavedGameFileNames.Contains(userInputForFileName)) ) // If no saved game file with that name exists
             {
-                return $"Cannot {lowercaseCommand} game because file does not exist"; // Return failure message
+                return $"Cannot {lowercaseCommand} game because no saved game file with name \"{userInputForFileName}\" exists"; // Return failure message
             }
             else
             {
