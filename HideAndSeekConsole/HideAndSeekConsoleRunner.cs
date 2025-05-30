@@ -237,7 +237,7 @@ namespace HideAndSeek
             }
             else if( !(FileExtensions.IsValidName(fileName)) ) // If input is invalid file name
             {
-                return "Cannot save game because file name is invalid"; // Return failure message
+                return $"Cannot save game because file name \"{fileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"; // Return failure message
             }
             else
             {

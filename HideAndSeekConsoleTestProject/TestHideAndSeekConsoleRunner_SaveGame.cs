@@ -88,13 +88,9 @@ namespace HideAndSeekConsoleTestProject
         [Category("ConsoleRunner Save Failure")]
         public void Test_ConsoleRunner_Save_InvalidFileName()
         {
-            // Set up mock GameController to return message when save
-            mockGameController.Setup((gc) => gc.SaveGame("}{(]){}ueao"))
-                .Throws(new ArgumentException("[save exception message]"));
-
             // Set up mock to return user input
             mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
-                .Returns("save }{(]){}ueao") // Save game
+                .Returns("save \\ /") // Save game with invalid file name
                 .Returns("exit"); // Exit game
 
             // Create console runner with mocked GameController and IConsoleIO
@@ -107,13 +103,13 @@ namespace HideAndSeekConsoleTestProject
             {
                 // Assert text displayed is as expected
                 Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
-                    "[save exception message]" + Environment.NewLine +
+                    $"Cannot save game because file name \"\\ /\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)" + Environment.NewLine +
                     Environment.NewLine +
                     "[status]" + Environment.NewLine +
                     "[prompt]"));
 
-                // Verify that Move method was called
-                mockGameController.Verify((gc) => gc.SaveGame("}{(]){}ueao"), Times.Once);
+                // Verify that SaveGame method was not called
+                mockGameController.Verify((gc) => gc.SaveGame(It.IsAny<string>()), Times.Never);
             });
         }
 
