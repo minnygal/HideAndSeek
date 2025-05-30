@@ -420,7 +420,7 @@ namespace HideAndSeek
                 }
                 else if( !(houseFileNames.Contains(userInputForFileName)) ) // If user entered nonexisting file name
                 {
-                    consoleIO.WriteLine("Cannot load house layout because file does not exist"); // Print error message
+                    consoleIO.WriteLine($"Cannot load house layout because no house file with name \"{userInputForFileName}\" exists"); // Print error message
                 }
                 else // If no forseeable issues
                 {
