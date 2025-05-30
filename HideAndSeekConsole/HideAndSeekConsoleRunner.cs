@@ -19,29 +19,53 @@ namespace HideAndSeek
     /** CHANGES
      * -I added instructions to be printed for the user when they launch the program.
      * -I allow the user to select the number or names of opponents.
-     * -I used the RestartGame method I added to GameController so
-     *  GameController only has to be created once.
-     * -I display available House layouts and allow the user to enter a House layout name 
+     * -I display available House layout file names and allow the user to enter a House layout name 
      *  or use the default House layout.
      * -I display available SavedGame file names.
-     * -I moved the ParseInput method to this class.
      * -I added comments to make the code more readable.
      * -I made code conform to my formatting.
      * -I added code to print an empty line to put space between moves information.
      * **/
     public class HideAndSeekConsoleRunner
     {
+        /// <summary>
+        /// Parameterless constructor
+        /// </summary>
         public HideAndSeekConsoleRunner() : this(new GameController(), new ConsoleIOAdapter()) { }
 
+        /// <summary>
+        /// Constructor accepting game controller and console IO (for testing)
+        /// </summary>
+        /// <param name="gameController">Game controller to use</param>
+        /// <param name="consoleIO">Console in/out to use</param>
         public HideAndSeekConsoleRunner(IGameController gameController, IConsoleIO consoleIO) 
             : this(gameController, consoleIO, new GetFileNamesAdapter()) { }
 
+        /// <summary>
+        /// Constructor accepting game controller, console IO, and file names adapter (for testing)
+        /// </summary>
+        /// <param name="gameController">Game controller to use</param>
+        /// <param name="consoleInOut">Console in/out to use</param>
+        /// <param name="fileNamesAdapter">GetFileNames adapter</param>
         public HideAndSeekConsoleRunner(IGameController gameController, IConsoleIO consoleInOut, IGetFileNamesAdapter fileNamesAdapter) 
             : this(gameController, consoleInOut, fileNamesAdapter, new GameControllerFactory()) { }
 
+        /// <summary>
+        /// Constructor accepting game controller, console IO, and game controller factory (for testing)
+        /// </summary>
+        /// <param name="gameController">Game controller to use</param>
+        /// <param name="consoleInOut">Console in/out to use</param>
+        /// <param name="gcFactory">Game controller factory to use</param>
         public HideAndSeekConsoleRunner(IGameController gameController, IConsoleIO consoleInOut, IGameControllerFactory gcFactory)
             : this(gameController, consoleInOut, new GetFileNamesAdapter(), gcFactory) { }
 
+        /// <summary>
+        /// Constructor accepting game controller, console IO, file names adapter, and game controller factory (for testing)
+        /// </summary>
+        /// <param name="gameController">Game controller to use</param>
+        /// <param name="consoleInOut">Console in/out to use</param>
+        /// <param name="fileNamesAdapter">GetFileNames adapter</param>
+        /// <param name="gcFactory">Game controller factory to use</param>
         public HideAndSeekConsoleRunner(
             IGameController gameController, IConsoleIO consoleInOut, IGetFileNamesAdapter fileNamesAdapter, IGameControllerFactory gcFactory)
         {
@@ -67,23 +91,23 @@ namespace HideAndSeek
         // Get file names adapter
         private readonly IGetFileNamesAdapter getFileNamesAdapter;
 
-        // Get game controller factory
+        // Game controller factory (for GameController creation) when new command called
         private readonly IGameControllerFactory gameControllerFactory;
 
         /// <summary>
-        /// Method to run the game
-        /// Outputs game information to Console and accepts user input from Console
+        /// Method to run the game,
+        /// outputting game information to Console and accepting user input from Console
         /// </summary>
         public void RunGame()
         {
-            // Create variable to store return value of ParseInput method
+            // Declare variable to store return value of ParseInput method
             string parseInputReturnValue;
 
             // Print welcome, basic instructions, and space
             consoleIO.WriteLine( GetWelcomeAndInstructions() + Environment.NewLine );
 
             // Until the user quits the program
-            while (true)
+            while(true)
             {
                 // Welcome user to the House
                 consoleIO.WriteLine(GetWelcomeToHouse());
@@ -94,27 +118,27 @@ namespace HideAndSeek
                     // Print game status and prompt, and get/parse/act on user input
                     consoleIO.WriteLine(GameController.Status); // Print game status
                     consoleIO.Write(GameController.Prompt); // Print game prompt
-                    parseInputReturnValue = RemoveParamText(ParseInput(consoleIO.ReadLine())); // Get user input, parse input, act on input, and return message
+                    parseInputReturnValue = ParseInput(consoleIO.ReadLine()); // Get user input, parse input, act on input, and set variable to return message
 
-                    // If requested, quit program
-                    if (parseInputReturnValue == QuitCommand)
+                    // If user entered quit command
+                    if(parseInputReturnValue == QuitCommand)
                     {
-                        return;
+                        return; // Quit program
                     }
 
                     // Print update
-                    consoleIO.WriteLine(parseInputReturnValue); // Print ParseInput return message
-                    consoleIO.WriteLine(); // Print empty line to put space between moves
+                    consoleIO.WriteLine(RemoveParamText(parseInputReturnValue)); // Print ParseInput return message without param text
+                    consoleIO.WriteLine(); // Print empty line to put space between actions
                 }
 
                 // Print post-game info and instructions
                 consoleIO.WriteLine($"You won the game in {GameController.MoveNumber} moves!");
                 consoleIO.Write("Press P to play again, any other key to quit. ");
 
-                // If user does not want to play again, quit
+                // If user does not want to play again
                 if( !(consoleIO.ReadKey().KeyChar.ToString().Equals("P", StringComparison.CurrentCultureIgnoreCase)) )
                 {
-                    return;
+                    return; // Quit program
                 }
 
                 // If user does want to play again, restart game and print space
@@ -125,11 +149,11 @@ namespace HideAndSeek
 
         /// <summary>
         /// Parse input from the player
-        /// Accepts case-insensitive commands for directions to move,
+        /// Accepts case-insensitive commands for directions to/for move,
         /// teleport, check, new, save, load, delete
         /// </summary>
         /// <param name="userInput">User input to parse</param>
-        /// <returns>Return message from parsing input / doing action OR "quit" if user wants to quit game</returns>
+        /// <returns>Message describing action or error OR "quit" if user wants to quit game</returns>
         private string ParseInput(string userInput)
         {
             // Trim input
@@ -144,7 +168,7 @@ namespace HideAndSeek
             try
             {
                 // Evaluate command and act accordingly
-                switch (lowercaseCommand)
+                switch(lowercaseCommand)
                 {
                     // Check current location and return description
                     case "check":
@@ -158,18 +182,18 @@ namespace HideAndSeek
                     case "save": 
                         return SaveGame(textAfterCommand);
 
-                    // Load game and return description (or "quit" command if user wants to quit game)
+                    // Load game and return description (or return "quit" command if user wants to quit game)
                     case "load":
-                        return PerformActionWithSavedGameFileOrAcceptQuitCommand(textAfterCommand, lowercaseCommand,
+                        return PerformActionWithSavedGameFileNameOrAcceptQuitCommand(textAfterCommand, lowercaseCommand,
                             (string fileName) =>
                             {
                                 return GameController.LoadGame(fileName) +
                                         Environment.NewLine + GetWelcomeToHouse(); // Return results from loading game plus welcome message
                             });
 
-                    // Delete game and return description (or "quit" command if user wants to quit game)
+                    // Delete game and return description (or return "quit" command if user wants to quit game)
                     case "delete":
-                        return PerformActionWithSavedGameFileOrAcceptQuitCommand(textAfterCommand, lowercaseCommand,
+                        return PerformActionWithSavedGameFileNameOrAcceptQuitCommand(textAfterCommand, lowercaseCommand,
                             (string fileName) =>
                             {
                                 return GameController.DeleteGame(fileName); // Return results from deleting game
@@ -179,7 +203,7 @@ namespace HideAndSeek
                     case "new":
                         GameController = GetGameControllerWithUserSpecifiedOpponents(); // Set game controller to new game with opponents specified via user input and default house                                                        
                         GameController = SetHouseLayoutBasedOnUserInput(GameController); // Set game controller House layout based on user input or leave House layout unchanged (returns null if user wants to quit)
-                        return GameController == null ? QuitCommand : "New game started" + Environment.NewLine + GetWelcomeToHouse(); // Return new game message if not null; if null, return quit command
+                        return GameController == null ? QuitCommand : "New game started" + Environment.NewLine + GetWelcomeToHouse(); // If null, return quit command; otherwise return new game message and welcome
 
                     // Return quit command since user wants to quit game
                     case QuitCommand:
@@ -192,7 +216,7 @@ namespace HideAndSeek
             }
             catch(Exception e)
             {
-                return RemoveParamText(e.Message); // Return exception message without param text
+                return e.Message; // Return exception message
             }
         }
 
@@ -200,7 +224,7 @@ namespace HideAndSeek
         /// Helper method to save current game (trims file name)
         /// </summary>
         /// <param name="fileName">Name of file in which to save game</param>
-        /// <returns></returns>
+        /// <returns>Message describing action or error</returns>
         private string SaveGame(string fileName)
         {
             // Trim file name
@@ -223,14 +247,14 @@ namespace HideAndSeek
 
         /// <summary>
         /// Perform action with SavedGame file (or accept quit command)
-        /// If empty text after command parameter value, display list of existing SavedGame files
+        /// If text after command is empty, display list of existing SavedGame files
         /// and get user input for file name.
         /// </summary>
         /// <param name="textAfterCommand">Text after command (if not empty/whitespace, used as file name)</param>
         /// <param name="lowercaseCommand">Action command in lowercase (e.g. "load", "delete")</param>
         /// <param name="ActionWithSavedGameFile">Action to perform with SavedGame file name</param>
-        /// <returns>Message describing action or error (or quit command)</returns>
-        private string PerformActionWithSavedGameFileOrAcceptQuitCommand(
+        /// <returns>Message describing action or error OR quit command</returns>
+        private string PerformActionWithSavedGameFileNameOrAcceptQuitCommand(
             string textAfterCommand, string lowercaseCommand, Func<string, string> ActionWithSavedGameFile)
         {
             // Get list of names of SavedGame files available
@@ -257,7 +281,7 @@ namespace HideAndSeek
                 userInputForFileName = consoleIO.ReadLine().Trim(); // Set variable for file name to trimmed user input
             }
 
-            // Return action results, quit command, or error message
+            // Return quit command, error message, or action results
             if(userInputForFileName == QuitCommand) // If user entered quit command
             {
                 return QuitCommand; // Return quit command
@@ -283,15 +307,12 @@ namespace HideAndSeek
         /// <returns>Game controller set up for game OR null if user wants to quit program</returns>
         private IGameController GetGameControllerWithUserSpecifiedOpponents()
         {
-            // Create local variable to store created game controller
-            IGameController gameController = null;
-
             // Add empty space
             consoleIO.WriteLine();
 
             while(true) // Continue until return statement
             {
-                // Obtain user input for setting opponents or loading game
+                // Obtain user input for setting opponents
                 consoleIO.Write("How many opponents would you like? Enter a number between 1 and 10, or a comma-separated list of names: "); // Prompt
                 string userInput = consoleIO.ReadLine().Trim(); // Get user input and trim it
 
@@ -300,6 +321,9 @@ namespace HideAndSeek
                 {
                     return null; // Return null to indicate user wants to quit
                 }
+
+                // Create local variable to store created game controller
+                IGameController gameController;
 
                 try
                 {
@@ -310,7 +334,7 @@ namespace HideAndSeek
                     }
                     else if (int.TryParse(userInput, out int numberOfOpponents)) // If user entered a number
                     {
-                        // If number of opponents with default names is invalid
+                        // If number of opponents is out of range
                         if (numberOfOpponents < 1 || numberOfOpponents > gameControllerFactory.MaximumNumberOfOpponentsWithDefaultNames)
                         {
                             throw new ArgumentOutOfRangeException(nameof(numberOfOpponents),
@@ -322,10 +346,13 @@ namespace HideAndSeek
                     }
                     else // if user did not enter empty string or a number, then assume user entered names for opponents
                     {
-                        string[] namesOfOpponents = userInput.Split(','); // Extract names from user input
+                        // Split user input into array of names
+                        string[] namesOfOpponents = userInput.Split(',');
+                        
+                        // For each name
                         for (int i = 0; i < namesOfOpponents.Length; i++)
                         {
-                            // Remove whitespace before or after each name
+                            // Trim name
                             namesOfOpponents[i] = namesOfOpponents[i].Trim();
 
                             // If name is invalid name for an opponent
@@ -335,7 +362,7 @@ namespace HideAndSeek
                             }
                         }
 
-                        // Create new game controller with trimmed names entered by user
+                        // Create new game controller with trimmed names
                         gameController = gameControllerFactory.GetGameControllerWithSpecificNamesOfOpponents(namesOfOpponents);
                     }
 
@@ -363,14 +390,15 @@ namespace HideAndSeek
                 return null; // Return null to indicate user wants to quit
             }
 
-            // Set variable to house file names
+            // Set variable to existing house file names
             IEnumerable<string> houseFileNames = getFileNamesAdapter.GetHouseFileNames();
 
-            while(true) // Repeat until return statement hit
+            // Repeat until user input determines House layout or user wants to quit
+            while(true)
             {
-                // Display list of names of House layout files available
+                // Display names of House layout files available
                 consoleIO.WriteLine("Here are the names of the house layout files available:" + Environment.NewLine +
-                                  GetTextListOfFileNames(houseFileNames)); // Display names of House layout files available
+                                  GetTextListOfFileNames(houseFileNames));
 
                 // Get House file name from user
                 consoleIO.Write("Type a house layout file name or just press Enter to use the default house layout: "); // Prompt for House layout file name
@@ -421,7 +449,7 @@ namespace HideAndSeek
         }
 
         /// <summary>
-        /// Helper method to print app welcome and instructions
+        /// Helper method to get app welcome and instructions text
         /// </summary>
         /// <returns>Welcome and instructions text</returns>
         private static string GetWelcomeAndInstructions()
@@ -439,26 +467,30 @@ namespace HideAndSeek
         }
 
         /// <summary>
-        /// Remove parameter text in error messages
+        /// Remove param text from error message
         /// </summary>
-        /// <param name="text">Text to remove parameter text from</param>
-        /// <returns>Text without parameter text</returns>
-        private static string RemoveParamText(string text)
+        /// <param name="errorMessage">Error message from which to remove param text</param>
+        /// <returns>Error message without param text</returns>
+        private static string RemoveParamText(string errorMessage)
         {
-            int indexOfParam = text.IndexOf("(Param");
+            // Get index of start of param text
+            int indexOfParam = errorMessage.IndexOf("(Param");
+
+            // If no param text
             if (indexOfParam == -1)
             {
-                return text;
+                return errorMessage; // Return error message
             }
 
-            // Remove parameter text
-            return text.Substring(0, indexOfParam - 1);
+            // Remove error message with param text removed
+            return errorMessage.Substring(0, indexOfParam - 1);
         }
 
         /// <summary>
-        /// Get text list of file names
+        /// Get list of file names as text (each file name on new line preceded by dash)
         /// </summary>
-        /// <param name="fileNames"></param>
+        /// <param name="fileNames">Enumerable of file names</param>
+        /// <returns>Text list of file names</returns>
         private static string GetTextListOfFileNames(IEnumerable<string> fileNames)
         {
             return String.Join(Environment.NewLine, fileNames.Select((name) => $" - {name}"));
