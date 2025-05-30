@@ -1261,5 +1261,73 @@ namespace HideAndSeek
                 Assert.That(gameController.GameOver, Is.False, "game not over");
             });
         }
+
+        [Test]
+        [Category("GameController RestartGame HidingLocations Success")]
+        public void Test_GameController_RestartGame_WithSpecificHidingPlaces()
+        {
+            // Create enumerable of hiding locations for opponents to hide
+            IEnumerable<string> hidingLocations = new List<string>()
+            {
+                "Kitchen", "Bedroom", "Bathroom", "Kitchen", "Pantry"
+            };
+
+            // Create GameController with mocked opponents and specific House
+            GameController gameController = new GameController(TestGameController_ConstructorsAndRestartGame_TestData.MockedOpponents,
+                                                               TestGameController_ConstructorsAndRestartGame_TestData.CustomHouse);
+
+            // Restart game with specific hiding locations
+            gameController.RestartGame(hidingLocations);
+
+            // Assert that hiding places (values) in OpponentsAndHidingLocations dictionary are set correctly
+            Assert.That(gameController.OpponentsAndHidingLocations.Values.Select((l) => l.Name), Is.EquivalentTo(hidingLocations));
+        }
+
+        [Test]
+        [Category("GameController RestartGame HidingLocations InvalidOperationException Failure")]
+        public void Test_GameController_RestartGame_WithSpecificHidingPlaces_AndCheckErrorMessage_ForNonexistentLocation()
+        {
+            // Create GameController with mocked opponents and specific House
+            GameController gameController = new GameController(TestGameController_ConstructorsAndRestartGame_TestData.MockedOpponents,
+                                                               TestGameController_ConstructorsAndRestartGame_TestData.CustomHouse);
+
+            Assert.Multiple(() =>
+            {
+                // Assert that restarting game with the name of a nonexistent hiding place raises exception
+                var exception = Assert.Throws<InvalidOperationException>(() =>
+                {
+                    gameController.RestartGame(new List<string>() { "Kitchen", "Bedroom", "Bathroom", "Worm Hole", "Pantry" });
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Is.EqualTo("location with hiding place \"Worm Hole\" does not exist in House"));
+            });
+        }
+
+        [TestCase()]
+        [TestCase("Living Room")]
+        [TestCase("Living Room", "Kitchen")]
+        [TestCase("Living Room", "Kitchen", "Pantry")]
+        [TestCase("Living Room", "Kitchen", "Pantry", "Attic")]
+        [TestCase("Living Room", "Kitchen", "Pantry", "Attic", "Office", "Bathroom")]
+        [Category("GameController RestartGame HidingLocations ArgumentOutOfRangeException Failure")]
+        public void Test_GameController_RestartGame_WithSpecificHidingPlaces_AndCheckErrorMessage_ForIncorrectNumberOfHidingPlaces(params string[] hidingPlaces)
+        {
+            // Create GameController with mocked opponents and specific House
+            GameController gameController = new GameController(TestGameController_ConstructorsAndRestartGame_TestData.MockedOpponents,
+                                                               TestGameController_ConstructorsAndRestartGame_TestData.CustomHouse);
+
+            Assert.Multiple(() =>
+            {
+                // Assert that calling method with an enumerable with an incorrect number of hiding places raises an exception
+                var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
+                {
+                    gameController.RestartGame(hidingPlaces);
+                });
+
+                // Assert that exception message is as expected
+                Assert.That(exception.Message, Does.StartWith("The number of hiding places must equal the number of opponents"));
+            });
+        }
     }
 }
