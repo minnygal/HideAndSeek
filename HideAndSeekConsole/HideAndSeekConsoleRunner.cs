@@ -241,7 +241,17 @@ namespace HideAndSeek
             }
             else
             {
-                return GameController.SaveGame(fileName); // Save game and return message
+                // Get list of names of SavedGame files available
+                IEnumerable<string> allSavedGameFileNames = getFileNamesAdapter.GetSavedGameFileNames();
+
+                // If file name already exists
+                if(allSavedGameFileNames.Contains(fileName))
+                {
+                    return $"Cannot save game because a saved game file named \"{fileName}\" already exists"; // Return failure message
+                }
+
+                // Save game and return message
+                return GameController.SaveGame(fileName);
             }
         }
 

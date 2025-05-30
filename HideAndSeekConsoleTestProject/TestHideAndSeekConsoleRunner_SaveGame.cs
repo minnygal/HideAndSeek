@@ -1,6 +1,7 @@
 using HideAndSeek;
 using Microsoft.VisualStudio.TestPlatform.CoreUtilities.Extensions;
 using Moq;
+using System.IO.Abstractions;
 using System.Text;
 
 namespace HideAndSeekConsoleTestProject
@@ -117,17 +118,17 @@ namespace HideAndSeekConsoleTestProject
         [Category("ConsoleRunner Save Failure")]
         public void Test_ConsoleRunner_Save_AlreadyExistingFileName()
         {
-            // Set up mock GameController to return message when save
-            mockGameController.Setup((gc) => gc.SaveGame("alreadyExists"))
-                .Throws(new InvalidOperationException("[save exception message]"));
-
             // Set up mock to return user input
             mockConsoleIO.SetupSequence((cio) => cio.ReadLine())
                 .Returns("save alreadyExists") // Save game
                 .Returns("exit"); // Exit game
 
+            // Set up get file names adapter mock
+            Mock<IGetFileNamesAdapter> mockGetFileNamesAdapter = new Mock<IGetFileNamesAdapter>(); // Create adapter mock
+            mockGetFileNamesAdapter.Setup((a) => a.GetSavedGameFileNames()).Returns(new string[] { "alreadyExists", "otherFile" }); // Set mock to return file names
+
             // Create console runner with mocked GameController and IConsoleIO
-            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object);
+            consoleRunner = new HideAndSeekConsoleRunner(mockGameController.Object, mockConsoleIO.Object, mockGetFileNamesAdapter.Object);
 
             // Run game
             consoleRunner.RunGame();
@@ -136,13 +137,13 @@ namespace HideAndSeekConsoleTestProject
             {
                 // Assert text displayed is as expected
                 Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
-                    "[save exception message]" + Environment.NewLine +
+                    "Cannot save game because a saved game file named \"alreadyExists\" already exists" + Environment.NewLine +
                     Environment.NewLine +
                     "[status]" + Environment.NewLine +
                     "[prompt]"));
 
                 // Verify that Move method was called
-                mockGameController.Verify((gc) => gc.SaveGame("alreadyExists"), Times.Once);
+                mockGameController.Verify((gc) => gc.SaveGame("alreadyExists"), Times.Never);
             });
         }
 
