@@ -52,7 +52,7 @@ namespace HideAndSeekConsoleTestProject
                     (Mock<IConsoleIO> mockConsoleIO) =>
                     {
                         mockConsoleIO.SetupSequence((cio) => cio.ReadLine()) // Set up user input
-                            .Returns("delete \\/ file") // Delete game
+                            .Returns("delete \\/ invalid") // Delete game
                             .Returns("exit"); // Exit game
                         return mockConsoleIO; // Return console mock
 

@@ -116,7 +116,7 @@ namespace HideAndSeekConsoleTestProject
                 // Assert text displayed is as expected
                 Assert.That(sbActualTextDisplayed.ToString(), Does.EndWith(
                     textBeforeErrorMessage +
-                    "Cannot delete game because file name is invalid" + Environment.NewLine +
+                    "Cannot delete game because file name \"\\/ invalid\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)" + Environment.NewLine +
                     Environment.NewLine +
                     "[status]" + Environment.NewLine +
                     "[prompt]"));

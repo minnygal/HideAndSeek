@@ -288,7 +288,7 @@ namespace HideAndSeek
             }
             else if( !(FileExtensions.IsValidName(userInputForFileName))) // If file name is invalid
             {
-                return $"Cannot {lowercaseCommand} game because file name is invalid"; // Return failure message
+                return $"Cannot {lowercaseCommand} game because file name \"{userInputForFileName}\" is invalid (is empty or contains illegal characters, e.g. \\, /, or whitespace)"; // Return failure message
             }
             else if( !(allSavedGameFileNames.Contains(userInputForFileName)) ) // If no saved game file with that name exists
             {
